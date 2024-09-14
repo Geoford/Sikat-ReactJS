@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import RegisterValidation from "./RegisterValidation";
+import RegisterValidation from "../RegisterValidation";
 import axios from "axios";
 
 export default function Register() {
@@ -23,7 +23,7 @@ export default function Register() {
 
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:8082/", values)
+        .post("http://localhost:8081/", values)
         .then((res) => {
           navigate("/Login");
         })

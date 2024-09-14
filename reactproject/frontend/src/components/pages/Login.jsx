@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import LoginValidation from "./LoginValidation";
+import LoginValidation from "../LoginValidation";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -19,7 +19,7 @@ export default function Login() {
 
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:8082/login", values)
+        .post("http://localhost:8081/login", values)
         .then((res) => {
           navigate("/Landing");
         })

@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "sikatdb",
+  database: "sikat-ediary",
 });
 
 db.connect((err) => {
@@ -20,6 +20,10 @@ db.connect((err) => {
     return;
   }
   console.log("Connected to database.");
+});
+
+app.get("/", (req, res) => {
+  res.json("Hello!");
 });
 
 app.post("/Register", (req, res) => {
@@ -57,6 +61,6 @@ app.post("/Login", (req, res) => {
   });
 });
 
-app.listen(8082, () => {
+app.listen(8081, () => {
   console.log("Server listening on port 8082");
 });
