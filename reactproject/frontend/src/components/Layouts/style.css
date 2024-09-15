@@ -18,6 +18,17 @@
   width: 40px;
   background-color: white;
   border-radius: 50%;
+  overflow: hidden;
+  border: none;
+}
+.logoImage {
+  height: 100%;
+  width: 100%;
+}
+.icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 .btn:focus {
   border: none;

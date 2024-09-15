@@ -3,8 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import IndexPage from "./components/pages/IndexPage";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
-import Landing from "./components/pages/Landing";
+import Home from "./components/pages/PagesUser/Home";
 import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
+// import "./components/Layouts/style.css";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
           <Route path="/" element={<IndexPage />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
-          <Route path="/Landing" element={<Landing />} />
+          <Route path="/Home" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </div>

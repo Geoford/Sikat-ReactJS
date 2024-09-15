@@ -21,7 +21,7 @@ export default function Login() {
       axios
         .post("http://localhost:8081/login", values)
         .then((res) => {
-          navigate("/Landing");
+          navigate("/Home");
         })
         .catch((err) => console.log(err));
     }
