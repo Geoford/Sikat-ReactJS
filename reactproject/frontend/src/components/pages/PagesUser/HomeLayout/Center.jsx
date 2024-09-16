@@ -1,46 +1,86 @@
 import DiaryEntry from "../../../../assets/DiaryEntry.png";
-import SampleImage from "../../../../assets/Background.jpg";
 import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Center = () => {
+  const [entries, setEntries] = useState([]);
+  const [user, setUser] = useState(null);
+
+  // Fetch user data
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  // Function to fetch diary entries
+  const fetchEntries = () => {
+    axios
+      .get("http://localhost:8081/entries")
+      .then((response) => {
+        setEntries(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the diary entries!", error);
+      });
+  };
+
+  // Fetch entries on initial load
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
   return (
     <div className="p-2">
-      <div className="rounded border p-3 " style={{ backgroundColor: "white" }}>
-        <DiaryEntryButton />
+      <div className="rounded border p-3" style={{ backgroundColor: "white" }}>
+        {/* Pass fetchEntries function as prop */}
+        <DiaryEntryButton onEntrySaved={fetchEntries} />
       </div>
-      <div
-        className="rounded border p-3 mt-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-          <div>
-            <button className="orangeButton">Follow</button>
+      {entries.length === 0 ? (
+        <p>No entries available.</p>
+      ) : (
+        entries.map((entry) => (
+          <div
+            key={entry.id}
+            className="rounded border p-3 mt-3"
+            style={{ backgroundColor: "white" }}
+          >
+            <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+              <div className="profilePicture">
+                {/* Optionally display a profile picture here */}
+              </div>
+              <p className="m-0">{entry.username}</p>
+              <div>
+                <button className="orangeButton">Follow</button>
+              </div>
+            </div>
+            <div className="text-start p-2">
+              <h5>{entry.title}</h5>
+              <p className="m-0">{entry.description}</p>
+              {entry.image && (
+                <img
+                  className="DiaryImage mt-1"
+                  src={entry.image}
+                  alt="Diary"
+                />
+              )}
+            </div>
+            <div className="row px-2 pt-2">
+              <div className="col">
+                <button className="InteractButton">Gadify</button>
+              </div>
+              <div className="col">
+                <button className="InteractButton">Comment</button>
+              </div>
+              <div className="col">
+                <button className="InteractButton">Flag</button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="text-start p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nisi sequi
-            incidunt obcaecati eaque quam, doloribus dolor repellat non in
-            deserunt aliquam tenetur necessitatibus delectus animi dolore.
-            Reiciendis nulla veritatis dolorem?
-          </p>
-          <img className="DiaryImage mt-1" src={SampleImage} alt="" />
-        </div>
-        <div className="row px-2 pt-2">
-          <div className="col">
-            <button className="InteractButton">Gadify</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">Flag</button>
-          </div>
-        </div>
-      </div>
+        ))
+      )}
     </div>
   );
 };

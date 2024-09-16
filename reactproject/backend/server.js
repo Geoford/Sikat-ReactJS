@@ -61,6 +61,34 @@ app.post("/Login", (req, res) => {
   });
 });
 
+app.post("/entry", (req, res) => {
+  const { title, description, user_id } = req.body;
+
+  const query =
+    "INSERT INTO diary_entries (title, description, user_id) VALUES (?, ?, ?)";
+  db.query(query, [title, description, user_id], (err, result) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.status(200).send({ message: "Entry added successfully!" });
+  });
+});
+
+app.get("/entries", (req, res) => {
+  const query = `
+    SELECT diary_entries.id, diary_entries.title, diary_entries.description, user_table.username
+    FROM diary_entries
+    JOIN user_table ON diary_entries.user_id = user_table.id
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.status(200).json(results);
+  });
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

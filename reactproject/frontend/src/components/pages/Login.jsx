@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import LoginValidation from "../LoginValidation.jsx";
+import LoginValidation from "./LoginValidation.jsx";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -21,6 +21,7 @@ export default function Login() {
       axios
         .post("http://localhost:8081/Login", values)
         .then((res) => {
+          localStorage.setItem("user", JSON.stringify(res.data));
           navigate("/Home");
         })
         .catch((err) => console.log(err));
@@ -83,7 +84,6 @@ export default function Login() {
           </p>
         </form>
       </div>
-      <Background />
     </div>
   );
 }
