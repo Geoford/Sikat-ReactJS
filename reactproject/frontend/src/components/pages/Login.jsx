@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import LoginValidation from "../LoginValidation";
+import LoginValidation from "../LoginValidation.jsx";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -12,18 +12,26 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = LoginValidation(values);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
       axios
-        .post("http://localhost:8081/login", values)
+        .post("http://localhost:8081/Login", values)
         .then((res) => {
           navigate("/Home");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 
@@ -35,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <div className="vh-90 d-flex justify-content-center align-items-center bg-primary">
+    <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
       <div className="bg-white rounded p-3">
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -66,8 +74,8 @@ export default function Login() {
               <span className="text-danger"> {errors.password}</span>
             )}
           </div>
-          <button type="submit" className="btn btn-success">
-            Log in
+          <button type="submit" className="btn btn-success" disabled={loading}>
+            {loading ? "Logging in..." : "Log in"}
           </button>
           <Link to="/Register" className="btn btn-success">
             Register
