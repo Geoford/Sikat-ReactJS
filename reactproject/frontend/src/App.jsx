@@ -2,7 +2,9 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Landing from "./components/Landing";
+import AddStudent from "./components/AddStudent";
+import UpdateStudent from "./components/UpdateStudent";
+import UserTable from "./components/UserTable";
 import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -13,7 +15,9 @@ function App() {
           <Route></Route>
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
-          <Route path="/Landing" element={<Landing />} />
+          <Route path="/UserTable" element={<UserTable />} />
+          <Route path="/AddStudent" element={<AddStudent />} />
+          <Route path="/Update/:ID" element={<UpdateStudent />} />
         </Routes>
       </BrowserRouter>
     </div>

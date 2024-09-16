@@ -23,9 +23,9 @@ export default function Register() {
 
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:8082/", values)
+        .post("http://localhost:8082/Add", values)
         .then((res) => {
-          navigate("/Login");
+          navigate("/UserTable");
         })
         .catch((err) => console.log(err));
     }
@@ -40,7 +40,7 @@ export default function Register() {
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
-      <div className="bg-white rounded p-3 text-start">
+      <div className="bg-white rounded p-3 text-start w-50">
         <form action="" onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="firstName">First Name</label>
@@ -127,11 +127,8 @@ export default function Register() {
             )}
           </div>
           <button type="submit" className="btn btn-success">
-            Register
+            Add
           </button>
-          <Link to="/Login" className="btn btn-success">
-            Login
-          </Link>
         </form>
       </div>
     </div>

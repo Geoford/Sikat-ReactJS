@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import RegisterValidation from "./RegisterValidation";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-export default function Register() {
+export default function UpdateStudent() {
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
@@ -14,7 +13,25 @@ export default function Register() {
   });
 
   const navigate = useNavigate();
+  const { username } = useParams(); // Assuming you pass the username as a route parameter.
   const [errors, setErrors] = useState({});
+
+  // Fetch the current values of the student on component load
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8082/`) // Assuming the endpoint to get user by username
+      .then((res) => {
+        setValues({
+          firstName: res.data.firstName,
+          lastName: res.data.lastName,
+          cvsuEmail: res.data.cvsuEmail,
+          username: res.data.username,
+          password: "", // You may want to keep this empty
+          confirmPassword: "", // You may want to keep this empty
+        });
+      })
+      .catch((err) => console.log(err));
+  }, [username]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,9 +40,9 @@ export default function Register() {
 
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:8082/", values)
+        .put("http://localhost:8082/UpdateStudent", values)
         .then((res) => {
-          navigate("/Login");
+          navigate("/UserTable");
         })
         .catch((err) => console.log(err));
     }
@@ -40,7 +57,7 @@ export default function Register() {
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
-      <div className="bg-white rounded p-3 text-start">
+      <div className="bg-white rounded p-3 text-start w-50">
         <form action="" onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="firstName">First Name</label>
@@ -93,6 +110,7 @@ export default function Register() {
               onChange={handleInput}
               className="form-control rounded-0"
               value={values.username}
+              readOnly // Username should not be editable
             />
             {errors.username && (
               <span className="text-danger"> {errors.username}</span>
@@ -127,11 +145,8 @@ export default function Register() {
             )}
           </div>
           <button type="submit" className="btn btn-success">
-            Register
+            Update
           </button>
-          <Link to="/Login" className="btn btn-success">
-            Login
-          </Link>
         </form>
       </div>
     </div>

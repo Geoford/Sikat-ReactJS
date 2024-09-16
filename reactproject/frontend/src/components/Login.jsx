@@ -21,7 +21,7 @@ export default function Login() {
       axios
         .post("http://localhost:8082/login", values)
         .then((res) => {
-          navigate("/Landing");
+          navigate("/UserTable");
         })
         .catch((err) => console.log(err));
     }
@@ -35,8 +35,8 @@ export default function Login() {
   };
 
   return (
-    <div className="vh-90 d-flex justify-content-center align-items-center bg-primary">
-      <div className="bg-white rounded p-3">
+    <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
+      <div className="bg-white rounded p-3 ">
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username">Username</label>
