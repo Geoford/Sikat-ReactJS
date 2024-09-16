@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "sikatdb",
+  database: "sikat-ediary",
 });
 
 db.connect((err) => {
