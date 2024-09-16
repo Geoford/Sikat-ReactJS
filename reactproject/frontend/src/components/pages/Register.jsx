@@ -39,36 +39,41 @@ export default function Register() {
   };
 
   return (
-    <div className="vh-90 d-flex justify-content-center align-items-center bg-primary">
-      <div className="bg-white rounded p-3 text-start">
+    <div
+      className="vh-100 d-flex justify-content-center align-items-center "
+      style={{ backgroundColor: "#990099" }}
+    >
+      <div className="bg-white rounded p-3 text-start w-50">
         <form action="" onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="firstName">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="Enter your first name"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.firstName}
-            />
-            {errors.firstName && (
-              <span className="text-danger"> {errors.firstName}</span>
-            )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Enter your last name"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.lastName}
-            />
-            {errors.lastName && (
-              <span className="text-danger"> {errors.lastName}</span>
-            )}
+          <div className="row">
+            <div className="col mb-3">
+              <label htmlFor="firstName">First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="Enter your first name"
+                onChange={handleInput}
+                className="form-control rounded-0"
+                value={values.firstName}
+              />
+              {errors.firstName && (
+                <span className="text-danger"> {errors.firstName}</span>
+              )}
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Enter your last name"
+                onChange={handleInput}
+                className="form-control rounded-0"
+                value={values.lastName}
+              />
+              {errors.lastName && (
+                <span className="text-danger"> {errors.lastName}</span>
+              )}
+            </div>
           </div>
           <div className="mb-3">
             <label htmlFor="cvsuEmail">CvSU Email</label>
@@ -129,9 +134,15 @@ export default function Register() {
           <button type="submit" className="btn btn-success">
             Register
           </button>
-          <Link to="/Login" className="btn btn-success">
-            Login
-          </Link>
+          <p>
+            Already have an account?{" "}
+            <Link
+              to="/Login"
+              className="link-underline link-underline-opacity-0"
+            >
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>

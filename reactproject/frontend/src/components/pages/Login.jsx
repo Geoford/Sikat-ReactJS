@@ -12,26 +12,18 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = LoginValidation(values);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      setLoading(true);
       axios
         .post("http://localhost:8081/Login", values)
         .then((res) => {
           navigate("/Home");
         })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        .catch((err) => console.log(err));
     }
   };
 
@@ -43,7 +35,10 @@ export default function Login() {
   };
 
   return (
-    <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
+    <div
+      className="vh-100 d-flex justify-content-center align-items-center"
+      style={{ backgroundColor: "#990099" }}
+    >
       <div className="bg-white rounded p-3">
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -74,12 +69,18 @@ export default function Login() {
               <span className="text-danger"> {errors.password}</span>
             )}
           </div>
-          <button type="submit" className="btn btn-success" disabled={loading}>
-            {loading ? "Logging in..." : "Log in"}
+          <button type="submit" className="btn btn-success">
+            Log in
           </button>
-          <Link to="/Register" className="btn btn-success">
-            Register
-          </Link>
+          <p>
+            Don't have an account?{" "}
+            <Link
+              to="/Register"
+              className="link-underline link-underline-opacity-0"
+            >
+              Register
+            </Link>
+          </p>
         </form>
       </div>
     </div>
