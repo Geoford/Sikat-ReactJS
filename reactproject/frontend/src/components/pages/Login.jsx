@@ -83,6 +83,7 @@ export default function Login() {
           </p>
         </form>
       </div>
+      <Background />
     </div>
   );
 }

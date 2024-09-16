@@ -1,5 +1,5 @@
 import React from "react";
-import IndexNavBar from "../Layouts/IndexNavBar";
+import IndexNavBar from "../Layouts/NavBarIndex";
 import Background from "../Layouts/Background";
 
 const IndexPage = () => {
