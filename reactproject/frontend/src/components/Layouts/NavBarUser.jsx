@@ -7,7 +7,7 @@ import NotificationButton from "./OffCanvassNotification";
 const UserNavBar = () => {
   return (
     <nav class="navbar navbar-expand-lg p-0">
-      <div class="container-fluid py-2 px-3">
+      <div class="container-fluid py-2 px-3 shadow">
         <div className="logo">
           <Link to="/Home">
             <img className="logoImage" src={Logo} />

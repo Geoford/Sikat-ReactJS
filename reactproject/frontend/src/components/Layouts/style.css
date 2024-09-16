@@ -12,6 +12,7 @@
 
 .navbar {
   background-color: #990099;
+  /* position: static; */
 }
 .logo {
   height: 40px;
@@ -30,6 +31,21 @@
   height: 24px;
   object-fit: contain;
 }
+.miniIcon {
+  width: 20px;
+  height: 20px;
+}
+.profilePicture {
+  height: 50px;
+  width: 50px;
+  background-color: rgb(214, 214, 214);
+  border-radius: 50%;
+  overflow: hidden;
+  border: none;
+}
+.DiaryImage {
+  width: 100%;
+}
 .btn:focus {
   border: none;
 }
@@ -44,6 +60,15 @@
 .orangeButton:hover {
   background-color: #ff751a;
 }
+.InteractButton {
+  width: 100%;
+  background-color: #ff8533;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+  transition: 0.3s;
+  color: white;
+}
 .orangerText {
   background-color: transparent;
   border: none;
@@ -51,4 +76,11 @@
 }
 .orangerText:hover {
   color: #ff751a;
+}
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+}
+.form {
+  width: clamp(400px, 40%, 500px);
 }
