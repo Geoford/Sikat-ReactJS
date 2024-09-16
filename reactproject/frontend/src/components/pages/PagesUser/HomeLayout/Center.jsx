@@ -15,7 +15,6 @@ const Center = () => {
     }
   }, []);
 
-  // Function to fetch diary entries
   const fetchEntries = () => {
     axios
       .get("http://localhost:8081/entries")
@@ -27,7 +26,6 @@ const Center = () => {
       });
   };
 
-  // Fetch entries on initial load
   useEffect(() => {
     fetchEntries();
   }, []);
@@ -35,7 +33,6 @@ const Center = () => {
   return (
     <div className="p-2">
       <div className="rounded border p-3" style={{ backgroundColor: "white" }}>
-        {/* Pass fetchEntries function as prop */}
         <DiaryEntryButton onEntrySaved={fetchEntries} />
       </div>
       {entries.length === 0 ? (
@@ -48,9 +45,7 @@ const Center = () => {
             style={{ backgroundColor: "white" }}
           >
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture">
-                {/* Optionally display a profile picture here */}
-              </div>
+              <div className="profilePicture"></div>
               <p className="m-0">{entry.username}</p>
               <div>
                 <button className="orangeButton">Follow</button>
