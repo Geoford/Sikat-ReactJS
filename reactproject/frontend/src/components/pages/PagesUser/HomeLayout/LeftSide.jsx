@@ -10,26 +10,50 @@ const Center = () => {
         <div className="mainProfilePicture"></div>
         <p className="m-0 mt-1 text-light fs-5">UserName</p>
       </div>
-      <div
-        className="rounded border p-3 mt-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
+
+      <div className=" bg-light rounded border p-3 mt-3">
+        <div className="d-flex justify-content-between border-bottom">
           <div>
-            <button className="orangeButton">Follow</button>
+            <h4>Journal Entries</h4>
+          </div>
+          <div>
+            <p className="orangerText" style={{ cursor: "pointer" }}>
+              View All
+            </p>
           </div>
         </div>
-        <div className="text-start p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nisi sequi
-            incidunt obcaecati eaque quam, doloribus dolor repellat non in
-            deserunt aliquam tenetur necessitatibus delectus animi dolore.
-            Reiciendis nulla veritatis dolorem?
-          </p>
-          <img className="DiaryImage mt-1" src={SampleImage} alt="" />
+        <div
+          className="mt-2 pe-1"
+          style={{ height: "260px", overflowY: "scroll" }}
+        >
+          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
+            <h5>Journal Title</h5>
+            <p className="text-start">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
+              expedita repellat quos quod nulla omnis!
+            </p>
+          </div>
+          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
+            <h5>Journal Title</h5>
+            <p className="text-start">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
+              expedita repellat quos quod nulla omnis!
+            </p>
+          </div>
+          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
+            <h5>Journal Title</h5>
+            <p className="text-start">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
+              expedita repellat quos quod nulla omnis!
+            </p>
+          </div>
+          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
+            <h5>Journal Title</h5>
+            <p className="text-start">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
+              expedita repellat quos quod nulla omnis!
+            </p>
+          </div>
         </div>
       </div>
     </div>

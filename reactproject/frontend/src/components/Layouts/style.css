@@ -92,3 +92,9 @@
 .form {
   width: clamp(400px, 40%, 500px);
 }
+.journalEntries {
+  transition: 0.3s;
+}
+.journalEntries:hover {
+  background-color: #e6e6e6;
+}
