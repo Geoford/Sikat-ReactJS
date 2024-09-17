@@ -3,10 +3,12 @@ import SampleImage from "../../../../assets/Background.jpg";
 const Center = () => {
   return (
     <div className="p-2">
-      <div className="rounded border p-3 " style={{ backgroundColor: "white" }}>
-        <button className="orangeButton w-100">
-          Diary Entry <img className="miniIcon mb-1" src={DiaryEntry} alt="" />
-        </button>
+      <div
+        className="d-flex align-items-center flex-column rounded gap-2 border-bottom py-3"
+        style={{ backgroundColor: "#cc00cc" }}
+      >
+        <div className="mainProfilePicture"></div>
+        <p className="m-0 mt-1 text-light fs-5">UserName</p>
       </div>
       <div
         className="rounded border p-3 mt-3"

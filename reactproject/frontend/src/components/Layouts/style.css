@@ -35,6 +35,14 @@
   width: 20px;
   height: 20px;
 }
+.mainProfilePicture {
+  height: 200px;
+  width: 200px;
+  background-color: #ffff;
+  border-radius: 50%;
+  overflow: hidden;
+  border: none;
+}
 .profilePicture {
   height: 50px;
   width: 50px;

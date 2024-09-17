@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import DiaryEntry from "../../assets/DiaryEntry.png";
+import uploadIcon from "../../assets/upload.png";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -17,7 +18,18 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
+  const [visibility, setVisibility] = useState("private");
+  const [anonimity, setAnonimity] = useState("private");
+
   const navigate = useNavigate();
+
+  const handleChangeVisibility = (event) => {
+    setVisibility(event.target.value);
+  };
+
+  const handleChangeAnonimity = (event) => {
+    setAnonimity(event.target.value);
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -98,11 +110,33 @@ function DiaryEntryButton({ onEntrySaved }) {
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
             <div className="profilePicture"></div>
             <p className="m-0">{user?.username || "User"}</p>
+            <div>
+              <select
+                id="visibility"
+                value={visibility}
+                onChange={handleChangeVisibility}
+              >
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+              </select>
+            </div>
+            <div>
+              <select
+                id="anonimity"
+                value={anonimity}
+                onChange={handleChangeAnonimity}
+                disabled={visibility === "private"}
+              >
+                <option value="private">Anonymous</option>
+                <option value="public">Not Anonymous</option>
+              </select>
+            </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          <div>
+          <div className="mt-2">
             <InputGroup className="mb-1">
               <Form.Control
+                className="rounded"
                 placeholder="Journal Title"
                 aria-label="Journal Title"
                 value={title}
@@ -120,7 +154,7 @@ function DiaryEntryButton({ onEntrySaved }) {
             >
               <Form.Control
                 as="textarea"
-                placeholder="Leave a comment here"
+                placeholder=""
                 style={{ height: "100px" }}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -131,13 +165,23 @@ function DiaryEntryButton({ onEntrySaved }) {
                 {formErrors.description}
               </Form.Control.Feedback>
             </FloatingLabel>
+            <div className="ps-1 pt-2">
+              <label htmlFor="uploadPhoto">
+                <div style={{ cursor: "pointer" }}>
+                  <img className="miniIcon mb-1 me-1" src={uploadIcon} alt="" />
+                  Upload Photo
+                </div>
+              </label>
+              <input type="file" id="uploadPhoto" hidden />
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={loading}>
             Close
           </Button>
-          <Button
+          <button
+            className="orangeButton py-2"
             variant="primary"
             onClick={handleSubmit}
             disabled={loading}
@@ -157,7 +201,7 @@ function DiaryEntryButton({ onEntrySaved }) {
             ) : (
               "Save Changes"
             )}
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     </>
