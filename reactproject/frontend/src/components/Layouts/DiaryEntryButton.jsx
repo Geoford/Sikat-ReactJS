@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import DiaryEntry from "../../assets/DiaryEntry.png";
@@ -14,35 +15,56 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [description, setDescription] = useState("");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
+    } else {
+      navigate("/Login");
     }
-  }, []);
+  }, [navigate]);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setFormErrors({});
+    setServerError("");
+    setTitle("");
+    setDescription("");
+  };
   const handleShow = () => setShow(true);
 
   const handleSubmit = () => {
-    if (!title || !description) {
-      alert("Please fill in both title and description.");
+    let errors = {};
+    if (!title) errors.title = "Title is required.";
+    if (!description) errors.description = "Description is required.";
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
+
+    if (!user || !user.id) {
+      setServerError("User not authenticated. Please log in again.");
       return;
     }
 
     const diaryEntry = {
       title,
       description,
-      user_id: user?.id,
+      user_id: user.id,
     };
 
     setLoading(true);
+    setServerError("");
 
     axios
       .post("http://localhost:8081/entry", diaryEntry)
       .then((response) => {
         console.log(response.data.message);
+        setTitle("");
+        setDescription("");
         handleClose();
         if (onEntrySaved) {
           onEntrySaved();
@@ -50,6 +72,7 @@ function DiaryEntryButton({ onEntrySaved }) {
       })
       .catch((error) => {
         console.error("There was an error saving the diary entry!", error);
+        setServerError("Failed to save diary entry. Please try again.");
       })
       .finally(() => {
         setLoading(false);
@@ -76,6 +99,7 @@ function DiaryEntryButton({ onEntrySaved }) {
             <div className="profilePicture"></div>
             <p className="m-0">{user?.username || "User"}</p>
           </div>
+          {serverError && <p className="text-danger">{serverError}</p>}
           <div>
             <InputGroup className="mb-1">
               <Form.Control
@@ -83,7 +107,12 @@ function DiaryEntryButton({ onEntrySaved }) {
                 aria-label="Journal Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                isInvalid={!!formErrors.title}
+                disabled={loading}
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.title}
+              </Form.Control.Feedback>
             </InputGroup>
             <FloatingLabel
               controlId="floatingTextarea2"
@@ -95,15 +124,25 @@ function DiaryEntryButton({ onEntrySaved }) {
                 style={{ height: "100px" }}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                isInvalid={!!formErrors.description}
+                disabled={loading}
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.description}
+              </Form.Control.Feedback>
             </FloatingLabel>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose} disabled={loading}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={loading}
+            aria-label="Save diary entry"
+          >
             {loading ? (
               <>
                 <Spinner

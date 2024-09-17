@@ -14,6 +14,14 @@ export default function Register() {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      navigate("/Home");
+    }
+  }, [navigate]);
+
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {

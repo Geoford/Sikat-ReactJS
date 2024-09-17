@@ -1,16 +1,24 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import LoginValidation from "./LoginValidation.jsx";
+import LoginValidation from "./LoginValidation";
 
 export default function Login() {
   const [values, setValues] = useState({
     username: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      navigate("/Home");
+    }
+  }, [navigate]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,13 +26,21 @@ export default function Login() {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
+      setServerError("");
       axios
         .post("http://localhost:8081/Login", values)
         .then((res) => {
           localStorage.setItem("user", JSON.stringify(res.data));
           navigate("/Home");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setServerError(
+            err.response?.data?.message ||
+              "Invalid login credentials. Please try again."
+          );
+        })
+        .finally(() => setLoading(false));
     }
   };
 
@@ -51,6 +67,7 @@ export default function Login() {
               onChange={handleInput}
               className="form-control rounded-0"
               value={values.username}
+              disabled={loading}
             />
             {errors.username && (
               <span className="text-danger"> {errors.username}</span>
@@ -61,18 +78,34 @@ export default function Login() {
             <input
               type="password"
               name="password"
-              placeholder="Enter Password"
+              placeholder="Enter password"
               onChange={handleInput}
               className="form-control rounded-0"
               value={values.password}
+              disabled={loading}
             />
             {errors.password && (
               <span className="text-danger"> {errors.password}</span>
             )}
           </div>
-          <button type="submit" className="btn btn-success">
-            Log in
+
+          {serverError && <span className="text-danger">{serverError}</span>}
+
+          <button type="submit" className="btn btn-success" disabled={loading}>
+            {loading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                {" Loading..."}
+              </>
+            ) : (
+              "Log in"
+            )}
           </button>
+
           <p>
             Don't have an account?{" "}
             <Link
