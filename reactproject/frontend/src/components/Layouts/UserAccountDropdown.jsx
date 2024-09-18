@@ -23,43 +23,37 @@ const UserAccountDropdown = () => {
 
   return (
     <Dropdown>
-      <button className="logo custom-button d-flex align-items-center justify-content-center">
-        <img className="icon ms-1" src={DefaultProfile} alt="User Profile" />
-        <Dropdown.Toggle
-          id="UserAccountDropdown"
-          className="noDisplay"
-        ></Dropdown.Toggle>
-      </button>
+      <Dropdown.Toggle
+        as="button"
+        className="logo custom-button d-flex align-items-center justify-content-center"
+        id="UserAccountDropdown"
+      >
+        <img className="icon ms-3" src={DefaultProfile} alt="User Profile" />
+      </Dropdown.Toggle>
 
       <Dropdown.Menu className="text-end mt-2">
         {user && (
-          <Dropdown.Item className="p-0 px-2 bg-transparent">
-            <div>
-              <Link
-                to={`/UpdateUser/${user.id}`}
-                className="w-100 btn btn-light text-end"
-              >
-                Account Settings
-              </Link>
-            </div>
+          <Dropdown.Item
+            as={Link}
+            to={`/UpdateUser/${user.userID}`}
+            className="w-100 btn btn-light text-end"
+          >
+            Account Settings
           </Dropdown.Item>
         )}
-        <Dropdown.Item className="p-0 px-2 bg-transparent">
-          <div>
-            <button className="w-100 btn btn-light text-end">
-              Diary Entries
-            </button>
-          </div>
+        <Dropdown.Item
+          as="button"
+          className="w-100 btn btn-light text-end"
+          onClick={() => navigate("/DiaryEntries")}
+        >
+          Diary Entries
         </Dropdown.Item>
-        <Dropdown.Item className="p-0 px-2 bg-transparent">
-          <div>
-            <button
-              onClick={handleLogout}
-              className="w-100 btn btn-light text-end"
-            >
-              Logout
-            </button>
-          </div>
+        <Dropdown.Item
+          as="button"
+          className="w-100 btn btn-light text-end"
+          onClick={handleLogout}
+        >
+          Logout
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

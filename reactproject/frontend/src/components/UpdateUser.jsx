@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import RegisterValidation from "./pages/RegisterValidation";
-import { useParams } from "react-router-dom";
+import UpdateValidation from "./pages/UpdateValidation";
 
-export default function UpdateStudent() {
-  const { userID } = useParams();
+export default function UpdateUser() {
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
@@ -15,21 +13,18 @@ export default function UpdateStudent() {
     confirmPassword: "",
   });
 
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const userObject = JSON.parse(userData);
-      console.log("User object:", userObject);
-      setUser(userObject);
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User data from local storage:", user);
+    if (user) {
       setValues({
-        firstName: userObject.firstName,
-        lastName: userObject.lastName,
-        cvsuEmail: userObject.cvsuEmail,
-        username: userObject.username,
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        cvsuEmail: user.cvsuEmail || "",
+        username: user.username || "",
         password: "",
         confirmPassword: "",
       });
@@ -40,13 +35,21 @@ export default function UpdateStudent() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const validationErrors = RegisterValidation(values);
+    const validationErrors = UpdateValidation(values);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
+      const userID = JSON.parse(localStorage.getItem("user")).userID;
       axios
-        .put(`http://localhost:8081/update/${user.userID}`, values)
+        .put(`http://localhost:8081/UpdateUser?userID=${userID}`, values)
         .then((res) => {
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              ...values,
+              userID: userID,
+            })
+          );
           navigate("/Home");
         })
         .catch((err) => console.log(err));
@@ -61,36 +64,41 @@ export default function UpdateStudent() {
   };
 
   return (
-    <div className="vh-100 d-flex justify-content-center align-items-center bg-primary">
+    <div
+      className="vh-100 d-flex justify-content-center align-items-center"
+      style={{ backgroundColor: "#990099" }}
+    >
       <div className="bg-white rounded p-3 text-start w-50">
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="firstName">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="Enter your first name"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.firstName}
-            />
-            {errors.firstName && (
-              <span className="text-danger"> {errors.firstName}</span>
-            )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Enter your last name"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.lastName}
-            />
-            {errors.lastName && (
-              <span className="text-danger"> {errors.lastName}</span>
-            )}
+          <div className="row">
+            <div className="col mb-3">
+              <label htmlFor="firstName">First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="Enter your first name"
+                onChange={handleInput}
+                className="form-control rounded-0"
+                value={values.firstName}
+              />
+              {errors.firstName && (
+                <span className="text-danger"> {errors.firstName}</span>
+              )}
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Enter your last name"
+                onChange={handleInput}
+                className="form-control rounded-0"
+                value={values.lastName}
+              />
+              {errors.lastName && (
+                <span className="text-danger"> {errors.lastName}</span>
+              )}
+            </div>
           </div>
           <div className="mb-3">
             <label htmlFor="cvsuEmail">CvSU Email</label>
@@ -112,20 +120,22 @@ export default function UpdateStudent() {
               type="text"
               name="username"
               placeholder="Enter your Username"
+              onChange={handleInput}
               className="form-control rounded-0"
               value={values.username}
-              readOnly
             />
             {errors.username && (
               <span className="text-danger"> {errors.username}</span>
             )}
           </div>
           <div className="mb-3">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              Password (Leave blank to keep current)
+            </label>
             <input
               type="password"
               name="password"
-              placeholder="Enter Password"
+              placeholder="Enter new Password"
               onChange={handleInput}
               className="form-control rounded-0"
               value={values.password}
@@ -139,7 +149,7 @@ export default function UpdateStudent() {
             <input
               type="password"
               name="confirmPassword"
-              placeholder="Confirm Password"
+              placeholder="Confirm new Password"
               onChange={handleInput}
               className="form-control rounded-0"
               value={values.confirmPassword}
@@ -151,6 +161,15 @@ export default function UpdateStudent() {
           <button type="submit" className="btn btn-success">
             Update
           </button>
+          <p>
+            Want to go back?{" "}
+            <Link
+              to="/Home"
+              className="link-underline link-underline-opacity-0"
+            >
+              Home
+            </Link>
+          </p>
         </form>
       </div>
     </div>

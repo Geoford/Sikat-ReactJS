@@ -21,6 +21,7 @@ const Center = () => {
         params: { userID: user.userID },
       })
       .then((response) => {
+        console.log("Entries fetched:", response.data);
         setEntries(response.data);
       })
       .catch((error) => {
@@ -60,6 +61,8 @@ const Center = () => {
     fetchEntries();
   }, [fetchEntries]);
 
+  console.log("Entries state:", entries);
+
   if (!user) return null;
 
   return (
@@ -75,9 +78,7 @@ const Center = () => {
         <p>No entries available.</p>
       ) : (
         entries.map((entry) => {
-          console.log("Current User ID:", user.userID);
-          console.log("Entry User ID:", entry.userID);
-
+          console.log("Entry data:", entry); // Check entry structure
           return (
             <div
               key={entry.entryID}

@@ -79,25 +79,41 @@ app.post("/Login", (req, res) => {
   });
 });
 
-app.put("/update/:userID", (req, res) => {
-  const hashedPassword = bcrypt.hashSync(req.body.password, 8);
-  const sql = `UPDATE user_table SET firstName = ?, lastName = ?, cvsuEmail = ?, username = ?, password = ? WHERE userID = ?`;
-  const values = [
-    req.body.firstName,
-    req.body.lastName,
-    req.body.cvsuEmail,
-    req.body.username,
-    hashedPassword,
-  ];
-  const id = req.params.userID;
+app.put("/UpdateUser", (req, res) => {
+  const {
+    firstName,
+    lastName,
+    cvsuEmail,
+    username,
+    password,
+    confirmPassword,
+  } = req.body;
+  const userID = req.query.userID;
 
-  db.query(sql, [...values, id], (err, data) => {
+  if (!userID) return res.status(400).json({ error: "User ID is required" });
+
+  if (password && password !== confirmPassword) {
+    return res.status(400).json({ error: "Passwords do not match" });
+  }
+
+  let updateQuery = `UPDATE user_table SET firstName = ?, lastName = ?, cvsuEmail = ?, username = ?`;
+  let queryParams = [firstName, lastName, cvsuEmail, username];
+
+  if (password) {
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    updateQuery += `, password = ?`;
+    queryParams.push(hashedPassword);
+  }
+
+  updateQuery += ` WHERE userID = ?`;
+  queryParams.push(userID);
+
+  db.query(updateQuery, queryParams, (err, results) => {
     if (err) {
-      console.error("Error updating user:", err);
-      return res.status(500).json({ error: "Error updating user" });
+      console.error("Error updating profile:", err);
+      return res.status(500).json({ error: "Failed to update profile" });
     }
-    console.log("Update result:", data);
-    return res.json(data);
+    res.status(200).json({ message: "Profile updated successfully" });
   });
 });
 
