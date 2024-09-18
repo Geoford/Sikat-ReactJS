@@ -58,9 +58,11 @@ const Center = () => {
                   ? "Anonymous"
                   : entry.username}
               </p>
-              <div>
-                <button className="orangeButton">Follow</button>
-              </div>
+              {user && user.userID !== entry.userID && (
+                <div>
+                  <button className="orangeButton">Follow</button>
+                </div>
+              )}
             </div>
             <div className="text-start p-2">
               <h5>{entry.title}</h5>

@@ -11,33 +11,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    if (!allowedTypes.includes(file.mimetype)) {
-      const error = new Error("Invalid file type");
-      error.code = "INVALID_FILE_TYPE";
-      return cb(error);
-    }
-    cb(null, true);
-  },
-});
-
 app.use("/uploads", express.static("uploads"));
 
 const db = mysql.createConnection({
@@ -53,6 +28,55 @@ db.connect((err) => {
     return;
   }
   console.log("Connected to database.");
+});
+
+app.post("/Register", (req, res) => {
+  const { firstName, lastName, cvsuEmail, username, password } = req.body;
+  if (!firstName || !lastName || !cvsuEmail || !username || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const hashedPassword = bcrypt.hashSync(password);
+  const sql =
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`) VALUES (?)";
+  const values = [firstName, lastName, cvsuEmail, username, hashedPassword];
+
+  db.query(sql, [values], (err, data) => {
+    if (err) {
+      console.error("Error inserting data: ", err);
+      return res.status(500).json({ error: "Error inserting data" });
+    }
+    return res.status(201).json({ message: "User registered successfully" });
+  });
+});
+
+app.post("/Login", (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ error: "Username and password are required" });
+  }
+
+  const sql = "SELECT * FROM user_table WHERE username = ?";
+  db.query(sql, [username], (err, data) => {
+    if (err) {
+      console.error("Error retrieving data: ", err);
+      return res.status(500).json({ error: "Error retrieving data" });
+    }
+    if (data.length === 0) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    const user = data[0];
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    return res.json({ userID: user.userID, username: user.username });
+  });
 });
 
 app.put("/update/:userID", (req, res) => {
@@ -74,41 +98,6 @@ app.put("/update/:userID", (req, res) => {
     }
     console.log("Update result:", data);
     return res.json(data);
-  });
-});
-
-app.post("/Register", (req, res) => {
-  const sql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`) VALUES (?)";
-  const values = [
-    req.body.firstName,
-    req.body.lastName,
-    req.body.cvsuEmail,
-    req.body.username,
-    req.body.password,
-  ];
-
-  db.query(sql, [values], (err, data) => {
-    if (err) {
-      console.error("Error inserting data: ", err);
-      return res.status(500).json({ error: "Error inserting data" });
-    }
-    return res.json(data);
-  });
-});
-
-app.post("/Login", (req, res) => {
-  const { username, password } = req.body;
-  const sql = "SELECT * FROM user_table WHERE username = ? AND password = ?";
-  db.query(sql, [username, password], (err, data) => {
-    if (err) {
-      console.error("Error retrieving data: ", err);
-      return res.status(500).json({ error: "Error retrieving data" });
-    }
-    if (data.length === 0) {
-      return res.status(401).json({ error: "Invalid username or password" });
-    }
-    return res.json(data[0]);
   });
 });
 
@@ -149,7 +138,8 @@ app.post(
 
     const query = `
       INSERT INTO diary_entries (title, description, userID, visibility, anonimity, fileURL)
-      VALUES (?, ?, ?, ?, ?, ?)`;
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
     const values = [title, description, userID, visibility, anonimity, fileURL];
 
     db.query(query, values, (err, result) => {
@@ -173,13 +163,48 @@ app.get("/entries", (req, res) => {
     JOIN user_table ON diary_entries.userID = user_table.userID
     WHERE (diary_entries.visibility = 'public' 
     OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
-    ORDER BY diary_entries.created_at DESC; ;
+    ORDER BY diary_entries.created_at DESC
   `;
 
   db.query(query, [userID], (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("Invalid file type");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
+
+app.get("/users", (req, res) => {
+  const query = "SELECT userID, username FROM user_table";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching users:", err.message);
+      return res.status(500).json({ error: "Error fetching users" });
     }
     res.status(200).json(results);
   });

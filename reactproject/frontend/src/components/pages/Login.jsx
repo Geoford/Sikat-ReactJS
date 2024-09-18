@@ -35,8 +35,9 @@ export default function Login() {
           navigate("/Home");
         })
         .catch((err) => {
+          console.error("Login Error:", err);
           setServerError(
-            err.response?.data?.message ||
+            err.response?.data?.error ||
               "Invalid login credentials. Please try again."
           );
         })
