@@ -1,6 +1,23 @@
 import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 const Center = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      navigate("/Login");
+    }
+  }, [navigate]);
+
+  if (!user) return null;
+
   return (
     <div className="p-2">
       <div
@@ -8,7 +25,7 @@ const Center = () => {
         style={{ backgroundColor: "#cc00cc" }}
       >
         <div className="mainProfilePicture"></div>
-        <p className="m-0 mt-1 text-light fs-5">UserName</p>
+        <p className="m-0 mt-1 text-light fs-5">{user.username}</p>
       </div>
 
       <div className=" bg-light rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3">

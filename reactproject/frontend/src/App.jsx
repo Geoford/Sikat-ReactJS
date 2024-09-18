@@ -6,6 +6,7 @@ import Register from "./components/pages/Register";
 import Home from "./components/pages/PagesUser/Home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UpdateUser from "./components/UpdateUser";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/Register"
             element={
@@ -30,6 +32,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/UpdateUser/:userID" element={<UpdateUser />} />
 
           <Route path="/Home" element={<Home />} />
         </Routes>

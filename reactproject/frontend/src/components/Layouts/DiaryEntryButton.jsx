@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import DiaryEntry from "../../assets/DiaryEntry.png";
@@ -20,6 +20,7 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [serverError, setServerError] = useState("");
   const [visibility, setVisibility] = useState("private");
   const [anonimity, setAnonimity] = useState("private");
+  const [file, setFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -29,6 +30,10 @@ function DiaryEntryButton({ onEntrySaved }) {
 
   const handleChangeAnonimity = (event) => {
     setAnonimity(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
   };
 
   useEffect(() => {
@@ -46,6 +51,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     setServerError("");
     setTitle("");
     setDescription("");
+    setFile(null);
   };
   const handleShow = () => setShow(true);
 
@@ -57,26 +63,35 @@ function DiaryEntryButton({ onEntrySaved }) {
 
     if (Object.keys(errors).length > 0) return;
 
-    if (!user || !user.id) {
+    if (!user || !user.userID) {
       setServerError("User not authenticated. Please log in again.");
       return;
     }
 
-    const diaryEntry = {
-      title,
-      description,
-      user_id: user.id,
-    };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("userID", user.userID);
+    formData.append("visibility", visibility);
+    formData.append("anonimity", anonimity);
+    if (file) {
+      formData.append("file", file);
+    }
 
     setLoading(true);
     setServerError("");
 
     axios
-      .post("http://localhost:8081/entry", diaryEntry)
+      .post("http://localhost:8081/entry", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         console.log(response.data.message);
         setTitle("");
         setDescription("");
+        setFile(null);
         handleClose();
         if (onEntrySaved) {
           onEntrySaved();
@@ -172,7 +187,12 @@ function DiaryEntryButton({ onEntrySaved }) {
                   Upload Photo
                 </div>
               </label>
-              <input type="file" id="uploadPhoto" hidden />
+              <input
+                type="file"
+                id="uploadPhoto"
+                hidden
+                onChange={handleFileChange}
+              />
             </div>
           </div>
         </Modal.Body>
