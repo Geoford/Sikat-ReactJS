@@ -158,7 +158,7 @@ app.get("/entries", (req, res) => {
   const userID = req.query.userID;
 
   const query = `
-    SELECT diary_entries.entryID, diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.fileURL, user_table.username
+    SELECT diary_entries.entryID, diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.fileURL, diary_entries.gadifyCount, user_table.username
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     WHERE (diary_entries.visibility = 'public' 
@@ -172,6 +172,67 @@ app.get("/entries", (req, res) => {
       return res.status(500).json({ error: "Error fetching diary entries" });
     }
     res.status(200).json(results);
+  });
+});
+
+app.post("/entry/:entryID/gadify", (req, res) => {
+  const { entryID } = req.params;
+  const userID = req.body.userID;
+
+  const checkQuery = `SELECT * FROM gadify_actions WHERE userID = ? AND entryID = ?`;
+  db.query(checkQuery, [userID, entryID], (err, results) => {
+    if (err) {
+      console.error("Error checking gadify status:", err);
+      return res.status(500).json({ error: "Failed to check gadify status" });
+    }
+
+    if (results.length > 0) {
+      // User has already gadified this entry; remove action and decrement count
+      const deleteQuery = `DELETE FROM gadify_actions WHERE userID = ? AND entryID = ?`;
+      db.query(deleteQuery, [userID, entryID], (err) => {
+        if (err) {
+          console.error("Error removing gadify action:", err);
+          return res
+            .status(500)
+            .json({ error: "Failed to remove gadify action" });
+        }
+
+        const updateQuery = `UPDATE diary_entries SET gadifyCount = gadifyCount - 1 WHERE entryID = ?`;
+        db.query(updateQuery, [entryID], (err) => {
+          if (err) {
+            console.error("Error updating gadify count:", err);
+            return res
+              .status(500)
+              .json({ error: "Failed to update gadify count" });
+          }
+          res
+            .status(200)
+            .json({ message: "Gadify action removed successfully" });
+        });
+      });
+    } else {
+      // User has not gadified this entry; add action and increment count
+      const insertQuery = `INSERT INTO gadify_actions (userID, entryID) VALUES (?, ?)`;
+      db.query(insertQuery, [userID, entryID], (err) => {
+        if (err) {
+          console.error("Error inserting gadify action:", err);
+          return res.status(500).json({ error: "Failed to gadify entry" });
+        }
+
+        const updateQuery = `UPDATE diary_entries SET gadifyCount = gadifyCount + 1 WHERE entryID = ?`;
+        db.query(updateQuery, [entryID], (err) => {
+          if (err) {
+            console.error("Error updating gadify count:", err);
+            return res
+              .status(500)
+              .json({ error: "Failed to update gadify count" });
+          }
+          res
+            .status(200)
+            .json({ message: "Gadify action recorded successfully" });
+        });
+      });
+    }
   });
 });
 
