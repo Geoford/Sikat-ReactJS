@@ -23,13 +23,29 @@ export default function Home() {
     <div>
       <UserNavBar />
       <div className="row mt-3 px-3">
-        <div className="col-md">
+        <div
+          className="col-md"
+          style={{
+            position: "sticky",
+            top: "75px",
+            height: "100%",
+            zIndex: "-1",
+          }}
+        >
           <LeftSide />
         </div>
         <div className="col-md-6">
           <Center />
         </div>
-        <div className="col-md">
+        <div
+          className="col-md"
+          style={{
+            position: "sticky",
+            top: "75px",
+            height: "100%",
+            zIndex: "-1",
+          }}
+        >
           <RightSide />
         </div>
       </div>

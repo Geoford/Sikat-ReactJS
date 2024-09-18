@@ -4,14 +4,14 @@ const Center = () => {
   return (
     <div className="p-2">
       <div
-        className="d-flex align-items-center flex-column rounded gap-2 border-bottom py-3"
+        className="d-flex align-items-center flex-column rounded gap-2 shadow py-3"
         style={{ backgroundColor: "#cc00cc" }}
       >
         <div className="mainProfilePicture"></div>
         <p className="m-0 mt-1 text-light fs-5">UserName</p>
       </div>
 
-      <div className=" bg-light rounded border p-3 mt-3">
+      <div className=" bg-light rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Journal Entries</h4>

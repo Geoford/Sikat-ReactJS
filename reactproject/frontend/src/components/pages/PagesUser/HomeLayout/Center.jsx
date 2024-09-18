@@ -32,7 +32,10 @@ const Center = () => {
 
   return (
     <div className="p-2">
-      <div className="rounded border p-3" style={{ backgroundColor: "white" }}>
+      <div
+        className="rounded border border-bg-secondary-subtle shadow-sm p-3"
+        style={{ backgroundColor: "white" }}
+      >
         <DiaryEntryButton onEntrySaved={fetchEntries} />
       </div>
       {entries.length === 0 ? (
@@ -41,7 +44,7 @@ const Center = () => {
         entries.map((entry) => (
           <div
             key={entry.id}
-            className="rounded border p-3 mt-3"
+            className="rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3"
             style={{ backgroundColor: "white" }}
           >
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
