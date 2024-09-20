@@ -3,10 +3,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import IndexPage from "./components/pages/IndexPage";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
+// USER
 import Home from "./components/pages/PagesUser/Home";
+import UserProfile from "./components/pages/PagesUser/UserProfile";
+import UpdateUser from "./components/pages/PagesUser/UpdateUser";
+
+// ADMIN
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
-import UpdateUser from "./components/UpdateUser";
 
 function App() {
   return (
@@ -33,9 +37,9 @@ function App() {
             }
           />
 
-          <Route path="/UpdateUser/:userID" element={<UpdateUser />} />
-
           <Route path="/Home" element={<Home />} />
+          <Route path="/UpdateUser/:userID" element={<UpdateUser />} />
+          <Route path="/UserProfile/:userID" element={<UserProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

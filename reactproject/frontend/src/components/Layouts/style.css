@@ -12,6 +12,7 @@
 
 .navbar {
   background-color: #990099;
+  position: absolute;
   /* position: static; */
 }
 .logo {
@@ -21,6 +22,11 @@
   border-radius: 50%;
   overflow: hidden;
   border: none;
+  transition: 0.2s;
+}
+.logo:hover {
+  background-color: #e6e6e6;
+  transform: scale(102%);
 }
 .logoImage {
   height: 100%;

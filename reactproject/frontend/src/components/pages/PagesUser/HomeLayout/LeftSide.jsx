@@ -1,7 +1,7 @@
 import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Center = () => {
   const [user, setUser] = useState(null);
@@ -20,13 +20,18 @@ const Center = () => {
 
   return (
     <div className="p-2">
-      <div
-        className="d-flex align-items-center flex-column rounded gap-2 shadow py-3"
-        style={{ backgroundColor: "#cc00cc" }}
+      <Link
+        className="text-decoration-none text-dark"
+        to="/UserProfile/${user.userID}"
       >
-        <div className="mainProfilePicture"></div>
-        <p className="m-0 mt-1 text-light fs-5">{user.username}</p>
-      </div>
+        <div
+          className="d-flex align-items-center flex-column rounded gap-2 shadow py-3"
+          style={{ backgroundColor: "#cc00cc" }}
+        >
+          <div className="mainProfilePicture"></div>
+          <p className="m-0 mt-1 text-light fs-5">{user.username}</p>
+        </div>
+      </Link>
 
       <div className=" bg-light rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3">
         <div className="d-flex justify-content-between border-bottom">
