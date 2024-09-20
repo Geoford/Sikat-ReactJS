@@ -29,7 +29,7 @@ export default function Home() {
             position: "sticky",
             top: "75px",
             height: "100%",
-            zIndex: "-1",
+            // zIndex: "1",
           }}
         >
           <LeftSide />
@@ -43,7 +43,7 @@ export default function Home() {
             position: "sticky",
             top: "75px",
             height: "100%",
-            zIndex: "-1",
+            // zIndex: "-1",
           }}
         >
           <RightSide />

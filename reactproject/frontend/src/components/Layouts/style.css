@@ -13,6 +13,7 @@
 .navbar {
   background-color: #990099;
   position: absolute;
+  z-index: 1;
   /* position: static; */
 }
 .logo {
@@ -42,13 +43,17 @@
   height: 20px;
 }
 .mainProfilePicture {
-  height: 200px;
-  width: 200px;
-  background-color: #ffff;
-  border-radius: 50%;
-  overflow: hidden;
-  border: none;
+  background: linear-gradient(to right, #ff8533, #cc00cc, #cc00cc);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: background-position 0.4s ease, transform 0.4s ease;
 }
+
+.mainProfilePicture:hover {
+  transform: scale(102%);
+  background-position: left bottom;
+}
+
 .profilePicture {
   height: 50px;
   width: 50px;

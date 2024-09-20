@@ -1,5 +1,6 @@
 import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
+import DefaultProfile from "../../../../assets/userDefaultProfile.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -24,11 +25,33 @@ const Center = () => {
         className="text-decoration-none text-dark"
         to="/UserProfile/${user.userID}"
       >
-        <div
-          className="d-flex align-items-center flex-column rounded gap-2 shadow py-3"
-          style={{ backgroundColor: "#cc00cc" }}
-        >
-          <div className="mainProfilePicture"></div>
+        <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
+          <div className="">
+            <div className=" d-flex justify-content-center align-items-center ">
+              <div
+                style={{
+                  backgroundColor: "#ffff",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "10vw",
+                  height: "10vw",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={DefaultProfile}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
           <p className="m-0 mt-1 text-light fs-5">{user.username}</p>
         </div>
       </Link>
@@ -46,7 +69,7 @@ const Center = () => {
         </div>
         <div
           className="mt-2 pe-1"
-          style={{ height: "260px", overflowY: "scroll" }}
+          style={{ height: "43vh", overflowY: "scroll" }}
         >
           <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
             <h5>Journal Title</h5>

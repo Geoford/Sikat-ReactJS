@@ -9,17 +9,21 @@ const UserProfile = () => {
   return (
     <div>
       <UserNavBar />
-      <div className="container bg-light mt-5 p-3 rounded shadow">
+      <div
+        className="container position-relative mt-5 p-3 rounded shadow-lg"
+        style={{ background: "linear-gradient(to right, #ff8533, #990099)" }}
+      >
         <div className="row">
           <div className="col-lg-3 col d-flex justify-content-center align-items-center ">
             <div
               style={{
+                backgroundColor: "#ffff",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 width: "clamp(250px, 50%, 450px)",
                 height: "clamp(250px, 50%, 450px)",
-                border: "2px solid lightgray",
+                // border: "2px solid lightgray",
                 borderRadius: "50%",
                 overflow: "hidden",
               }}
@@ -42,7 +46,10 @@ const UserProfile = () => {
             className="text-decoration-none text-dark"
             to="/UpdateUser/${user.userID}"
           >
-            <button className="w-100 btn btn-light text-end">
+            <button
+              className="orangeButton position-absolute text-end"
+              style={{ right: "10px", top: "10px" }}
+            >
               Edit Personal Details
             </button>
           </Link>

@@ -45,7 +45,7 @@ const Center = () => {
         </div>
         <div
           className="mt-2 pe-1"
-          style={{ height: "200px", overflowY: "scroll" }}
+          style={{ height: "25vh", overflowY: "scroll" }}
         >
           {users.map((user) => (
             <div
@@ -77,7 +77,7 @@ const Center = () => {
         </div>
         <div
           className="mt-2 pe-1"
-          style={{ height: "260px", overflowY: "scroll" }}
+          style={{ height: "39vh", overflowY: "scroll" }}
         >
           {/* Example placeholders for friends */}
           {Array.from({ length: 1 }).map((_, index) => (

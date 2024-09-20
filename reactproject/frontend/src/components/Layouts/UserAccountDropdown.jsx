@@ -49,7 +49,7 @@ const UserAccountDropdown = () => {
               style={{ width: "60%", height: "60%" }}
             />
           </div>
-          <img className="icon ms-1" src={DefaultProfile} alt="User Profile" />
+          <img className="icon " src={DefaultProfile} alt="User Profile" />
         </Dropdown.Toggle>
       </div>
 
@@ -58,7 +58,7 @@ const UserAccountDropdown = () => {
           <Dropdown.Item className="w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
-              to={`/UserProfile/${user.userID}`} // Use backticks here
+              to={`/UserProfile/${user.userID}`}
             >
               <button className="w-100 btn btn-light text-end">Account</button>
             </Link>
