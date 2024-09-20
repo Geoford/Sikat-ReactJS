@@ -58,11 +58,9 @@ const UserAccountDropdown = () => {
           <Dropdown.Item className="w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
-              to="/UpdateUser/${user.userID}"
+              to={`/UserProfile/${user.userID}`} // Use backticks here
             >
-              <button className="w-100 btn btn-light text-end">
-                Account Settings
-              </button>
+              <button className="w-100 btn btn-light text-end">Account</button>
             </Link>
           </Dropdown.Item>
         )}
