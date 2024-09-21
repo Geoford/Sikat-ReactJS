@@ -5,7 +5,10 @@ import axios from "axios";
 const Center = () => {
   const [entries, setEntries] = useState([]);
   const [user, setUser] = useState(null);
+  const [activeButtons, setActiveButtons] = useState({});
+  const [expandButtons, setExpandButtons] = useState({});
 
+  // Fetch user data from localStorage
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -13,6 +16,7 @@ const Center = () => {
     }
   }, []);
 
+  // Fetch diary entries for the logged-in user
   const fetchEntries = useCallback(() => {
     if (!user) return;
 
@@ -29,6 +33,7 @@ const Center = () => {
       });
   }, [user]);
 
+  // Handle the Gadify action and update the button state
   const handleGadify = (entryID) => {
     if (!user) return;
 
@@ -61,7 +66,28 @@ const Center = () => {
     fetchEntries();
   }, [fetchEntries]);
 
-  console.log("Entries state:", entries);
+  // Handle button click for Gadify, expansion, and color change
+  const handleClick = (entryID) => {
+    // Toggle active (persistent color change)
+    const updatedActiveButtons = {
+      ...activeButtons,
+      [entryID]: !activeButtons[entryID],
+    };
+    setActiveButtons(updatedActiveButtons);
+
+    // Trigger temporary expansion
+    const updatedExpandButtons = { ...expandButtons, [entryID]: true };
+    setExpandButtons(updatedExpandButtons);
+
+    // Remove the expansion class after 300ms
+    setTimeout(() => {
+      updatedExpandButtons[entryID] = false;
+      setExpandButtons({ ...updatedExpandButtons });
+    }, 300);
+
+    // Handle Gadify action
+    handleGadify(entryID);
+  };
 
   if (!user) return null;
 
@@ -77,65 +103,65 @@ const Center = () => {
       {entries.length === 0 ? (
         <p>No entries available.</p>
       ) : (
-        entries.map((entry) => {
-          console.log("Entry data:", entry); // Check entry structure
-          return (
-            <div
-              key={entry.entryID}
-              className="rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3"
-              style={{ backgroundColor: "white" }}
-            >
-              <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-                <div className="profilePicture"></div>
+        entries.map((entry) => (
+          <div
+            key={entry.entryID}
+            className="rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3"
+            style={{ backgroundColor: "white" }}
+          >
+            <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+              <div className="profilePicture"></div>
 
-                <p className="m-0">
-                  {user && entry.userID === user.userID
-                    ? entry.visibility === "public" &&
-                      entry.anonimity === "private"
-                      ? `${entry.username} - Anonymous`
-                      : entry.username
-                    : entry.visibility === "public" &&
-                      entry.anonimity === "private"
-                    ? "Anonymous"
-                    : entry.username}
-                </p>
-                {user && user.userID !== entry.userID && (
-                  <div>
-                    <button className="orangeButton">Follow</button>
-                  </div>
-                )}
+              <p className="m-0">
+                {user && entry.userID === user.userID
+                  ? entry.visibility === "public" &&
+                    entry.anonimity === "private"
+                    ? `${entry.username} - Anonymous`
+                    : entry.username
+                  : entry.visibility === "public" &&
+                    entry.anonimity === "private"
+                  ? "Anonymous"
+                  : entry.username}
+              </p>
+              {user && user.userID !== entry.userID && (
+                <div>
+                  <button className="orangeButton">Follow</button>
+                </div>
+              )}
+            </div>
+
+            <div className="text-start border-bottom p-2">
+              <h5>{entry.title}</h5>
+              <p className="m-0">{entry.description}</p>
+              {entry.fileURL && (
+                <img
+                  className="DiaryImage mt-1"
+                  src={`http://localhost:8081${entry.fileURL}`}
+                  alt="Diary"
+                />
+              )}
+            </div>
+
+            <div className="row pt-2">
+              <div className="col">
+                <button
+                  className={`InteractButton ${
+                    activeButtons[entry.entryID] ? "active" : ""
+                  } ${expandButtons[entry.entryID] ? "expand" : ""}`}
+                  onClick={() => handleClick(entry.entryID)}
+                >
+                  <span>({entry.gadifyCount}) </span>Gadify
+                </button>
               </div>
-              <div className="text-start p-2">
-                <h5>{entry.title}</h5>
-                <p className="m-0">{entry.description}</p>
-                {entry.fileURL && (
-                  <img
-                    className="DiaryImage mt-1"
-                    src={`http://localhost:8081${entry.fileURL}`}
-                    alt="Diary"
-                  />
-                )}
+              <div className="col">
+                <button className="InteractButton">Comment</button>
               </div>
-              <div className="row px-2 pt-2">
-                <div key={entry.entryID} className="col">
-                  <button
-                    className="InteractButton"
-                    onClick={() => handleGadify(entry.entryID)}
-                  >
-                    <span>({entry.gadifyCount}) </span>
-                    Gadify
-                  </button>
-                </div>
-                <div className="col">
-                  <button className="InteractButton">Comment</button>
-                </div>
-                <div className="col">
-                  <button className="InteractButton">Flag</button>
-                </div>
+              <div className="col">
+                <button className="InteractButton">Flag</button>
               </div>
             </div>
-          );
-        })
+          </div>
+        ))
       )}
     </div>
   );

@@ -81,13 +81,31 @@
 }
 .InteractButton {
   width: 100%;
+  background-color: #ffff;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  padding: 5px 20px;
+  transition: all 0.3s ease;
+  color: #ff8533;
+}
+
+.InteractButton:hover {
   background-color: #ff8533;
   border: none;
-  border-radius: 5px;
-  padding: 5px 20px 5px 20px;
-  transition: 0.3s;
-  color: white;
+  color: #ffff;
 }
+
+.InteractButton.active {
+  background-color: #ff8533;
+  border: none;
+  color: #ffff;
+}
+
+.InteractButton.expand {
+  transform: scale(102%);
+  transition: transform 0.2s ease;
+}
+
 .orangerText {
   background-color: transparent;
   border: none;
@@ -108,6 +126,13 @@
   transition: 0.3s;
 }
 .journalEntries:hover {
+  background-color: #e6e6e6;
+}
+.grayHover {
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grayHover:hover {
   background-color: #e6e6e6;
 }
 .noDisplay {
