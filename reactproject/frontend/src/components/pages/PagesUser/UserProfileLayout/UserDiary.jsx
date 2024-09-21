@@ -97,6 +97,154 @@ const UserDiary = () => {
           </div>
         </div>
       </div>
+      <div
+        className="rounded border border-secondary-subtle shadow p-3"
+        style={{ backgroundColor: "white" }}
+      >
+        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="profilePicture"></div>
+          <p className="m-0">UserName</p>
+        </div>
+        <div className="text-start border-bottom p-2">
+          <h5>Journal Title</h5>
+          <p className="m-0">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
+            sit amet consectetur adipisicing elit. Commodi tempora consectetur
+            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
+          </p>
+          <img className="DiaryImage mt-1" src={""} alt="Diary" />
+        </div>
+        <div className="row pt-2">
+          <div className="col">
+            <button
+              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
+                expandButtons[1] ? "expand" : ""
+              }`}
+              onClick={() => handleClick(1)}
+            >
+              (0) Gadify
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Comment</button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Flag</button>
+          </div>
+        </div>
+      </div>
+      <div
+        className="rounded border border-secondary-subtle shadow p-3"
+        style={{ backgroundColor: "white" }}
+      >
+        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="profilePicture"></div>
+          <p className="m-0">UserName</p>
+        </div>
+        <div className="text-start border-bottom p-2">
+          <h5>Journal Title</h5>
+          <p className="m-0">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
+            sit amet consectetur adipisicing elit. Commodi tempora consectetur
+            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
+          </p>
+          <img className="DiaryImage mt-1" src={""} alt="Diary" />
+        </div>
+        <div className="row pt-2">
+          <div className="col">
+            <button
+              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
+                expandButtons[1] ? "expand" : ""
+              }`}
+              onClick={() => handleClick(1)}
+            >
+              (0) Gadify
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Comment</button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Flag</button>
+          </div>
+        </div>
+      </div>
+      <div
+        className="rounded border border-secondary-subtle shadow p-3"
+        style={{ backgroundColor: "white" }}
+      >
+        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="profilePicture"></div>
+          <p className="m-0">UserName</p>
+        </div>
+        <div className="text-start border-bottom p-2">
+          <h5>Journal Title</h5>
+          <p className="m-0">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
+            sit amet consectetur adipisicing elit. Commodi tempora consectetur
+            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
+          </p>
+          <img className="DiaryImage mt-1" src={""} alt="Diary" />
+        </div>
+        <div className="row pt-2">
+          <div className="col">
+            <button
+              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
+                expandButtons[1] ? "expand" : ""
+              }`}
+              onClick={() => handleClick(1)}
+            >
+              (0) Gadify
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Comment</button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Flag</button>
+          </div>
+        </div>
+      </div>
+      <div
+        className="rounded border border-secondary-subtle shadow p-3"
+        style={{ backgroundColor: "white" }}
+      >
+        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="profilePicture"></div>
+          <p className="m-0">UserName</p>
+        </div>
+        <div className="text-start border-bottom p-2">
+          <h5>Journal Title</h5>
+          <p className="m-0">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
+            sit amet consectetur adipisicing elit. Commodi tempora consectetur
+            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
+          </p>
+          <img className="DiaryImage mt-1" src={""} alt="Diary" />
+        </div>
+        <div className="row pt-2">
+          <div className="col">
+            <button
+              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
+                expandButtons[1] ? "expand" : ""
+              }`}
+              onClick={() => handleClick(1)}
+            >
+              (0) Gadify
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Comment</button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">(0) Flag</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

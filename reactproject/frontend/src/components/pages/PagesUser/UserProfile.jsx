@@ -70,13 +70,10 @@ const UserProfile = () => {
 
       <div className="container mt-3">
         <div className="row ">
-          <div
-            className="col-lg-3 mb-2 p-0 px-md-2"
-            style={{ minHeight: "37vh" }}
-          >
+          <div className="col-lg-4 mb-2 p-0 px-md-2">
             <div
-              className="d-flex flex-column gap-2"
-              //   style={{ minHeight: "50vh" }}
+              className="position-sticky d-flex flex-column gap-2"
+              style={{ minHeight: "37vh", top: "-45vh" }}
             >
               <div>
                 <RecentJournalEntries />
@@ -89,6 +86,7 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
+
           <div className="col p-0 px-md-2">
             <div className="" style={{ minHeight: "60vh" }}>
               <UserDiary />
