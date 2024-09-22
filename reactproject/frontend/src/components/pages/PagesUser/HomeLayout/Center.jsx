@@ -1,6 +1,7 @@
 import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -94,10 +95,13 @@ const Center = () => {
   return (
     <div className="p-2">
       <div
-        className="rounded border border-bg-secondary-subtle shadow-sm p-3"
+        className="rounded border border-secondary-subtle shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
         <DiaryEntryButton onEntrySaved={fetchEntries} />
+      </div>
+      <div className=" d-flex justify-content-end">
+        <FilterButton />
       </div>
 
       {entries.length === 0 ? (
@@ -106,7 +110,7 @@ const Center = () => {
         entries.map((entry) => (
           <div
             key={entry.entryID}
-            className="rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3"
+            className="rounded border border-secondary-subtle shadow-sm p-3 mb-2"
             style={{ backgroundColor: "white" }}
           >
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">

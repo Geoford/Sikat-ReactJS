@@ -1,5 +1,6 @@
 import React from "react";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
+import uploadProfile from "../../../assets/uploadProfile.png";
 import UserNavBar from "../../Layouts/NavBarUser";
 import Background from "../../Layouts/Background";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,17 +22,36 @@ const UserProfile = () => {
           <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
             <div
               style={{
+                position: "relative",
                 backgroundColor: "#ffff",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 width: "clamp(250px, 50%, 450px)",
                 height: "clamp(250px, 50%, 450px)",
-                // border: "2px solid lightgray",
                 borderRadius: "50%",
-                overflow: "hidden",
+                overflow: "",
               }}
             >
+              <div
+                style={{
+                  position: "absolute",
+                  backgroundColor: "#ffff",
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                  border: "2px solid #ff8533",
+                  padding: "7px",
+                  right: "15px",
+                  bottom: "15px",
+                }}
+              >
+                <img
+                  src={uploadProfile}
+                  alt=""
+                  style={{ width: "100%", height: "100%", marginBottom: "" }}
+                />
+              </div>
               <img
                 src={DefaultProfile}
                 alt="Profile"
@@ -39,6 +59,7 @@ const UserProfile = () => {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
+                  borderRadius: "50%",
                 }}
               />
             </div>

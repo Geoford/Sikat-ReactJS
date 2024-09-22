@@ -56,7 +56,7 @@ const Center = () => {
         </div>
       </Link>
 
-      <div className=" bg-light rounded border border-bg-secondary-subtle shadow-sm p-3 mt-3">
+      <div className=" bg-light rounded border border-secondary-subtle shadow-sm p-3 mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Journal Entries</h4>
