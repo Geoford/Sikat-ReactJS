@@ -8,6 +8,7 @@ import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
+import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
 
 const UserProfile = () => {
   const Alias = "Alias";
@@ -33,25 +34,34 @@ const UserProfile = () => {
                 overflow: "",
               }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  backgroundColor: "#ffff",
-                  borderRadius: "50%",
-                  width: "50px",
-                  height: "50px",
-                  border: "2px solid #ff8533",
-                  padding: "7px",
-                  right: "15px",
-                  bottom: "15px",
-                }}
-              >
-                <img
-                  src={uploadProfile}
-                  alt=""
-                  style={{ width: "100%", height: "100%", marginBottom: "" }}
-                />
-              </div>
+              <label htmlFor="uploadProfile">
+                <div
+                  className="grayHover"
+                  style={{
+                    position: "absolute",
+                    borderRadius: "50%",
+                    width: "50px",
+                    height: "50px",
+                    border: "2px solid #ff8533",
+                    padding: "7px",
+                    right: "15px",
+                    bottom: "15px",
+                  }}
+                >
+                  <img
+                    src={uploadProfile}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      marginBottom: "",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <input type="file" id="uploadProfile" hidden />
+                </div>
+              </label>
+
               <img
                 src={DefaultProfile}
                 alt="Profile"
@@ -64,7 +74,7 @@ const UserProfile = () => {
               />
             </div>
           </div>
-          <div className="col-md text-light text-center text-md-start d-flex flex-column justify-content-center pt-5">
+          <div className="col-md text-light text-center text-md-start d-flex flex-column justify-content-start justify-content-md-center ">
             <div className="">
               <h3>Juan Dela Cruz ({Alias})</h3>
               <p>(00) Followers - (00) following</p>
@@ -75,17 +85,9 @@ const UserProfile = () => {
               </p>
             </div>
           </div>
-          <Link
-            className="text-decoration-none text-dark"
-            to="/UpdateUser/${user.userID}"
-          >
-            <button
-              className="orangeButton position-absolute text-end"
-              style={{ right: "10px", top: "10px" }}
-            >
-              Edit Personal Details
-            </button>
-          </Link>
+          <div>
+            <EditPersonalDetailButton />
+          </div>
         </div>
       </div>
 
