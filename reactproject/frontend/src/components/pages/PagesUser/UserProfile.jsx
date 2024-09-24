@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfile from "../../../assets/uploadProfile.png";
-import UserNavBar from "../../Layouts/NavBarUser";
+import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
 import Background from "../../Layouts/Background";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import ActivityLogs from "./UserProfileLayout/ActivityLogs";

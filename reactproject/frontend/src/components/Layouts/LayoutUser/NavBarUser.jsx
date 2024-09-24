@@ -1,8 +1,8 @@
-import "./style.css";
-import Logo from "../../assets/logo.jpg";
-import Notification from "../../assets/Notification.png";
+import "../style.css";
+import Logo from "../../../assets/logo.jpg";
+import Notification from "../../../assets/Notification.png";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationButton from "./OffCanvassNotification";
+import NotificationButton from "../LayoutUser/OffCanvassNotification";
 import UserAccountDropdown from "./UserAccountDropdown";
 
 const UserNavBar = () => {

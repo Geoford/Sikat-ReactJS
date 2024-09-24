@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./style.css";
+import "../style.css";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import Notification from "../../assets/Notification.png";
+import Notification from "../../../assets/Notification.png";
 
 function OffCanvassLayouts() {
   const [show, setShow] = useState(false);
