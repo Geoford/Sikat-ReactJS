@@ -213,7 +213,7 @@ const EditPersonalDetailButton = () => {
               <h5>Privacy and Security</h5>
               <div className="mb-1">
                 <p className="m-0">Interact Anonimously or Not</p>
-                {/* <AnonimityButton /> */}
+                <AnonimityButton />
               </div>
               <div className="">
                 <label htmlFor="password">
