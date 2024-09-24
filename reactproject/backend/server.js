@@ -32,21 +32,35 @@ db.connect((err) => {
 
 app.post("/Register", (req, res) => {
   const { firstName, lastName, cvsuEmail, username, password } = req.body;
+
   if (!firstName || !lastName || !cvsuEmail || !username || !password) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   const hashedPassword = bcrypt.hashSync(password);
-  const sql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`) VALUES (?)";
-  const values = [firstName, lastName, cvsuEmail, username, hashedPassword];
 
-  db.query(sql, [values], (err, data) => {
+  const userSql =
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`) VALUES (?)";
+  const userValues = [firstName, lastName, cvsuEmail, username, hashedPassword];
+
+  db.query(userSql, [userValues], (err, data) => {
     if (err) {
-      console.error("Error inserting data: ", err);
-      return res.status(500).json({ error: "Error inserting data" });
+      console.error("Error inserting user data: ", err);
+      return res.status(500).json({ error: "Error inserting user data" });
     }
-    return res.status(201).json({ message: "User registered successfully" });
+
+    const userID = data.insertId;
+
+    const profileSql = "INSERT INTO user_profiles (`userID`) VALUES (?)";
+
+    db.query(profileSql, [userID], (err, profileData) => {
+      if (err) {
+        console.error("Error inserting profile data: ", err);
+        return res.status(500).json({ error: "Error inserting profile data" });
+      }
+
+      return res.status(201).json({ message: "User registered successfully" });
+    });
   });
 });
 
@@ -79,41 +93,56 @@ app.post("/Login", (req, res) => {
   });
 });
 
-app.put("/UpdateUser", (req, res) => {
-  const {
-    firstName,
-    lastName,
-    cvsuEmail,
-    username,
-    password,
-    confirmPassword,
-  } = req.body;
-  const userID = req.query.userID;
+app.put("/EditProfile/:userID", (req, res) => {
+  const { userID } = req.params;
+  const { firstName, lastName, username, password, bio, alias } = req.body;
 
-  if (!userID) return res.status(400).json({ error: "User ID is required" });
+  let updateUserSql = `
+    UPDATE user_table 
+    SET firstName = ?, lastName = ?, username = ?`;
 
-  if (password && password !== confirmPassword) {
-    return res.status(400).json({ error: "Passwords do not match" });
+  const userValues = [firstName, lastName, username];
+
+  // Hash password only if provided
+  if (password && password.trim()) {
+    updateUserSql += `, password = ?`;
+    userValues.push(bcrypt.hashSync(password, 10));
   }
 
-  let updateQuery = `UPDATE user_table SET firstName = ?, lastName = ?, cvsuEmail = ?, username = ?`;
-  let queryParams = [firstName, lastName, cvsuEmail, username];
+  updateUserSql += ` WHERE userID = ?`;
+  userValues.push(userID);
 
-  if (password) {
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    updateQuery += `, password = ?`;
-    queryParams.push(hashedPassword);
-  }
+  // Log SQL and values for better debugging
+  console.log("User update query: ", updateUserSql);
+  console.log("User update values: ", userValues);
 
-  updateQuery += ` WHERE userID = ?`;
-  queryParams.push(userID);
-
-  db.query(updateQuery, queryParams, (err, results) => {
+  db.query(updateUserSql, userValues, (err, userResult) => {
     if (err) {
-      console.error("Error updating profile:", err);
-      return res.status(500).json({ error: "Failed to update profile" });
+      console.error("Error updating user: ", err);
+      return res.status(500).json({ error: "Failed to update user details" });
     }
-    res.status(200).json({ message: "Profile updated successfully" });
+
+    const updateProfileSql = `
+      UPDATE user_profiles
+      SET bio = ?, alias = ?
+      WHERE userID = ?`;
+
+    const profileValues = [bio, alias, userID];
+
+    // Log SQL and values for better debugging
+    console.log("Profile update query: ", updateProfileSql);
+    console.log("Profile update values: ", profileValues);
+
+    db.query(updateProfileSql, profileValues, (err, profileResult) => {
+      if (err) {
+        console.error("Error updating profile: ", err);
+        return res
+          .status(500)
+          .json({ error: "Failed to update profile details" });
+      }
+
+      return res.status(200).json({ message: "Profile updated successfully" });
+    });
   });
 });
 
@@ -273,6 +302,36 @@ const upload = multer({
     }
     cb(null, true);
   },
+});
+
+app.get("/fetchUser/user/:id", (req, res) => {
+  const userID = req.params.id;
+
+  const userValues = "SELECT * FROM user_table WHERE userID = ?";
+  db.query(userValues, [userID], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const profileValues = "SELECT * FROM user_profiles WHERE userID = ?";
+    db.query(profileValues, [userID], (err, profileResult) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Internal server error" });
+      }
+
+      if (profileResult.length > 0) {
+        res.json({ ...result[0], ...profileResult[0] }); // Merge results if needed
+      } else {
+        res.status(404).json({ message: "User profile not found" });
+      }
+    });
+  });
 });
 
 app.get("/users", (req, res) => {

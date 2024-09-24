@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
 import Background from "../../Layouts/Background";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UpdateValidation from "../UpdateValidation";
 
@@ -13,6 +13,7 @@ export default function UpdateUser() {
     username: "",
     password: "",
     confirmPassword: "",
+    bio: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -20,13 +21,13 @@ export default function UpdateUser() {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log("User data from local storage:", user);
     if (user) {
       setValues({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         cvsuEmail: user.cvsuEmail || "",
         username: user.username || "",
+        bio: user.bio || "",
         password: "",
         confirmPassword: "",
       });
@@ -43,7 +44,7 @@ export default function UpdateUser() {
     if (Object.keys(validationErrors).length === 0) {
       const userID = JSON.parse(localStorage.getItem("user")).userID;
       axios
-        .put(`http://localhost:8081/UpdateUser?userID=${userID}`, values)
+        .put(`http://localhost:8081/EditProfile?userID=${userID}`, values)
         .then((res) => {
           localStorage.setItem(
             "user",
@@ -120,6 +121,18 @@ export default function UpdateUser() {
               {errors.username && (
                 <span className="text-danger"> {errors.username}</span>
               )}
+            </div>
+            <div className="mb-3">
+              <label htmlFor="bio">Bio</label>
+              <textarea
+                name="bio"
+                placeholder="Enter your bio"
+                onChange={handleInput}
+                className="form-control rounded"
+                value={values.bio}
+                autoComplete="nope"
+              />
+              {errors.bio && <span className="text-danger"> {errors.bio}</span>}
             </div>
             <div className="mb-3">
               <label htmlFor="password">
