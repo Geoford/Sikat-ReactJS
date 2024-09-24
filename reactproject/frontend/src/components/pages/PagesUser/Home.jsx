@@ -1,4 +1,4 @@
-import UserNavBar from "../../Layouts/NavBarUser";
+import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
 import Background from "../../Layouts/Background";
 import LeftSide from "../../pages/PagesUser/HomeLayout/LeftSide";
 import Center from "../../pages/PagesUser/HomeLayout/Center";

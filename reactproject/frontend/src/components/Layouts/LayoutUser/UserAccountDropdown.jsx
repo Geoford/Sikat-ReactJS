@@ -1,6 +1,6 @@
 import Dropdown from "react-bootstrap/Dropdown";
-import DefaultProfile from "../../assets/userDefaultProfile.png";
-import DropDownButton from "../../assets/DropDown.png";
+import DefaultProfile from "../../../assets/userDefaultProfile.png";
+import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 

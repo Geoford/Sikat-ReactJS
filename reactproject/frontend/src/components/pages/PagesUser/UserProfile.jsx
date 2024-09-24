@@ -1,7 +1,7 @@
 import React from "react";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfile from "../../../assets/uploadProfile.png";
-import UserNavBar from "../../Layouts/NavBarUser";
+import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
 import Background from "../../Layouts/Background";
 import { Link, useNavigate } from "react-router-dom";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
