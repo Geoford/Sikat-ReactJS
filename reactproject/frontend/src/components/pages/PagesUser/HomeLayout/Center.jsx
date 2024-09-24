@@ -9,7 +9,6 @@ const Center = () => {
   const [activeButtons, setActiveButtons] = useState({});
   const [expandButtons, setExpandButtons] = useState({});
 
-  // Fetch user data from localStorage
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -17,7 +16,6 @@ const Center = () => {
     }
   }, []);
 
-  // Fetch diary entries for the logged-in user
   const fetchEntries = useCallback(() => {
     if (!user) return;
 
@@ -34,7 +32,6 @@ const Center = () => {
       });
   }, [user]);
 
-  // Handle the Gadify action and update the button state
   const handleGadify = (entryID) => {
     if (!user) return;
 
@@ -67,26 +64,21 @@ const Center = () => {
     fetchEntries();
   }, [fetchEntries]);
 
-  // Handle button click for Gadify, expansion, and color change
   const handleClick = (entryID) => {
-    // Toggle active (persistent color change)
     const updatedActiveButtons = {
       ...activeButtons,
       [entryID]: !activeButtons[entryID],
     };
     setActiveButtons(updatedActiveButtons);
 
-    // Trigger temporary expansion
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
-    // Remove the expansion class after 300ms
     setTimeout(() => {
       updatedExpandButtons[entryID] = false;
       setExpandButtons({ ...updatedExpandButtons });
     }, 300);
 
-    // Handle Gadify action
     handleGadify(entryID);
   };
 

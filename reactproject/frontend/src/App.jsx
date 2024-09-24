@@ -38,7 +38,6 @@ function App() {
           />
 
           <Route path="/Home" element={<Home />} />
-          <Route path="/UpdateUser/:userID" element={<UpdateUser />} />
           <Route path="/UserProfile/:userID" element={<UserProfile />} />
         </Routes>
       </BrowserRouter>

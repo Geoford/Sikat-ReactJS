@@ -15,12 +15,17 @@ const EditPersonalDetailButton = () => {
     username: "",
     password: "",
     confirmPassword: "",
+    alias: "",
+    bio: "",
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    console.log("Edit Personal Details button clicked");
+    setShow(true);
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +36,8 @@ const EditPersonalDetailButton = () => {
         lastName: user.lastName || "",
         cvsuEmail: user.cvsuEmail || "",
         username: user.username || "",
+        alias: user.alias || "",
+        bio: user.bio || "",
         password: "",
         confirmPassword: "",
       });
@@ -39,8 +46,26 @@ const EditPersonalDetailButton = () => {
     }
   }, [navigate]);
 
+  const UpdateValidation = (values) => {
+    let errors = {};
+    if (!values.firstName) {
+      errors.firstName = "First name is required";
+    }
+    if (!values.lastName) {
+      errors.lastName = "Last name is required";
+    }
+    if (!values.username) {
+      errors.username = "Username is required";
+    }
+    if (values.password && values.password !== values.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+    return errors;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("Form submitted with values:", values);
     const validationErrors = UpdateValidation(values);
     setErrors(validationErrors);
 
@@ -48,7 +73,8 @@ const EditPersonalDetailButton = () => {
       const userID = JSON.parse(localStorage.getItem("user")).userID;
       const updatedValues = { ...values };
 
-      // Remove empty password fields from the request
+      console.log("Sending update request to server:", updatedValues);
+
       if (!updatedValues.password) {
         delete updatedValues.password;
       }
@@ -57,8 +83,9 @@ const EditPersonalDetailButton = () => {
       }
 
       axios
-        .put(`http://localhost:8081/UpdateUser?userID=${userID}`, updatedValues)
+        .put(`http://localhost:8081/EditProfile/${userID}`, updatedValues)
         .then((res) => {
+          console.log("Profile updated successfully:", res);
           localStorage.setItem(
             "user",
             JSON.stringify({
@@ -66,10 +93,14 @@ const EditPersonalDetailButton = () => {
               userID: userID,
             })
           );
-          navigate("/Home");
-          handleClose(); // Close modal after submission
+          handleClose();
+          window.location.reload();
+          alert("Profile successfully updated.");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.error("Error updating profile:", err);
+          alert("Failed to update profile. Please try again.");
+        });
     }
   };
 
@@ -79,7 +110,7 @@ const EditPersonalDetailButton = () => {
       [event.target.name]: event.target.value,
     }));
   };
-
+  console.log("Modal show state:", show);
   return (
     <>
       <button
@@ -95,7 +126,7 @@ const EditPersonalDetailButton = () => {
         onHide={handleClose}
         keyboard={false}
         centered
-        dialogClassName="modal-dialog-scrollable" // Make the modal scrollable
+        dialogClassName="modal-dialog-scrollable"
       >
         <Modal.Header closeButton>
           <Modal.Title>Edit Personal Details</Modal.Title>
@@ -159,25 +190,30 @@ const EditPersonalDetailButton = () => {
                   placeholder="Enter your Alias"
                   onChange={handleInput}
                   className="form-control rounded"
+                  value={values.alias}
                   autoComplete="off"
                 />
-                {errors && <span className="text-danger"></span>}
+                {errors.alias && (
+                  <span className="text-danger"> {errors.alias}</span>
+                )}
               </div>
-              <div class="form-floating">
+              <div className="form-floating mb-3">
                 <textarea
-                  class="form-control"
+                  className="form-control"
                   placeholder="Enter your Bio"
-                  id="userBio"
+                  name="bio"
                   style={{ height: "100px" }}
+                  value={values.bio}
+                  onChange={handleInput}
                 ></textarea>
-                <label for="userBio">Enter your Bio</label>
+                <label htmlFor="bio">Enter your Bio</label>
               </div>
             </div>
             <div>
               <h5>Privacy and Security</h5>
               <div className="mb-1">
                 <p className="m-0">Interact Anonimously or Not</p>
-                <AnonimityButton />
+                {/* <AnonimityButton /> */}
               </div>
               <div className="">
                 <label htmlFor="password">
@@ -213,13 +249,13 @@ const EditPersonalDetailButton = () => {
                 )}
               </div>
             </div>
+            <Modal.Footer>
+              <button type="submit" className="orangeButton w-100">
+                Update
+              </button>
+            </Modal.Footer>
           </form>
         </Modal.Body>
-        <Modal.Footer>
-          <button type="submit" className="orangeButton w-100">
-            Update
-          </button>
-        </Modal.Footer>
       </Modal>
     </>
   );

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfile from "../../../assets/uploadProfile.png";
 import UserNavBar from "../../Layouts/NavBarUser";
 import Background from "../../Layouts/Background";
-import { Link, useNavigate } from "react-router-dom";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
@@ -11,7 +11,40 @@ import UserDiary from "./UserProfileLayout/UserDiary";
 import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
 
 const UserProfile = () => {
-  const Alias = "Alias";
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
+    } else {
+      navigate("/Login");
+    }
+  }, [navigate]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div>
       <UserNavBar />
@@ -20,7 +53,7 @@ const UserProfile = () => {
         style={{ background: "linear-gradient(to right, #ff8533, #990099)" }}
       >
         <div className="row">
-          <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
+          <div className="col-lg-4 col d-flex justify-content-center align-items-center">
             <div
               style={{
                 position: "relative",
@@ -31,7 +64,7 @@ const UserProfile = () => {
                 width: "clamp(250px, 50%, 450px)",
                 height: "clamp(250px, 50%, 450px)",
                 borderRadius: "50%",
-                overflow: "",
+                overflow: "hidden",
               }}
             >
               <label htmlFor="uploadProfile">
@@ -54,7 +87,6 @@ const UserProfile = () => {
                     style={{
                       width: "100%",
                       height: "100%",
-                      marginBottom: "",
                       cursor: "pointer",
                     }}
                   />
@@ -74,16 +106,14 @@ const UserProfile = () => {
               />
             </div>
           </div>
-          <div className="col-md text-light text-center text-md-start d-flex flex-column justify-content-start justify-content-md-center ">
-            <div className="">
-              <h3>Juan Dela Cruz ({Alias})</h3>
-              <p>(00) Followers - (00) following</p>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Voluptas dolorum tenetur necessitatibus quisquam nam,
-                voluptatibus illum maxime assumenda molestias distinctio!
-              </p>
-            </div>
+          <div className="col-md text-center text-md-start pt-5">
+            <h3>
+              {user.firstName} {user.lastName} ({user.alias || "No Alias"})
+            </h3>
+            <p>
+              {user.followersCount} Followers - {user.followingCount} Following
+            </p>
+            <p>{user.bio || "No bio available."}</p>
           </div>
           <div>
             <EditPersonalDetailButton />
