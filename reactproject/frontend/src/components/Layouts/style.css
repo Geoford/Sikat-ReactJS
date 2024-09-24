@@ -140,3 +140,53 @@
   position: absolute;
   opacity: 0;
 }
+.ChatButton {
+  position: fixed; /* Changed from absolute to fixed */
+  display: inline-block;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1;
+}
+
+.ChatButton button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background-color: #cc00cc;
+  padding: 5px;
+  position: relative;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.ChatButton button:hover {
+  background-color: #990099;
+  transform: scale(105%);
+}
+.ChatButton button img {
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
+}
+
+.ChatButton .tooltiptext {
+  width: 150px;
+  background-color: #990099;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease, right 0.3s ease;
+  pointer-events: none;
+}
+
+.ChatButton button:hover .tooltiptext {
+  opacity: 1;
+  right: 110%;
+}

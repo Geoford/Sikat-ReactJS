@@ -1,10 +1,10 @@
-import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
-import Background from "../../Layouts/Background";
 import LeftSide from "../../pages/PagesUser/HomeLayout/LeftSide";
 import Center from "../../pages/PagesUser/HomeLayout/Center";
 import RightSide from "../../pages/PagesUser/HomeLayout/RightSide";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
+import ChatButton from "../../Layouts/LayoutUser/ChatButton";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -20,9 +20,11 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <div>
-      <UserNavBar />
+    <UserPageMainLayout>
       <div className="row mt-3 px-3">
+        <div>
+          <ChatButton />
+        </div>
         <div
           className="col-md"
           style={{
@@ -49,7 +51,6 @@ export default function Home() {
           <RightSide />
         </div>
       </div>
-      <Background />
-    </div>
+    </UserPageMainLayout>
   );
 }
