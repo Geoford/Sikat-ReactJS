@@ -1,250 +1,116 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const UserDiary = () => {
-  const [activeButtons, setActiveButtons] = useState([false, false, false]);
-  const [expandButtons, setExpandButtons] = useState([false, false, false]); // For expansion
+  const [user, setUser] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeButtons, setActiveButtons] = useState({});
+  const [expandButtons, setExpandButtons] = useState({});
+  const navigate = useNavigate();
 
-  const handleClick = (index) => {
-    // Toggle active (persistent color change)
-    const updatedActiveButtons = [...activeButtons];
-    updatedActiveButtons[index] = !updatedActiveButtons[index];
-    setActiveButtons(updatedActiveButtons);
+  useEffect(() => {
+    const user = localStorage.getItem("user");
 
-    // Trigger temporary expansion
-    const updatedExpandButtons = [...expandButtons];
-    updatedExpandButtons[index] = true;
-    setExpandButtons(updatedExpandButtons);
+    if (user) {
+      const fetchUser = JSON.parse(user);
 
-    // Remove the expansion class after 300ms
-    setTimeout(() => {
-      updatedExpandButtons[index] = false;
-      setExpandButtons([...updatedExpandButtons]);
-    }, 300);
+      fetch(`http://localhost:8081/fetchUserEntry/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("No entry found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(fetchUser);
+          setEntries(data.entries);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
+    } else {
+      navigate("/Login");
+    }
+  }, [navigate]);
+
+  const handleClick = (entryID) => {
+    setActiveButtons((prevState) => ({
+      ...prevState,
+      [entryID]: !prevState[entryID],
+    }));
+
+    setExpandButtons((prevState) => ({
+      ...prevState,
+      [entryID]: !prevState[entryID],
+    }));
   };
 
-  return (
-    <div className="d-flex flex-column gap-3">
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-        </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel?
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
-        </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[0] ? "active" : ""} ${
-                expandButtons[0] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(0)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
+  return (
+    <div>
+      {error ? (
+        <div>
+          <p>{error}</p>
         </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
-            sit amet consectetur adipisicing elit. Commodi tempora consectetur
-            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
+      ) : (
+        <div className="d-flex flex-column gap-3">
+          {entries.length === 0 ? (
+            <p>No entries available.</p>
+          ) : (
+            entries.map((entry) => (
+              <div
+                key={entry.entryID}
+                className="rounded border border-secondary-subtle shadow-sm p-3 mb-2"
+                style={{ backgroundColor: "white" }}
+              >
+                <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+                  <div className="profilePicture"></div>
+                  <p className="m-0">{entry.username}</p>
+                </div>
+
+                <div className="text-start border-bottom p-2">
+                  <h5>{entry.title}</h5>
+                  <p className="m-0">{entry.description}</p>
+                  {entry.fileURL && (
+                    <img
+                      className="DiaryImage mt-1"
+                      src={`http://localhost:8081${entry.fileURL}`}
+                      alt="Diary"
+                    />
+                  )}
+                </div>
+
+                <div className="row pt-2">
+                  <div className="col">
+                    <button
+                      className={`InteractButton ${
+                        activeButtons[entry.entryID] ? "active" : ""
+                      } ${expandButtons[entry.entryID] ? "expand" : ""}`}
+                      onClick={() => handleClick(entry.entryID)}
+                    >
+                      <span>({entry.gadifyCount}) </span>Gadify
+                    </button>
+                  </div>
+                  <div className="col">
+                    <button className="InteractButton">Comment</button>
+                  </div>
+                  <div className="col">
+                    <button className="InteractButton">Flag</button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
-                expandButtons[1] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(1)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-        </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
-            sit amet consectetur adipisicing elit. Commodi tempora consectetur
-            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
-        </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
-                expandButtons[1] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(1)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-        </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
-            sit amet consectetur adipisicing elit. Commodi tempora consectetur
-            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
-        </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
-                expandButtons[1] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(1)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-        </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
-            sit amet consectetur adipisicing elit. Commodi tempora consectetur
-            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
-        </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
-                expandButtons[1] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(1)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
-      <div
-        className="rounded border border-secondary-subtle shadow p-3"
-        style={{ backgroundColor: "white" }}
-      >
-        <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-          <div className="profilePicture"></div>
-          <p className="m-0">UserName</p>
-        </div>
-        <div className="text-start border-bottom p-2">
-          <h5>Journal Title</h5>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            quaerat odit, laboriosam laudantium tempore vel? Lorem ipsum, dolor
-            sit amet consectetur adipisicing elit. Commodi tempora consectetur
-            cum architecto ab perspiciatis ut magni maxime cupiditate ullam.
-          </p>
-          <img className="DiaryImage mt-1" src={""} alt="Diary" />
-        </div>
-        <div className="row pt-2">
-          <div className="col">
-            <button
-              className={`InteractButton ${activeButtons[1] ? "active" : ""} ${
-                expandButtons[1] ? "expand" : ""
-              }`}
-              onClick={() => handleClick(1)}
-            >
-              (0) Gadify
-            </button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Comment</button>
-          </div>
-          <div className="col">
-            <button className="InteractButton">(0) Flag</button>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

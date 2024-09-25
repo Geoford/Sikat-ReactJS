@@ -7,15 +7,24 @@ import axios from "axios";
 const Center = () => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [followedUsers, setFollowedUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+    const followedUsersData = localStorage.getItem("followedUsers");
+
     if (userData) {
       setUser(JSON.parse(userData));
+      fetchFollowers(JSON.parse(userData).userID); // Fetch followers for the current user
       fetchUsers();
     } else {
       navigate("/Login");
+    }
+
+    if (followedUsersData) {
+      setFollowedUsers(JSON.parse(followedUsersData));
     }
   }, [navigate]);
 
@@ -28,67 +37,124 @@ const Center = () => {
     }
   };
 
+  const fetchFollowers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followers/${userID}`
+      );
+      setFollowers(response.data);
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    }
+  };
+
+  const handleFollowToggle = async (followUserId) => {
+    const isFollowing = followedUsers.includes(followUserId);
+    try {
+      if (isFollowing) {
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
+
+        setFollowedUsers((prev) => {
+          const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
+          localStorage.setItem(
+            "followedUsers",
+            JSON.stringify(updatedFollowedUsers)
+          );
+          return updatedFollowedUsers;
+        });
+
+        const unfollowedUser = users.find(
+          (user) => user.userID === followUserId
+        );
+        alert(`You have unfollowed user ${unfollowedUser?.username}`);
+      } else {
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
+
+        setFollowedUsers((prev) => {
+          const updatedFollowedUsers = [...prev, followUserId];
+          localStorage.setItem(
+            "followedUsers",
+            JSON.stringify(updatedFollowedUsers)
+          );
+          return updatedFollowedUsers;
+        });
+
+        const followedUser = users.find((user) => user.userID === followUserId);
+        alert(`You are now following user ${followedUser?.username}`);
+      }
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  };
+
   if (!user) return null;
 
   return (
     <div className="p-2">
+      {/* Section for Followers */}
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Followers</h4>
-          </div>
-          <div>
-            <p className="orangerText" style={{ cursor: "pointer" }}>
-              View All
-            </p>
+            <h4>Your Followers</h4>
           </div>
         </div>
         <div
           className="mt-2 pe-1"
           style={{ height: "25vh", overflowY: "scroll" }}
         >
-          {users.map((user) => (
+          {followers.map((follower) => (
             <div
-              key={user.userID}
+              key={follower.userID}
               className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
             >
               <div className="d-flex align-items-center gap-2">
                 <div className="profilePicture"></div>
-                <p className="m-0 ms-2">{user.username}</p>
-              </div>
-              <div>
-                <button className="orangeButton">Follow</button>
+                <p className="m-0 ms-2">{follower.username}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* Section for Following Users */}
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Friends</h4>
-          </div>
-          <div>
-            <p className="orangerText" style={{ cursor: "pointer" }}>
-              View All
-            </p>
+            <h4>Following Users</h4>
           </div>
         </div>
         <div
           className="mt-2 pe-1"
-          style={{ height: "39vh", overflowY: "scroll" }}
+          style={{ height: "25vh", overflowY: "scroll" }}
         >
-          {/* Example placeholders for friends */}
-          {Array.from({ length: 1 }).map((_, index) => (
-            <div
-              key={index}
-              className="d-flex align-items-center gap-2 border-bottom pb-2 pe-2 mb-2"
-            >
-              <div className="profilePicture"></div>
-              <p className="m-0">UserName : Dummy</p>
-            </div>
-          ))}
+          {followedUsers.map((followedUserId) => {
+            const followedUser = users.find(
+              (user) => user.userID === followedUserId
+            );
+            return followedUser ? (
+              <div
+                key={followedUserId}
+                className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
+              >
+                <div className="d-flex align-items-center gap-2">
+                  <div className="profilePicture"></div>
+                  <p className="m-0 ms-2">{followedUser.username}</p>
+                </div>
+                <div>
+                  <button
+                    className="orangeButton"
+                    onClick={() => handleFollowToggle(followedUserId)}
+                  >
+                    Unfollow
+                  </button>
+                </div>
+              </div>
+            ) : null; // Only render if the user exists
+          })}
         </div>
       </div>
     </div>
