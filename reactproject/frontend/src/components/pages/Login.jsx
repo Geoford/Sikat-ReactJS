@@ -1,7 +1,11 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import LoginValidation from "./LoginValidation";
+import usernameIcon from "../../assets/Username.png";
+import passwordIcon from "../../assets/Password.png";
+import showIcon from "../../assets/show.png";
+import hiddenIcon from "../../assets/hidden.png";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -11,6 +15,7 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,21 +57,33 @@ export default function Login() {
     }));
   };
 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   return (
-    <div
-      className="vh-100 d-flex justify-content-center align-items-center"
-      style={{ backgroundColor: "#990099" }}
-    >
-      <div className="bg-white rounded p-3">
+    <div className="vh-100 d-flex justify-content-center align-items-center">
+      <div
+        className="bg-white rounded border border-secondary-subtle shadow p-3"
+        style={{ width: "clamp(450px, 40vw, 500px)" }}
+      >
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="username">Username</label>
+          {/* Username field */}
+          <div className="input-group mb-3">
+            <span className="input-group-text p-1 px-2">
+              <img
+                src={usernameIcon}
+                alt=""
+                style={{ width: "20px", height: "20px" }}
+              />
+            </span>
             <input
               type="text"
               name="username"
-              placeholder="Enter username"
+              placeholder="Username"
               onChange={handleInput}
-              className="form-control rounded-0"
+              className="form-control rounded-end"
               value={values.username}
               disabled={loading}
             />
@@ -74,25 +91,56 @@ export default function Login() {
               <span className="text-danger"> {errors.username}</span>
             )}
           </div>
-          <div className="mb-3">
-            <label htmlFor="password">Password</label>
+
+          {/* Password field */}
+          <div className="input-group mb-3 position-relative">
+            <span className="input-group-text p-1 px-2">
+              <img
+                src={passwordIcon}
+                alt=""
+                style={{ width: "20px", height: "20px" }}
+              />
+            </span>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle input type
               name="password"
-              placeholder="Enter password"
+              placeholder="Password"
               onChange={handleInput}
-              className="form-control rounded-0"
+              className="form-control rounded-end pe-5"
               value={values.password}
               disabled={loading}
             />
+            <div
+              onClick={togglePasswordVisibility} // Toggle password visibility
+              style={{ cursor: "pointer", zIndex: "5" }}
+            >
+              <img
+                className="position-absolute"
+                src={showPassword ? showIcon : hiddenIcon} // Switch icon
+                alt="Toggle visibility"
+                style={{
+                  width: "15px",
+                  height: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: "15px",
+                }}
+              />
+            </div>
             {errors.password && (
               <span className="text-danger"> {errors.password}</span>
             )}
           </div>
 
+          {/* Server error message */}
           {serverError && <span className="text-danger">{serverError}</span>}
 
-          <button type="submit" className="btn btn-success" disabled={loading}>
+          {/* Submit button */}
+          <button
+            type="submit"
+            className="orangeButton w-100 py-2"
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <span
@@ -106,16 +154,6 @@ export default function Login() {
               "Log in"
             )}
           </button>
-
-          <p>
-            Don't have an account?{" "}
-            <Link
-              to="/Register"
-              className="link-underline link-underline-opacity-0"
-            >
-              Register
-            </Link>
-          </p>
         </form>
       </div>
     </div>

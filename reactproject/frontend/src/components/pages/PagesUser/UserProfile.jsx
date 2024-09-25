@@ -9,6 +9,7 @@ import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
 import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
+import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -46,8 +47,7 @@ const UserProfile = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <UserNavBar />
+    <UserPageMainLayout>
       <div
         className="container position-relative mt-4 p-3 rounded shadow"
         style={{ background: "linear-gradient(to right, #ff8533, #990099)" }}
@@ -147,9 +147,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-
-      <Background />
-    </div>
+    </UserPageMainLayout>
   );
 };
 
