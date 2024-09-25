@@ -47,10 +47,7 @@ export default function Register() {
   };
 
   return (
-    <div
-      className="vh-100 d-flex justify-content-center align-items-center "
-      style={{ backgroundColor: "#990099" }}
-    >
+    <div className="vh-100 d-flex justify-content-center align-items-center ">
       <div className="bg-white rounded p-3 text-start w-50">
         <form action="" onSubmit={handleSubmit}>
           <div className="row">
@@ -142,7 +139,7 @@ export default function Register() {
           <button type="submit" className="btn btn-success">
             Register
           </button>
-          <p>
+          {/* <p>
             Already have an account?{" "}
             <Link
               to="/Login"
@@ -150,7 +147,7 @@ export default function Register() {
             >
               Login
             </Link>
-          </p>
+          </p> */}
         </form>
       </div>
     </div>
