@@ -17,7 +17,7 @@ const Center = () => {
 
     if (userData) {
       setUser(JSON.parse(userData));
-      fetchFollowers(JSON.parse(userData).userID); // Fetch followers for the current user
+      fetchFollowers(JSON.parse(userData).userID);
       fetchUsers();
     } else {
       navigate("/Login");
@@ -49,7 +49,18 @@ const Center = () => {
   };
 
   const handleFollowToggle = async (followUserId) => {
+    if (!followUserId) {
+      console.error("User ID to follow/unfollow is undefined");
+      return;
+    }
+
+    if (user.userID === followUserId) {
+      alert("You cannot follow yourself.");
+      return;
+    }
+
     const isFollowing = followedUsers.includes(followUserId);
+
     try {
       if (isFollowing) {
         await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
@@ -65,10 +76,7 @@ const Center = () => {
           return updatedFollowedUsers;
         });
 
-        const unfollowedUser = users.find(
-          (user) => user.userID === followUserId
-        );
-        alert(`You have unfollowed user ${unfollowedUser?.username}`);
+        alert(`You have unfollowed user ${followUserId}`);
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
@@ -83,11 +91,11 @@ const Center = () => {
           return updatedFollowedUsers;
         });
 
-        const followedUser = users.find((user) => user.userID === followUserId);
-        alert(`You are now following user ${followedUser?.username}`);
+        alert(`You are now following user ${followUserId}`);
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
+      alert("There was an error processing your request.");
     }
   };
 
@@ -95,7 +103,6 @@ const Center = () => {
 
   return (
     <div className="p-2">
-      {/* Section for Followers */}
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <div>
@@ -114,13 +121,20 @@ const Center = () => {
               <div className="d-flex align-items-center gap-2">
                 <div className="profilePicture"></div>
                 <p className="m-0 ms-2">{follower.username}</p>
+                <button
+                  className="orangeButton"
+                  onClick={() => handleFollowToggle(follower.userID)}
+                >
+                  {followedUsers.includes(follower.userID)
+                    ? "Unfollow"
+                    : "Follow"}
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Section for Following Users */}
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
@@ -145,15 +159,17 @@ const Center = () => {
                   <p className="m-0 ms-2">{followedUser.username}</p>
                 </div>
                 <div>
-                  <button
-                    className="orangeButton"
-                    onClick={() => handleFollowToggle(followedUserId)}
-                  >
-                    Unfollow
-                  </button>
+                  {user.userID !== followedUserId && (
+                    <button
+                      className="orangeButton"
+                      onClick={() => handleFollowToggle(followedUserId)}
+                    >
+                      Unfollow
+                    </button>
+                  )}
                 </div>
               </div>
-            ) : null; // Only render if the user exists
+            ) : null;
           })}
         </div>
       </div>

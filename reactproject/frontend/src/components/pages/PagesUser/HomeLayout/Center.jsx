@@ -102,10 +102,12 @@ const Center = () => {
 
     try {
       if (isFollowing) {
+        // Unfollow the user
         await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
           data: { followerId: user.userID },
         });
 
+        // Update local state to reflect unfollow
         setFollowedUsers((prev) => {
           const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
           localStorage.setItem(
@@ -117,10 +119,12 @@ const Center = () => {
 
         alert(`You have unfollowed user ${followUserId}`);
       } else {
+        // Follow the user
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
+        // Update local state to reflect follow
         setFollowedUsers((prev) => {
           const updatedFollowedUsers = [...prev, followUserId];
           localStorage.setItem(
