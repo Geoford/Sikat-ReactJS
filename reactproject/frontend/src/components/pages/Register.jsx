@@ -99,11 +99,8 @@ export default function Register() {
                 placeholder="Alias (for anonymity purposes)"
                 onChange={handleInput}
                 className="form-control rounded"
-                value={values.cvsuEmail}
+                value={values.alias}
               />
-              {errors.cvsuEmail && (
-                <span className="text-danger"> {errors.cvsuEmail}</span>
-              )}
             </div>
             <div className="mb-3">
               <input
@@ -125,11 +122,8 @@ export default function Register() {
                 placeholder="Student Number"
                 onChange={handleInput}
                 className="form-control rounded"
-                value={values.cvsuEmail}
+                value={values.studentNumber}
               />
-              {errors.cvsuEmail && (
-                <span className="text-danger"> {errors.cvsuEmail}</span>
-              )}
             </div>
           </div>
 

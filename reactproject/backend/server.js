@@ -31,17 +31,39 @@ db.connect((err) => {
 });
 
 app.post("/Register", (req, res) => {
-  const { firstName, lastName, cvsuEmail, username, password } = req.body;
+  const {
+    firstName,
+    lastName,
+    cvsuEmail,
+    username,
+    password,
+    studentNumber,
+    alias,
+  } = req.body;
 
-  if (!firstName || !lastName || !cvsuEmail || !username || !password) {
+  if (
+    !firstName ||
+    !lastName ||
+    !cvsuEmail ||
+    !username ||
+    !password ||
+    !studentNumber
+  ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   const hashedPassword = bcrypt.hashSync(password);
 
   const userSql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`) VALUES (?)";
-  const userValues = [firstName, lastName, cvsuEmail, username, hashedPassword];
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`) VALUES (?)";
+  const userValues = [
+    firstName,
+    lastName,
+    cvsuEmail,
+    username,
+    hashedPassword,
+    studentNumber,
+  ];
 
   db.query(userSql, [userValues], (err, data) => {
     if (err) {
@@ -51,9 +73,10 @@ app.post("/Register", (req, res) => {
 
     const userID = data.insertId;
 
-    const profileSql = "INSERT INTO user_profiles (`userID`) VALUES (?)";
+    const profileSql =
+      "INSERT INTO user_profiles (`userID`, `alias`) VALUES (?, ?)";
 
-    db.query(profileSql, [userID], (err, profileData) => {
+    db.query(profileSql, [userID, alias], (err, profileData) => {
       if (err) {
         console.error("Error inserting profile data: ", err);
         return res.status(500).json({ error: "Error inserting profile data" });
@@ -372,7 +395,8 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
         .status(404)
         .json({ message: "No entries found for this user" });
     }
-    return res.status(200).json(result);
+
+    return res.status(200).json({ entries: result });
   });
 });
 
