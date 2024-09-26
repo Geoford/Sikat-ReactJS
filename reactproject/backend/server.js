@@ -97,53 +97,73 @@ app.put("/EditProfile/:userID", (req, res) => {
   const { userID } = req.params;
   const { firstName, lastName, username, password, bio, alias } = req.body;
 
-  let updateUserSql = `
-    UPDATE user_table 
-    SET firstName = ?, lastName = ?, username = ?`;
+  let updateUserSql = `UPDATE user_table SET `;
+  const userValues = [];
 
-  const userValues = [firstName, lastName, username];
-
-  // Hash password only if provided
+  if (firstName && firstName.trim()) {
+    updateUserSql += `firstName = ?, `;
+    userValues.push(firstName);
+  }
+  if (lastName && lastName.trim()) {
+    updateUserSql += `lastName = ?, `;
+    userValues.push(lastName);
+  }
+  if (username && username.trim()) {
+    updateUserSql += `username = ?, `;
+    userValues.push(username);
+  }
   if (password && password.trim()) {
-    updateUserSql += `, password = ?`;
+    updateUserSql += `password = ?, `;
     userValues.push(bcrypt.hashSync(password, 10));
   }
 
-  updateUserSql += ` WHERE userID = ?`;
-  userValues.push(userID);
+  if (userValues.length > 0) {
+    updateUserSql = updateUserSql.slice(0, -2);
+    updateUserSql += ` WHERE userID = ?`;
+    userValues.push(userID);
 
-  // Log SQL and values for better debugging
-  console.log("User update query: ", updateUserSql);
-  console.log("User update values: ", userValues);
-
-  db.query(updateUserSql, userValues, (err, userResult) => {
-    if (err) {
-      console.error("Error updating user: ", err);
-      return res.status(500).json({ error: "Failed to update user details" });
-    }
-
-    const updateProfileSql = `
-      UPDATE user_profiles
-      SET bio = ?, alias = ?
-      WHERE userID = ?`;
-
-    const profileValues = [bio, alias, userID];
-
-    // Log SQL and values for better debugging
-    console.log("Profile update query: ", updateProfileSql);
-    console.log("Profile update values: ", profileValues);
-
-    db.query(updateProfileSql, profileValues, (err, profileResult) => {
+    db.query(updateUserSql, userValues, (err, userResult) => {
       if (err) {
-        console.error("Error updating profile: ", err);
-        return res
-          .status(500)
-          .json({ error: "Failed to update profile details" });
+        console.error("Error updating user: ", err);
+        return res.status(500).json({ error: "Failed to update user details" });
       }
 
-      return res.status(200).json({ message: "Profile updated successfully" });
+      let updateProfileSql = `UPDATE user_profiles SET `;
+      const profileValues = [];
+
+      if (bio && bio.trim()) {
+        updateProfileSql += `bio = ?, `;
+        profileValues.push(bio);
+      }
+      if (alias && alias.trim()) {
+        updateProfileSql += `alias = ?, `;
+        profileValues.push(alias);
+      }
+
+      if (profileValues.length > 0) {
+        updateProfileSql = updateProfileSql.slice(0, -2);
+        updateProfileSql += ` WHERE userID = ?`;
+        profileValues.push(userID);
+
+        db.query(updateProfileSql, profileValues, (err, profileResult) => {
+          if (err) {
+            console.error("Error updating profile: ", err);
+            return res
+              .status(500)
+              .json({ error: "Failed to update profile details" });
+          }
+
+          return res
+            .status(200)
+            .json({ message: "Profile updated successfully" });
+        });
+      } else {
+        return res.status(200).json({ message: "User updated successfully" });
+      }
     });
-  });
+  } else {
+    return res.status(200).json({ message: "Nothing to update" });
+  }
 });
 
 app.post(
@@ -203,7 +223,7 @@ app.get("/entries", (req, res) => {
   const userID = req.query.userID;
 
   const query = `
-    SELECT diary_entries.entryID, diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.fileURL, diary_entries.gadifyCount, user_table.username
+    SELECT diary_entries.entryID, diary_entries.userID,  diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.fileURL, diary_entries.gadifyCount, user_table.username
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     WHERE (diary_entries.visibility = 'public' 
@@ -232,7 +252,6 @@ app.post("/entry/:entryID/gadify", (req, res) => {
     }
 
     if (results.length > 0) {
-      // User has already gadified this entry; remove action and decrement count
       const deleteQuery = `DELETE FROM gadify_actions WHERE userID = ? AND entryID = ?`;
       db.query(deleteQuery, [userID, entryID], (err) => {
         if (err) {
@@ -256,7 +275,6 @@ app.post("/entry/:entryID/gadify", (req, res) => {
         });
       });
     } else {
-      // User has not gadified this entry; add action and increment count
       const insertQuery = `INSERT INTO gadify_actions (userID, entryID) VALUES (?, ?)`;
       db.query(insertQuery, [userID, entryID], (err) => {
         if (err) {
@@ -326,11 +344,35 @@ app.get("/fetchUser/user/:id", (req, res) => {
       }
 
       if (profileResult.length > 0) {
-        res.json({ ...result[0], ...profileResult[0] }); // Merge results if needed
+        res.json({ ...result[0], ...profileResult[0] });
       } else {
         res.status(404).json({ message: "User profile not found" });
       }
     });
+  });
+});
+
+app.get("/fetchUserEntry/user/:id", (req, res) => {
+  const userID = req.params.id;
+
+  const query = `
+    SELECT diary_entries.*, user_table.username 
+    FROM diary_entries 
+    INNER JOIN user_table ON diary_entries.userID = user_table.userID 
+    WHERE diary_entries.userID = ?`;
+
+  db.query(query, [userID], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No entries found for this user" });
+    }
+    return res.status(200).json(result);
   });
 });
 
@@ -343,6 +385,143 @@ app.get("/users", (req, res) => {
       return res.status(500).json({ error: "Error fetching users" });
     }
     res.status(200).json(results);
+  });
+});
+
+app.post("/follow/:followUserId", (req, res) => {
+  const { followerId } = req.body;
+  const followUserId = req.params.followUserId;
+
+  db.beginTransaction((err) => {
+    if (err) throw err;
+
+    const followQuery =
+      "INSERT INTO followers (userID, followedUserID, followingUserID) VALUES (?, ?, ?)";
+    db.query(
+      followQuery,
+      [followerId, followUserId, followerId],
+      (err, results) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("Error following user:", err);
+            res.status(500).send("Error following user");
+          });
+        }
+
+        const updateFollowedCountQuery =
+          "UPDATE user_profiles SET followersCount = followersCount + 1 WHERE userID = ?";
+        db.query(updateFollowedCountQuery, [followUserId], (err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Error updating followers count:", err);
+              res.status(500).send("Error updating followers count");
+            });
+          }
+
+          const updateFollowerCountQuery =
+            "UPDATE user_profiles SET followingCount = followingCount + 1 WHERE userID = ?";
+          db.query(updateFollowerCountQuery, [followerId], (err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error("Error updating following count:", err);
+                res.status(500).send("Error updating following count");
+              });
+            }
+
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error("Transaction commit failed:", err);
+                  res.status(500).send("Transaction commit failed");
+                });
+              }
+
+              res.status(201).json({ message: "User followed successfully" });
+            });
+          });
+        });
+      }
+    );
+  });
+});
+
+app.delete("/unfollow/:followUserId", (req, res) => {
+  const { followerId } = req.body;
+  const followUserId = req.params.followUserId;
+
+  db.beginTransaction((err) => {
+    if (err) throw err;
+
+    const unfollowQuery =
+      "DELETE FROM followers WHERE userID = ? AND followedUserID = ? AND followingUserID = ?";
+    db.query(
+      unfollowQuery,
+      [followerId, followUserId, followerId],
+      (err, results) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("Error unfollowing user:", err);
+            res.status(500).send("Error unfollowing user");
+          });
+        }
+
+        const updateFollowedCountQuery =
+          "UPDATE user_profiles SET followersCount = followersCount - 1 WHERE userID = ?";
+        db.query(updateFollowedCountQuery, [followUserId], (err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Error updating followers count:", err);
+              res.status(500).send("Error updating followers count");
+            });
+          }
+
+          const updateFollowerCountQuery =
+            "UPDATE user_profiles SET followingCount = followingCount - 1 WHERE userID = ?";
+          db.query(updateFollowerCountQuery, [followerId], (err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error("Error updating following count:", err);
+                res.status(500).send("Error updating following count");
+              });
+            }
+
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error("Transaction commit failed:", err);
+                  res.status(500).send("Transaction commit failed");
+                });
+              }
+
+              res.status(200).json({ message: "User unfollowed successfully" });
+            });
+          });
+        });
+      }
+    );
+  });
+});
+
+app.get("/followers/:userID", (req, res) => {
+  const userID = req.params.userID;
+
+  const query = `
+    SELECT u.userID, u.username
+    FROM followers f
+    JOIN user_table u ON f.userID = u.userID
+    WHERE f.followedUserID = ?`;
+
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error("Error fetching followers:", err);
+      return res.status(500).json({ error: "Error fetching followers" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No followers found" });
+    }
+
+    res.json(results);
   });
 });
 

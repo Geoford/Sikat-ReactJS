@@ -6,7 +6,7 @@ import Register from "./components/pages/Register";
 // USER
 import Home from "./components/pages/PagesUser/Home";
 import UserProfile from "./components/pages/PagesUser/UserProfile";
-import UpdateUser from "./components/pages/PagesUser/UpdateUser";
+// import UpdateUser from "./components/pages/PagesUser/UpdateUser";
 
 // ADMIN
 import "bootstrap/dist/css/bootstrap.min.css";

@@ -48,12 +48,6 @@ const EditPersonalDetailButton = () => {
 
   const UpdateValidation = (values) => {
     let errors = {};
-    if (!values.firstName) {
-      errors.firstName = "First name is required";
-    }
-    if (!values.lastName) {
-      errors.lastName = "Last name is required";
-    }
     if (!values.username) {
       errors.username = "Username is required";
     }
@@ -111,6 +105,7 @@ const EditPersonalDetailButton = () => {
     }));
   };
   console.log("Modal show state:", show);
+
   return (
     <>
       <button

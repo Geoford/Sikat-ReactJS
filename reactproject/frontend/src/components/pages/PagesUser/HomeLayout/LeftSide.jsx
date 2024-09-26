@@ -3,9 +3,11 @@ import SampleImage from "../../../../assets/Background.jpg";
 import DefaultProfile from "../../../../assets/userDefaultProfile.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Ensure axios is imported
 
 const Center = () => {
   const [user, setUser] = useState(null);
+  const [entries, setEntries] = useState([]); // State to store journal entries
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,17 +19,34 @@ const Center = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
+
+  const fetchEntries = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchUserEntry/user/${user.userID}` // Corrected URL to fetch entries by userID
+      );
+      setEntries(response.data);
+    } catch (error) {
+      console.error("Error fetching entries:", error);
+    }
+  };
+
   if (!user) return null;
 
   return (
     <div className="p-2">
       <Link
         className="text-decoration-none text-dark"
-        to="/UserProfile/${user.userID}"
+        to={`/UserProfile/${user.userID}`}
       >
         <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
           <div className="">
-            <div className=" d-flex justify-content-center align-items-center ">
+            <div className="d-flex justify-content-center align-items-center">
               <div
                 style={{
                   backgroundColor: "#ffff",
@@ -56,49 +75,29 @@ const Center = () => {
         </div>
       </Link>
 
-      <div className=" bg-light rounded border border-secondary-subtle shadow-sm p-3 mt-3">
+      <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Journal Entries</h4>
-          </div>
-          <div>
-            <p className="orangerText" style={{ cursor: "pointer" }}>
-              View All
-            </p>
           </div>
         </div>
         <div
           className="mt-2 pe-1"
           style={{ height: "43vh", overflowY: "scroll" }}
         >
-          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
-            <h5>Journal Title</h5>
-            <p className="text-start">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
-              expedita repellat quos quod nulla omnis!
-            </p>
-          </div>
-          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
-            <h5>Journal Title</h5>
-            <p className="text-start">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
-              expedita repellat quos quod nulla omnis!
-            </p>
-          </div>
-          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
-            <h5>Journal Title</h5>
-            <p className="text-start">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
-              expedita repellat quos quod nulla omnis!
-            </p>
-          </div>
-          <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1">
-            <h5>Journal Title</h5>
-            <p className="text-start">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni
-              expedita repellat quos quod nulla omnis!
-            </p>
-          </div>
+          {entries.length === 0 ? (
+            <p>No entries available.</p>
+          ) : (
+            entries.map((entry) => (
+              <div
+                key={entry.entryID}
+                className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1 mt-2"
+              >
+                <h5>{entry.title}</h5>
+                <p className="text-start">{entry.description}</p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

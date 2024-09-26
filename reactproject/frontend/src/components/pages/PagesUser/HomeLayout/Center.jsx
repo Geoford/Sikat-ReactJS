@@ -6,13 +6,18 @@ import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 const Center = () => {
   const [entries, setEntries] = useState([]);
   const [user, setUser] = useState(null);
+  const [followedUsers, setFollowedUsers] = useState([]);
   const [activeButtons, setActiveButtons] = useState({});
-  const [expandButtons, setExpandButtons] = useState({});
+  const [expandButtons, setExpandButtons] = useState([]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
+      const followedData = localStorage.getItem("followedUsers");
+      if (followedData) {
+        setFollowedUsers(JSON.parse(followedData));
+      }
     }
   }, []);
 
@@ -82,6 +87,61 @@ const Center = () => {
     handleGadify(entryID);
   };
 
+  const handleFollowToggle = async (followUserId) => {
+    if (!followUserId) {
+      console.error("User ID to follow/unfollow is undefined");
+      return;
+    }
+
+    if (user.userID === followUserId) {
+      alert("You cannot follow yourself.");
+      return;
+    }
+
+    const isFollowing = followedUsers.includes(followUserId);
+
+    try {
+      if (isFollowing) {
+        // Unfollow the user
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
+
+        // Update local state to reflect unfollow
+        setFollowedUsers((prev) => {
+          const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
+          localStorage.setItem(
+            "followedUsers",
+            JSON.stringify(updatedFollowedUsers)
+          );
+          return updatedFollowedUsers;
+        });
+
+        alert(`You have unfollowed user ${followUserId}`);
+      } else {
+        // Follow the user
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
+
+        // Update local state to reflect follow
+        setFollowedUsers((prev) => {
+          const updatedFollowedUsers = [...prev, followUserId];
+          localStorage.setItem(
+            "followedUsers",
+            JSON.stringify(updatedFollowedUsers)
+          );
+          return updatedFollowedUsers;
+        });
+
+        alert(`You are now following user ${followUserId}`);
+      }
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+      alert("There was an error processing your request.");
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -92,7 +152,7 @@ const Center = () => {
       >
         <DiaryEntryButton onEntrySaved={fetchEntries} />
       </div>
-      <div className=" d-flex justify-content-end">
+      <div className="d-flex justify-content-end">
         <FilterButton />
       </div>
 
@@ -121,7 +181,14 @@ const Center = () => {
               </p>
               {user && user.userID !== entry.userID && (
                 <div>
-                  <button className="orangeButton">Follow</button>
+                  <button
+                    className="orangeButton"
+                    onClick={() => handleFollowToggle(entry.userID)}
+                  >
+                    {followedUsers.includes(entry.userID)
+                      ? "Following"
+                      : "Follow"}
+                  </button>
                 </div>
               )}
             </div>
