@@ -19,7 +19,7 @@ const UserAccountDropdown = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/Login");
+    navigate("/");
   };
 
   return (
