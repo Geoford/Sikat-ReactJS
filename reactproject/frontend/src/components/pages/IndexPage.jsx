@@ -66,8 +66,17 @@ const IndexPage = () => {
       <Background>
         <img
           src={BackgroundImg}
-          alt=""
-          style={{ height: "100%", opacity: ".15" }}
+          alt="Background"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100vw",
+            height: "100vh",
+            opacity: "0.5",
+            objectFit: "cover",
+          }}
         />
       </Background>
     </div>
