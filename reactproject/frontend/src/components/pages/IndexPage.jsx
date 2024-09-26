@@ -5,6 +5,7 @@ import Background from "../Layouts/Background";
 import Login from "./Login";
 import Register from "./Register";
 import Logo from "../../assets/logo.jpg";
+import BackgroundImg from "../../assets/Background.jpg";
 
 const IndexPage = () => {
   const [isLoginPage, setIsLoginPage] = useState(true); // state to track if the login page is active
@@ -46,7 +47,7 @@ const IndexPage = () => {
               onClick={handleRegisterClick}
               style={{ border: "none", width: "90px", padding: "5px" }}
             >
-              Sign up
+              Register
             </button>
             <button
               className={isLoginPage ? "orangeButton" : "btn text-light"}
@@ -62,7 +63,13 @@ const IndexPage = () => {
       <div className={`fade-container ${fadeIn ? "fade-in" : "fade-out"}`}>
         {isLoginPage ? <Login /> : <Register />}
       </div>
-      <Background />
+      <Background>
+        <img
+          src={BackgroundImg}
+          alt=""
+          style={{ height: "100%", opacity: ".15" }}
+        />
+      </Background>
     </div>
   );
 };

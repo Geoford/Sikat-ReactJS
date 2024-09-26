@@ -15,7 +15,7 @@ export default function Home() {
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 

@@ -136,6 +136,9 @@
 .grayHover:hover {
   background-color: #e6e6e6;
 }
+.hoverUnderline:hover {
+  text-decoration: underline;
+}
 .noDisplay {
   position: absolute;
   opacity: 0;

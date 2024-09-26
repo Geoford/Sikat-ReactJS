@@ -6,6 +6,7 @@ import usernameIcon from "../../assets/Username.png";
 import passwordIcon from "../../assets/Password.png";
 import showIcon from "../../assets/show.png";
 import hiddenIcon from "../../assets/hidden.png";
+import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -65,9 +66,19 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className="bg-white rounded border border-secondary-subtle shadow p-3"
-        style={{ width: "clamp(450px, 40vw, 500px)" }}
+        className="bg-white rounded border border-secondary-subtle shadow p-4"
+        style={{ width: "clamp(450px, 25vw, 500px)" }}
       >
+        <div>
+          <h3 className="m-0">Welcome to</h3>
+          <h1
+            className="m-0 mb-3 fw-bolder"
+            style={{ fontSize: "60px", color: "#990099" }}
+          >
+            CCAT eDiary
+          </h1>
+        </div>
+
         <form onSubmit={handleSubmit}>
           {/* Username field */}
           <div className="input-group mb-3">
@@ -93,7 +104,7 @@ export default function Login() {
           </div>
 
           {/* Password field */}
-          <div className="input-group mb-3 position-relative">
+          <div className="input-group position-relative">
             <span className="input-group-text p-1 px-2">
               <img
                 src={passwordIcon}
@@ -130,6 +141,9 @@ export default function Login() {
             {errors.password && (
               <span className="text-danger"> {errors.password}</span>
             )}
+          </div>
+          <div className="text-end">
+            <ForgotPassword></ForgotPassword>
           </div>
 
           {/* Server error message */}

@@ -48,95 +48,136 @@ export default function Register() {
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center ">
-      <div className="bg-white rounded p-3 text-start w-50">
+      <div
+        className="bg-white rounded border border-secondary-subtle shadow text-start p-3 mt-5"
+        style={{ width: "clamp(450px, 80vw, 650px)" }}
+      >
+        <div className="border-bottom pb-1 mb-2">
+          <h3 className="m-0" style={{ color: "#990099" }}>
+            Create New Account
+          </h3>
+          <p className="m-0 text-secondary">
+            Easily establish your account in just a few steps.
+          </p>
+        </div>
+
         <form action="" onSubmit={handleSubmit}>
-          <div className="row">
-            <div className="col mb-3">
-              <label htmlFor="firstName">First Name</label>
+          <div>
+            <h5>Personal Details</h5>
+            <div className="row">
+              <div className="col mb-3">
+                <input
+                  type="text"
+                  name="firstName"
+                  placeholder="First name"
+                  onChange={handleInput}
+                  className="form-control rounded"
+                  value={values.firstName}
+                />
+                {errors.firstName && (
+                  <span className="text-danger"> {errors.firstName}</span>
+                )}
+              </div>
+              <div className="col mb-3">
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last name"
+                  onChange={handleInput}
+                  className="form-control rounded"
+                  value={values.lastName}
+                />
+                {errors.lastName && (
+                  <span className="text-danger"> {errors.lastName}</span>
+                )}
+              </div>
+            </div>
+            <div className="mb-3">
               <input
                 type="text"
-                name="firstName"
-                placeholder="Enter your first name"
+                name="alias"
+                placeholder="Alias (for anonymity purposes)"
                 onChange={handleInput}
-                className="form-control rounded-0"
-                value={values.firstName}
+                className="form-control rounded"
+                value={values.cvsuEmail}
               />
-              {errors.firstName && (
-                <span className="text-danger"> {errors.firstName}</span>
+              {errors.cvsuEmail && (
+                <span className="text-danger"> {errors.cvsuEmail}</span>
               )}
             </div>
-            <div className="col mb-3">
-              <label htmlFor="lastName">Last Name</label>
+            <div className="mb-3">
+              <input
+                type="email"
+                name="cvsuEmail"
+                placeholder="CvSU Email"
+                onChange={handleInput}
+                className="form-control rounded"
+                value={values.cvsuEmail}
+              />
+              {errors.cvsuEmail && (
+                <span className="text-danger"> {errors.cvsuEmail}</span>
+              )}
+            </div>
+            <div className="mb-3">
+              <input
+                type="number"
+                name="studentNumber"
+                placeholder="Student Number"
+                onChange={handleInput}
+                className="form-control rounded"
+                value={values.cvsuEmail}
+              />
+              {errors.cvsuEmail && (
+                <span className="text-danger"> {errors.cvsuEmail}</span>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h5>Account Details</h5>
+            <div className="mb-3">
               <input
                 type="text"
-                name="lastName"
-                placeholder="Enter your last name"
+                name="username"
+                placeholder="Username"
                 onChange={handleInput}
-                className="form-control rounded-0"
-                value={values.lastName}
+                className="form-control rounded"
+                value={values.username}
+                autoComplete="new-username"
               />
-              {errors.lastName && (
-                <span className="text-danger"> {errors.lastName}</span>
+              {errors.username && (
+                <span className="text-danger"> {errors.username}</span>
+              )}
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleInput}
+                className="form-control rounded"
+                value={values.password}
+                autoComplete="new-password"
+              />
+              {errors.password && (
+                <span className="text-danger"> {errors.password}</span>
+              )}
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                onChange={handleInput}
+                className="form-control rounded"
+                value={values.confirmPassword}
+              />
+              {errors.confirmPassword && (
+                <span className="text-danger"> {errors.confirmPassword}</span>
               )}
             </div>
           </div>
-          <div className="mb-3">
-            <label htmlFor="cvsuEmail">CvSU Email</label>
-            <input
-              type="email"
-              name="cvsuEmail"
-              placeholder="Enter your CvSU Email"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.cvsuEmail}
-            />
-            {errors.cvsuEmail && (
-              <span className="text-danger"> {errors.cvsuEmail}</span>
-            )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              name="username"
-              placeholder="Enter your Username"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.username}
-            />
-            {errors.username && (
-              <span className="text-danger"> {errors.username}</span>
-            )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter Password"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.password}
-            />
-            {errors.password && (
-              <span className="text-danger"> {errors.password}</span>
-            )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              onChange={handleInput}
-              className="form-control rounded-0"
-              value={values.confirmPassword}
-            />
-            {errors.confirmPassword && (
-              <span className="text-danger"> {errors.confirmPassword}</span>
-            )}
-          </div>
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="w-100 orangeButton">
             Register
           </button>
           {/* <p>
