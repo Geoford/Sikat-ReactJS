@@ -106,7 +106,7 @@ const Center = () => {
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Your Followers</h4>
+            <h4>Followers</h4>
           </div>
         </div>
         <div
@@ -138,7 +138,7 @@ const Center = () => {
       <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Following Users</h4>
+            <h4>Following</h4>
           </div>
         </div>
         <div

@@ -32,8 +32,8 @@ const Center = () => {
       const response = await axios.get(
         `http://localhost:8081/fetchUserEntry/user/${user.userID}`
       );
-      if (Array.isArray(response.data)) {
-        setEntries(response.data);
+      if (response.data.entries && Array.isArray(response.data.entries)) {
+        setEntries(response.data.entries);
       } else {
         console.error("Response data is not an array", response.data);
         setEntries([]);
@@ -42,7 +42,7 @@ const Center = () => {
       console.error("Error fetching entries:", error);
       setError("There was an issue loading your entries.");
     } finally {
-      setIsLoading(false); // Stop loading state once done
+      setIsLoading(false);
     }
   };
 

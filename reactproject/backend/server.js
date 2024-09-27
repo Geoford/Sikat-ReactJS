@@ -30,6 +30,23 @@ db.connect((err) => {
   console.log("Connected to database.");
 });
 
+const uploadFolder = path.join(__dirname, "uploads/");
+
+if (!fs.existsSync(uploadFolder)) {
+  fs.mkdirSync(uploadFolder, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadFolder);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
 app.post("/Register", (req, res) => {
   const {
     firstName,
@@ -322,29 +339,6 @@ app.post("/entry/:entryID/gadify", (req, res) => {
   });
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    if (!allowedTypes.includes(file.mimetype)) {
-      const error = new Error("Invalid file type");
-      error.code = "INVALID_FILE_TYPE";
-      return cb(error);
-    }
-    cb(null, true);
-  },
-});
-
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
@@ -382,7 +376,8 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
     SELECT diary_entries.*, user_table.username 
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
-    WHERE diary_entries.userID = ?`;
+    WHERE diary_entries.userID = ?
+    ORDER BY diary_entries.created_at DESC`;
 
   db.query(query, [userID], (err, result) => {
     if (err) {
@@ -546,6 +541,32 @@ app.get("/followers/:userID", (req, res) => {
     }
 
     res.json(results);
+  });
+});
+
+app.use("/uploads", express.static("uploads"));
+
+app.post("/uploadProfile", upload.single("file"), (req, res) => {
+  const { userID } = req.body;
+
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
+  const filePath = `/uploads/${req.file.filename}`;
+
+  const query = "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
+
+  db.query(query, [filePath, userID], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json({
+      message: "Profile photo uploaded successfully",
+      filePath,
+    });
   });
 });
 
