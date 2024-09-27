@@ -103,9 +103,10 @@ const Center = () => {
 
   return (
     <div className="p-2">
-      <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mb-2">
+      <div className="bg-light rounded  shadow-sm p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <div>
+            <h4>Followers</h4>
             <h4>Followers</h4>
           </div>
         </div>
@@ -135,7 +136,7 @@ const Center = () => {
         </div>
       </div>
 
-      <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3">
+      <div className="bg-light rounded shadow-sm p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Following</h4>
@@ -143,7 +144,7 @@ const Center = () => {
         </div>
         <div
           className="mt-2 pe-1"
-          style={{ height: "25vh", overflowY: "scroll" }}
+          style={{ height: "40vh", overflowY: "scroll" }}
         >
           {followedUsers.map((followedUserId) => {
             const followedUser = users.find(

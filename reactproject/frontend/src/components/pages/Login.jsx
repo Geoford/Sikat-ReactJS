@@ -66,22 +66,25 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className="bg-white rounded border border-secondary-subtle shadow p-4"
-        style={{ width: "clamp(450px, 25vw, 500px)" }}
+        className=" rounded-5 border border-secondary-subtle shadow p-5"
+        style={{
+          width: "clamp(400px, 30vw, 500px)",
+          backgroundColor: "#990099",
+        }}
       >
         <div>
-          <h3 className="m-0">Welcome to</h3>
+          <h3 className="m-0 text-light">Welcome to</h3>
           <h1
-            className="m-0 mb-3 fw-bolder"
-            style={{ fontSize: "60px", color: "#990099" }}
+            className="m-0 mb-4 fw-bolder"
+            style={{ fontSize: "55px", color: "#ffff" }}
           >
-            CCAT eDiary
+            SIKAT eDiary
           </h1>
         </div>
 
         <form onSubmit={handleSubmit}>
           {/* Username field */}
-          <div className="input-group mb-3">
+          <div className="input-group mb-2">
             <span className="input-group-text p-1 px-2">
               <img
                 src={usernameIcon}
@@ -142,7 +145,7 @@ export default function Login() {
               <span className="text-danger"> {errors.password}</span>
             )}
           </div>
-          <div className="text-end">
+          <div className="text-end my-2">
             <ForgotPassword></ForgotPassword>
           </div>
 
