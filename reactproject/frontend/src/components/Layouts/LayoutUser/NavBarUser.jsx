@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NotificationButton from "../LayoutUser/OffCanvassNotification";
 import UserAccountDropdown from "./UserAccountDropdown";
 
-const UserNavBar = () => {
+const NavBarUser = () => {
   return (
     <nav
       className="navbar navbar-expand-lg p-0"
@@ -31,4 +31,4 @@ const UserNavBar = () => {
   );
 };
 
-export default UserNavBar;
+export default NavBarUser;

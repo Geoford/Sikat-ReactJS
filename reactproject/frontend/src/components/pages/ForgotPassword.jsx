@@ -12,11 +12,11 @@ const ForgotPassword = () => {
     <>
       <button
         type="button"
-        className="bg-light my-1"
+        className=" my-1"
         onClick={handleShow}
-        style={{ border: "none" }}
+        style={{ border: "none", backgroundColor: "transparent" }}
       >
-        <p className="hoverUnderline m-0">Forgot Password?</p>
+        <p className="hoverUnderline m-0 text-light">Forgot Password?</p>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>

@@ -50,7 +50,7 @@ const UserProfile = () => {
     <UserPageMainLayout>
       <div
         className="container position-relative mt-4 p-3 rounded shadow"
-        style={{ background: "linear-gradient(to right, #ff8533, #990099)" }}
+        style={{ background: "#990099" }}
       >
         <div className="row">
           <div className="col-lg-4 col d-flex justify-content-center align-items-center">
@@ -106,7 +106,7 @@ const UserProfile = () => {
               />
             </div>
           </div>
-          <div className="col-md text-center text-md-start pt-5">
+          <div className="col-md text-light text-center text-md-start pt-5">
             <h3>
               {user.firstName} {user.lastName} ({user.alias || "No Alias"})
             </h3>
