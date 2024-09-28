@@ -50,7 +50,7 @@ const RecentJournalEntries = () => {
 
   return (
     <div>
-      <div className="bg-light border border-secondary-subtle rounded shadow p-2">
+      <div className=" p-2">
         <div className="d-flex justify-content-between border-bottom pt-2 px-1">
           <div>
             <h5>Journal entries</h5>
