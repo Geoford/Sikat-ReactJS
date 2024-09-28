@@ -46,28 +46,26 @@ const UserProfile = () => {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
-  
+
     if (selectedFile) {
       uploadProfile(selectedFile);
     }
   };
-  
+
   const uploadProfile = (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('userID', user.userID); // Append the userID
-  
+    formData.append("file", file);
+    formData.append("userID", user.userID);
+
     axios
-      .post('http://localhost:8081/uploadProfile', formData)
+      .post("http://localhost:8081/uploadProfile", formData)
       .then((res) => {
-        console.log('Profile uploaded successfully', res.data);
-        // Optionally update the user profile state
+        console.log("Profile uploaded successfully", res.data);
       })
       .catch((error) => {
-        console.error('Error uploading profile:', error);
+        console.error("Error uploading profile:", error);
       });
   };
-  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -75,8 +73,8 @@ const UserProfile = () => {
   return (
     <UserPageMainLayout>
       <div
-        className="container position-relative mt-4 p-3"
-        //
+        className="container d-flex justify-content-center position-relative rounded shadow-sm mt-4 p-3"
+        style={{ background: "#ffff" }}
       >
         <div className="row">
           <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
@@ -126,24 +124,26 @@ const UserProfile = () => {
               </label>
 
               <img
-  src={
-    user && user.profile_image
-      ? `http://localhost:8081${user.profile_image}`
-      : DefaultProfile
-  }
-  alt="Profile"
-  style={{
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    borderRadius: "50%",
-  }}
-/>
-
+                src={
+                  user && user.profile_image
+                    ? `http://localhost:8081${user.profile_image}`
+                    : DefaultProfile
+                }
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
             </div>
           </div>
           <div className="col-md d-flex align-items-center text-light text-center text-md-start">
-            <div style={{ background: "#b300b3" }}>
+            <div
+              className="w-100 rounded p-3"
+              style={{ background: "#b300b3", height: "100%" }}
+            >
               <h3>
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
               </h3>
