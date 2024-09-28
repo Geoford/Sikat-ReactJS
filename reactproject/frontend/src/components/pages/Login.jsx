@@ -66,17 +66,22 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className=" rounded-5 shadow p-5"
+        className=" rounded shadow p-4"
         style={{
           width: "clamp(400px, 30vw, 500px)",
           backgroundColor: "#990099",
         }}
       >
         <div>
-          <h3 className="m-0 text-light">Welcome to</h3>
+          <h3
+            className="m-0 text-light"
+            style={{ fontSize: "clamp(20px, 3vw, 25px)", color: "#ffff" }}
+          >
+            Welcome to
+          </h3>
           <h1
             className="m-0 mb-4 fw-bolder"
-            style={{ fontSize: "55px", color: "#ffff" }}
+            style={{ fontSize: "clamp(40px, 3vw, 60px)", color: "#ffff" }}
           >
             SIKAT eDiary
           </h1>

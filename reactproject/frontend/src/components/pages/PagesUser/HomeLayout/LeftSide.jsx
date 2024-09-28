@@ -96,8 +96,8 @@ const Center = () => {
           </div>
         </div>
         <div
-          className="mt-2 pe-1"
-          style={{ height: "43vh", overflowY: "scroll" }}
+          className="mt-2 pe-1 custom-scrollbar"
+          style={{ height: "45vh", overflowY: "scroll" }}
         >
           {error ? (
             <p>{error}</p> // Error message rendering

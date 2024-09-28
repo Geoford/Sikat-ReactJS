@@ -88,7 +88,7 @@
   color: white;
 }
 .purpleButton:hover {
-  background-color: #cc00cc;
+  background-color: #b300b3;
 }
 .InteractButton {
   width: 100%;
@@ -219,10 +219,22 @@
 }
 
 /* FOR REMOVING BLUE BORDER ON INPUTS */
-
 input.form-control:focus {
   outline: 1px solid lightgray;
   border: 1px solid lightgray;
   box-shadow: none;
   background-color: #ffff;
+}
+
+/* FOR SCHROLL BAR */
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+  transition: 0.2s;
+}
+.custom-scrollbar:hover {
+  scrollbar-width: thin;
+  scrollbar-color: #ababab #f1f1f1;
 }
