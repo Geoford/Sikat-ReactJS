@@ -61,7 +61,7 @@ const UserDiary = () => {
           <p>{error}</p>
         </div>
       ) : (
-        <div className="d-flex flex-column gap-3">
+        <div className="d-flex flex-column gap-1">
           {entries.length === 0 ? (
             <p>No entries available.</p>
           ) : (

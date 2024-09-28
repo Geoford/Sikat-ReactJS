@@ -213,5 +213,5 @@ input.form-control:focus {
   outline: 1px solid lightgray;
   border: 1px solid lightgray;
   box-shadow: none;
-  background-color: transparent;
+  background-color: #ffff;
 }

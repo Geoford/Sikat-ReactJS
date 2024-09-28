@@ -50,7 +50,7 @@ const UserProfile = () => {
     <UserPageMainLayout>
       <div
         className="container position-relative mt-4 p-3 rounded shadow"
-        style={{ background: "#990099" }}
+        style={{ background: "#b300b3" }}
       >
         <div className="row">
           <div className="col-lg-4 col d-flex justify-content-center align-items-center">
@@ -64,7 +64,7 @@ const UserProfile = () => {
                 width: "clamp(250px, 50%, 450px)",
                 height: "clamp(250px, 50%, 450px)",
                 borderRadius: "50%",
-                overflow: "hidden",
+                overflow: "",
               }}
             >
               <label htmlFor="uploadProfile">
@@ -75,8 +75,8 @@ const UserProfile = () => {
                     borderRadius: "50%",
                     width: "50px",
                     height: "50px",
-                    border: "2px solid #ff8533",
-                    padding: "7px",
+                    border: "3px solid #b300b3",
+                    padding: "9px",
                     right: "15px",
                     bottom: "15px",
                   }}
