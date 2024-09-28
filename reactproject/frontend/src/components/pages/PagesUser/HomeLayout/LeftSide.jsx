@@ -9,17 +9,36 @@ const Center = () => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // Error state
   const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+
     if (userData) {
-      setUser(JSON.parse(userData));
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
     } else {
       navigate("/Login");
     }
   }, [navigate]);
+
 
   useEffect(() => {
     if (user) {
@@ -74,7 +93,7 @@ const Center = () => {
                 }}
               >
                 <img
-                  src={DefaultProfile} // Conditional rendering
+                   src={user && user.profile_image ? `http://localhost:8081${user.profile_image}` : DefaultProfile}
                   alt="Profile"
                   style={{
                     width: "100%",

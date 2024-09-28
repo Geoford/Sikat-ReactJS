@@ -44,33 +44,30 @@ const UserProfile = () => {
   }, [navigate]);
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+  
+    if (selectedFile) {
+      uploadProfile(selectedFile);
+    }
   };
-
-  const handleFileUpload = () => {
-    if (!file) return;
-
+  
+  const uploadProfile = (file) => {
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userID", user.userID);
-
+    formData.append('file', file);
+    formData.append('userID', user.userID); // Append the userID
+  
     axios
-      .post("http://localhost:8081/uploadProfile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        setUser((prev) => ({
-          ...prev,
-          profile_image: response.data.filePath,
-        }));
+      .post('http://localhost:8081/uploadProfile', formData)
+      .then((res) => {
+        console.log('Profile uploaded successfully', res.data);
+        // Optionally update the user profile state
       })
       .catch((error) => {
-        console.error("Failed to upload the file", error);
+        console.error('Error uploading profile:', error);
       });
   };
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -123,25 +120,26 @@ const UserProfile = () => {
                     type="file"
                     id="uploadProfile"
                     hidden
-                    onChange={handleFileUpload}
+                    onChange={handleFileChange}
                   />
                 </div>
               </label>
 
               <img
-                src={
-                  user.profile_image
-                    ? `http://localhost:8081${user.profile_image}`
-                    : DefaultProfile
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                }}
-              />
+  src={
+    user && user.profile_image
+      ? `http://localhost:8081${user.profile_image}`
+      : DefaultProfile
+  }
+  alt="Profile"
+  style={{
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "50%",
+  }}
+/>
+
             </div>
           </div>
           <div className="col-md text-light text-center text-md-start pt-5">

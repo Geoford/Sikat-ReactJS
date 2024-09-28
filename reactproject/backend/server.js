@@ -30,15 +30,16 @@ db.connect((err) => {
   console.log("Connected to database.");
 });
 
-const uploadFolder = path.join(__dirname, "uploads/");
+const uploadsDir = path.join(__dirname, 'uploads');
 
-if (!fs.existsSync(uploadFolder)) {
-  fs.mkdirSync(uploadFolder, { recursive: true });
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
 }
 
+// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadFolder);
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -544,25 +545,31 @@ app.get("/followers/:userID", (req, res) => {
   });
 });
 
-app.use("/uploads", express.static("uploads"));
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
   const { userID } = req.body;
 
+  if (!userID) {
+    console.log("No user ID provided");
+    return res.status(400).json({ message: "No user ID provided." });
+  }
+
   if (!req.file) {
-    return res.status(400).send("No file uploaded.");
+    console.log("No file uploaded");
+    return res.status(400).json({ message: "No file uploaded." });
   }
 
   const filePath = `/uploads/${req.file.filename}`;
 
   const query = "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
 
-  db.query(query, [filePath, userID], (err, result) => {
+  db.query(query, [filePath, userID], (err) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).json({ message: "Database error" });
     }
 
+    console.log("Profile photo uploaded successfully", filePath);
     res.json({
       message: "Profile photo uploaded successfully",
       filePath,
