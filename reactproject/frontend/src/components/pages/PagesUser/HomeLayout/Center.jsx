@@ -194,10 +194,10 @@ const Center = () => {
             <div className="text-start border-bottom p-2">
               <h5>{entry.title}</h5>
               <p className="m-0">{entry.description}</p>
-              {entry.fileURL && (
+              {entry.diary_image && (
                 <img
                   className="DiaryImage mt-1"
-                  src={`http://localhost:8081${entry.fileURL}`}
+                  src={`http://localhost:8081${entry.diary_image}`}
                   alt="Diary"
                 />
               )}

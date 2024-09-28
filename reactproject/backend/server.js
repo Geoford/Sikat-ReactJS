@@ -237,16 +237,16 @@ app.post(
         .send({ message: "Title, description, and userID are required." });
     }
 
-    let fileURL = "";
+    let diary_image = "";
     if (file) {
-      fileURL = `/uploads/${file.filename}`;
+      diary_image = `/uploads/${file.filename}`;
     }
 
     const query = `
-      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, fileURL)
+      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    const values = [title, description, userID, visibility, anonimity, fileURL];
+    const values = [title, description, userID, visibility, anonimity, diary_image];
 
     db.query(query, values, (err, result) => {
       if (err) {
@@ -264,7 +264,7 @@ app.get("/entries", (req, res) => {
   const userID = req.query.userID;
 
   const query = `
-    SELECT diary_entries.entryID, diary_entries.userID,  diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.fileURL, diary_entries.gadifyCount, user_table.username
+    SELECT diary_entries.entryID, diary_entries.userID,  diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.diary_image, diary_entries.gadifyCount, user_table.username
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     WHERE (diary_entries.visibility = 'public' 
@@ -544,7 +544,6 @@ app.get("/followers/:userID", (req, res) => {
     res.json(results);
   });
 });
-
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
   const { userID } = req.body;
