@@ -73,7 +73,7 @@ const UserProfile = () => {
   return (
     <UserPageMainLayout>
       <div
-        className="container d-flex justify-content-center position-relative rounded shadow-sm mt-4 p-3"
+        className="container d-flex rounded shadow-sm mt-4 p-3"
         style={{ background: "#ffff" }}
       >
         <div className="row">
