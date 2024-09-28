@@ -75,7 +75,7 @@ const IndexPage = () => {
               className="position-absolute"
               src={BackgroundImg1}
               alt=""
-              style={{ left: "0" }}
+              style={{ left: "0", top: "0px" }}
             />
           </div>
           <div>
@@ -83,7 +83,7 @@ const IndexPage = () => {
               className="position-absolute"
               src={BackgroundImg2}
               alt=""
-              style={{ right: "0" }}
+              style={{ right: "0", bottom: "0px" }}
             />
           </div>
         </div>
