@@ -73,11 +73,11 @@ const UserProfile = () => {
   return (
     <UserPageMainLayout>
       <div
-        className="container d-flex rounded shadow-sm mt-4 p-3"
+        className="container d-flex rounded shadow-sm mt-4 p-3 py-4"
         style={{ background: "#ffff" }}
       >
-        <div className="row">
-          <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
+        <div className="w-100 row m-0">
+          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-md-0">
             <div
               style={{
                 position: "relative",
@@ -85,12 +85,26 @@ const UserProfile = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "clamp(250px, 50%, 450px)",
-                height: "clamp(250px, 50%, 450px)",
+                width: "250px",
+                height: "250px",
                 borderRadius: "50%",
                 overflow: "",
               }}
             >
+              <img
+                src={
+                  user && user.profile_image
+                    ? `http://localhost:8081${user.profile_image}`
+                    : DefaultProfile
+                }
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
               <label htmlFor="uploadProfile">
                 <div
                   className="grayHover"
@@ -122,26 +136,11 @@ const UserProfile = () => {
                   />
                 </div>
               </label>
-
-              <img
-                src={
-                  user && user.profile_image
-                    ? `http://localhost:8081${user.profile_image}`
-                    : DefaultProfile
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                }}
-              />
             </div>
           </div>
           <div className="col-md d-flex align-items-center text-light text-center text-md-start">
             <div
-              className="w-100 rounded p-3"
+              className="w-100 position-relative rounded p-3"
               style={{ background: "#b300b3", height: "100%" }}
             >
               <h3>
@@ -152,10 +151,10 @@ const UserProfile = () => {
                 Following
               </p>
               <p>{user.bio || "No bio available."}</p>
+              <div>
+                <EditPersonalDetailButton />
+              </div>
             </div>
-          </div>
-          <div>
-            <EditPersonalDetailButton />
           </div>
         </div>
       </div>
