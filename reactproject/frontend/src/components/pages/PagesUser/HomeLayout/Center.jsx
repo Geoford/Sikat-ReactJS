@@ -145,7 +145,7 @@ const Center = () => {
   return (
     <div className="p-2">
       <div
-        className="rounded border border-secondary-subtle shadow-sm p-3 mt-1"
+        className="rounded shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
         <DiaryEntryButton onEntrySaved={fetchEntries} />
@@ -160,7 +160,7 @@ const Center = () => {
         entries.map((entry) => (
           <div
             key={entry.entryID}
-            className="rounded border border-secondary-subtle shadow-sm p-3 mb-2"
+            className="rounded shadow-sm p-3 mb-2"
             style={{ backgroundColor: "white" }}
           >
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
