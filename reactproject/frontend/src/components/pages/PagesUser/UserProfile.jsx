@@ -78,8 +78,8 @@ const UserProfile = () => {
   return (
     <UserPageMainLayout>
       <div
-        className="container position-relative mt-4 p-3 rounded shadow"
-        style={{ background: "#b300b3" }}
+        className="container position-relative mt-4 p-3"
+        //
       >
         <div className="row">
           <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
@@ -144,14 +144,17 @@ const UserProfile = () => {
               />
             </div>
           </div>
-          <div className="col-md text-light text-center text-md-start pt-5">
-            <h3>
-              {user.firstName} {user.lastName} ({user.alias || "No Alias"})
-            </h3>
-            <p>
-              {user.followersCount} Followers - {user.followingCount} Following
-            </p>
-            <p>{user.bio || "No bio available."}</p>
+          <div className="col-md d-flex align-items-center text-light text-center text-md-start">
+            <div style={{ background: "#b300b3" }}>
+              <h3>
+                {user.firstName} {user.lastName} ({user.alias || "No Alias"})
+              </h3>
+              <p>
+                {user.followersCount} Followers - {user.followingCount}{" "}
+                Following
+              </p>
+              <p>{user.bio || "No bio available."}</p>
+            </div>
           </div>
           <div>
             <EditPersonalDetailButton />
@@ -164,16 +167,10 @@ const UserProfile = () => {
           <div className="col-lg-4 mb-2 p-0 px-md-2">
             <div
               className="position-sticky d-flex flex-column gap-2"
-              style={{ minHeight: "37vh", top: "-45vh" }}
+              style={{ minHeight: "37vh", top: "70px" }}
             >
               <div>
                 <RecentJournalEntries />
-              </div>
-              <div>
-                <ActivityLogs />
-              </div>
-              <div>
-                <FiledCases />
               </div>
             </div>
           </div>
