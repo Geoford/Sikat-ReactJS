@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
-import uploadProfile from "../../../assets/uploadProfile.png";
-import UserNavBar from "../../Layouts/LayoutUser/NavBarUser";
-import Background from "../../Layouts/Background";
+import uploadProfileIcon from "../../../assets/uploadProfile.png";
+import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
 import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
-import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +43,35 @@ const UserProfile = () => {
     }
   }, [navigate]);
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userID", user.userID);
+
+    axios
+      .post("http://localhost:8081/uploadProfile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setUser((prev) => ({
+          ...prev,
+          profile_image: response.data.filePath,
+        }));
+      })
+      .catch((error) => {
+        console.error("Failed to upload the file", error);
+      });
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -53,7 +82,7 @@ const UserProfile = () => {
         style={{ background: "#b300b3" }}
       >
         <div className="row">
-          <div className="col-lg-4 col d-flex justify-content-center align-items-center">
+          <div className="col-lg-4 col d-flex justify-content-center align-items-center ">
             <div
               style={{
                 position: "relative",
@@ -82,20 +111,29 @@ const UserProfile = () => {
                   }}
                 >
                   <img
-                    src={uploadProfile}
-                    alt=""
+                    src={uploadProfileIcon}
+                    alt="Upload Icon"
                     style={{
                       width: "100%",
                       height: "100%",
                       cursor: "pointer",
                     }}
                   />
-                  <input type="file" id="uploadProfile" hidden />
+                  <input
+                    type="file"
+                    id="uploadProfile"
+                    hidden
+                    onChange={handleFileUpload}
+                  />
                 </div>
               </label>
 
               <img
-                src={DefaultProfile}
+                src={
+                  user.profile_image
+                    ? `http://localhost:8081${user.profile_image}`
+                    : DefaultProfile
+                }
                 alt="Profile"
                 style={{
                   width: "100%",

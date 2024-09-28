@@ -107,6 +107,7 @@ const Center = () => {
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Followers</h4>
+            <h4>Followers</h4>
           </div>
         </div>
         <div
@@ -138,7 +139,7 @@ const Center = () => {
       <div className="bg-light rounded shadow-sm p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Friends</h4>
+            <h4>Following</h4>
           </div>
         </div>
         <div

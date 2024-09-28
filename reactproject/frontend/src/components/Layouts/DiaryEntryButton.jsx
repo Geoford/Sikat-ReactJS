@@ -96,6 +96,7 @@ function DiaryEntryButton({ onEntrySaved }) {
         if (onEntrySaved) {
           onEntrySaved();
         }
+        window.location.reload();
       })
       .catch((error) => {
         console.error("There was an error saving the diary entry!", error);
