@@ -66,7 +66,7 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className=" rounded-5 border border-secondary-subtle shadow p-5"
+        className=" rounded-5 shadow p-5"
         style={{
           width: "clamp(400px, 30vw, 500px)",
           backgroundColor: "#990099",

@@ -67,8 +67,8 @@ const Center = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  width: "10vw",
-                  height: "10vw",
+                  width: "21vh",
+                  height: "21vh",
                   borderRadius: "50%",
                   overflow: "hidden",
                 }}
@@ -89,7 +89,7 @@ const Center = () => {
         </div>
       </Link>
 
-      <div className="bg-light rounded border border-secondary-subtle shadow-sm p-3 mt-3">
+      <div className=" mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
             <h4>Journal Entries</h4>
