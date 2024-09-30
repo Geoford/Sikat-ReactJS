@@ -13,29 +13,41 @@ const Center = () => {
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
-      setUser(JSON.parse(userData));
-      const followedData = localStorage.getItem("followedUsers");
-      if (followedData) {
-        setFollowedUsers(JSON.parse(followedData));
-      }
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      fetchFollowedUsers(parsedUser.userID); // Fetch followed users from backend
+      fetchEntries(parsedUser.userID);
+    } else {
+      // Redirect to login if user is not authenticated
+      window.location.href = "/Login";
     }
   }, []);
 
-  const fetchEntries = useCallback(() => {
-    if (!user) return;
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      const followedUsersData = response.data.map((user) => user.userID);
+      setFollowedUsers(followedUsersData);
+      // Optionally, you can remove or update localStorage
+      // localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
+    }
+  };
 
-    axios
-      .get("http://localhost:8081/entries", {
-        params: { userID: user.userID },
-      })
-      .then((response) => {
-        console.log("Entries fetched:", response.data);
-        setEntries(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the diary entries!", error);
+  const fetchEntries = async (userID) => {
+    try {
+      const response = await axios.get("http://localhost:8081/entries", {
+        params: { userID: userID },
       });
-  }, [user]);
+      console.log("Entries fetched:", response.data);
+      setEntries(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the diary entries!", error);
+    }
+  };
 
   const handleGadify = (entryID) => {
     if (!user) return;
@@ -48,8 +60,8 @@ const Center = () => {
         userID: user.userID,
       })
       .then((res) => {
-        setEntries(
-          entries.map((entry) =>
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
             entry.entryID === entryID
               ? {
                   ...entry,
@@ -64,10 +76,6 @@ const Center = () => {
       })
       .catch((err) => console.error("Error updating gadify count:", err));
   };
-
-  useEffect(() => {
-    fetchEntries();
-  }, [fetchEntries]);
 
   const handleClick = (entryID) => {
     const updatedActiveButtons = {
@@ -106,34 +114,20 @@ const Center = () => {
           data: { followerId: user.userID },
         });
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
         alert(`You have unfollowed user ${followUserId}`);
+        window.location.reload();
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = [...prev, followUserId];
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) => [...prev, followUserId]);
         alert(`You are now following user ${followUserId}`);
+        window.location.reload();
       }
 
-      window.location.reload();
+      await fetchFollowedUsers(user.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
       alert("There was an error processing your request.");
@@ -148,7 +142,7 @@ const Center = () => {
         className="rounded shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton onEntrySaved={fetchEntries} />
+        <DiaryEntryButton onEntrySaved={() => fetchEntries(user.userID)} />
       </div>
       <div className="d-flex justify-content-end">
         <FilterButton />

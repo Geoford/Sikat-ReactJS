@@ -6,16 +6,38 @@ import { Link, useNavigate } from "react-router-dom";
 
 const UserAccountDropdown = () => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+
     if (userData) {
-      setUser(JSON.parse(userData));
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
     } else {
-      navigate("/");
+      navigate("/Login");
     }
   }, [navigate]);
+
+  if (!user) return null;
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -49,7 +71,15 @@ const UserAccountDropdown = () => {
               style={{ width: "60%", height: "60%" }}
             />
           </div>
-          <img className="icon " src={DefaultProfile} alt="User Profile" />
+          <img
+            className="icon "
+            src={
+              user && user.profile_image
+                ? `http://localhost:8081${user.profile_image}`
+                : DefaultProfile
+            }
+            alt="User Profile"
+          />
         </Dropdown.Toggle>
       </div>
 

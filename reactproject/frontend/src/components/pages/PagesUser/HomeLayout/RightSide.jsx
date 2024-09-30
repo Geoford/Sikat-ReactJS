@@ -13,18 +13,14 @@ const Center = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    const followedUsersData = localStorage.getItem("followedUsers");
-
     if (userData) {
-      setUser(JSON.parse(userData));
-      fetchFollowers(JSON.parse(userData).userID);
-      fetchUsers();
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      fetchFollowers(parsedUser.userID); // Fetch followers when user is set
+      fetchUsers(); // Also fetching users
+      fetchFollowedUsers(parsedUser.userID); // Fetch followed users
     } else {
       navigate("/Login");
-    }
-
-    if (followedUsersData) {
-      setFollowedUsers(JSON.parse(followedUsersData));
     }
   }, [navigate]);
 
@@ -45,6 +41,20 @@ const Center = () => {
       setFollowers(response.data);
     } catch (error) {
       console.error("Error fetching followers:", error);
+    }
+  };
+
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      const followedUsersData = response.data.map((user) => user.userID);
+
+      setFollowedUsers(followedUsersData);
+      localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
     }
   };
 

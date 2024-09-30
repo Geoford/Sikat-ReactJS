@@ -36,7 +36,6 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
@@ -416,54 +415,83 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/follow/:followUserId", (req, res) => {
-  const { followerId } = req.body;
-  const followUserId = req.params.followUserId;
+  const { followerId } = req.body; // ID of the user following someone
+  const followUserId = req.params.followUserId; // ID of the user being followed
+
+  if (followerId === followUserId) {
+    return res.status(400).json({ message: "User cannot follow themselves." });
+  }
 
   db.beginTransaction((err) => {
-    if (err) throw err;
+    if (err) {
+      console.error("Transaction error:", err);
+      return res.status(500).send("Transaction error");
+    }
 
-    const followQuery =
-      "INSERT INTO followers (userID, followedUserID, followingUserID) VALUES (?, ?, ?)";
+    // Check if this follow relationship already exists
+    const checkExistingFollowQuery =
+      "SELECT * FROM followers WHERE userID = ? AND followedUserID = ?";
     db.query(
-      followQuery,
-      [followerId, followUserId, followerId],
+      checkExistingFollowQuery,
+      [followerId, followUserId],
       (err, results) => {
         if (err) {
           return db.rollback(() => {
-            console.error("Error following user:", err);
-            res.status(500).send("Error following user");
+            console.error("Error checking follow relationship:", err);
+            res.status(500).send("Error checking follow relationship");
           });
         }
 
-        const updateFollowedCountQuery =
-          "UPDATE user_profiles SET followersCount = followersCount + 1 WHERE userID = ?";
-        db.query(updateFollowedCountQuery, [followUserId], (err) => {
+        if (results.length > 0) {
+          return res
+            .status(400)
+            .json({ message: "Already following this user" });
+        }
+
+        // Insert the follow relationship into the followers table
+        const followQuery =
+          "INSERT INTO followers (userID, followedUserID) VALUES (?, ?)";
+        db.query(followQuery, [followerId, followUserId], (err) => {
           if (err) {
             return db.rollback(() => {
-              console.error("Error updating followers count:", err);
-              res.status(500).send("Error updating followers count");
+              console.error("Error inserting follow relationship:", err);
+              res.status(500).send("Error following user");
             });
           }
 
-          const updateFollowerCountQuery =
-            "UPDATE user_profiles SET followingCount = followingCount + 1 WHERE userID = ?";
-          db.query(updateFollowerCountQuery, [followerId], (err) => {
+          // Update the followed user's follower count
+          const updateFollowedCountQuery =
+            "UPDATE user_profiles SET followersCount = followersCount + 1 WHERE userID = ?";
+          db.query(updateFollowedCountQuery, [followUserId], (err) => {
             if (err) {
               return db.rollback(() => {
-                console.error("Error updating following count:", err);
-                res.status(500).send("Error updating following count");
+                console.error("Error updating followers count:", err);
+                res.status(500).send("Error updating followers count");
               });
             }
 
-            db.commit((err) => {
+            // Update the follower's following count
+            const updateFollowerCountQuery =
+              "UPDATE user_profiles SET followingCount = followingCount + 1 WHERE userID = ?";
+            db.query(updateFollowerCountQuery, [followerId], (err) => {
               if (err) {
                 return db.rollback(() => {
-                  console.error("Transaction commit failed:", err);
-                  res.status(500).send("Transaction commit failed");
+                  console.error("Error updating following count:", err);
+                  res.status(500).send("Error updating following count");
                 });
               }
 
-              res.status(201).json({ message: "User followed successfully" });
+              // Commit the transaction
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error("Transaction commit failed:", err);
+                    res.status(500).send("Transaction commit failed");
+                  });
+                }
+
+                res.status(201).json({ message: "User followed successfully" });
+              });
             });
           });
         });
@@ -473,54 +501,84 @@ app.post("/follow/:followUserId", (req, res) => {
 });
 
 app.delete("/unfollow/:followUserId", (req, res) => {
-  const { followerId } = req.body;
-  const followUserId = req.params.followUserId;
+  const { followerId } = req.body; // ID of the user unfollowing someone
+  const followUserId = req.params.followUserId; // ID of the user being unfollowed
+
+  if (followerId === followUserId) {
+    return res
+      .status(400)
+      .json({ message: "User cannot unfollow themselves." });
+  }
 
   db.beginTransaction((err) => {
-    if (err) throw err;
+    if (err) {
+      console.error("Transaction error:", err);
+      return res.status(500).send("Transaction error");
+    }
 
-    const unfollowQuery =
-      "DELETE FROM followers WHERE userID = ? AND followedUserID = ? AND followingUserID = ?";
+    const checkExistingUnfollowQuery =
+      "SELECT * FROM followers WHERE userID = ? AND followedUserID = ?";
     db.query(
-      unfollowQuery,
-      [followerId, followUserId, followerId],
+      checkExistingUnfollowQuery,
+      [followerId, followUserId],
       (err, results) => {
         if (err) {
           return db.rollback(() => {
-            console.error("Error unfollowing user:", err);
-            res.status(500).send("Error unfollowing user");
+            console.error("Error checking follow relationship:", err);
+            res.status(500).send("Error checking follow relationship");
           });
         }
 
-        const updateFollowedCountQuery =
-          "UPDATE user_profiles SET followersCount = followersCount - 1 WHERE userID = ?";
-        db.query(updateFollowedCountQuery, [followUserId], (err) => {
+        if (results.length === 0) {
+          return res
+            .status(400)
+            .json({ message: "User is not following this person" });
+        }
+
+        const unfollowQuery =
+          "DELETE FROM followers WHERE userID = ? AND followedUserID = ?";
+        db.query(unfollowQuery, [followerId, followUserId], (err) => {
           if (err) {
             return db.rollback(() => {
-              console.error("Error updating followers count:", err);
-              res.status(500).send("Error updating followers count");
+              console.error("Error removing follow relationship:", err);
+              res.status(500).send("Error unfollowing user");
             });
           }
 
-          const updateFollowerCountQuery =
-            "UPDATE user_profiles SET followingCount = followingCount - 1 WHERE userID = ?";
-          db.query(updateFollowerCountQuery, [followerId], (err) => {
+          const updateFollowedCountQuery =
+            "UPDATE user_profiles SET followersCount = followersCount - 1 WHERE userID = ? AND followersCount > 0";
+          db.query(updateFollowedCountQuery, [followUserId], (err) => {
             if (err) {
               return db.rollback(() => {
-                console.error("Error updating following count:", err);
-                res.status(500).send("Error updating following count");
+                console.error("Error updating followers count:", err);
+                res.status(500).send("Error updating followers count");
               });
             }
 
-            db.commit((err) => {
+            // Update the follower's following count
+            const updateFollowerCountQuery =
+              "UPDATE user_profiles SET followingCount = followingCount - 1 WHERE userID = ? AND followingCount > 0";
+            db.query(updateFollowerCountQuery, [followerId], (err) => {
               if (err) {
                 return db.rollback(() => {
-                  console.error("Transaction commit failed:", err);
-                  res.status(500).send("Transaction commit failed");
+                  console.error("Error updating following count:", err);
+                  res.status(500).send("Error updating following count");
                 });
               }
 
-              res.status(200).json({ message: "User unfollowed successfully" });
+              // Commit the transaction
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error("Transaction commit failed:", err);
+                    res.status(500).send("Transaction commit failed");
+                  });
+                }
+
+                res
+                  .status(200)
+                  .json({ message: "User unfollowed successfully" });
+              });
             });
           });
         });
@@ -529,27 +587,51 @@ app.delete("/unfollow/:followUserId", (req, res) => {
   });
 });
 
-app.get("/followers/:userID", (req, res) => {
+app.get("/followedUsers/:userID", (req, res) => {
   const userID = req.params.userID;
 
   const query = `
     SELECT u.userID, u.username
     FROM followers f
-    JOIN user_table u ON f.userID = u.userID
-    WHERE f.followedUserID = ?`;
+    JOIN user_table u ON f.followedUserID = u.userID
+    WHERE f.userID = ?
+  `;
 
   db.query(query, [userID], (err, results) => {
     if (err) {
-      console.error("Error fetching followers:", err);
-      return res.status(500).json({ error: "Error fetching followers" });
+      console.error("Error fetching followed users:", err);
+      return res.status(500).json({ error: "Error fetching followed users" });
     }
 
-    if (results.length === 0) {
-      return res.status(404).json({ message: "No followers found" });
-    }
-
-    res.json(results);
+    res.status(200).json(results);
   });
+});
+
+const getFollowersFromDatabase = async (userID) => {
+  const query = `
+    SELECT u.userID, u.username
+    FROM followers f
+    JOIN user_table u ON f.userID = u.userID
+    WHERE f.followedUserID = ?
+  `;
+  return new Promise((resolve, reject) => {
+    db.query(query, [userID], (err, results) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+app.get("/followers/:userID", async (req, res) => {
+  const userID = req.params.userID;
+  try {
+    const followers = await getFollowersFromDatabase(userID); // Replace with your DB logic
+    res.json(followers);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch followers" });
+  }
 });
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
