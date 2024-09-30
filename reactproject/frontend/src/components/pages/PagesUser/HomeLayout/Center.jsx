@@ -2,6 +2,7 @@ import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
+import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -15,10 +16,9 @@ const Center = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchFollowedUsers(parsedUser.userID); // Fetch followed users from backend
+      fetchFollowedUsers(parsedUser.userID);
       fetchEntries(parsedUser.userID);
     } else {
-      // Redirect to login if user is not authenticated
       window.location.href = "/Login";
     }
   }, []);
@@ -158,7 +158,17 @@ const Center = () => {
             style={{ backgroundColor: "white" }}
           >
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture"></div>
+              <div className="profilePicture">
+                <img
+                  className="icon "
+                  src={
+                    entry.profile_image
+                      ? `http://localhost:8081${entry.profile_image}`
+                      : DefaultProfile
+                  }
+                  alt="User Profile"
+                />
+              </div>
 
               <p className="m-0">
                 {user && entry.userID === user.userID

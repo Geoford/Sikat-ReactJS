@@ -270,9 +270,20 @@ app.get("/entries", (req, res) => {
   const userID = req.query.userID;
 
   const query = `
-    SELECT diary_entries.entryID, diary_entries.userID,  diary_entries.title, diary_entries.visibility, diary_entries.anonimity, diary_entries.description, diary_entries.diary_image, diary_entries.gadifyCount, user_table.username
+    SELECT 
+      diary_entries.entryID, 
+      diary_entries.userID,  
+      diary_entries.title, 
+      diary_entries.visibility, 
+      diary_entries.anonimity, 
+      diary_entries.description, 
+      diary_entries.diary_image, 
+      diary_entries.gadifyCount, 
+      user_table.username,
+      user_profiles.profile_image
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
+    JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     WHERE (diary_entries.visibility = 'public' 
     OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
     ORDER BY diary_entries.created_at DESC
@@ -591,9 +602,10 @@ app.get("/followedUsers/:userID", (req, res) => {
   const userID = req.params.userID;
 
   const query = `
-    SELECT u.userID, u.username
+    SELECT u.userID, u.username, up.profile_image
     FROM followers f
     JOIN user_table u ON f.followedUserID = u.userID
+    JOIN user_profiles up ON f.followedUserID = up.userID
     WHERE f.userID = ?
   `;
 
