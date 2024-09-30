@@ -61,6 +61,7 @@ const UserProfile = () => {
       .post("http://localhost:8081/uploadProfile", formData)
       .then((res) => {
         console.log("Profile uploaded successfully", res.data);
+        alert("Profile uploaded successfully");
       })
       .catch((error) => {
         console.error("Error uploading profile:", error);

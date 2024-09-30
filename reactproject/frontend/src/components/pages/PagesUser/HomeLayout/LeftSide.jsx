@@ -39,7 +39,6 @@ const Center = () => {
     }
   }, [navigate]);
 
-
   useEffect(() => {
     if (user) {
       fetchEntries();
@@ -59,7 +58,7 @@ const Center = () => {
       }
     } catch (error) {
       console.error("Error fetching entries:", error);
-      setError("There was an issue loading your entries.");
+      setError("No entry.");
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +92,11 @@ const Center = () => {
                 }}
               >
                 <img
-                   src={user && user.profile_image ? `http://localhost:8081${user.profile_image}` : DefaultProfile}
+                  src={
+                    user && user.profile_image
+                      ? `http://localhost:8081${user.profile_image}`
+                      : DefaultProfile
+                  }
                   alt="Profile"
                   style={{
                     width: "100%",

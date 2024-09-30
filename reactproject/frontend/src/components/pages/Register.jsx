@@ -33,7 +33,8 @@ export default function Register() {
       axios
         .post("http://localhost:8081/Register", values)
         .then((res) => {
-          navigate("/Login");
+          navigate("/");
+          window.location.reload();
         })
         .catch((err) => console.log(err));
     }

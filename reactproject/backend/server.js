@@ -30,7 +30,7 @@ db.connect((err) => {
   console.log("Connected to database.");
 });
 
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, "uploads");
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
@@ -246,7 +246,14 @@ app.post(
       INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    const values = [title, description, userID, visibility, anonimity, diary_image];
+    const values = [
+      title,
+      description,
+      userID,
+      visibility,
+      anonimity,
+      diary_image,
+    ];
 
     db.query(query, values, (err, result) => {
       if (err) {
@@ -558,21 +565,63 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
     return res.status(400).json({ message: "No file uploaded." });
   }
 
-  const filePath = `/uploads/${req.file.filename}`;
+  const newFilePath = `/uploads/${req.file.filename}`;
 
-  const query = "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
+  const getCurrentProfileQuery =
+    "SELECT profile_image FROM user_profiles WHERE userID = ?";
 
-  db.query(query, [filePath, userID], (err) => {
+  db.query(getCurrentProfileQuery, [userID], (err, result) => {
     if (err) {
-      console.error("Database error:", err);
+      console.error("Error fetching current profile image:", err);
       return res.status(500).json({ message: "Database error" });
     }
 
-    console.log("Profile photo uploaded successfully", filePath);
-    res.json({
-      message: "Profile photo uploaded successfully",
-      filePath,
-    });
+    const currentProfileImage = result[0]?.profile_image;
+
+    if (currentProfileImage) {
+      const currentImagePath = path.join(__dirname, currentProfileImage);
+
+      fs.unlink(currentImagePath, (err) => {
+        if (err && err.code !== "ENOENT") {
+          console.error("Error deleting current profile image:", err);
+          return res
+            .status(500)
+            .json({ message: "Error deleting current profile image" });
+        }
+
+        const updateQuery =
+          "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
+
+        db.query(updateQuery, [newFilePath, userID], (err) => {
+          if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Database error" });
+          }
+
+          console.log("Profile photo uploaded successfully", newFilePath);
+          res.json({
+            message: "Profile photo uploaded successfully",
+            filePath: newFilePath,
+          });
+        });
+      });
+    } else {
+      const updateQuery =
+        "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
+
+      db.query(updateQuery, [newFilePath, userID], (err) => {
+        if (err) {
+          console.error("Database error:", err);
+          return res.status(500).json({ message: "Database error" });
+        }
+
+        console.log("Profile photo uploaded successfully", newFilePath);
+        res.json({
+          message: "Profile photo uploaded successfully",
+          filePath: newFilePath,
+        });
+      });
+    }
   });
 });
 
