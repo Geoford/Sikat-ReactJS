@@ -30,17 +30,30 @@ const EditPersonalDetailButton = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     console.log("User data from local storage:", user);
-    if (user) {
-      setValues({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        cvsuEmail: user.cvsuEmail || "",
-        username: user.username || "",
-        alias: user.alias || "",
-        bio: user.bio || "",
-        password: "",
-        confirmPassword: "",
-      });
+
+    if (user && user.username) {
+      const fetchUserDetails = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/fetchUser/user/${user.userID}`
+          );
+          const userDetails = response.data;
+
+          setValues({
+            firstName: userDetails.firstName || "",
+            lastName: userDetails.lastName || "",
+            cvsuEmail: userDetails.cvsuEmail || "",
+            username: userDetails.username || user.username,
+            alias: userDetails.alias || "",
+            bio: userDetails.bio || "",
+            password: "",
+            confirmPassword: "",
+          });
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      };
+      fetchUserDetails();
     } else {
       navigate("/Login");
     }

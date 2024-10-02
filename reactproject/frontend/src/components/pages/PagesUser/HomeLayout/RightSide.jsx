@@ -3,6 +3,7 @@ import SampleImage from "../../../../assets/Background.jpg";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 
 const Center = () => {
   const [user, setUser] = useState(null);
@@ -16,13 +17,18 @@ const Center = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchFollowers(parsedUser.userID); // Fetch followers when user is set
-      fetchUsers(); // Also fetching users
-      fetchFollowedUsers(parsedUser.userID); // Fetch followed users
+      fetchFollowers(parsedUser.userID);
+      fetchUsers();
+      fetchFollowedUsers(parsedUser.userID);
     } else {
       navigate("/Login");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    console.log("Users:", users);
+    console.log("Followed Users:", followedUsers);
+  }, [users, followedUsers]);
 
   const fetchUsers = async () => {
     try {
@@ -50,8 +56,8 @@ const Center = () => {
         `http://localhost:8081/followedUsers/${userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
-
       setFollowedUsers(followedUsersData);
+      console.log("Fetched followed users:", followedUsersData);
       localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
     } catch (error) {
       console.error("Error fetching followed users:", error);
@@ -129,7 +135,17 @@ const Center = () => {
               className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
             >
               <div className="d-flex align-items-center gap-2">
-                <div className="profilePicture"></div>
+                <div className="profilePicture">
+                  <img
+                    className="icon "
+                    src={
+                      follower.profile_image
+                        ? `http://localhost:8081${follower.profile_image}`
+                        : DefaultProfile
+                    }
+                    alt="User Profile"
+                  />
+                </div>
                 <p className="m-0 ms-2">{follower.username}</p>
                 <button
                   className="orangeButton"
@@ -161,18 +177,28 @@ const Center = () => {
             );
             return followedUser ? (
               <div
-                key={followedUserId}
+                key={followedUser.userID}
                 className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
               >
                 <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture"></div>
+                  <div className="profilePicture">
+                    <img
+                      className="icon"
+                      src={
+                        followedUser.profile_image
+                          ? `http://localhost:8081${followedUser.profile_image}`
+                          : DefaultProfile
+                      }
+                      alt="User Profile"
+                    />
+                  </div>
                   <p className="m-0 ms-2">{followedUser.username}</p>
                 </div>
                 <div>
-                  {user.userID !== followedUserId && (
+                  {user.userID !== followedUser.userID && (
                     <button
                       className="orangeButton"
-                      onClick={() => handleFollowToggle(followedUserId)}
+                      onClick={() => handleFollowToggle(followedUser.userID)}
                     >
                       Unfollow
                     </button>

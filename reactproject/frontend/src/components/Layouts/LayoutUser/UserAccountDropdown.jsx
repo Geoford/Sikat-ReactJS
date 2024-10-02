@@ -6,28 +6,49 @@ import { Link, useNavigate } from "react-router-dom";
 
 const UserAccountDropdown = () => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const fetchUserData = async (userID) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/fetchUser/user/${userID}`
+      );
+
+      if (!response.ok) {
+        throw new Error("User not found");
+      }
+
+      const data = await response.json();
+      setUser(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      fetchUserData(parsedUser.userID);
     } else {
-      navigate("/");
+      navigate("/Login");
     }
-    setIsLoading(false);
   }, [navigate]);
-
-  if (!user) return null;
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/");
+    navigate("/Login");
   };
 
+  if (loading) return <div>Loading...</div>;
+
+  if (error) return <div>Error: {error}</div>;
+
+  if (!user) return null;
   return (
     <Dropdown>
       <div>

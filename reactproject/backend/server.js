@@ -360,7 +360,8 @@ app.post("/entry/:entryID/gadify", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  const userValues = "SELECT * FROM user_table WHERE userID = ?";
+  const userValues =
+    "SELECT * FROM user_table JOIN user_profiles ON user_table.userID = user_table.userID WHERE user_profiles.userID = ?";
   db.query(userValues, [userID], (err, result) => {
     if (err) {
       console.error("Database error:", err);
@@ -426,8 +427,8 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/follow/:followUserId", (req, res) => {
-  const { followerId } = req.body; // ID of the user following someone
-  const followUserId = req.params.followUserId; // ID of the user being followed
+  const { followerId } = req.body;
+  const followUserId = req.params.followUserId;
 
   if (followerId === followUserId) {
     return res.status(400).json({ message: "User cannot follow themselves." });
@@ -439,7 +440,6 @@ app.post("/follow/:followUserId", (req, res) => {
       return res.status(500).send("Transaction error");
     }
 
-    // Check if this follow relationship already exists
     const checkExistingFollowQuery =
       "SELECT * FROM followers WHERE userID = ? AND followedUserID = ?";
     db.query(
@@ -459,7 +459,6 @@ app.post("/follow/:followUserId", (req, res) => {
             .json({ message: "Already following this user" });
         }
 
-        // Insert the follow relationship into the followers table
         const followQuery =
           "INSERT INTO followers (userID, followedUserID) VALUES (?, ?)";
         db.query(followQuery, [followerId, followUserId], (err) => {
@@ -470,7 +469,6 @@ app.post("/follow/:followUserId", (req, res) => {
             });
           }
 
-          // Update the followed user's follower count
           const updateFollowedCountQuery =
             "UPDATE user_profiles SET followersCount = followersCount + 1 WHERE userID = ?";
           db.query(updateFollowedCountQuery, [followUserId], (err) => {
@@ -481,7 +479,6 @@ app.post("/follow/:followUserId", (req, res) => {
               });
             }
 
-            // Update the follower's following count
             const updateFollowerCountQuery =
               "UPDATE user_profiles SET followingCount = followingCount + 1 WHERE userID = ?";
             db.query(updateFollowerCountQuery, [followerId], (err) => {
@@ -492,7 +489,6 @@ app.post("/follow/:followUserId", (req, res) => {
                 });
               }
 
-              // Commit the transaction
               db.commit((err) => {
                 if (err) {
                   return db.rollback(() => {
@@ -512,8 +508,8 @@ app.post("/follow/:followUserId", (req, res) => {
 });
 
 app.delete("/unfollow/:followUserId", (req, res) => {
-  const { followerId } = req.body; // ID of the user unfollowing someone
-  const followUserId = req.params.followUserId; // ID of the user being unfollowed
+  const { followerId } = req.body;
+  const followUserId = req.params.followUserId;
 
   if (followerId === followUserId) {
     return res
@@ -602,11 +598,11 @@ app.get("/followedUsers/:userID", (req, res) => {
   const userID = req.params.userID;
 
   const query = `
-    SELECT u.userID, u.username, up.profile_image
-    FROM followers f
-    JOIN user_table u ON f.followedUserID = u.userID
-    JOIN user_profiles up ON f.followedUserID = up.userID
-    WHERE f.userID = ?
+    SELECT user_table.userID, user_table.username, user_profiles.profile_image
+    FROM followers
+    JOIN user_table ON followers.followedUserID = user_table.userID
+    JOIN user_profiles ON followers.followedUserID = user_profiles.userID
+    WHERE followers.userID = ?
   `;
 
   db.query(query, [userID], (err, results) => {
@@ -621,9 +617,10 @@ app.get("/followedUsers/:userID", (req, res) => {
 
 const getFollowersFromDatabase = async (userID) => {
   const query = `
-    SELECT u.userID, u.username
+    SELECT u.userID, u.username, up.profile_image
     FROM followers f
     JOIN user_table u ON f.userID = u.userID
+    JOIN user_profiles up ON f.userID = up.userID
     WHERE f.followedUserID = ?
   `;
   return new Promise((resolve, reject) => {
@@ -639,7 +636,7 @@ const getFollowersFromDatabase = async (userID) => {
 app.get("/followers/:userID", async (req, res) => {
   const userID = req.params.userID;
   try {
-    const followers = await getFollowersFromDatabase(userID); // Replace with your DB logic
+    const followers = await getFollowersFromDatabase(userID);
     res.json(followers);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch followers" });
