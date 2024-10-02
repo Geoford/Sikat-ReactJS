@@ -15,28 +15,12 @@ const NavBarUser = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-
     if (userData) {
-      const fetchUser = JSON.parse(userData);
-
-      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("User not found");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setUser(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoading(false);
-        });
+      setUser(JSON.parse(userData));
     } else {
-      navigate("/Login");
+      navigate("/");
     }
+    setIsLoading(false);
   }, [navigate]);
 
   if (!user) return null;
