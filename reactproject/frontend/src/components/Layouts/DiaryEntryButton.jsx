@@ -109,7 +109,7 @@ function DiaryEntryButton({ onEntrySaved }) {
 
   return (
     <>
-      <button className="orangeButton w-100" onClick={handleShow}>
+      <button className="primaryButton w-100" onClick={handleShow}>
         Diary Entry{" "}
         <img
           className="miniIcon mb-1"

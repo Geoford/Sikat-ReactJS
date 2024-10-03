@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ProfileDiaryDropdown from "../../../Layouts/LayoutUser/ProfileDiaryDropdown";
 
 const UserDiary = () => {
   const [user, setUser] = useState(null);
@@ -68,9 +69,12 @@ const UserDiary = () => {
             entries.map((entry) => (
               <div
                 key={entry.entryID}
-                className="shadow-sm rounded p-3 mb-2"
+                className="position-relative shadow-sm rounded p-3 mb-2"
                 style={{ backgroundColor: "white" }}
               >
+                <div className="position-absolute" style={{ right: "20px" }}>
+                  <ProfileDiaryDropdown></ProfileDiaryDropdown>
+                </div>
                 <div className="d-flex align-items-center gap-2 border-bottom pb-2">
                   <div className="profilePicture"></div>
                   <p className="m-0">{entry.username}</p>

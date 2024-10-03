@@ -1,8 +1,16 @@
+:root {
+  --primary: #5c0099;
+  --primary_hover: #4c0080;
+  --primary_light: #ffe6cc;
+  --secondary: #ff9933;
+  --secondary_hover: #e65c00;
+}
+
 .background {
   position: fixed;
   width: 100vw;
   height: 100%; /* Make the background fill the viewport initially */
-  background-color: #f2f2f2;
+  background-color: #e6e6e6;
   top: 0;
   left: 0;
   z-index: -2;
@@ -11,9 +19,10 @@
 }
 
 .navbar {
-  background-color: #990099;
+  background-color: var(--primary);
   position: absolute;
   z-index: 1;
+  height: 3.5rem;
   /* position: static; */
 }
 .logo {
@@ -42,8 +51,24 @@
   width: 20px;
   height: 20px;
 }
+/* .mainProfilePicture {
+  background: #ffff;
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: background-position 0.4s ease, transform 0.4s ease;
+}
+
+.mainProfilePicture:hover {
+  transform: scale(102%);
+  background-position: left bottom;
+} */
 .mainProfilePicture {
-  background: linear-gradient(to right, #ff8533, #cc00cc, #cc00cc);
+  background: linear-gradient(
+    to right,
+    #ff8533,
+    var(--primary),
+    var(--primary)
+  );
   background-size: 200% 100%;
   background-position: right bottom;
   transition: background-position 0.4s ease, transform 0.4s ease;
@@ -57,7 +82,7 @@
 .profilePicture {
   height: 50px;
   width: 50px;
-  background-color: rgb(214, 214, 214);
+  background-color: #e6ccff;
   border-radius: 50%;
   overflow: hidden;
   border: none;
@@ -68,16 +93,27 @@
 .btn:focus {
   border: none;
 }
-.orangeButton {
-  background-color: #ff8533;
+.primaryButton {
+  background-color: var(--primary);
   border: none;
   border-radius: 5px;
   padding: 5px 20px 5px 20px;
   transition: 0.3s;
   color: white;
 }
-.orangeButton:hover {
-  background-color: #ff751a;
+.primaryButton:hover {
+  background-color: var(--primary_hover);
+}
+.secondaryButton {
+  border: 2px solid var(--primary);
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+  transition: 0.3s;
+  color: var(--primary);
+}
+.secondaryButton:hover {
+  color: #ffff;
+  background-color: var(--primary_hover);
 }
 .purpleButton {
   background-color: #cc00cc;
@@ -97,19 +133,17 @@
   border-radius: 5px;
   padding: 5px 20px;
   transition: all 0.3s ease;
-  color: #ff8533;
+  color: gray;
 }
 
 .InteractButton:hover {
-  background-color: #ff8533;
-  border: none;
-  color: #ffff;
+  background-color: lightgray;
 }
 
 .InteractButton.active {
-  background-color: #ff8533;
-  border: none;
-  color: #ffff;
+  /* background-color: #ff8533; */
+  border: 1px solid lightgray;
+  color: var(--secondary);
 }
 
 .InteractButton.expand {
@@ -117,13 +151,18 @@
   transition: transform 0.2s ease;
 }
 
-.orangerText {
+.linkText {
   background-color: transparent;
   border: none;
-  color: #ff8533;
+  color: gray;
+  transition: 0.3s;
+  padding: 5px;
+  border-radius: "10px";
+  text-decoration: none;
 }
-.orangerText:hover {
-  color: #ff751a;
+.linkText:hover {
+  color: var(--secondary);
+  background-color: #ffff;
 }
 .wrapper {
   width: 100%;
@@ -140,16 +179,28 @@
   background-color: #ffff;
 }
 .grayHover {
-  background-color: #ffff;
+  background-color: #e6e6e6;
   cursor: pointer;
   transition: 0.3s;
 }
 .grayHover:hover {
-  background-color: #e6e6e6;
+  background-color: #d9d9d9;
 }
 .hoverUnderline:hover {
   text-decoration: underline;
 }
+
+/* .threeDots {
+  background-color: transparent !important;
+  border: none !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50% !important;
+}
+.threeDots:hover {
+  background-color: #ffff !important;
+  color: black !important;
+} */
 .noDisplay {
   position: absolute;
   opacity: 0;
@@ -237,4 +288,45 @@ input.form-control:focus {
 .custom-scrollbar:hover {
   scrollbar-width: thin;
   scrollbar-color: #ababab #f1f1f1;
+}
+
+/* FOR DATE SELECTORS */
+/* Styles for the select elements and their options */
+.dateSelector {
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 0 8px;
+}
+.dateSelector:focus {
+  border: none;
+  outline: none;
+}
+/* Styles for the options inside the select dropdown */
+.dateOption {
+  color: black;
+  font-size: 17px;
+  font-weight: normal;
+}
+
+/* Add this to style the container */
+.dateContainer {
+  background-color: var(--primary);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: start;
+}
+.days,
+.days h5 {
+  cursor: pointer;
+  transition: 0.2s;
+}
+.days:hover {
+  transform: scale(102%) !important;
+}
+.days:hover h5 {
+  color: var(--secondary) !important;
 }

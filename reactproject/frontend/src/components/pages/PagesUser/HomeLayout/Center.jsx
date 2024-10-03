@@ -2,6 +2,9 @@ import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
+import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
+import AnonymousIcon from "../../../../assets/Anonymous.png";
+import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -160,27 +163,36 @@ const Center = () => {
         entries.map((entry) => (
           <div
             key={entry.entryID}
-            className="rounded shadow-sm p-3 mb-2"
+            className="position-relative rounded shadow-sm p-3 mb-2"
             style={{ backgroundColor: "white" }}
           >
+            <div className="position-absolute" style={{ right: "20px" }}>
+              <HomeDiaryDropdown></HomeDiaryDropdown>
+            </div>
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture"></div>
+              <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
+              </div>
+              <div>
+                {" "}
+                <p className="m-0 text-start">
+                  {user && entry.userID === user.userID
+                    ? entry.visibility === "public" &&
+                      entry.anonimity === "private"
+                      ? `${entry.username} - Anonymous`
+                      : entry.username
+                    : entry.visibility === "public" &&
+                      entry.anonimity === "private"
+                    ? "Anonymous"
+                    : entry.username}
+                </p>
+                <h5 className="m-0 text-start">{entry.title}</h5>
+              </div>
 
-              <p className="m-0">
-                {user && entry.userID === user.userID
-                  ? entry.visibility === "public" &&
-                    entry.anonimity === "private"
-                    ? `${entry.username} - Anonymous`
-                    : entry.username
-                  : entry.visibility === "public" &&
-                    entry.anonimity === "private"
-                  ? "Anonymous"
-                  : entry.username}
-              </p>
               {user && user.userID !== entry.userID && (
                 <div>
                   <button
-                    className="orangeButton"
+                    className="primaryButton"
                     onClick={() => handleFollowToggle(entry.userID)}
                   >
                     {followedUsers.includes(entry.userID)
@@ -192,11 +204,10 @@ const Center = () => {
             </div>
 
             <div className="text-start border-bottom p-2">
-              <h5>{entry.title}</h5>
               <p className="m-0">{entry.description}</p>
               {entry.diary_image && (
                 <img
-                  className="DiaryImage mt-1"
+                  className="DiaryImage mt-1 rounded"
                   src={`http://localhost:8081${entry.diary_image}`}
                   alt="Diary"
                 />
@@ -215,7 +226,7 @@ const Center = () => {
                 </button>
               </div>
               <div className="col">
-                <button className="InteractButton">Comment</button>
+                <CommentSection></CommentSection>
               </div>
               <div className="col">
                 <button className="InteractButton">Flag</button>

@@ -109,7 +109,7 @@ const EditPersonalDetailButton = () => {
   return (
     <>
       <button
-        className="orangeButton position-absolute text-end"
+        className="btn btn-light text-end"
         style={{ right: "10px", top: "10px" }}
         onClick={handleShow}
       >

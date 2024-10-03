@@ -6,6 +6,8 @@ import Register from "./components/pages/Register";
 // USER
 import Home from "./components/pages/PagesUser/Home";
 import UserProfile from "./components/pages/PagesUser/UserProfile";
+import DiaryEntries from "./components/pages/PagesUser/DiaryEntries";
+import DiaryEntry from "./components/pages/PagesUser/DiaryEntry";
 // import UpdateUser from "./components/pages/PagesUser/UpdateUser";
 
 // ADMIN
@@ -36,9 +38,11 @@ function App() {
               </ProtectedRoute>
             }
           />
-
+          {/* USER ROUTES */}
           <Route path="/Home" element={<Home />} />
           <Route path="/UserProfile/:userID" element={<UserProfile />} />
+          <Route path="/DiaryEntries/" element={<DiaryEntries />} />
+          <Route path="/DiaryEntry/" element={<DiaryEntry />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,5 +1,6 @@
 import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
+import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -106,7 +107,7 @@ const Center = () => {
       <div className="rounded p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Followers</h4>
+            <h4 className="text-secondary">Followers</h4>
           </div>
         </div>
         <div
@@ -118,11 +119,15 @@ const Center = () => {
               key={follower.userID}
               className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
             >
-              <div className="d-flex align-items-center gap-2">
-                <div className="profilePicture"></div>
-                <p className="m-0 ms-2">{follower.username}</p>
+              <div className="w-100 d-flex align-items-center justify-content-between gap-2">
+                <div className="d-flex align-items-center">
+                  <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                    <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
+                  </div>
+                  <p className="m-0 ms-2">{follower.username}</p>
+                </div>
                 <button
-                  className="orangeButton"
+                  className="secondaryButton"
                   onClick={() => handleFollowToggle(follower.userID)}
                 >
                   {followedUsers.includes(follower.userID)
@@ -138,7 +143,7 @@ const Center = () => {
       <div className=" p-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Following</h4>
+            <h4 className="text-secondary">Following</h4>
           </div>
         </div>
         <div
@@ -155,13 +160,15 @@ const Center = () => {
                 className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
               >
                 <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture"></div>
+                  <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                    <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
+                  </div>
                   <p className="m-0 ms-2">{followedUser.username}</p>
                 </div>
                 <div>
                   {user.userID !== followedUserId && (
                     <button
-                      className="orangeButton"
+                      className="secondaryButton"
                       onClick={() => handleFollowToggle(followedUserId)}
                     >
                       Unfollow

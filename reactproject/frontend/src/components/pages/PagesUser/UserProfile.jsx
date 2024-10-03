@@ -9,6 +9,7 @@ import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
 import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
+import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -77,7 +78,7 @@ const UserProfile = () => {
         style={{ background: "#ffff" }}
       >
         <div className="w-100 row m-0">
-          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-md-0">
+          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0">
             <div
               style={{
                 position: "relative",
@@ -113,7 +114,7 @@ const UserProfile = () => {
                     borderRadius: "50%",
                     width: "50px",
                     height: "50px",
-                    border: "3px solid #b300b3",
+                    border: "3px solid #ffff",
                     padding: "9px",
                     right: "15px",
                     bottom: "15px",
@@ -138,10 +139,10 @@ const UserProfile = () => {
               </label>
             </div>
           </div>
-          <div className="col-md d-flex align-items-center text-light text-center text-md-start">
+          <div className="col-md d-flex align-items-center justify-content-end flex-wrap text-light text-center text-md-start">
             <div
-              className="w-100 position-relative rounded p-3"
-              style={{ background: "#b300b3", height: "100%" }}
+              className="w-100 position-relative rounded p-4"
+              style={{ background: "#b300b3", height: "80%" }}
             >
               <h3>
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
@@ -151,9 +152,9 @@ const UserProfile = () => {
                 Following
               </p>
               <p>{user.bio || "No bio available."}</p>
-              <div>
-                <EditPersonalDetailButton />
-              </div>
+            </div>
+            <div className="">
+              <ProfileDropdown></ProfileDropdown>
             </div>
           </div>
         </div>

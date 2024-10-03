@@ -11,7 +11,7 @@ const NavBarUser = () => {
       className="navbar navbar-expand-lg p-0"
       style={{ position: "sticky", top: "0" }}
     >
-      <div className="container-fluid py-2 px-3 shadow">
+      <div className="container-fluid py-2 px-3 shadow-sm">
         <div className="logo">
           <Link to="/Home">
             <img className="logoImage" src={Logo} alt="Logo" />

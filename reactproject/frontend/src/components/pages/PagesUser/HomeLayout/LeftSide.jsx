@@ -39,7 +39,6 @@ const Center = () => {
     }
   }, [navigate]);
 
-
   useEffect(() => {
     if (user) {
       fetchEntries();
@@ -93,7 +92,11 @@ const Center = () => {
                 }}
               >
                 <img
-                   src={user && user.profile_image ? `http://localhost:8081${user.profile_image}` : DefaultProfile}
+                  src={
+                    user && user.profile_image
+                      ? `http://localhost:8081${user.profile_image}`
+                      : DefaultProfile
+                  }
                   alt="Profile"
                   style={{
                     width: "100%",
@@ -104,14 +107,23 @@ const Center = () => {
               </div>
             </div>
           </div>
-          <p className="m-0 mt-1 text-light fs-5">{user.username}</p>
+          <p className="m-0 mt-1 text-light fs-5">{user.firstName}</p>
         </div>
       </Link>
 
       <div className=" mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4>Journal Entries</h4>
+            <h4 className="text-secondary">Journal Entries</h4>
+          </div>
+          <div>
+            <Link
+              to="/DiaryEntries"
+              className="linkText rounded"
+              style={{ cursor: "pointer" }}
+            >
+              View All
+            </Link>
           </div>
         </div>
         <div
@@ -128,8 +140,7 @@ const Center = () => {
                 key={entry.entryID}
                 className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1 mt-2"
               >
-                <h5>{entry.title}</h5>
-                <p className="text-start">{entry.description}</p>
+                <h6 className="text-start text-secondary">{entry.title}</h6>
               </div>
             ))
           )}
