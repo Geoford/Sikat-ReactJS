@@ -361,7 +361,8 @@ app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
   const userValues =
-    "SELECT * FROM user_table JOIN user_profiles ON user_table.userID = user_table.userID WHERE user_profiles.userID = ?";
+    "SELECT * FROM user_table JOIN user_profiles ON user_table.userID = user_profiles.userID WHERE user_table.userID = ?";
+
   db.query(userValues, [userID], (err, result) => {
     if (err) {
       console.error("Database error:", err);
@@ -372,19 +373,7 @@ app.get("/fetchUser/user/:id", (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const profileValues = "SELECT * FROM user_profiles WHERE userID = ?";
-    db.query(profileValues, [userID], (err, profileResult) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ message: "Internal server error" });
-      }
-
-      if (profileResult.length > 0) {
-        res.json({ ...result[0], ...profileResult[0] });
-      } else {
-        res.status(404).json({ message: "User profile not found" });
-      }
-    });
+    res.json(result[0]); // Merged result since the JOIN already includes profile data
   });
 });
 
@@ -392,9 +381,10 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const userID = req.params.id;
 
   const query = `
-    SELECT diary_entries.*, user_table.username 
+    SELECT diary_entries.*, user_table.username, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
+    INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
     WHERE diary_entries.userID = ?
     ORDER BY diary_entries.created_at DESC`;
 

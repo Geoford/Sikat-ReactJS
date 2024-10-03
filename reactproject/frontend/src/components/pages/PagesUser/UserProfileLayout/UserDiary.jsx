@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileDiaryDropdown from "../../../Layouts/LayoutUser/ProfileDiaryDropdown";
+import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 
 const UserDiary = () => {
   const [user, setUser] = useState(null);
@@ -35,7 +36,7 @@ const UserDiary = () => {
           setLoading(false);
         });
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 
@@ -76,7 +77,21 @@ const UserDiary = () => {
                   <ProfileDiaryDropdown></ProfileDiaryDropdown>
                 </div>
                 <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-                  <div className="profilePicture"></div>
+                  <div className="profilePicture">
+                    <img
+                      src={
+                        entry.profile_image
+                          ? `http://localhost:8081${entry.profile_image}`
+                          : DefaultProfile
+                      }
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
                   <p className="m-0">{entry.username}</p>
                 </div>
 

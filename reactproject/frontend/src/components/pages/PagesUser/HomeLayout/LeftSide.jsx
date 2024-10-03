@@ -35,7 +35,7 @@ const Center = () => {
           setLoading(false);
         });
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 

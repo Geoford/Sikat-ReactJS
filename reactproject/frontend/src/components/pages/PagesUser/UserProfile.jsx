@@ -40,7 +40,7 @@ const UserProfile = () => {
           setLoading(false);
         });
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 

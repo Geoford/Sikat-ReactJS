@@ -2,6 +2,8 @@ import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
+import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
+import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -15,10 +17,11 @@ const Center = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchFollowedUsers(parsedUser.userID);
+      fetchFollowedUsers(parsedUser.userID); // Fetch followed users from backend
       fetchEntries(parsedUser.userID);
     } else {
-      window.location.href = "/Login";
+      // Redirect to login if user is not authenticated
+      window.location.href = "/";
     }
   }, []);
 
@@ -160,8 +163,21 @@ const Center = () => {
               <HomeDiaryDropdown></HomeDiaryDropdown>
             </div>
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture"></div>
-
+              <div className="profilePicture">
+                <img
+                  src={
+                    entry.profile_image
+                      ? `http://localhost:8081${entry.profile_image}`
+                      : DefaultProfile
+                  }
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
               <p className="m-0">
                 {user && entry.userID === user.userID
                   ? entry.visibility === "public" &&

@@ -35,13 +35,13 @@ const UserAccountDropdown = () => {
       const parsedUser = JSON.parse(userData);
       fetchUserData(parsedUser.userID);
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/Login");
+    navigate("/");
   };
 
   if (loading) return <div>Loading...</div>;

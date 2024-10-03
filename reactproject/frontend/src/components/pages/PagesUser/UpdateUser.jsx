@@ -32,7 +32,7 @@ export default function UpdateUser() {
         confirmPassword: "",
       });
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 

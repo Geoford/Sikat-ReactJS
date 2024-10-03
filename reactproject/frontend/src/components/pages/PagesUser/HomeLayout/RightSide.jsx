@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
+import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 
 const Center = () => {
   const [user, setUser] = useState(null);
@@ -22,7 +23,7 @@ const Center = () => {
       fetchUsers();
       fetchFollowedUsers(parsedUser.userID);
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 
@@ -136,7 +137,21 @@ const Center = () => {
               className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
             >
               <div className="d-flex align-items-center gap-2">
-                <div className="profilePicture"></div>
+                <div className="profilePicture">
+                  <img
+                    src={
+                      follower.profile_image
+                        ? `http://localhost:8081${follower.profile_image}`
+                        : DefaultProfile
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
                 <p className="m-0 ms-2">{follower.username}</p>
                 <button
                   className="secondaryButton"
@@ -172,7 +187,21 @@ const Center = () => {
                 className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
               >
                 <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture"></div>
+                  <div className="profilePicture">
+                    <img
+                      src={
+                        followedUser.profile_image
+                          ? `http://localhost:8081${followedUser.profile_image}`
+                          : DefaultProfile
+                      }
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
                   <p className="m-0 ms-2">{followedUser.username}</p>
                 </div>
                 <div>
