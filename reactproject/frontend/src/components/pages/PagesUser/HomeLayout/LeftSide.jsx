@@ -8,9 +8,9 @@ import axios from "axios";
 const Center = () => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Error state
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const Center = () => {
       }
     } catch (error) {
       console.error("Error fetching entries:", error);
-      setError("There was an issue loading your entries.");
+      setError("No entry.");
     } finally {
       setIsLoading(false);
     }

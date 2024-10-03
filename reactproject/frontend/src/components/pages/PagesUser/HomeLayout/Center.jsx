@@ -2,9 +2,6 @@ import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
-import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
-import AnonymousIcon from "../../../../assets/Anonymous.png";
-import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -16,29 +13,40 @@ const Center = () => {
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
-      setUser(JSON.parse(userData));
-      const followedData = localStorage.getItem("followedUsers");
-      if (followedData) {
-        setFollowedUsers(JSON.parse(followedData));
-      }
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      fetchFollowedUsers(parsedUser.userID);
+      fetchEntries(parsedUser.userID);
+    } else {
+      window.location.href = "/Login";
     }
   }, []);
 
-  const fetchEntries = useCallback(() => {
-    if (!user) return;
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      const followedUsersData = response.data.map((user) => user.userID);
+      setFollowedUsers(followedUsersData);
+      // Optionally, you can remove or update localStorage
+      // localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
+    }
+  };
 
-    axios
-      .get("http://localhost:8081/entries", {
-        params: { userID: user.userID },
-      })
-      .then((response) => {
-        console.log("Entries fetched:", response.data);
-        setEntries(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the diary entries!", error);
+  const fetchEntries = async (userID) => {
+    try {
+      const response = await axios.get("http://localhost:8081/entries", {
+        params: { userID: userID },
       });
-  }, [user]);
+      console.log("Entries fetched:", response.data);
+      setEntries(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the diary entries!", error);
+    }
+  };
 
   const handleGadify = (entryID) => {
     if (!user) return;
@@ -51,8 +59,8 @@ const Center = () => {
         userID: user.userID,
       })
       .then((res) => {
-        setEntries(
-          entries.map((entry) =>
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
             entry.entryID === entryID
               ? {
                   ...entry,
@@ -67,10 +75,6 @@ const Center = () => {
       })
       .catch((err) => console.error("Error updating gadify count:", err));
   };
-
-  useEffect(() => {
-    fetchEntries();
-  }, [fetchEntries]);
 
   const handleClick = (entryID) => {
     const updatedActiveButtons = {
@@ -109,34 +113,20 @@ const Center = () => {
           data: { followerId: user.userID },
         });
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
         alert(`You have unfollowed user ${followUserId}`);
+        window.location.reload();
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = [...prev, followUserId];
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) => [...prev, followUserId]);
         alert(`You are now following user ${followUserId}`);
+        window.location.reload();
       }
 
-      window.location.reload();
+      await fetchFollowedUsers(user.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
       alert("There was an error processing your request.");
@@ -151,7 +141,7 @@ const Center = () => {
         className="rounded shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton onEntrySaved={fetchEntries} />
+        <DiaryEntryButton onEntrySaved={() => fetchEntries(user.userID)} />
       </div>
       <div className="d-flex justify-content-end">
         <FilterButton />
@@ -170,25 +160,19 @@ const Center = () => {
               <HomeDiaryDropdown></HomeDiaryDropdown>
             </div>
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
-              </div>
-              <div>
-                {" "}
-                <p className="m-0 text-start">
-                  {user && entry.userID === user.userID
-                    ? entry.visibility === "public" &&
-                      entry.anonimity === "private"
-                      ? `${entry.username} - Anonymous`
-                      : entry.username
-                    : entry.visibility === "public" &&
-                      entry.anonimity === "private"
-                    ? "Anonymous"
-                    : entry.username}
-                </p>
-                <h5 className="m-0 text-start">{entry.title}</h5>
-              </div>
+              <div className="profilePicture"></div>
 
+              <p className="m-0">
+                {user && entry.userID === user.userID
+                  ? entry.visibility === "public" &&
+                    entry.anonimity === "private"
+                    ? `${entry.username} - Anonymous`
+                    : entry.username
+                  : entry.visibility === "public" &&
+                    entry.anonimity === "private"
+                  ? "Anonymous"
+                  : entry.username}
+              </p>
               {user && user.userID !== entry.userID && (
                 <div>
                   <button

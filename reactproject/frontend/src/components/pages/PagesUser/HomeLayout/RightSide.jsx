@@ -4,6 +4,7 @@ import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 
 const Center = () => {
   const [user, setUser] = useState(null);
@@ -14,20 +15,21 @@ const Center = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    const followedUsersData = localStorage.getItem("followedUsers");
-
     if (userData) {
-      setUser(JSON.parse(userData));
-      fetchFollowers(JSON.parse(userData).userID);
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      fetchFollowers(parsedUser.userID);
       fetchUsers();
+      fetchFollowedUsers(parsedUser.userID);
     } else {
       navigate("/Login");
     }
-
-    if (followedUsersData) {
-      setFollowedUsers(JSON.parse(followedUsersData));
-    }
   }, [navigate]);
+
+  useEffect(() => {
+    console.log("Users:", users);
+    console.log("Followed Users:", followedUsers);
+  }, [users, followedUsers]);
 
   const fetchUsers = async () => {
     try {
@@ -46,6 +48,20 @@ const Center = () => {
       setFollowers(response.data);
     } catch (error) {
       console.error("Error fetching followers:", error);
+    }
+  };
+
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      const followedUsersData = response.data.map((user) => user.userID);
+      setFollowedUsers(followedUsersData);
+      console.log("Fetched followed users:", followedUsersData);
+      localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
     }
   };
 
@@ -119,13 +135,9 @@ const Center = () => {
               key={follower.userID}
               className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
             >
-              <div className="w-100 d-flex align-items-center justify-content-between gap-2">
-                <div className="d-flex align-items-center">
-                  <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                    <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
-                  </div>
-                  <p className="m-0 ms-2">{follower.username}</p>
-                </div>
+              <div className="d-flex align-items-center gap-2">
+                <div className="profilePicture"></div>
+                <p className="m-0 ms-2">{follower.username}</p>
                 <button
                   className="secondaryButton"
                   onClick={() => handleFollowToggle(follower.userID)}
@@ -156,19 +168,17 @@ const Center = () => {
             );
             return followedUser ? (
               <div
-                key={followedUserId}
+                key={followedUser.userID}
                 className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
               >
                 <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                    <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
-                  </div>
+                  <div className="profilePicture"></div>
                   <p className="m-0 ms-2">{followedUser.username}</p>
                 </div>
                 <div>
-                  {user.userID !== followedUserId && (
+                  {user.userID !== followedUser.userID && (
                     <button
-                      className="secondaryButton"
+                      className="orangeButton"
                       onClick={() => handleFollowToggle(followedUserId)}
                     >
                       Unfollow

@@ -8,13 +8,12 @@ import SendIcon from "../../../assets/SendIcon.png";
 
 const ChatButton = () => {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
     <>
-      <div class="ChatButton">
+      <div className="ChatButton">
         <button className="shadow" onClick={handleShow}>
           <img src={ChatIcon} alt="" />
           <span class="tooltiptext">Message Admin</span>
@@ -37,7 +36,7 @@ const ChatButton = () => {
                   respectful, and don't hesitate to communicate!
                 </p>
               </div>
-              {/* Message from admin  */}
+
               <div>
                 <div
                   className="rounded p-2 text-light"
@@ -51,7 +50,7 @@ const ChatButton = () => {
                   <p className="m-0">Hello, Kamusta?</p>
                 </div>
               </div>
-              {/* Message From User */}
+
               <div className="w-100 d-flex justify-content-end">
                 <div
                   className="rounded p-2 text-light"
