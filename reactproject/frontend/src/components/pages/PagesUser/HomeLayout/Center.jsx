@@ -204,6 +204,7 @@ const Center = () => {
             </div>
 
             <div className="text-start border-bottom p-2">
+              <h5>{entry.title}</h5>
               <p className="m-0">{entry.description}</p>
               {entry.diary_image && (
                 <img
