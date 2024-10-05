@@ -69,7 +69,7 @@ export default function Login() {
         className=" rounded shadow p-4"
         style={{
           width: "clamp(400px, 30vw, 500px)",
-          backgroundColor: "#990099",
+          backgroundColor: "var(--primary)",
         }}
       >
         <div>
@@ -160,7 +160,7 @@ export default function Login() {
           {/* Submit button */}
           <button
             type="submit"
-            className="orangeButton w-100 py-2"
+            className="orangeButton rounded w-100 py-2"
             disabled={loading}
           >
             {loading ? (

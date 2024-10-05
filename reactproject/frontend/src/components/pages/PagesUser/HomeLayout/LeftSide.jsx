@@ -64,6 +64,11 @@ const Center = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -136,12 +141,20 @@ const Center = () => {
             <p>No entries available.</p>
           ) : (
             entries.map((entry) => (
-              <div
-                key={entry.entryID}
-                className="journalEntries d-flex align-items-start flex-column rounded ps-2 pt-1 mt-2"
+              <Link
+                to="/DiaryEntry"
+                className="rounded text-decoration-none"
+                style={{ cursor: "pointer" }}
               >
-                <h6 className="text-start text-secondary">{entry.title}</h6>
-              </div>
+                <div
+                  key={entry.entryID}
+                  className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-2"
+                >
+                  <h6 className="m-0 p-2 text-start text-secondary">
+                    {entry.title} - {formatDate(entry.created_at)}
+                  </h6>
+                </div>
+              </Link>
             ))
           )}
         </div>

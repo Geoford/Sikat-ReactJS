@@ -54,7 +54,7 @@ export default function Register() {
         style={{ width: "clamp(450px, 80vw, 650px)" }}
       >
         <div className="border-bottom pb-1 mb-2">
-          <h3 className="m-0" style={{ color: "#990099" }}>
+          <h3 className="m-0" style={{ color: "var(--primary)" }}>
             Create New Account
           </h3>
           <p className="m-0 text-secondary">
@@ -172,7 +172,7 @@ export default function Register() {
               )}
             </div>
           </div>
-          <button type="submit" className="w-100 orangeButton">
+          <button type="submit" className="w-100 rounded orangeButton py-2">
             Register
           </button>
           {/* <p>

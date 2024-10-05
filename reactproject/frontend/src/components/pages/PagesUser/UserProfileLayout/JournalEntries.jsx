@@ -50,15 +50,15 @@ const RecentJournalEntries = () => {
 
   return (
     <div>
-      <div className=" p-2">
+      <div className=" p-2 text-secondary">
         <div className="d-flex justify-content-between border-bottom pt-2 px-1">
           <div>
             <h5>Journal entries</h5>
           </div>
           <div>
             <Link
-              to="/all-entries"
-              className="orangerText"
+              to="/DiaryEntries"
+              className="linkText rounded"
               style={{ cursor: "pointer" }}
             >
               View All

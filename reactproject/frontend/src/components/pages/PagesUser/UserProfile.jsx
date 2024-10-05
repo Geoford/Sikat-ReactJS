@@ -75,10 +75,10 @@ const UserProfile = () => {
   return (
     <UserPageMainLayout>
       <div
-        className="container d-flex rounded shadow-sm mt-4 p-3 py-4"
+        className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
         style={{ background: "#ffff" }}
       >
-        <div className="w-100 row m-0">
+        <div className="w-100 row m-0 py-3">
           <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0">
             <div
               style={{
@@ -140,19 +140,19 @@ const UserProfile = () => {
               </label>
             </div>
           </div>
-          <div className="col-md d-flex align-items-center justify-content-end flex-wrap text-light text-center text-md-start">
+          <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-md-start">
             <div
-              className="w-100 position-relative rounded p-4"
-              style={{ background: "#b300b3", height: "80%" }}
+              className="w-100 position-relative rounded border-bottom p-4"
+              style={{ background: "", height: "80%" }}
             >
-              <h3>
+              <h3 className="m-0">
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
               </h3>
-              <p>
+              <p className="m-0 text-secondary">
                 {user.followersCount} Followers - {user.followingCount}{" "}
                 Following
               </p>
-              <p>{user.bio || "No bio available."}</p>
+              <p className="mt-3">{user.bio || "No bio available."}</p>
             </div>
             <div className="">
               <ProfileDropdown></ProfileDropdown>

@@ -65,7 +65,7 @@
 .mainProfilePicture {
   background: linear-gradient(
     to right,
-    #ff8533,
+    var(--secondary),
     var(--primary),
     var(--primary)
   );
@@ -116,7 +116,7 @@
   background-color: var(--primary_hover);
 }
 .purpleButton {
-  background-color: #cc00cc;
+  background-color: var(--primary);
   border: none;
   border-radius: 5px;
   padding: 5px 20px 5px 20px;
@@ -124,7 +124,16 @@
   color: white;
 }
 .purpleButton:hover {
-  background-color: #b300b3;
+  background-color: var(--primary_hover);
+}
+.orangeButton {
+  background-color: var(--secondary);
+  border: none;
+  color: white;
+  transition: 0.2s;
+}
+.orangeButton:hover {
+  background-color: var(--secondary_hover);
 }
 .InteractButton {
   width: 100%;
@@ -218,14 +227,14 @@
   height: 60px;
   border-radius: 50%;
   border: none;
-  background-color: #cc00cc;
+  background-color: var(--primary);
   padding: 5px;
   position: relative;
   cursor: pointer;
   transition: 0.3s;
 }
 .ChatButton button:hover {
-  background-color: #990099;
+  background-color: var(--primary_hover);
   transform: scale(105%);
 }
 .ChatButton button img {
@@ -236,7 +245,7 @@
 
 .ChatButton .tooltiptext {
   width: 150px;
-  background-color: #990099;
+  background-color: var(--primary);
   color: #fff;
   text-align: center;
   border-radius: 6px;

@@ -54,7 +54,7 @@ const UserAccountDropdown = () => {
       <div>
         <Dropdown.Toggle
           as="button"
-          className="logo position-relative custom-button d-flex align-items-center justify-content-center overflow-visible"
+          className="logo position-relative custom-button d-flex align-items-center justify-content-center overflow-visible p-0"
           id="UserAccountDropdown"
           bsPrefix="custom-toggle"
         >
@@ -66,7 +66,7 @@ const UserAccountDropdown = () => {
               backgroundColor: "white",
               right: "-3px",
               bottom: "-1px",
-              border: "2px solid #990099",
+              border: "2px solid var(--primary)",
             }}
           >
             <img
@@ -76,15 +76,21 @@ const UserAccountDropdown = () => {
               style={{ width: "60%", height: "60%" }}
             />
           </div>
-          <img
-            className="icon "
-            src={
-              user && user.profile_image
-                ? `http://localhost:8081${user.profile_image}`
-                : DefaultProfile
-            }
-            alt="User Profile"
-          />
+          <div
+            className="overflow-hidden rounded-circle"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <img
+              className=" "
+              src={
+                user && user.profile_image
+                  ? `http://localhost:8081${user.profile_image}`
+                  : DefaultProfile
+              }
+              alt="User Profile"
+              style={{ width: "100%" }}
+            />
+          </div>
         </Dropdown.Toggle>
       </div>
 
@@ -100,10 +106,7 @@ const UserAccountDropdown = () => {
           </Dropdown.Item>
         )}
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
-          <Link
-            className="text-decoration-none text-dark"
-            to="/UpdateUser/${user.userID}"
-          >
+          <Link className="text-decoration-none text-dark" to="/DiaryEntries">
             <button className="w-100 btn btn-light text-end">
               Diary Entries
             </button>
