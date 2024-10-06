@@ -1,5 +1,6 @@
 import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
@@ -163,32 +164,41 @@ const Center = () => {
               <HomeDiaryDropdown></HomeDiaryDropdown>
             </div>
             <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-              <div className="profilePicture">
-                <img
-                  src={
-                    entry.profile_image
-                      ? `http://localhost:8081${entry.profile_image}`
-                      : DefaultProfile
-                  }
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-              <p className="m-0">
-                {user && entry.userID === user.userID
-                  ? entry.visibility === "public" &&
-                    entry.anonimity === "private"
-                    ? `${entry.username} - Anonymous`
-                    : entry.username
-                  : entry.visibility === "public" &&
-                    entry.anonimity === "private"
-                  ? "Anonymous"
-                  : entry.username}
-              </p>
+              <Link
+                to="/Profile"
+                className="linkText rounded"
+                style={{ cursor: "pointer" }}
+              >
+                <div>
+                  <div className="profilePicture">
+                    <img
+                      src={
+                        entry.profile_image
+                          ? `http://localhost:8081${entry.profile_image}`
+                          : DefaultProfile
+                      }
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                  <p className="m-0">
+                    {user && entry.userID === user.userID
+                      ? entry.visibility === "public" &&
+                        entry.anonimity === "private"
+                        ? `${entry.username} - Anonymous`
+                        : entry.username
+                      : entry.visibility === "public" &&
+                        entry.anonimity === "private"
+                      ? "Anonymous"
+                      : entry.username}
+                  </p>
+                </div>
+              </Link>
+
               {user && user.userID !== entry.userID && (
                 <div>
                   <button
