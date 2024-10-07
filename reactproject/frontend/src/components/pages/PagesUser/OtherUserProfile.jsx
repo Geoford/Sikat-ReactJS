@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "boxicons/css/boxicons.min.css";
+// import "boxicons/css/boxicons.min.css";
 import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfileIcon from "../../../assets/uploadProfile.png";

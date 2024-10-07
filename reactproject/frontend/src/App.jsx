@@ -21,7 +21,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<IndexPage />} />
-
           <Route
             path="/Login"
             element={
@@ -30,7 +29,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/Register"
             element={

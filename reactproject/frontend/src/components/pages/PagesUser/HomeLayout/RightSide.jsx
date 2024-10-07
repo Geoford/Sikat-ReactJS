@@ -57,8 +57,8 @@ const Center = () => {
       const response = await axios.get(
         `http://localhost:8081/followedUsers/${userID}`
       );
-      const followedUsersData = response.data.map((user) => user.userID);
-      setFollowedUsers(followedUsersData);
+      const followedUsersData = response.data; // Store full user data
+      setFollowedUsers(followedUsersData); // Set the full data to state
       console.log("Fetched followed users:", followedUsersData);
       localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
     } catch (error) {
@@ -127,6 +127,7 @@ const Center = () => {
             <h4 className="text-secondary">Followers</h4>
           </div>
         </div>
+
         <div
           className="mt-2 pe-1"
           style={{ height: "25vh", overflowY: "scroll" }}
@@ -177,46 +178,41 @@ const Center = () => {
           className="mt-2 pe-1"
           style={{ height: "40vh", overflowY: "scroll" }}
         >
-          {followedUsers.map((followedUserId) => {
-            const followedUser = users.find(
-              (user) => user.userID === followedUserId
-            );
-            return followedUser ? (
-              <div
-                key={followedUser.userID}
-                className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
-              >
-                <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture">
-                    <img
-                      src={
-                        followedUser.profile_image
-                          ? `http://localhost:8081${followedUser.profile_image}`
-                          : DefaultProfile
-                      }
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                  <p className="m-0 ms-2">FullName</p>
+          {followedUsers.map((followedUser) => (
+            <div
+              key={followedUser.userID}
+              className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
+            >
+              <div className="d-flex align-items-center gap-2">
+                <div className="profilePicture">
+                  <img
+                    src={
+                      followedUser.profile_image
+                        ? `http://localhost:8081${followedUser.profile_image}`
+                        : DefaultProfile
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
                 </div>
-                <div>
-                  {user.userID !== followedUser.userID && (
-                    <button
-                      className="secondaryButton"
-                      onClick={() => handleFollowToggle(followedUserId)}
-                    >
-                      Unfollow
-                    </button>
-                  )}
-                </div>
+                <p className="m-0 ms-2">{followedUser.username}</p>
               </div>
-            ) : null;
-          })}
+              <div>
+                {user.userID !== followedUser.userID && (
+                  <button
+                    className="orangeButton"
+                    onClick={() => handleFollowToggle(followedUser.userID)}
+                  >
+                    Unfollow
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

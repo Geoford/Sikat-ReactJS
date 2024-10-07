@@ -6,8 +6,8 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const fs = require("fs");
-
 const app = express();
+const Pusher = require("pusher");
 
 app.use(express.json());
 app.use(cors());
@@ -20,6 +20,14 @@ const db = mysql.createConnection({
   user: "root",
   password: "",
   database: "sikat-ediary",
+});
+
+const pusher = new Pusher({
+  appId: "1875705",
+  key: "4810211a14a19b86f640",
+  secret: "e3bd24cb43cd9520c5ca",
+  cluster: "ap1",
+  useTLS: true,
 });
 
 db.connect((err) => {
@@ -584,25 +592,35 @@ app.delete("/unfollow/:followUserId", (req, res) => {
   });
 });
 
-app.get("/followedUsers/:userID", (req, res) => {
-  const userID = req.params.userID;
-
+const getFollowedUsersFromDatabase = async (userID) => {
   const query = `
     SELECT user_table.userID, user_table.username, user_profiles.profile_image
     FROM followers
-    JOIN user_table ON followers.followedUserID = user_table.userID
-    JOIN user_profiles ON followers.followedUserID = user_profiles.userID
+    INNER JOIN user_table ON followers.followedUserID = user_table.userID
+    INNER JOIN user_profiles ON followers.followedUserID = user_profiles.userID
     WHERE followers.userID = ?
   `;
 
-  db.query(query, [userID], (err, results) => {
-    if (err) {
-      console.error("Error fetching followed users:", err);
-      return res.status(500).json({ error: "Error fetching followed users" });
-    }
-
-    res.status(200).json(results);
+  return new Promise((resolve, reject) => {
+    db.query(query, [userID], (err, results) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(results);
+    });
   });
+};
+
+app.get("/followedUsers/:userID", async (req, res) => {
+  const userID = req.params.userID;
+
+  try {
+    const followedUsers = await getFollowedUsersFromDatabase(userID);
+    res.status(200).json(followedUsers);
+  } catch (error) {
+    console.error("Error fetching followed users:", error);
+    res.status(500).json({ error: "Failed to fetch followed users" });
+  }
 });
 
 const getFollowersFromDatabase = async (userID) => {
@@ -631,6 +649,97 @@ app.get("/followers/:userID", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch followers" });
   }
+});
+
+app.get("/fetchComments/:entryID", (req, res) => {
+  const { entryID } = req.params;
+  const query = `
+    SELECT 
+      comments.commentID, comments.text, comments.created_at, comments.replyCommentID,
+      user_table.username, user_profiles.profile_image
+    FROM comments
+    INNER JOIN user_table ON comments.userID = user_table.userID
+    INNER JOIN user_profiles ON comments.userID = user_profiles.userID
+    WHERE comments.entryID = ?
+    ORDER BY comments.created_at ASC
+  `;
+
+  db.query(query, [entryID], (err, results) => {
+    if (err) {
+      console.error("Error fetching comments:", err);
+      return res.status(500).json({ error: "Failed to fetch comments" });
+    }
+
+    // Log the results for debugging purposes
+    console.log("Fetched comments:", results);
+
+    res.status(200).json(results);
+  });
+});
+
+app.post("/comments", (req, res) => {
+  const { userID, text, entryID, replyCommentID } = req.body;
+
+  if (!text || !userID || !entryID) {
+    return res
+      .status(400)
+      .json({ error: "User ID, Entry ID, and text are required." });
+  }
+
+  const query =
+    "INSERT INTO comments (userID, entryID, text, replyCommentID) VALUES (?, ?, ?, ?)";
+  db.query(
+    query,
+    [userID, entryID, text, replyCommentID || null],
+    (err, results) => {
+      if (err) {
+        console.error("Error posting comment:", err);
+        return res.status(500).json({ error: "Failed to post comment" });
+      }
+      res.status(201).json({
+        message: "Comment posted successfully!",
+        commentID: results.insertId,
+      });
+    }
+  );
+});
+
+app.delete("/deleteComments/:commentID", (req, res) => {
+  const { commentID } = req.params;
+  const userID = req.body.userID; // Assuming you pass userID in the request body
+
+  // Step 1: Check if the comment exists and retrieve the entryID and userID
+  const commentQuery = `
+    SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
+    FROM comments
+    INNER JOIN entries ON comments.entryID = entries.entryID
+    WHERE comments.commentID = ?
+  `;
+
+  db.query(commentQuery, [commentID], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(404).json({ error: "Comment not found." });
+    }
+
+    const commentUserID = results[0].commentUserID;
+    const entryUserID = results[0].entryUserID;
+
+    // Step 2: Check if the requesting user is the owner of the comment and the diary entry
+    if (commentUserID !== userID && entryUserID !== userID) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this comment." });
+    }
+
+    // Step 3: Proceed with deletion if checks pass
+    db.query("DELETE FROM comments WHERE commentID = ?", [commentID], (err) => {
+      if (err) {
+        console.error("Error deleting comment:", err);
+        return res.status(500).json({ error: "Failed to delete comment." });
+      }
+      res.status(204).send(); // Successfully deleted
+    });
+  });
 });
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
@@ -704,6 +813,44 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
       });
     }
   });
+});
+
+app.post("/message", (req, res) => {
+  const { message, userID } = req.body; // Ensure userID is being retrieved correctly
+
+  if (!userID || !message) {
+    return res.status(400).send("UserID and message are required.");
+  }
+
+  db.query(
+    "INSERT INTO messages (userID, message) VALUES (?, ?)",
+    [userID, message],
+    (err) => {
+      if (err) {
+        console.error("Database error:", err); // Log database error
+        return res.status(500).send("Error sending message.");
+      }
+
+      pusher.trigger("chat-channel", "message-event", {
+        message,
+        userID,
+      });
+
+      res.status(200).send("Message sent successfully");
+    }
+  );
+});
+
+app.get("/messages", (req, res) => {
+  db.query(
+    "SELECT * FROM messages ORDER BY created_at DESC",
+    (err, results) => {
+      if (err) {
+        return res.status(500).send("Error fetching messages.");
+      }
+      res.json(results);
+    }
+  );
 });
 
 const PORT = process.env.PORT || 8081;

@@ -3,9 +3,67 @@ import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import publicIcon from "../../../assets/public.png";
 import privateIcon from "../../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
 
 const DiaryEntries = () => {
-  // List of months
+  const [user, setUser] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setIsLoading(false);
+        });
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
+
+  const fetchEntries = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+      );
+      if (response.data.entries && Array.isArray(response.data.entries)) {
+        setEntries(response.data.entries);
+      } else {
+        console.error("Response data is not an array", response.data);
+        setEntries([]);
+      }
+    } catch (error) {
+      console.error("Error fetching entries:", error);
+      setError("No entry found.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const months = [
     "January",
     "February",
@@ -21,28 +79,23 @@ const DiaryEntries = () => {
     "December",
   ];
 
-  // Get the current year and month
   const currentYear = new Date().getFullYear();
-  const currentMonthIndex = new Date().getMonth(); // This gives us a 0-based index for the current month
+  const currentMonthIndex = new Date().getMonth();
 
-  // List of years from 2024 to the current year
   const years = Array.from(
     { length: currentYear - 2024 + 1 },
     (_, i) => 2024 + i
   );
 
-  // State to hold the selected month and year, with the current month preselected
-  const [selectedMonth, setSelectedMonth] = useState(months[currentMonthIndex]); // Preselect current month
-  const [selectedYear, setSelectedYear] = useState(currentYear); // Preselect current year
+  const [selectedMonth, setSelectedMonth] = useState(months[currentMonthIndex]);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [daysInMonth, setDaysInMonth] = useState([]);
 
-  // Function to calculate the number of days in a month
   const getDaysInMonth = (month, year) => {
     const monthIndex = months.indexOf(month);
     return new Date(year, monthIndex + 1, 0).getDate();
   };
 
-  // Update days when month or year changes
   useEffect(() => {
     if (selectedMonth && selectedYear) {
       const days = getDaysInMonth(selectedMonth, selectedYear);
@@ -52,12 +105,31 @@ const DiaryEntries = () => {
     }
   }, [selectedMonth, selectedYear]);
 
+  const findEntryForDay = (day) => {
+    return entries.find((entry) => {
+      const entryDate = new Date(entry.date);
+      return (
+        entryDate.getDate() === day &&
+        entryDate.getMonth() === months.indexOf(selectedMonth) &&
+        entryDate.getFullYear() === selectedYear
+      );
+    });
+  };
+
+  if (isLoading) {
+    return <Spinner animation="border" role="status" />; // Add a spinner
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>; // Show error if something went wrong
+  }
+
+  if (!user) return null;
+
   return (
     <UserPageMainLayout>
       <div>
-        {/* Display Days in the Selected Month */}
         <div className="container-fluid container-md mb-2 mt-5">
-          {/* Display Selected Month and Year */}
           <div className="dateContainer shadow">
             <div>
               <select
@@ -92,34 +164,42 @@ const DiaryEntries = () => {
         <div className="container-fluid container-md">
           {daysInMonth.length > 0 && (
             <div className="row">
-              {daysInMonth.map((day) => (
-                <div className="col-4 col-md-3 col-lg-2 py-1">
-                  <Link to="/DiaryEntry" className="text-decoration-none">
-                    <div
-                      className="days border rounded bg-light shadow-sm p-2"
-                      key={day}
-                      style={{ height: "80px" }}
+              {daysInMonth.map((day) => {
+                const entry = findEntryForDay(day);
+                return (
+                  <div className="col-4 col-md-3 col-lg-2 py-1" key={day}>
+                    <Link
+                      to={entry ? `/DiaryEntry/${entry.entryID}` : "#"}
+                      className="text-decoration-none"
                     >
-                      <div className="d-flex align-items-center gap-1">
-                        <p className="m-0 text-start text-secondary">{day}</p>{" "}
-                        <img
-                          className=""
-                          src={publicIcon}
-                          alt=""
-                          style={{ width: "15px", height: "15px" }}
-                        />
-                        <img
-                          className=""
-                          src={privateIcon}
-                          alt=""
-                          style={{ width: "15px", height: "15px" }}
-                        />
+                      <div
+                        className="days border rounded bg-light shadow-sm p-2"
+                        style={{ height: "80px" }}
+                      >
+                        <div className="d-flex align-items-center gap-1">
+                          <p className="m-0 text-start text-secondary">{day}</p>
+                          {entry && (
+                            <>
+                              <img
+                                src={
+                                  entry.privacy === "public"
+                                    ? publicIcon
+                                    : privateIcon
+                                }
+                                alt={entry.privacy}
+                                style={{ width: "15px", height: "15px" }}
+                              />
+                            </>
+                          )}
+                        </div>
+                        <h5 className="m-0 text-secondary">
+                          {entry ? entry.title : "No Entry"}
+                        </h5>
                       </div>
-                      <h5 className="m-0 text-secondary">Journal Title</h5>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

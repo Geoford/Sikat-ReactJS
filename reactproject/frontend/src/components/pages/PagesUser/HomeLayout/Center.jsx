@@ -239,7 +239,7 @@ const Center = () => {
                 </button>
               </div>
               <div className="col">
-                <CommentSection></CommentSection>
+                <CommentSection userID={user.userID} entryID={entry.entryID} />
               </div>
               <div className="col">
                 <button className="InteractButton">Flag</button>
