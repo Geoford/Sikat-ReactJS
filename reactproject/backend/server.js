@@ -816,8 +816,7 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
 });
 
 app.post("/message", (req, res) => {
-  const { message, userID } = req.body; // Ensure userID is being retrieved correctly
-
+  const { message, userID } = req.body;
   if (!userID || !message) {
     return res.status(400).send("UserID and message are required.");
   }
@@ -827,28 +826,62 @@ app.post("/message", (req, res) => {
     [userID, message],
     (err) => {
       if (err) {
-        console.error("Database error:", err); // Log database error
+        console.error("Database error:", err);
         return res.status(500).send("Error sending message.");
       }
 
-      pusher.trigger("chat-channel", "message-event", {
-        message,
-        userID,
-      });
+      // Notify only admin users with isAdmin = 1
+      db.query(
+        "SELECT userID FROM user_table WHERE isAdmin = 1",
+        (err, admins) => {
+          if (err) {
+            console.error("Error fetching admin users:", err);
+            return res.status(500).send("Error fetching admins.");
+          }
 
-      res.status(200).send("Message sent successfully");
+          // Trigger Pusher event for each admin
+          admins.forEach((admin) => {
+            pusher.trigger("chat-channel", "message-event", {
+              message,
+              userID: admin.userID, // Send message to each admin
+            });
+          });
+
+          res.status(200).send("Message sent to admins successfully");
+        }
+      );
     }
   );
 });
 
 app.get("/messages", (req, res) => {
+  const userID = req.query.userID;
+
+  // Check if the user is an admin
   db.query(
-    "SELECT * FROM messages ORDER BY created_at DESC",
+    "SELECT isAdmin FROM user_table WHERE userID = ?",
+    [userID],
     (err, results) => {
-      if (err) {
-        return res.status(500).send("Error fetching messages.");
+      if (err || results.length === 0) {
+        return res.status(500).send("Error checking user role.");
       }
-      res.json(results);
+
+      const isAdmin = results[0].isAdmin;
+      if (isAdmin) {
+        // If the user is an admin, return all messages
+        db.query(
+          "SELECT * FROM messages ORDER BY created_at DESC",
+          (err, messages) => {
+            if (err) {
+              return res.status(500).send("Error fetching messages.");
+            }
+            res.json(messages);
+          }
+        );
+      } else {
+        // Non-admins shouldn't have access to messages
+        res.status(403).send("Only admins can view messages.");
+      }
     }
   );
 });
