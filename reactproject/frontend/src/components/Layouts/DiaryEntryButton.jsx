@@ -9,6 +9,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
+import SubjectSelection from "./LayoutUser/SubjectSelection";
 
 function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -149,7 +150,10 @@ function DiaryEntryButton({ onEntrySaved }) {
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          <div className="mt-2">
+          <div>
+            <SubjectSelection></SubjectSelection>
+          </div>
+          <div className="">
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"

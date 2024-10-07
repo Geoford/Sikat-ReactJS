@@ -41,15 +41,21 @@ const UserDiary = () => {
   }, [navigate]);
 
   const handleClick = (entryID) => {
-    setActiveButtons((prevState) => ({
-      ...prevState,
-      [entryID]: !prevState[entryID],
-    }));
+    const updatedActiveButtons = {
+      ...activeButtons,
+      [entryID]: !activeButtons[entryID],
+    };
+    setActiveButtons(updatedActiveButtons);
 
-    setExpandButtons((prevState) => ({
-      ...prevState,
-      [entryID]: !prevState[entryID],
-    }));
+    const updatedExpandButtons = { ...expandButtons, [entryID]: true };
+    setExpandButtons(updatedExpandButtons);
+
+    setTimeout(() => {
+      updatedExpandButtons[entryID] = false;
+      setExpandButtons({ ...updatedExpandButtons });
+    }, 300);
+
+    handleGadify(entryID);
   };
 
   if (error) {

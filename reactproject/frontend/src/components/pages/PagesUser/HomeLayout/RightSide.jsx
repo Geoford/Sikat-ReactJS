@@ -202,12 +202,12 @@ const Center = () => {
                       }}
                     />
                   </div>
-                  <p className="m-0 ms-2">{followedUser.username}</p>
+                  <p className="m-0 ms-2">FullName</p>
                 </div>
                 <div>
                   {user.userID !== followedUser.userID && (
                     <button
-                      className="orangeButton"
+                      className="secondaryButton"
                       onClick={() => handleFollowToggle(followedUserId)}
                     >
                       Unfollow

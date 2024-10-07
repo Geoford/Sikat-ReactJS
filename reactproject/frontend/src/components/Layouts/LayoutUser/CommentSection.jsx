@@ -5,6 +5,7 @@ import AnonymousIcon from "../../../assets/Anonymous.png";
 import SendIcon from "../../../assets/SendIcon.png";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import Accordion from "react-bootstrap/Accordion";
 import CommentDropdown from "./CommentDropdown";
 
 const CommentSection = () => {
@@ -60,34 +61,51 @@ const CommentSection = () => {
                   <button className="btn btn-light btn-sm">Gadify</button>
                   <button className="btn btn-light btn-sm">Reply</button>
                 </div>
-                <div className="d-flex align-items-start flex-column gap-2 ps-1 pb-2 mt-2">
-                  <div className="w-100 d-flex align-items-center justify-content-between pe-3">
-                    <div className="d-flex align-items-center gap-2">
-                      <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                        <img
-                          src={AnonymousIcon}
-                          alt=""
-                          style={{ width: "80%" }}
-                        />
+                <Accordion
+                  className="border-0"
+                  defaultActiveKey={["null"]}
+                  alwaysOpen
+                >
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>
+                      <p className="m-0 text-secondary">Replies</p>
+                    </Accordion.Header>
+                    <Accordion.Body className="p-0 ps-3">
+                      <div className="d-flex align-items-start flex-column gap-2 ps-1 pb-2 mt-2">
+                        <div className="w-100 d-flex align-items-center justify-content-between pe-3">
+                          <div className="d-flex align-items-center gap-2">
+                            <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                              <img
+                                src={AnonymousIcon}
+                                alt=""
+                                style={{ width: "80%" }}
+                              />
+                            </div>
+                            <div className="d-flex justify-content-start flex-column">
+                              <h6 className="m-0 text-start">UserName</h6>
+                            </div>
+                          </div>
+                          <div>
+                            <CommentDropdown></CommentDropdown>
+                          </div>
+                        </div>
+                        <p className="ps-5 m-0 text-secondary">
+                          Sample Comment Lorem ipsum, dolor sit amet consectetur
+                          adipisicing elit. Quisquam explicabo accusamus nobis
+                          rem ipsa illo?
+                        </p>
+                        <div className="ps-5">
+                          <button className="btn btn-light btn-sm">
+                            Gadify
+                          </button>
+                          <button className="btn btn-light btn-sm">
+                            Reply
+                          </button>
+                        </div>
                       </div>
-                      <div className="d-flex justify-content-start flex-column">
-                        <h6 className="m-0 text-start">UserName</h6>
-                      </div>
-                    </div>
-                    <div>
-                      <CommentDropdown></CommentDropdown>
-                    </div>
-                  </div>
-                  <p className="ps-5 m-0 text-secondary">
-                    Sample Comment Lorem ipsum, dolor sit amet consectetur
-                    adipisicing elit. Quisquam explicabo accusamus nobis rem
-                    ipsa illo?
-                  </p>
-                  <div className="ps-5">
-                    <button className="btn btn-light btn-sm">Gadify</button>
-                    <button className="btn btn-light btn-sm">Reply</button>
-                  </div>
-                </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
               </div>
             </div>
           </div>

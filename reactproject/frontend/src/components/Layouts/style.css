@@ -99,21 +99,23 @@
   border-radius: 5px;
   padding: 5px 20px 5px 20px;
   transition: 0.3s;
-  color: white;
+  color: #ffff;
 }
 .primaryButton:hover {
   background-color: var(--primary_hover);
 }
 .secondaryButton {
-  border: 2px solid var(--primary);
+  /* background-color: var(--primary); */
+  background-color: transparent;
+  border: none;
   border-radius: 5px;
-  padding: 5px 20px 5px 20px;
+  /* padding: 5px 20px 5px 20px; */
   transition: 0.3s;
   color: var(--primary);
 }
 .secondaryButton:hover {
-  color: #ffff;
-  background-color: var(--primary_hover);
+  /* background-color: var(--primary_hover); */
+  color: var(--primary_hover);
 }
 .purpleButton {
   background-color: var(--primary);
@@ -131,6 +133,7 @@
   border: none;
   color: white;
   transition: 0.2s;
+  border-radius: 5px;
 }
 .orangeButton:hover {
   background-color: var(--secondary_hover);
@@ -338,4 +341,30 @@ input.form-control:focus {
 }
 .days:hover h5 {
   color: var(--secondary) !important;
+}
+
+/* ACCORDION CUSTOMIZE */
+.accordion-item {
+  border: none !important;
+  background-color: transparent !important;
+  color: gray !important;
+}
+
+.accordion-button {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.accordion-button:focus {
+  box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+.accordion-button::after {
+  display: none !important;
 }

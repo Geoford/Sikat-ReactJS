@@ -163,13 +163,13 @@ const Center = () => {
             <div className="position-absolute" style={{ right: "20px" }}>
               <HomeDiaryDropdown></HomeDiaryDropdown>
             </div>
-            <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+            <div className="d-flex align-items-center border-bottom pb-2">
               <Link
                 to="/Profile"
                 className="linkText rounded"
                 style={{ cursor: "pointer" }}
               >
-                <div>
+                <div className="d-flex align-items-center gap-2">
                   <div className="profilePicture">
                     <img
                       src={
@@ -196,13 +196,15 @@ const Center = () => {
                       ? "Anonymous"
                       : entry.username}
                   </p>
+
+                  <p className="m-0 mb-1 fs-2">·</p>
                 </div>
               </Link>
 
               {user && user.userID !== entry.userID && (
                 <div>
                   <button
-                    className="primaryButton"
+                    className="secondaryButton"
                     onClick={() => handleFollowToggle(entry.userID)}
                   >
                     {followedUsers.includes(entry.userID)
