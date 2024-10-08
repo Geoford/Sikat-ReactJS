@@ -177,7 +177,9 @@ const UserChatButton = () => {
               >
                 <div className="mb-2">
                   <p className="m-0 text-secondary text-center">
-                    You are now messaging with Admin.
+                    You are now communicating with Admin. Please feel free to
+                    reach out if you need assistance, and ensure that all
+                    interactions remain respectful.
                   </p>
                 </div>
 
@@ -204,9 +206,10 @@ const UserChatButton = () => {
                 ))}
               </div>
 
-              <div>
+              <div className="position-relative">
                 <FloatingLabel controlId="floatingTextarea2" label="Message">
                   <Form.Control
+                    className="pe-3"
                     as="textarea"
                     placeholder="Leave a message here"
                     style={{ height: "70px" }}

@@ -3,7 +3,7 @@ import Center from "../../pages/PagesAdmin/HomeLayout/Center";
 import RightSide from "../../pages/PagesAdmin/HomeLayout/RightSide";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import UserPageMainLayout from "../../Layouts/LayoutAdmin/UserPageMainLayout";
+import AdminPageMainLayout from "../../Layouts/LayoutAdmin/AdminPageMainLayout";
 import ChatButton from "../../Layouts/LayoutAdmin/ChatButton";
 import "boxicons/css/boxicons.min.css";
 
@@ -21,7 +21,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <UserPageMainLayout>
+    <AdminPageMainLayout>
       <div className="row mt-3 px-3">
         <div>
           <ChatButton />
@@ -52,6 +52,6 @@ export default function Home() {
           <RightSide />
         </div>
       </div>
-    </UserPageMainLayout>
+    </AdminPageMainLayout>
   );
 }
