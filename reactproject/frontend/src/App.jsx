@@ -12,6 +12,8 @@ import Profile from "./components/pages/PagesUser/OtherUserProfile";
 // import UpdateUser from "./components/pages/PagesUser/UpdateUser";
 
 // ADMIN
+import AdminHome from "./components/pages/PagesAdmin/Home";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -43,6 +45,9 @@ function App() {
           <Route path="/Profile/" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/" element={<DiaryEntry />} />
+
+          {/* ADMIN ROUTES */}
+          <Route path="/Admin/Home" element={<AdminHome />} />
         </Routes>
       </BrowserRouter>
     </div>
