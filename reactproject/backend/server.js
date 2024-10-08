@@ -137,7 +137,11 @@ app.post("/Login", (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    return res.json({ userID: user.userID, username: user.username });
+    return res.json({
+      userID: user.userID,
+      username: user.username,
+      isAdmin: user.isAdmin,
+    });
   });
 });
 

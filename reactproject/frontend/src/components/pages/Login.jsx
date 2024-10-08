@@ -38,7 +38,13 @@ export default function Login() {
         .post("http://localhost:8081/Login", values)
         .then((res) => {
           localStorage.setItem("user", JSON.stringify(res.data));
-          navigate("/Home");
+          if (res.data.isAdmin) {
+            // If the user is an admin, navigate to the admin dashboard
+            navigate("/Admin/Home");
+          } else {
+            // Otherwise, navigate to the user dashboard
+            navigate("/Home");
+          }
         })
         .catch((err) => {
           console.error("Login Error:", err);
