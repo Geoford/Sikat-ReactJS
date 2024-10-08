@@ -845,73 +845,56 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
 });
 
 app.post("/message", (req, res) => {
-  const { message, userID } = req.body;
-  if (!userID || !message) {
-    return res.status(400).send("UserID and message are required.");
+  const { senderID, recipientID, message } = req.body;
+  if (!senderID || !recipientID || !message) {
+    return res
+      .status(400)
+      .send("SenderID, recipientID, and message are required.");
   }
 
   db.query(
-    "INSERT INTO messages (userID, message) VALUES (?, ?)",
-    [userID, message],
+    "INSERT INTO messages (senderID, recipientID, message) VALUES (?, ?, ?)",
+    [senderID, recipientID, message],
     (err) => {
       if (err) {
         console.error("Database error:", err);
         return res.status(500).send("Error sending message.");
       }
 
-      // Notify only admin users (isAdmin = 1)
-      db.query(
-        "SELECT userID FROM user_table WHERE isAdmin = 1",
-        (err, admins) => {
-          if (err) {
-            console.error("Error fetching admin users:", err);
-            return res.status(500).send("Error fetching admins.");
-          }
+      // Notify the recipient via Pusher
+      pusher.trigger(`user-${recipientID}`, "message-event", {
+        message,
+        senderID,
+      });
 
-          admins.forEach((admin) => {
-            pusher.trigger("chat-channel", "message-event", {
-              message,
-              username: `User ${userID}`,
-            });
-          });
-
-          res.status(200).send("Message sent to admins successfully");
-        }
-      );
+      res.status(200).send("Message sent successfully");
     }
   );
 });
 
 app.get("/messages", (req, res) => {
-  const userID = req.query.userID;
+  const { userID, withUserID } = req.query;
 
-  // Check if the user is an admin
-  db.query(
-    "SELECT isAdmin FROM user_table WHERE userID = ?",
-    [userID],
-    (err, results) => {
-      if (err || results.length === 0) {
-        return res.status(500).send("Error checking user role.");
-      }
+  if (!userID || !withUserID) {
+    return res.status(400).send("userID and withUserID are required.");
+  }
 
-      const isAdmin = results[0].isAdmin;
-      if (isAdmin) {
-        // If the user is an admin, return all messages
-        db.query(
-          "SELECT * FROM messages ORDER BY created_at DESC",
-          (err, messages) => {
-            if (err) {
-              return res.status(500).send("Error fetching messages.");
-            }
-            res.json(messages);
-          }
-        );
-      } else {
-        // Non-admins shouldn't have access to messages
-        res.status(403).send("Only admins can view messages.");
-      }
+  // Fetch messages where (senderID = userID AND recipientID = withUserID)
+  // OR (senderID = withUserID AND recipientID = userID)
+  const query = `
+    SELECT * FROM messages 
+    WHERE (senderID = ? AND recipientID = ?) 
+       OR (senderID = ? AND recipientID = ?)
+    ORDER BY created_at ASC
+  `;
+
+  db.query(query, [userID, withUserID, withUserID, userID], (err, messages) => {
+    if (err) {
+      console.error("Error fetching messages:", err);
+      return res.status(500).send("Error fetching messages.");
     }
-  );
+    res.json(messages);
+  });
 });
 
 const PORT = process.env.PORT || 8081;
