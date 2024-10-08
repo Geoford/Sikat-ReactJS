@@ -413,7 +413,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  const query = "SELECT userID, username FROM user_table";
+  const query = "SELECT userID, username, firstName, lastName FROM user_table";
 
   db.query(query, (err, results) => {
     if (err) {
