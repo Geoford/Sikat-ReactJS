@@ -1,4 +1,4 @@
-import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
+import AdminPublishButton from "../../../Layouts/AdminPublishButton";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -145,7 +145,7 @@ const Center = () => {
         className="rounded shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton onEntrySaved={() => fetchEntries(user.userID)} />
+        <AdminPublishButton onEntrySaved={() => fetchEntries(user.userID)} />
       </div>
       <div className="d-flex justify-content-end">
         <FilterButton />

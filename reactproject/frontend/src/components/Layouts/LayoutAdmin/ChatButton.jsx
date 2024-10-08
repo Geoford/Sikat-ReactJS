@@ -107,6 +107,7 @@ const ChatButton = () => {
           <div>
             {/* Show UserList if no user is selected, otherwise show ChatRoom */}
             {!selectedUser ? (
+              // USERLIST
               <div
                 className="UserList "
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
@@ -153,23 +154,40 @@ const ChatButton = () => {
                           {userItem.firstName} {userItem.lastName} (FullName) or
                           (Alias) {/* if the user is anonymous */}
                         </p>
+                        <div
+                          className="d-flex justify-content-center align-items-center"
+                          style={{
+                            backgroundColor: "red",
+                            height: "20px",
+                            width: "20px",
+                            borderRadius: "50%",
+                          }}
+                        >
+                          <p
+                            className="m-0 text-light"
+                            style={{ fontSize: "13px" }}
+                          >
+                            0
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             ) : (
+              // CHATROOM
               <div
                 className="ChatRoom"
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
                 {/* Back button */}
                 <div
-                  style
+                  className="py-2 d-flex align-items-center"
                   onClick={handleBackClick}
                   style={{ cursor: "pointer" }}
                 >
-                  <h5>
+                  <h5 className="m-0 my-1">
                     <i className="bx bx-arrow-back"></i> {selectedUser.username}
                   </h5>
                 </div>
@@ -179,16 +197,6 @@ const ChatButton = () => {
                     className="p-2 border rounded overflow-y-scroll"
                     style={{ height: "65%" }}
                   >
-                    <p>
-                      Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet
-                      consectetur adipisicing elit. Impedit est voluptatem quae
-                      soluta placeat, suscipit sit officia accusantium,
-                      voluptate eveniet sapiente provident incidunt voluptas
-                      optio ad perferendis iste molestiae. Quisquam, ea aliquid.
-                      Quod hic ex, optio ea esse illo nisi quam inventore
-                      numquam delectus reprehenderit, repellat, odio incidunt in
-                      temporibus.
-                    </p>
                     {messages.map((msg, index) => (
                       <div
                         key={index}
@@ -248,11 +256,11 @@ const ChatButton = () => {
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer>
+        {/* <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-        </Modal.Footer>
+        </Modal.Footer> */}
       </Modal>
     </>
   );

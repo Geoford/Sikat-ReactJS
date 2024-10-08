@@ -4,7 +4,7 @@ import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const UserAccountDropdown = () => {
+const AdminAccountDropdown = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -88,7 +88,7 @@ const UserAccountDropdown = () => {
                   : DefaultProfile
               }
               alt="User Profile"
-              style={{ width: "100%" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
         </Dropdown.Toggle>
@@ -125,4 +125,4 @@ const UserAccountDropdown = () => {
   );
 };
 
-export default UserAccountDropdown;
+export default AdminAccountDropdown;

@@ -137,14 +137,16 @@ const ChatButton = () => {
               >
                 <div className="mb-2">
                   <p className="m-0 text-secondary text-center">
-                    You are now messaging with Admin.
+                    You are now communicating with Admin. Please feel free to
+                    reach out if you need assistance, and ensure that all
+                    interactions remain respectful.
                   </p>
                 </div>
 
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`w-100 d-flex justify-content-${
+                    className={`w-100 mb-1 d-flex justify-content-${
                       msg.username === user?.username ? "end" : "start"
                     }`}
                   >
@@ -154,7 +156,7 @@ const ChatButton = () => {
                         backgroundColor:
                           msg.username === user?.username
                             ? "#ff8533"
-                            : "#990099",
+                            : "var(--primary)",
                         maxWidth: "200px",
                         width: "fit-content",
                         wordWrap: "break-word",
@@ -166,9 +168,10 @@ const ChatButton = () => {
                 ))}
               </div>
 
-              <div>
+              <div className="position-relative">
                 <FloatingLabel controlId="floatingTextarea2" label="Message">
                   <Form.Control
+                    className="pe-3"
                     as="textarea"
                     placeholder="Leave a message here"
                     style={{ height: "70px" }}
@@ -176,28 +179,27 @@ const ChatButton = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                   />
                 </FloatingLabel>
+                {user?.isAdmin || admin ? (
+                  <button
+                    className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                    onClick={sendMessage}
+                    style={{
+                      backgroundColor: "transparent",
+                      right: "10px",
+                      bottom: "5px",
+                    }}
+                  >
+                    <img
+                      src={SendIcon}
+                      alt=""
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </button>
+                ) : null}
               </div>
             </div>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          {user?.isAdmin || admin ? (
-            <button
-              className="orangeButton py-2 d-flex align-items-center justify-content-center"
-              onClick={sendMessage}
-            >
-              <p className="me-2 mb-0">Send</p>
-              <img
-                src={SendIcon}
-                alt=""
-                style={{ width: "20px", height: "20px" }}
-              />
-            </button>
-          ) : null}
-        </Modal.Footer>
       </Modal>
     </>
   );

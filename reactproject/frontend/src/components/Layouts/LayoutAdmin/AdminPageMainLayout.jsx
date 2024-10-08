@@ -1,15 +1,15 @@
 import React from "react";
-import UserNavBar from "./NavBarUser";
+import NavBarAdmin from "./NavBarAdmin";
 import Background from "../Background";
 
-const UserPageMainLayout = ({ children }) => {
+const AdminPageMainLayout = ({ children }) => {
   return (
     <div>
-      <UserNavBar />
+      <NavBarAdmin />
       <div>{children}</div>
       <Background />
     </div>
   );
 };
 
-export default UserPageMainLayout;
+export default AdminPageMainLayout;

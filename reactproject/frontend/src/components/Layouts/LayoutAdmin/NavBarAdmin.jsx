@@ -4,9 +4,9 @@ import Notification from "../../../assets/Notification.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationButton from "../LayoutUser/OffCanvassNotification";
-import UserAccountDropdown from "./UserAccountDropdown";
+import AdminAccountDropdown from "./AdminAccountDropdown";
 
-const NavBarUser = () => {
+const NavBarAdmin = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ const NavBarUser = () => {
             <NotificationButton />
           </div>
           <div>
-            <UserAccountDropdown />
+            <AdminAccountDropdown />
           </div>
         </div>
       </div>
@@ -50,4 +50,4 @@ const NavBarUser = () => {
   );
 };
 
-export default NavBarUser;
+export default NavBarAdmin;

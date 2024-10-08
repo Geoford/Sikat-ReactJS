@@ -26,7 +26,7 @@ export default function Home() {
           <ChatButton />
         </div>
         <div
-          className="col-md"
+          className="col-lg d-none d-lg-block"
           style={{
             position: "sticky",
             top: "75px",
@@ -36,11 +36,11 @@ export default function Home() {
         >
           <LeftSide />
         </div>
-        <div className="col-md-6">
+        <div className="col-lg-6">
           <Center />
         </div>
         <div
-          className="col-md"
+          className="col-lg d-none d-lg-block"
           style={{
             position: "sticky",
             top: "75px",
