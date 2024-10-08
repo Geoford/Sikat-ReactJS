@@ -100,99 +100,138 @@ const ChatButton = () => {
         <Modal.Header closeButton>
           <Modal.Title>Messages</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          style={{ height: "clamp(400px, 30vh, 500px)", overflow: "hidden" }}
+        >
           <div>
             {/* Show UserList if no user is selected, otherwise show ChatRoom */}
             {!selectedUser ? (
-              <div className="UserList d-flex flex-column gap-2">
-                <div>Users</div>
-                {users.map((userItem, index) => (
+              <div
+                className="UserList "
+                style={{ height: "clamp(400px, 30vh, 500px)" }}
+              >
+                <div>
+                  <h5 className="m-0 ms-2">Users</h5>
+                </div>
+                <div style={{ height: "85%" }}>
                   <div
-                    key={index}
-                    className="user-item d-flex align-items-center gap-2"
-                    onClick={() => handleUserClick(userItem)}
-                    style={{ cursor: "pointer" }} // Add cursor pointer for click feedback
+                    className="mb-4 pe-2 d-flex flex-column gap-2 overflow-y-scroll"
+                    style={{ height: "100%" }}
                   >
-                    <div className="profilePicture">
-                      <img
-                        src={DefaultProfile}
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <p className="m-0">
-                      {userItem.firstName} {userItem.lastName} or (Alias){" "}
-                      {/*if the user is anonymous*/}
-                    </p>
+                    {users.map((userItem, index) => (
+                      <div
+                        key={index}
+                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
+                        onClick={() => handleUserClick(userItem)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="profilePicture">
+                          <img
+                            src={DefaultProfile}
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <p className="m-0">
+                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
+                          {/* if the user is anonymous */}
+                        </p>
+                      </div>
+                    ))}
+                    {users.map((userItem, index) => (
+                      <div
+                        key={index}
+                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
+                        onClick={() => handleUserClick(userItem)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="profilePicture">
+                          <img
+                            src={DefaultProfile}
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <p className="m-0">
+                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
+                          {/* if the user is anonymous */}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             ) : (
               <div
-                className="ChatRoom border rounded mb-1 p-2"
-                style={{ height: "300px", overflowY: "scroll" }}
+                className="ChatRoom mb-1 p-2"
+                style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
                 {/* Back button */}
                 <div onClick={handleBackClick} style={{ cursor: "pointer" }}>
-                  Back
+                  <i className="bx bx-arrow-back"></i> {selectedUser.username}
                 </div>
-
-                <div className="mb-2">
-                  <p className="m-0 text-secondary text-center">
-                    You're now messaging {selectedUser.username}. Please be
-                    respectful, and don't hesitate to communicate!
-                  </p>
-                </div>
-
-                {/* Display chat messages */}
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`w-100 d-flex justify-content-${
-                      msg.username === user?.username ? "end" : "start"
-                    }`}
-                  >
-                    <div
-                      className="rounded p-2 text-light"
-                      style={{
-                        backgroundColor:
-                          msg.username === user?.username
-                            ? "#ff8533"
-                            : "#990099",
-                        maxWidth: "200px",
-                        width: "fit-content",
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      <p className="m-0">{msg.message}</p>
-                    </div>
-                  </div>
-                ))}
                 <div>
-                  <FloatingLabel controlId="floatingTextarea2" label="Message">
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Leave a comment here"
-                      style={{ height: "70px" }}
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                  </FloatingLabel>
-                  <button
-                    className="orangeButton py-2 d-flex align-items-center justify-content-center"
-                    onClick={sendMessage}
-                  >
-                    <p className="me-2 mb-0">Send</p>
-                    <img
-                      src={SendIcon}
-                      alt=""
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </button>
+                  {/* Display chat messages */}
+                  <div className="border rounded">
+                    <h5>Lorem ipsum dolor sit amet.</h5>
+                    {messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`w-100 d-flex justify-content-${
+                          msg.username === user?.username ? "end" : "start"
+                        }`}
+                      >
+                        <div
+                          className="rounded p-2 text-light"
+                          style={{
+                            backgroundColor:
+                              msg.username === user?.username
+                                ? "#ff8533"
+                                : "#990099",
+                            maxWidth: "200px",
+                            width: "fit-content",
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          <p className="m-0">{msg.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div>
+                    <FloatingLabel
+                      controlId="floatingTextarea2"
+                      label="Message"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Leave a comment here"
+                        style={{ height: "70px" }}
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                      />
+                    </FloatingLabel>
+                    <button
+                      className="orangeButton py-2 d-flex align-items-center justify-content-center"
+                      onClick={sendMessage}
+                    >
+                      <p className="me-2 mb-0">Send</p>
+                      <img
+                        src={SendIcon}
+                        alt=""
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

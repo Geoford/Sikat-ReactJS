@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserPageMainLayout from "../../Layouts/LayoutAdmin/UserPageMainLayout";
 import ChatButton from "../../Layouts/LayoutAdmin/ChatButton";
+import "boxicons/css/boxicons.min.css";
 
 export default function Home() {
   const [user, setUser] = useState(null);
