@@ -365,6 +365,19 @@ app.post("/entry/:entryID/gadify", (req, res) => {
   });
 });
 
+app.get("/gadifyStatus/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  const query = `SELECT entryID FROM gadify_actions WHERE userID = ?`;
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error("Error fetching gadify status:", err);
+      return res.status(500).json({ error: "Failed to fetch gadify status" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
@@ -413,7 +426,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  const query = "SELECT userID, username, firstName, lastName FROM user_table";
+  const query = "SELECT userID, username FROM user_table WHERE isAdmin = 0";
 
   db.query(query, (err, results) => {
     if (err) {
@@ -422,6 +435,18 @@ app.get("/users", (req, res) => {
     }
     res.status(200).json(results);
   });
+});
+
+app.get("/admin", (req, res) => {
+  db.query(
+    "SELECT userID, username FROM user_table WHERE isAdmin = 1 LIMIT 1",
+    (err, results) => {
+      if (err) {
+        return res.status(500).send("Error fetching admin.");
+      }
+      res.json(results[0]); // Send the first admin (if multiple admins exist)
+    }
+  );
 });
 
 app.post("/follow/:followUserId", (req, res) => {
@@ -830,7 +855,7 @@ app.post("/message", (req, res) => {
         return res.status(500).send("Error sending message.");
       }
 
-      // Notify only admin users with isAdmin = 1
+      // Notify only admin users (isAdmin = 1)
       db.query(
         "SELECT userID FROM user_table WHERE isAdmin = 1",
         (err, admins) => {
@@ -839,11 +864,10 @@ app.post("/message", (req, res) => {
             return res.status(500).send("Error fetching admins.");
           }
 
-          // Trigger Pusher event for each admin
           admins.forEach((admin) => {
             pusher.trigger("chat-channel", "message-event", {
               message,
-              userID: admin.userID, // Send message to each admin
+              username: `User ${userID}`,
             });
           });
 

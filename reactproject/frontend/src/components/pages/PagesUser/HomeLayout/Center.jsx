@@ -45,8 +45,19 @@ const Center = () => {
       const response = await axios.get("http://localhost:8081/entries", {
         params: { userID: userID },
       });
-      console.log("Entries fetched:", response.data);
-      setEntries(response.data);
+
+      const gadifyStatusResponse = await axios.get(
+        `http://localhost:8081/gadifyStatus/${userID}`
+      );
+
+      const updatedEntries = response.data.map((entry) => {
+        const isGadified = gadifyStatusResponse.data.some(
+          (g) => g.entryID === entry.entryID
+        );
+        return { ...entry, isGadified };
+      });
+
+      setEntries(updatedEntries);
     } catch (error) {
       console.error("There was an error fetching the diary entries!", error);
     }
@@ -231,7 +242,7 @@ const Center = () => {
               <div className="col">
                 <button
                   className={`InteractButton ${
-                    activeButtons[entry.entryID] ? "active" : ""
+                    entry.isGadified ? "active" : ""
                   } ${expandButtons[entry.entryID] ? "expand" : ""}`}
                   onClick={() => handleClick(entry.entryID)}
                 >
