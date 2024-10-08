@@ -8,7 +8,7 @@ import ChatIcon from "../../../assets/ChatIcon.png";
 import SendIcon from "../../../assets/SendIcon.png";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 
-const AdminChatButton = () => {
+const ChatButton = () => {
   const [show, setShow] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -130,33 +130,38 @@ const AdminChatButton = () => {
     <>
       <div className="ChatButton">
         <button className="shadow" onClick={handleShow}>
-          <img src={ChatIcon} alt="Chat" />
+          <img src={ChatIcon} alt="" />
           <span className="tooltiptext">Messages</span>
         </button>
       </div>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
-            {selectedUser ? `Chat with ${selectedUser.username}` : "Messages"}
-          </Modal.Title>
+          <Modal.Title>Messages</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          style={{ height: "clamp(400px, 30vh, 500px)", overflow: "hidden" }}
+        >
           <div>
+            {/* Show UserList if no user is selected, otherwise show ChatRoom */}
             {!selectedUser ? (
-              <div>
-                <h5 className="m-0 ms-2">Users</h5>
+              <div
+                className="UserList "
+                style={{ height: "clamp(400px, 30vh, 500px)" }}
+              >
                 <div>
-                  {users.length === 0 ? (
-                    <p>No users available.</p>
-                  ) : (
-                    users.map((userItem) => (
+                  <h5 className="m-0 ms-2">Users</h5>
+                </div>
+                <div style={{ height: "85%" }}>
+                  <div
+                    className="mb-4 pe-2 d-flex flex-column gap-2 overflow-y-scroll"
+                    style={{ height: "100%" }}
+                  >
+                    {users.map((userItem, index) => (
                       <div
-                        key={userItem.userID}
+                        key={index}
                         className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
-                        onClick={() =>
-                          fetchMessagesForSelectedUser(userItem.userID)
-                        }
+                        onClick={() => handleUserClick(userItem)}
                         style={{ cursor: "pointer" }}
                       >
                         <div className="profilePicture">
@@ -170,33 +175,64 @@ const AdminChatButton = () => {
                             }}
                           />
                         </div>
-                        <p className="m-0">{userItem.username}</p>
+                        <p className="m-0">
+                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
+                          {/* if the user is anonymous */}
+                        </p>
                       </div>
-                    ))
-                  )}
+                    ))}
+                    {users.map((userItem, index) => (
+                      <div
+                        key={index}
+                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
+                        onClick={() => handleUserClick(userItem)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="profilePicture">
+                          <img
+                            src={DefaultProfile}
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <p className="m-0">
+                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
+                          {/* if the user is anonymous */}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : (
-              <div>
-                <div
-                  className="border rounded mb-1 p-2"
-                  style={{ height: "300px", overflowY: "scroll" }}
-                >
-                  {messages.length === 0 ? (
-                    <p>No messages yet.</p>
-                  ) : (
-                    messages.map((msg, index) => (
+              <div
+                className="ChatRoom mb-1 p-2"
+                style={{ height: "clamp(400px, 30vh, 500px)" }}
+              >
+                {/* Back button */}
+                <div onClick={handleBackClick} style={{ cursor: "pointer" }}>
+                  <i className="bx bx-arrow-back"></i> {selectedUser.username}
+                </div>
+                <div>
+                  {/* Display chat messages */}
+                  <div className="border rounded">
+                    <h5>Lorem ipsum dolor sit amet.</h5>
+                    {messages.map((msg, index) => (
                       <div
                         key={index}
                         className={`w-100 d-flex justify-content-${
-                          msg.senderID === user?.userID ? "end" : "start"
+                          msg.username === user?.username ? "end" : "start"
                         }`}
                       >
                         <div
                           className="rounded p-2 text-light"
                           style={{
                             backgroundColor:
-                              msg.senderID === user?.userID
+                              msg.username === user?.username
                                 ? "#ff8533"
                                 : "#990099",
                             maxWidth: "200px",
@@ -207,45 +243,47 @@ const AdminChatButton = () => {
                           <p className="m-0">{msg.message}</p>
                         </div>
                       </div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
 
-                <div>
-                  <FloatingLabel controlId="floatingTextarea2" label="Message">
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Type your message here"
-                      style={{ height: "70px" }}
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                  </FloatingLabel>
+                  <div>
+                    <FloatingLabel
+                      controlId="floatingTextarea2"
+                      label="Message"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Leave a comment here"
+                        style={{ height: "70px" }}
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                      />
+                    </FloatingLabel>
+                    <button
+                      className="orangeButton py-2 d-flex align-items-center justify-content-center"
+                      onClick={sendMessage}
+                    >
+                      <p className="me-2 mb-0">Send</p>
+                      <img
+                        src={SendIcon}
+                        alt=""
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </Modal.Body>
-
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <button
-            className="orangeButton py-2 d-flex align-items-center justify-content-center"
-            onClick={sendMessage}
-          >
-            <p className="me-2 mb-0">Send</p>
-            <img
-              src={SendIcon}
-              alt="Send"
-              style={{ width: "20px", height: "20px" }}
-            />
-          </button>
         </Modal.Footer>
       </Modal>
     </>
   );
 };
 
-export default AdminChatButton;
+export default ChatButton;
