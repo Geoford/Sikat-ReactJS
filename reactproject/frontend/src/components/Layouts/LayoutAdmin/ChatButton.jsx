@@ -101,6 +101,7 @@ const ChatButton = () => {
           <Modal.Title>Messages</Modal.Title>
         </Modal.Header>
         <Modal.Body
+          className="p-0 px-2"
           style={{ height: "clamp(400px, 30vh, 500px)", overflow: "hidden" }}
         >
           <div>
@@ -110,8 +111,20 @@ const ChatButton = () => {
                 className="UserList "
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
-                <div>
-                  <h5 className="m-0 ms-2">Users</h5>
+                <div className="p-2 d-flex align-items-center justify-content-between">
+                  <h5 className="m-0">Users</h5>
+                  <div class="input-group w-50">
+                    <span class="input-group-text" id="basic-addon1">
+                      <i className="bx bx-search-alt-2"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
+                    />
+                  </div>
                 </div>
                 <div style={{ height: "85%" }}>
                   <div
@@ -137,32 +150,8 @@ const ChatButton = () => {
                           />
                         </div>
                         <p className="m-0">
-                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
-                          {/* if the user is anonymous */}
-                        </p>
-                      </div>
-                    ))}
-                    {users.map((userItem, index) => (
-                      <div
-                        key={index}
-                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
-                        onClick={() => handleUserClick(userItem)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div className="profilePicture">
-                          <img
-                            src={DefaultProfile}
-                            alt="Profile"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                        <p className="m-0">
-                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
-                          {/* if the user is anonymous */}
+                          {userItem.firstName} {userItem.lastName} (FullName) or
+                          (Alias) {/* if the user is anonymous */}
                         </p>
                       </div>
                     ))}
@@ -171,17 +160,35 @@ const ChatButton = () => {
               </div>
             ) : (
               <div
-                className="ChatRoom mb-1 p-2"
+                className="ChatRoom"
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
                 {/* Back button */}
-                <div onClick={handleBackClick} style={{ cursor: "pointer" }}>
-                  <i className="bx bx-arrow-back"></i> {selectedUser.username}
+                <div
+                  style
+                  onClick={handleBackClick}
+                  style={{ cursor: "pointer" }}
+                >
+                  <h5>
+                    <i className="bx bx-arrow-back"></i> {selectedUser.username}
+                  </h5>
                 </div>
-                <div>
+                <div style={{ height: "100%" }}>
                   {/* Display chat messages */}
-                  <div className="border rounded">
-                    <h5>Lorem ipsum dolor sit amet.</h5>
+                  <div
+                    className="p-2 border rounded overflow-y-scroll"
+                    style={{ height: "65%" }}
+                  >
+                    <p>
+                      Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet
+                      consectetur adipisicing elit. Impedit est voluptatem quae
+                      soluta placeat, suscipit sit officia accusantium,
+                      voluptate eveniet sapiente provident incidunt voluptas
+                      optio ad perferendis iste molestiae. Quisquam, ea aliquid.
+                      Quod hic ex, optio ea esse illo nisi quam inventore
+                      numquam delectus reprehenderit, repellat, odio incidunt in
+                      temporibus.
+                    </p>
                     {messages.map((msg, index) => (
                       <div
                         key={index}
@@ -194,8 +201,8 @@ const ChatButton = () => {
                           style={{
                             backgroundColor:
                               msg.username === user?.username
-                                ? "#ff8533"
-                                : "#990099",
+                                ? "var(--primary)"
+                                : "var(--primary)",
                             maxWidth: "200px",
                             width: "fit-content",
                             wordWrap: "break-word",
@@ -207,12 +214,13 @@ const ChatButton = () => {
                     ))}
                   </div>
 
-                  <div>
+                  <div className="mt-2 position-relative">
                     <FloatingLabel
                       controlId="floatingTextarea2"
                       label="Message"
                     >
                       <Form.Control
+                        className="pe-4"
                         as="textarea"
                         placeholder="Leave a comment here"
                         style={{ height: "70px" }}
@@ -221,15 +229,18 @@ const ChatButton = () => {
                       />
                     </FloatingLabel>
                     <button
-                      className="orangeButton py-2 d-flex align-items-center justify-content-center"
+                      className="position-absolute border-0"
+                      style={{
+                        bottom: "5px",
+                        right: "10px",
+                        backgroundColor: "transparent",
+                      }}
                       onClick={sendMessage}
                     >
-                      <p className="me-2 mb-0">Send</p>
-                      <img
-                        src={SendIcon}
-                        alt=""
-                        style={{ width: "20px", height: "20px" }}
-                      />
+                      <i
+                        className="bx bxs-send bx-sm"
+                        style={{ color: "var(--primary)" }}
+                      ></i>
                     </button>
                   </div>
                 </div>
