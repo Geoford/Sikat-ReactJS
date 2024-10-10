@@ -209,7 +209,7 @@ const ChatButton = () => {
                           />
                         </div>
                         <p className="m-0">
-                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
+                          {userItem.username} {userItem.lastName} or (Alias){" "}
                           {/* if the user is anonymous */}
                         </p>
                         <div

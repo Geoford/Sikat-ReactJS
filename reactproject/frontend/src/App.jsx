@@ -6,13 +6,15 @@ import Register from "./components/pages/Register";
 // USER
 import Home from "./components/pages/PagesUser/Home";
 import UserProfile from "./components/pages/PagesUser/UserProfile";
+
 import DiaryEntries from "./components/pages/PagesUser/DiaryEntries";
 import DiaryEntry from "./components/pages/PagesUser/DiaryEntry";
 import Profile from "./components/pages/PagesUser/OtherUserProfile";
 // import UpdateUser from "./components/pages/PagesUser/UpdateUser";
 
 // ADMIN
-import AdminHome from "./components/pages/PagesAdmin/Home";
+import AdminHome from "./components/pages/PagesAdmin/AdminHome";
+import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -47,7 +49,11 @@ function App() {
           <Route path="/DiaryEntry/" element={<DiaryEntry />} />
 
           {/* ADMIN ROUTES */}
-          <Route path="/Admin/Home" element={<AdminHome />} />
+          <Route path="/Admin/AdminHome" element={<AdminHome />} />
+          <Route
+            path="/Admin/AdminProfile/:userID"
+            element={<AdminProfile />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

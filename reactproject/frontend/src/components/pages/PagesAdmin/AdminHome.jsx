@@ -1,6 +1,6 @@
-import LeftSide from "../../pages/PagesAdmin/HomeLayout/LeftSide";
-import Center from "../../pages/PagesAdmin/HomeLayout/Center";
-import RightSide from "../../pages/PagesAdmin/HomeLayout/RightSide";
+import LeftSide from "./HomeLayout/LeftSide";
+import Center from "./HomeLayout/Center";
+import RightSide from "./HomeLayout/RightSide";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminPageMainLayout from "../../Layouts/LayoutAdmin/AdminPageMainLayout";

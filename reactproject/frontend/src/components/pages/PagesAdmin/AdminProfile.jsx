@@ -10,6 +10,7 @@ import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
 import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
+import AdminPageMainLayout from "../../Layouts/LayoutAdmin/AdminPageMainLayout";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -73,7 +74,7 @@ const UserProfile = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <UserPageMainLayout>
+    <AdminPageMainLayout>
       <div
         className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
         style={{ background: "#ffff" }}
@@ -147,6 +148,7 @@ const UserProfile = () => {
             >
               <h3 className="m-0">
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
+                admin
               </h3>
               <p className="m-0 text-secondary">
                 {user.followersCount} Followers - {user.followingCount}{" "}
@@ -160,7 +162,6 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-
       <div className="container mt-3">
         <div className="row ">
           <div className="col-lg-4 mb-2 p-0 px-md-2">
@@ -181,7 +182,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-    </UserPageMainLayout>
+    </AdminPageMainLayout>
   );
 };
 

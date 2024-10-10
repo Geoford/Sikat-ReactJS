@@ -99,9 +99,11 @@ const AdminAccountDropdown = () => {
           <Dropdown.Item className="w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
-              to={`/UserProfile/${user.userID}`}
+              to={`/Admin/AdminProfile/${user.userID}`}
             >
-              <button className="w-100 btn btn-light text-end">Account</button>
+              <button className="w-100 btn btn-light text-end">
+                Account Admin
+              </button>
             </Link>
           </Dropdown.Item>
         )}
