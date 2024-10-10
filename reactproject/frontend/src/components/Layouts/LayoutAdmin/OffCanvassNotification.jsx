@@ -85,7 +85,9 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others gadified your post.
+              <p className="w-75 m-0">
+                UserName and 00 others gadified your post.
+              </p>
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -104,13 +106,15 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others commented on your post.
+              <p className="w-75 m-0">
+                UserName and 00 others commented on your post.
+              </p>
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
             <div
               className="grayHover d-flex align-items-center gap-2 p-2 rounded"
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "var(--background)" }}
             >
               <div className="profilePicture">
                 <img
@@ -123,7 +127,9 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others flagged your post.
+              <p className="w-75 m-0">
+                UserName and 00 others flagged your post.
+              </p>
             </div>
           </Link>
         </Offcanvas.Body>

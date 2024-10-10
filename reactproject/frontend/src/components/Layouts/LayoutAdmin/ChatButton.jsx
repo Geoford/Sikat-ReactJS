@@ -131,7 +131,23 @@ const ChatButton = () => {
       <div className="ChatButton">
         <button className="shadow" onClick={handleShow}>
           <img src={ChatIcon} alt="" />
-          <span className="tooltiptext">Messages</span>
+          <span className="tooltiptext" style={{ zIndex: "-2" }}>
+            Messages
+          </span>
+
+          <div
+            className="position-absolute p-0 d-flex align-items-center justify-content-center"
+            style={{
+              backgroundColor: "red",
+              top: "5px",
+              left: "-5px",
+              height: "15px",
+              width: "15px",
+              borderRadius: "50%",
+              color: "#ffff",
+              // border: "2px solid var(--background)",
+            }}
+          ></div>
         </button>
       </div>
 

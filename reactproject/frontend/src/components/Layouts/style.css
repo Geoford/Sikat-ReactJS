@@ -4,13 +4,14 @@
   --primary_light: #ffe6cc;
   --secondary: #ff9933;
   --secondary_hover: #e65c00;
+  --background: #e6e6e6;
 }
 
 .background {
   position: fixed;
   width: 100vw;
   height: 100%; /* Make the background fill the viewport initially */
-  background-color: #e6e6e6;
+  background-color: var(--background);
   top: 0;
   left: 0;
   z-index: -2;
