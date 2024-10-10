@@ -32,7 +32,7 @@ const NavBarAdmin = () => {
     >
       <div className="container-fluid py-2 px-3 shadow-sm">
         <div className="logo">
-          <Link to="/Home">
+          <Link to="/Admin/AdminHome">
             <img className="logoImage" src={Logo} alt="Logo" />
           </Link>
         </div>
