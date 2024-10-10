@@ -181,30 +181,6 @@ const ChatButton = () => {
                         </p>
                       </div>
                     ))}
-                    {users.map((userItem, index) => (
-                      <div
-                        key={index}
-                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
-                        onClick={() => handleUserClick(userItem)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div className="profilePicture">
-                          <img
-                            src={DefaultProfile}
-                            alt="Profile"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                        <p className="m-0">
-                          {userItem.firstName} {userItem.lastName} or (Alias){" "}
-                          {/* if the user is anonymous */}
-                        </p>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>

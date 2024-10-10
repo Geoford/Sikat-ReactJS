@@ -3,7 +3,7 @@ import Logo from "../../../assets/logo.jpg";
 import Notification from "../../../assets/Notification.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationButton from "../LayoutUser/OffCanvassNotification";
+import NotificationButton from "../LayoutAdmin/OffCanvassNotification";
 import AdminAccountDropdown from "./AdminAccountDropdown";
 
 const NavBarAdmin = () => {
