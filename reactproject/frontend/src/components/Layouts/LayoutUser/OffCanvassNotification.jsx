@@ -85,7 +85,10 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others gadified your diary.
+              UserName and 00 others gadified your diary.{" "}
+              <span className="text-secondary" style={{ fontSize: "13px" }}>
+                0 hours ago.
+              </span>
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -104,7 +107,10 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others commented on your diary.
+              UserName and 00 others commented on your diary.{" "}
+              <span className="text-secondary" style={{ fontSize: "13px" }}>
+                0 hours ago.
+              </span>
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -123,7 +129,10 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others flagged your diary.
+              UserName and 00 others flagged your diary.{" "}
+              <span className="text-secondary" style={{ fontSize: "13px" }}>
+                0 hours ago.
+              </span>
             </div>
           </Link>
         </Offcanvas.Body>

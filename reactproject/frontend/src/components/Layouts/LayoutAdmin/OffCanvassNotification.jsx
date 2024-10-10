@@ -86,7 +86,10 @@ function OffCanvassLayouts() {
                 />
               </div>
               <p className="w-75 m-0">
-                UserName and 00 others gadified your post.
+                UserName and 00 others gadified your post.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
               </p>
             </div>
           </Link>
@@ -107,7 +110,10 @@ function OffCanvassLayouts() {
                 />
               </div>
               <p className="w-75 m-0">
-                UserName and 00 others commented on your post.
+                UserName and 00 others commented on your post.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
               </p>
             </div>
           </Link>
@@ -128,7 +134,10 @@ function OffCanvassLayouts() {
                 />
               </div>
               <p className="w-75 m-0">
-                UserName and 00 others flagged your post.
+                UserName and 00 others flagged your post.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
               </p>
             </div>
           </Link>
