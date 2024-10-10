@@ -140,6 +140,7 @@ const ChatButton = () => {
           <Modal.Title>Messages</Modal.Title>
         </Modal.Header>
         <Modal.Body
+          className="p-1"
           style={{ height: "clamp(400px, 30vh, 500px)", overflow: "hidden" }}
         >
           <div>
@@ -149,8 +150,20 @@ const ChatButton = () => {
                 className="UserList "
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
-                <div>
-                  <h5 className="m-0 ms-2">Users</h5>
+                <div className="d-flex align-items-center justify-content-between mb-1 px-3">
+                  <h5 className="m-0">Users</h5>
+                  <div class="w-50 input-group">
+                    <span class="input-group-text" id="basic-addon1">
+                      <i className="bx bx-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search"
+                      aria-label="search"
+                      aria-describedby="basic-addon1"
+                    />
+                  </div>
                 </div>
                 <div style={{ height: "85%" }}>
                   <div
@@ -179,6 +192,20 @@ const ChatButton = () => {
                           {userItem.firstName} {userItem.lastName} or (Alias){" "}
                           {/* if the user is anonymous */}
                         </p>
+                        <div
+                          className="p-0 m-0 d-flex align-items-center justify-content-center"
+                          style={{
+                            backgroundColor: "red",
+                            height: "20px",
+                            width: "20px",
+                            borderRadius: "50%",
+                            color: "#ffff",
+                          }}
+                        >
+                          <p className="m-0 p-0" style={{ fontSize: "13px" }}>
+                            0
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -252,11 +279,6 @@ const ChatButton = () => {
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

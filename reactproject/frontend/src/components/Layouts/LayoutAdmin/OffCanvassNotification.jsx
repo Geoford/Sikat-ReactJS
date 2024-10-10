@@ -85,7 +85,7 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName gadified your diary.
+              UserName and 00 others gadified your post.
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -104,7 +104,7 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName commented on your diary.
+              UserName and 00 others commented on your post.
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -123,7 +123,7 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName flagged your diary.
+              UserName and 00 others flagged your post.
             </div>
           </Link>
         </Offcanvas.Body>
