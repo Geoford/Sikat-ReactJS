@@ -85,10 +85,36 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others gadified your diary.{" "}
-              <span className="text-secondary" style={{ fontSize: "13px" }}>
-                0 hours ago.
-              </span>
+              <p className="w-75 m-0">
+                UserName and 00 others gadified your diary.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
+              </p>
+            </div>
+          </Link>
+          <Link className="text-decoration-none text-dark" to="/DiaryEntry">
+            <div
+              className="grayHover d-flex align-items-center gap-2 p-2 rounded"
+              style={{ backgroundColor: "var(--background)" }}
+            >
+              <div className="profilePicture">
+                <img
+                  src={DefaultProfile}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+              <p className="w-75 m-0">
+                UserName and 00 others commented on your diary.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
+              </p>
             </div>
           </Link>
           <Link className="text-decoration-none text-dark" to="/DiaryEntry">
@@ -107,32 +133,12 @@ function OffCanvassLayouts() {
                   }}
                 />
               </div>
-              UserName and 00 others commented on your diary.{" "}
-              <span className="text-secondary" style={{ fontSize: "13px" }}>
-                0 hours ago.
-              </span>
-            </div>
-          </Link>
-          <Link className="text-decoration-none text-dark" to="/DiaryEntry">
-            <div
-              className="grayHover d-flex align-items-center gap-2 p-2 rounded"
-              style={{ backgroundColor: "white" }}
-            >
-              <div className="profilePicture">
-                <img
-                  src={DefaultProfile}
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-              UserName and 00 others flagged your diary.{" "}
-              <span className="text-secondary" style={{ fontSize: "13px" }}>
-                0 hours ago.
-              </span>
+              <p className="w-75 m-0">
+                UserName and 00 others flagged your diary.{" "}
+                <span className="text-secondary" style={{ fontSize: "13px" }}>
+                  0 hours ago.
+                </span>
+              </p>
             </div>
           </Link>
         </Offcanvas.Body>
