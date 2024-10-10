@@ -350,7 +350,7 @@ input.form-control:focus {
   color: var(--secondary) !important;
 }
 
-/* ACCORDION CUSTOMIZE */
+/* FOR COMMENT REPLIES */
 .accordion-item {
   border: none !important;
   background-color: transparent !important;
@@ -374,4 +374,31 @@ input.form-control:focus {
 
 .accordion-button::after {
   display: none !important;
+}
+/* FOR REGISTRATION STEPS */
+.stepsIndicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.stepsIndicator.active {
+  transform: scale(120%);
+}
+.stepsIndicator h5 {
+  margin: 0;
+}
+.custom-progress-bar .progress-bar {
+  background-color: var(--secondary) !important;
+}
+/* FOR OTP */
+.otp-input-container input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 0.25rem;
 }
