@@ -1,5 +1,5 @@
 import Pusher from "pusher-js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -15,9 +15,20 @@ const UserChatButton = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [admin, setAdmin] = useState(null);
+  const pusherRef = useRef(null);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setShow(false);
+    setMessages([]); // Clear messages when modal closes
+    setSelectedUser(null); // Reset selected user
+  };
+
+  const handleShow = async () => {
+    setShow(true);
+    if (!user?.isAdmin && admin) {
+      await fetchMessages(admin.userID); // Fetch messages when modal opens for normal users
+    }
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -33,7 +44,7 @@ const UserChatButton = () => {
           console.log("Fetched admin data:", data);
           setAdmin(data);
           if (!parsedUser.isAdmin) {
-            await fetchMessages(data.userID);
+            await fetchMessages(data.userID); // Fetch messages for normal users
           }
         } catch (error) {
           console.error("Error fetching admin data:", error);
@@ -55,35 +66,41 @@ const UserChatButton = () => {
         };
         fetchAllUsers();
       }
+
+      // Initialize Pusher here
+      pusherRef.current = new Pusher("4810211a14a19b86f640", {
+        cluster: "ap1",
+        encrypted: true,
+      });
+
+      const channel = pusherRef.current.subscribe("chat-channel");
+
+      // Handle incoming messages
+      channel.bind("message-event", (data) => {
+        // Update messages for the correct recipient
+        if (
+          data.recipientID === user.userID ||
+          (selectedUser && data.senderID === selectedUser)
+        ) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              username: data.username,
+              message: data.message,
+              senderID: data.senderID,
+            },
+          ]);
+        }
+      });
+
+      return () => {
+        channel.unbind_all();
+        pusherRef.current.unsubscribe("chat-channel");
+      };
     } else {
       window.location.href = "/";
     }
-
-    // Initialize Pusher
-    const pusher = new Pusher("4810211a14a19b86f640", {
-      cluster: "ap1",
-      encrypted: true,
-    });
-
-    const channel = pusher.subscribe("chat-channel");
-    channel.bind("message-event", function (data) {
-      if (data.senderID === admin.userID || data.senderID === user.userID) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            username: data.username,
-            message: data.message,
-            senderID: data.senderID,
-          },
-        ]);
-      }
-    });
-
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [user, admin]);
+  }, []); // Only run this effect on mount
 
   useEffect(() => {
     if (selectedUser) {
@@ -91,13 +108,9 @@ const UserChatButton = () => {
     }
   }, [selectedUser]);
 
-  useEffect(() => {
-    if (user && admin) {
-      fetchMessages(admin.userID);
-    }
-  }, [user, admin]);
-
   const fetchMessages = async (userID) => {
+    if (!user) return;
+
     try {
       const response = await fetch(
         `http://localhost:8081/messages?userID=${user.userID}&withUserID=${userID}`
@@ -129,6 +142,7 @@ const UserChatButton = () => {
       }),
     });
 
+    // Update local state for the sent message
     setMessages((prevMessages) => [
       ...prevMessages,
       { username: user.username, message: newMessage, senderID: senderUserID },

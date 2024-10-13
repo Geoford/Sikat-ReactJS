@@ -448,7 +448,10 @@ app.get("/admin", (req, res) => {
       if (err) {
         return res.status(500).send("Error fetching admin.");
       }
-      res.json(results[0]); // Send the first admin (if multiple admins exist)
+      if (results.length === 0) {
+        return res.status(404).send("No admin found.");
+      }
+      res.json(results[0]);
     }
   );
 });
