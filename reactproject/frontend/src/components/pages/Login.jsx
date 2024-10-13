@@ -39,10 +39,8 @@ export default function Login() {
         .then((res) => {
           localStorage.setItem("user", JSON.stringify(res.data));
           if (res.data.isAdmin) {
-            // If the user is an admin, navigate to the admin dashboard
-            navigate("/Admin/Home");
+            navigate("/AdminHome");
           } else {
-            // Otherwise, navigate to the user dashboard
             navigate("/Home");
           }
         })

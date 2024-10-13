@@ -79,7 +79,7 @@ const Center = () => {
     <div className="p-2">
       <Link
         className="text-decoration-none text-dark"
-        to={`/UserProfile/${user.userID}`}
+        to={`/AdminProfile/${user.userID}`}
       >
         <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
           <div>

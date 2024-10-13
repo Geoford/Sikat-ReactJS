@@ -49,11 +49,8 @@ function App() {
           <Route path="/DiaryEntry/" element={<DiaryEntry />} />
 
           {/* ADMIN ROUTES */}
-          <Route path="/Admin/AdminHome" element={<AdminHome />} />
-          <Route
-            path="/Admin/AdminProfile/:userID"
-            element={<AdminProfile />}
-          />
+          <Route path="/AdminHome" element={<AdminHome />} />
+          <Route path="/AdminProfile/:userID" element={<AdminProfile />} />
         </Routes>
       </BrowserRouter>
     </div>
