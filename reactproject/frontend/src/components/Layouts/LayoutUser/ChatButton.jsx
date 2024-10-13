@@ -16,6 +16,7 @@ const UserChatButton = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [admin, setAdmin] = useState(null);
   const pusherRef = useRef(null);
+  const messagesEndRef = useRef(null); // Ref for scrolling to the end of messages
 
   const handleClose = () => {
     setShow(false);
@@ -107,6 +108,13 @@ const UserChatButton = () => {
       fetchMessages(selectedUser);
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the messages when new messages arrive
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const fetchMessages = async (userID) => {
     if (!user) return;
@@ -205,7 +213,7 @@ const UserChatButton = () => {
                     }`}
                   >
                     <div
-                      className="rounded p-2 text-light"
+                      className="rounded p-2 mt-1 text-light"
                       style={{
                         backgroundColor:
                           msg.senderID === user?.userID ? "#ff8533" : "#990099",
@@ -218,6 +226,8 @@ const UserChatButton = () => {
                     </div>
                   </div>
                 ))}
+                {/* This div is used to scroll to the bottom */}
+                <div ref={messagesEndRef} />
               </div>
 
               <div className="position-relative">

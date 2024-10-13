@@ -7,6 +7,42 @@ import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 
+const UserList = ({ users, handleFollowToggle, isFollowing }) => (
+  <div className="mt-2 pe-1" style={{ height: "25vh", overflowY: "scroll" }}>
+    {users.map((user) => (
+      <div
+        key={user.userID}
+        className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
+      >
+        <div className="d-flex align-items-center gap-2">
+          <div className="profilePicture">
+            <img
+              src={
+                user.profile_image
+                  ? `http://localhost:8081${user.profile_image}`
+                  : DefaultProfile
+              }
+              alt="Profile"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <p className="m-0 ms-2">{user.username}</p>
+          <button
+            className="secondaryButton"
+            onClick={() => handleFollowToggle(user.userID)}
+          >
+            {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 const Center = () => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
@@ -26,11 +62,6 @@ const Center = () => {
       navigate("/");
     }
   }, [navigate]);
-
-  useEffect(() => {
-    console.log("Users:", users);
-    console.log("Followed Users:", followedUsers);
-  }, [users, followedUsers]);
 
   const fetchUsers = async () => {
     try {
@@ -77,7 +108,7 @@ const Center = () => {
       return;
     }
 
-    const isFollowing = followedUsers.includes(followUserId);
+    const isFollowing = followedUsers.some((f) => f.userID === followUserId);
 
     try {
       if (isFollowing) {
@@ -85,30 +116,20 @@ const Center = () => {
           data: { followerId: user.userID },
         });
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = prev.filter((id) => id !== followUserId);
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) =>
+          prev.filter((u) => u.userID !== followUserId)
+        );
         alert(`You have unfollowed user ${followUserId}`);
       } else {
-        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
-          followerId: user.userID,
-        });
+        const response = await axios.post(
+          `http://localhost:8081/follow/${followUserId}`,
+          {
+            followerId: user.userID,
+          }
+        );
+        const followedUserData = response.data; // Expect the user data in the response
 
-        setFollowedUsers((prev) => {
-          const updatedFollowedUsers = [...prev, followUserId];
-          localStorage.setItem(
-            "followedUsers",
-            JSON.stringify(updatedFollowedUsers)
-          );
-          return updatedFollowedUsers;
-        });
-
+        setFollowedUsers((prev) => [...prev, followedUserData]);
         alert(`You are now following user ${followUserId}`);
       }
     } catch (error) {
@@ -123,97 +144,24 @@ const Center = () => {
     <div className="p-2">
       <div className="rounded p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
-          <div>
-            <h4 className="text-secondary">Followers</h4>
-          </div>
+          <h4 className="text-secondary">Followers</h4>
         </div>
-
-        <div
-          className="mt-2 pe-1"
-          style={{ height: "25vh", overflowY: "scroll" }}
-        >
-          {followers.map((follower) => (
-            <div
-              key={follower.userID}
-              className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
-            >
-              <div className="d-flex align-items-center gap-2">
-                <div className="profilePicture">
-                  <img
-                    src={
-                      follower.profile_image
-                        ? `http://localhost:8081${follower.profile_image}`
-                        : DefaultProfile
-                    }
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <p className="m-0 ms-2">{follower.username}</p>
-                <button
-                  className="secondaryButton"
-                  onClick={() => handleFollowToggle(follower.userID)}
-                >
-                  {followedUsers.includes(follower.userID)
-                    ? "Unfollow"
-                    : "Follow"}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <UserList
+          users={followers}
+          handleFollowToggle={handleFollowToggle}
+          isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
+        />
       </div>
 
-      <div className=" p-3">
+      <div className="p-3">
         <div className="d-flex justify-content-between border-bottom">
-          <div>
-            <h4 className="text-secondary">Following</h4>
-          </div>
+          <h4 className="text-secondary">Following</h4>
         </div>
-        <div
-          className="mt-2 pe-1"
-          style={{ height: "40vh", overflowY: "scroll" }}
-        >
-          {followedUsers.map((followedUser) => (
-            <div
-              key={followedUser.userID}
-              className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
-            >
-              <div className="d-flex align-items-center gap-2">
-                <div className="profilePicture">
-                  <img
-                    src={
-                      followedUser.profile_image
-                        ? `http://localhost:8081${followedUser.profile_image}`
-                        : DefaultProfile
-                    }
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <p className="m-0 ms-2">{followedUser.username}</p>
-              </div>
-              <div>
-                {user.userID !== followedUser.userID && (
-                  <button
-                    className="secondaryButton"
-                    onClick={() => handleFollowToggle(followedUser.userID)}
-                  >
-                    Unfollow
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <UserList
+          users={followedUsers}
+          handleFollowToggle={handleFollowToggle}
+          isFollowing={() => true}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Pusher from "pusher-js";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -15,6 +15,7 @@ const ChatButton = () => {
   const [user, setUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const messagesEndRef = useRef(null); // Reference for scrolling
 
   const handleClose = () => {
     setShow(false);
@@ -75,6 +76,11 @@ const ChatButton = () => {
       pusher.disconnect();
     };
   }, [user, selectedUser]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the messages container whenever messages change
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const fetchMessagesForSelectedUser = async (withUserID) => {
     try {
@@ -153,7 +159,7 @@ const ChatButton = () => {
         </Modal.Header>
         <Modal.Body
           className="p-1"
-          style={{ height: "clamp(400px, 30vh, 500px)", overflow: "hidden" }}
+          style={{ height: "clamp(475px, 50vh, 500px)", overflow: "hidden" }}
         >
           <div>
             {!selectedUser ? (
@@ -217,8 +223,8 @@ const ChatButton = () => {
                 </div>
                 <div>
                   <div
-                    className="border rounded"
-                    style={{ height: "225px", overflowY: "scroll" }}
+                    className="border rounded mb-1 p-2"
+                    style={{ height: "300px", overflowY: "scroll" }}
                   >
                     {messages.map((msg, index) => (
                       <div
@@ -243,6 +249,8 @@ const ChatButton = () => {
                         </div>
                       </div>
                     ))}
+                    {/* Reference for scrolling */}
+                    <div ref={messagesEndRef} />
                   </div>
                   <div>
                     <FloatingLabel
