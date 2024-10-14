@@ -15,6 +15,7 @@ const ChatButton = () => {
   const [user, setUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // New state for search
   const messagesEndRef = useRef(null); // Reference for scrolling
 
   const handleClose = () => {
@@ -59,8 +60,13 @@ const ChatButton = () => {
       forceTLS: true,
     });
 
+    // Subscribe to the user's personal channel
     const channel = pusher.subscribe(`user-${user.userID}`);
 
+    // Subscribe to the admin channel to receive all messages
+    const adminChannel = pusher.subscribe("admin-channel");
+
+    // Listen for messages in the personal channel
     channel.bind("message-event", function (data) {
       if (selectedUser && data.recipientID === selectedUser.userID) {
         setMessages((prevMessages) => [
@@ -70,9 +76,20 @@ const ChatButton = () => {
       }
     });
 
+    // Listen for all messages in the admin channel
+    adminChannel.bind("message-event", function (data) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { senderID: data.senderID, message: data.message },
+      ]);
+    });
+
+    // Cleanup function
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
+      adminChannel.unbind_all();
+      adminChannel.unsubscribe();
       pusher.disconnect();
     };
   }, [user, selectedUser]);
@@ -122,10 +139,6 @@ const ChatButton = () => {
         throw new Error("Failed to send message");
       }
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { senderID: user.userID, message: newMessage },
-      ]);
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -137,6 +150,13 @@ const ChatButton = () => {
     setSelectedUser(null);
     setMessages([]); // Clear messages when going back
   };
+
+  // Function to filter users based on search query
+  const filteredUsers = users.filter((userItem) =>
+    `${userItem.username} ${userItem.lastName}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -167,13 +187,22 @@ const ChatButton = () => {
                 className="UserList"
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
-                <h5 className="m-0">Users</h5>
+                <div className="d-flex justify-content-between">
+                  <h5 className="m-1">Users</h5>
+                  <Form.Control
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="mb-2 w-50"
+                  />
+                </div>
                 <div style={{ height: "85%" }}>
                   <div
                     className="mb-4 pe-2 d-flex flex-column gap-2 overflow-y-scroll"
                     style={{ height: "100%" }}
                   >
-                    {users.map((userItem, index) => (
+                    {filteredUsers.map((userItem, index) => (
                       <div
                         key={index}
                         className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
@@ -192,7 +221,7 @@ const ChatButton = () => {
                           />
                         </div>
                         <p className="m-0">
-                          {userItem.username} {userItem.lastName} or (Alias)
+                          {userItem.firstName} {userItem.lastName} or (Alias)
                         </p>
                         <div
                           className="p-0 m-0 d-flex align-items-center justify-content-center"
@@ -234,45 +263,51 @@ const ChatButton = () => {
                         }`}
                       >
                         <div
-                          className="rounded p-2 text-light"
+                          className="rounded p-2 text-white"
                           style={{
                             backgroundColor:
                               msg.senderID === user?.userID
                                 ? "#ff8533"
                                 : "#990099",
-                            maxWidth: "200px",
-                            width: "fit-content",
-                            wordWrap: "break-word",
                           }}
                         >
-                          <p className="m-0">{msg.message}</p>
+                          {msg.message}
                         </div>
                       </div>
                     ))}
-                    {/* Reference for scrolling */}
-                    <div ref={messagesEndRef} />
+                    <div ref={messagesEndRef} /> {/* Scroll reference */}
                   </div>
-                  <div>
+                  <div className="">
                     <FloatingLabel
                       controlId="floatingTextarea2"
                       label="Message"
                     >
                       <Form.Control
                         as="textarea"
-                        placeholder="Type your message..."
+                        placeholder="Message"
+                        style={{ height: "70px" }}
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        style={{ height: "80px" }}
                       />
                     </FloatingLabel>
                   </div>
-                  <div className="d-flex justify-content-end mt-2">
-                    <Button onClick={sendMessage}>
-                      Send{" "}
+                  <div>
+                    <Button
+                      className="orangeButton py-2 d-flex align-items-center justify-content-center"
+                      onClick={sendMessage}
+                      style={{
+                        height: "50px",
+                        width: "50px",
+                        marginLeft: "5px",
+                      }}
+                    >
                       <img
                         src={SendIcon}
                         alt=""
-                        style={{ width: "20px", height: "20px" }}
+                        style={{
+                          width: "25px",
+                          height: "25px",
+                        }}
                       />
                     </Button>
                   </div>

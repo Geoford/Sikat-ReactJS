@@ -430,7 +430,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  const query = "SELECT userID, username FROM user_table WHERE isAdmin = 0";
+  const query = "SELECT * FROM user_table WHERE isAdmin = 0";
 
   db.query(query, (err, results) => {
     if (err) {
@@ -864,10 +864,17 @@ app.post("/message", (req, res) => {
         return res.status(500).send("Error sending message.");
       }
 
-      // Notify the recipient via Pusher
-      pusher.trigger(`user-${recipientID}`, "message-event", {
+      // Notify all users via Pusher (on the global 'chat-channel')
+      pusher.trigger("chat-channel", "message-event", {
         message,
         senderID,
+        recipientID, // Send recipientID to filter messages on the client side
+      });
+
+      pusher.trigger("admin-channel", "message-event", {
+        message,
+        senderID,
+        recipientID,
       });
 
       res.status(200).send("Message sent successfully");

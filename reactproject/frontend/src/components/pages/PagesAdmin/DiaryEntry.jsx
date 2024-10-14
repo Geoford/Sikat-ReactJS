@@ -9,6 +9,64 @@ const DiaryEntry = () => {
   const [expandButton, setExpandButton] = useState(false);
   const [gadifyCount, setGadifyCount] = useState(0);
 
+  const [user, setUser] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
+
+  const fetchEntries = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+      );
+      if (response.data.entries && Array.isArray(response.data.entries)) {
+        setEntries(response.data.entries);
+      } else {
+        console.error("Response data is not an array", response.data);
+        setEntries([]);
+      }
+    } catch (error) {
+      console.error("Error fetching entries:", error);
+      setError("No entry.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Create a ref for the comment section
   const commentSectionRef = useRef(null);
 

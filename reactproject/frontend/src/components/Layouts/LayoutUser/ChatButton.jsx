@@ -16,18 +16,18 @@ const UserChatButton = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [admin, setAdmin] = useState(null);
   const pusherRef = useRef(null);
-  const messagesEndRef = useRef(null); // Ref for scrolling to the end of messages
+  const messagesEndRef = useRef(null);
 
   const handleClose = () => {
     setShow(false);
-    setMessages([]); // Clear messages when modal closes
-    setSelectedUser(null); // Reset selected user
+    setMessages([]);
+    setSelectedUser(null);
   };
 
   const handleShow = async () => {
     setShow(true);
     if (!user?.isAdmin && admin) {
-      await fetchMessages(admin.userID); // Fetch messages when modal opens for normal users
+      await fetchMessages(admin.userID);
     }
   };
 
@@ -36,16 +36,14 @@ const UserChatButton = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      console.log("Current user:", parsedUser);
 
       const fetchAdmin = async () => {
         try {
           const response = await fetch("http://localhost:8081/admin");
           const data = await response.json();
-          console.log("Fetched admin data:", data);
           setAdmin(data);
           if (!parsedUser.isAdmin) {
-            await fetchMessages(data.userID); // Fetch messages for normal users
+            await fetchMessages(data.userID);
           }
         } catch (error) {
           console.error("Error fetching admin data:", error);
@@ -59,7 +57,6 @@ const UserChatButton = () => {
           try {
             const response = await fetch("http://localhost:8081/users");
             const data = await response.json();
-            console.log("Fetched all users:", data);
             setAllUsers(data);
           } catch (error) {
             console.error("Error fetching all users:", error);
@@ -67,8 +64,14 @@ const UserChatButton = () => {
         };
         fetchAllUsers();
       }
+    } else {
+      window.location.href = "/";
+    }
+  }, []);
 
-      // Initialize Pusher here
+  // Set up Pusher subscription only after user data is set
+  useEffect(() => {
+    if (user) {
       pusherRef.current = new Pusher("4810211a14a19b86f640", {
         cluster: "ap1",
         encrypted: true,
@@ -76,17 +79,16 @@ const UserChatButton = () => {
 
       const channel = pusherRef.current.subscribe("chat-channel");
 
-      // Handle incoming messages
       channel.bind("message-event", (data) => {
-        // Update messages for the correct recipient
         if (
-          data.recipientID === user.userID ||
-          (selectedUser && data.senderID === selectedUser)
+          (data.recipientID === user.userID &&
+            data.senderID === selectedUser) ||
+          (data.senderID === user.userID && data.recipientID === selectedUser)
         ) {
           setMessages((prevMessages) => [
             ...prevMessages,
             {
-              username: data.username,
+              username: data.username || "Unknown",
               message: data.message,
               senderID: data.senderID,
             },
@@ -98,10 +100,8 @@ const UserChatButton = () => {
         channel.unbind_all();
         pusherRef.current.unsubscribe("chat-channel");
       };
-    } else {
-      window.location.href = "/";
     }
-  }, []); // Only run this effect on mount
+  }, [user, selectedUser]);
 
   useEffect(() => {
     if (selectedUser) {
@@ -110,7 +110,6 @@ const UserChatButton = () => {
   }, [selectedUser]);
 
   useEffect(() => {
-    // Scroll to the bottom of the messages when new messages arrive
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -124,7 +123,6 @@ const UserChatButton = () => {
         `http://localhost:8081/messages?userID=${user.userID}&withUserID=${userID}`
       );
       const data = await response.json();
-      console.log("Fetched messages for userID:", userID, data);
       setMessages(data);
       setSelectedUser(userID);
     } catch (error) {
@@ -150,12 +148,7 @@ const UserChatButton = () => {
       }),
     });
 
-    // Update local state for the sent message
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { username: user.username, message: newMessage, senderID: senderUserID },
-    ]);
-    setNewMessage("");
+    setNewMessage(""); // Still keep clearing the input
   };
 
   return (
@@ -226,7 +219,6 @@ const UserChatButton = () => {
                     </div>
                   </div>
                 ))}
-                {/* This div is used to scroll to the bottom */}
                 <div ref={messagesEndRef} />
               </div>
 
