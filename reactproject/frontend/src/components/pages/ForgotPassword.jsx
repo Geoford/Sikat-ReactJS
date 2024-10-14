@@ -4,9 +4,19 @@ import Modal from "react-bootstrap/Modal";
 
 const ForgotPassword = () => {
   const [show, setShow] = useState(false);
+  const [step, setStep] = useState(1); // Step state to control which step is shown
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setStep(1); // Reset step on close
+  };
   const handleShow = () => setShow(true);
+
+  const handleFirstStepSubmit = () => {
+    // You can add validation for the recovery question and OTP here
+    // If valid, proceed to the second step
+    setStep(2);
+  };
 
   return (
     <>
@@ -21,16 +31,84 @@ const ForgotPassword = () => {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Account Recovery</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+        <Modal.Body>
+          {step === 1 && (
+            // FIRST STEP
+            <div>
+              <div className="mb-3">
+                <p className="m-0">
+                  <b>Recovery Question:</b> What is your favorite color?
+                </p>
+                <div className="input-group mb-2">
+                  <input
+                    type="text"
+                    name="answer"
+                    placeholder="Answer"
+                    className="form-control rounded-end"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <p className="m-0">OTP sent to email@email.com</p>
+                <div className="mb-3">
+                  <input
+                    type="number"
+                    name="OTP"
+                    placeholder="OTP eg. 000000"
+                    className="form-control rounded"
+                  />
+                </div>
+                <div className="text-end px-2">
+                  <a className="m-0 text-end" href="">
+                    Resend OTP
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            // SECOND STEP
+            <div>
+              <div className="mb-3">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="New Password"
+                  className="form-control rounded"
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  className="form-control rounded"
+                />
+              </div>
+            </div>
+          )}
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
+          {step === 1 ? (
+            <button
+              className="primaryButton py-2"
+              onClick={handleFirstStepSubmit}
+            >
+              Next
+            </button>
+          ) : (
+            <button className="primaryButton py-2" onClick={handleClose}>
+              Submit
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </>
