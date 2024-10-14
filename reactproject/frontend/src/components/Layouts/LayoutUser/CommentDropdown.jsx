@@ -1,4 +1,5 @@
 import Dropdown from "react-bootstrap/Dropdown";
+import ReportButton from "./ReportButton";
 
 const CommentDropdown = () => {
   return (
@@ -12,8 +13,8 @@ const CommentDropdown = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="p-2">
-        <Dropdown.Item className="p-0 btn btn-light" href="#/action-1">
-          <button className="btn btn-light w-100 text-start">Report</button>
+        <Dropdown.Item className="p-0 btn btn-light">
+          <ReportButton></ReportButton>
         </Dropdown.Item>
         {/* <Dropdown.Item href="#/action-2"></Dropdown.Item>
         <Dropdown.Item href="#/action-3"> </Dropdown.Item> */}
