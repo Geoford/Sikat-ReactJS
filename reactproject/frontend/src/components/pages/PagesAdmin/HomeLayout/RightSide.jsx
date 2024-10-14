@@ -2,7 +2,7 @@ import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
 import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/anonymous.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
@@ -151,21 +151,33 @@ const Center = () => {
         </div>
         <div className="d-flex align-items-center gap-2">
           <div
-            className="custom-scrollbar mt-2 pe-1"
+            className="w-100 custom-scrollbar mt-2 pe-1"
             style={{ height: "25vh", overflowY: "scroll" }}
           >
-            <div className="profilePicture">
-              <img
-                src={DefaultProfile}
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
-            <p className="m-0 ms-2">asdsadasd</p>
+            {/* WHEN CLICKED IT SHOULD DISPLAY THE COMMENT OF THE REPORTED USER */}
+            <Link
+              to="/Admin/DiaryEntry"
+              className="text-decoration-none"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="linkText d-flex align-items-center gap-2 rounded">
+                <div className="profilePicture">
+                  <img
+                    src={DefaultProfile}
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <div className="d-flex flex-column align-items-start">
+                  <p className="text-secondary m-0">FullName</p>
+                  <p className="text-danger m-0">Violation,Violation</p>
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -174,11 +186,82 @@ const Center = () => {
         <div className="d-flex justify-content-between border-bottom">
           <h4 className="text-secondary">Flagged Diaries</h4>
         </div>
-        <UserList
-          users={followedUsers}
-          handleFollowToggle={handleFollowToggle}
-          isFollowing={() => true}
-        />
+        <div className="d-flex align-items-center gap-2">
+          <div
+            className="w-100 custom-scrollbar mt-2 pe-1"
+            style={{ height: "40vh", overflowY: "scroll" }}
+          >
+            <Link
+              to="/Admin/DiaryEntry"
+              className="text-decoration-none"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="linkText d-flex align-items-center gap-2 rounded">
+                <div className="profilePicture">
+                  <img
+                    src={DefaultProfile}
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <div className="d-flex flex-column align-items-start">
+                  <p className="text-secondary m-0">FullName</p>
+                  <h5 className="text-secondary m-0">Journal Title</h5>
+                </div>
+              </div>
+            </Link>
+            <Link
+              to="/Admin/DiaryEntry"
+              className="text-decoration-none"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="linkText d-flex align-items-center gap-2 rounded">
+                <div className="profilePicture">
+                  <img
+                    src={DefaultProfile}
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <div className="d-flex flex-column align-items-start">
+                  <p className="text-secondary m-0">FullName</p>
+                  <h5 className="text-secondary m-0">Journal Title</h5>
+                </div>
+              </div>
+            </Link>
+            <Link
+              to="/Admin/DiaryEntry"
+              className="text-decoration-none"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="linkText d-flex align-items-center gap-2 rounded">
+                <div className="profilePicture">
+                  <img
+                    src={DefaultProfile}
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <div className="d-flex flex-column align-items-start">
+                  <p className="text-secondary m-0">FullName</p>
+                  <h5 className="text-secondary m-0">Journal Title</h5>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
