@@ -4,11 +4,14 @@ import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
+import DefaultProfile from "../../../../../src/assets/anonymous.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
-  <div className="mt-2 pe-1" style={{ height: "25vh", overflowY: "scroll" }}>
+  <div
+    className="custom-scrollbar mt-2 pe-1"
+    style={{ height: "25vh", overflowY: "scroll" }}
+  >
     {users.map((user) => (
       <div
         key={user.userID}
@@ -144,18 +147,32 @@ const Center = () => {
     <div className="p-2">
       <div className="rounded p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Followers</h4>
+          <h4 className="text-secondary">Reported User/s</h4>
         </div>
-        <UserList
-          users={followers}
-          handleFollowToggle={handleFollowToggle}
-          isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
-        />
+        <div className="d-flex align-items-center gap-2">
+          <div
+            className="custom-scrollbar mt-2 pe-1"
+            style={{ height: "25vh", overflowY: "scroll" }}
+          >
+            <div className="profilePicture">
+              <img
+                src={DefaultProfile}
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+            <p className="m-0 ms-2">asdsadasd</p>
+          </div>
+        </div>
       </div>
 
       <div className="p-3">
         <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Following</h4>
+          <h4 className="text-secondary">Flagged Diaries</h4>
         </div>
         <UserList
           users={followedUsers}

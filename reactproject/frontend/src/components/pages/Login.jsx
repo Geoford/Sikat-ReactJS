@@ -6,6 +6,7 @@ import usernameIcon from "../../assets/Username.png";
 import passwordIcon from "../../assets/Password.png";
 import showIcon from "../../assets/show.png";
 import hiddenIcon from "../../assets/hidden.png";
+import logo from "../../assets/TransparentLogo.png";
 import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
@@ -70,13 +71,14 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className=" rounded shadow p-4"
+        className=" rounded-5 shadow p-4"
         style={{
-          width: "clamp(400px, 30vw, 500px)",
+          width: "clamp(400px, 40vw, 400px)",
           backgroundColor: "var(--primary)",
         }}
       >
         <div>
+          <img src={logo} alt="" style={{ width: "65px", height: "65px" }} />
           <h3
             className="m-0 text-light"
             style={{ fontSize: "clamp(20px, 3vw, 25px)", color: "#ffff" }}

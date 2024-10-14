@@ -119,7 +119,7 @@ const Center = () => {
       <div className=" mt-3">
         <div className="d-flex justify-content-between border-bottom">
           <div>
-            <h4 className="text-secondary">Journal Entries</h4>
+            <h4 className="text-secondary">Recent Post</h4>
           </div>
           <div>
             <Link
