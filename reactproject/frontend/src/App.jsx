@@ -49,8 +49,8 @@ function App() {
           <Route path="/DiaryEntry/" element={<DiaryEntry />} />
 
           {/* ADMIN ROUTES */}
-          <Route path="/AdminHome" element={<AdminHome />} />
-          <Route path="/AdminProfile/:userID" element={<AdminProfile />} />
+          <Route path="/Admin/Home" element={<AdminHome />} />
+          <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

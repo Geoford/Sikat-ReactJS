@@ -39,7 +39,7 @@ export default function Login() {
         .then((res) => {
           localStorage.setItem("user", JSON.stringify(res.data));
           if (res.data.isAdmin) {
-            navigate("/AdminHome");
+            navigate("/Admin/Home");
           } else {
             navigate("/Home");
           }
