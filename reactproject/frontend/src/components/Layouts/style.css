@@ -402,3 +402,36 @@ input.form-control:focus {
   font-size: 1.5rem;
   margin: 0.25rem;
 }
+
+/* FOR PRELOADER */
+/* Preloader styling */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+}
+
+.preloader img {
+  width: 200px;
+}
+
+.text-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.text-container span {
+  font-size: 1.5rem;
+  font-weight: bold;
+  opacity: 0; /* Starts hidden */
+}

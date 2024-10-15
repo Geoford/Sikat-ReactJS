@@ -7,6 +7,7 @@ import Register from "./Register";
 import Logo from "../../assets/logo.jpg";
 import BackgroundImg1 from "../../assets/LogInBackground (1).png";
 import BackgroundImg2 from "../../assets/LogInBackground (2).png";
+import { PreLoader } from "./PreLoader";
 
 const IndexPage = () => {
   const [isLoginPage, setIsLoginPage] = useState(true); // state to track if the login page is active
@@ -34,8 +35,11 @@ const IndexPage = () => {
   };
 
   return (
-    <div className="">
-      {/* <nav className="w-100 navbar navbar-expand-lg position-absolute p-0">
+    <>
+      <PreLoader></PreLoader>
+
+      <div className="">
+        {/* <nav className="w-100 navbar navbar-expand-lg position-absolute p-0">
         <div className="container-fluid py-2 px-3 shadow">
           <div className="logo">
             <Link to="/">
@@ -45,50 +49,51 @@ const IndexPage = () => {
           
         </div>
       </nav> */}
-      <div
-        className="d-flex align-items-center position-absolute  gap-1"
-        style={{ top: "20px", right: "30px" }}
-      >
-        <button
-          className={isLoginPage ? "btn fw-bolder" : "purpleButton fw-bolder"}
-          onClick={handleRegisterClick}
-          style={{ border: "none", width: "90px", padding: "5px" }}
+        <div
+          className="d-flex align-items-center position-absolute  gap-1"
+          style={{ top: "20px", right: "30px", zIndex: "-1" }}
         >
-          Register
-        </button>
-        <button
-          className={isLoginPage ? "purpleButton fw-bolder" : "btn fw-bolder"}
-          onClick={handleLoginClick}
-          style={{ border: "none", width: "90px", padding: "5px" }}
-        >
-          Log in
-        </button>
-      </div>
-
-      <div className={`fade-container ${fadeIn ? "fade-in" : "fade-out"}`}>
-        {isLoginPage ? <Login /> : <Register />}
-      </div>
-      <Background>
-        <div className="vh-100 position-relative">
-          <div>
-            <img
-              className="position-absolute"
-              src={BackgroundImg1}
-              alt=""
-              style={{ left: "0", top: "0px" }}
-            />
-          </div>
-          <div>
-            <img
-              className="position-absolute"
-              src={BackgroundImg2}
-              alt=""
-              style={{ right: "0", bottom: "0px" }}
-            />
-          </div>
+          <button
+            className={isLoginPage ? "btn fw-bolder" : "purpleButton fw-bolder"}
+            onClick={handleRegisterClick}
+            style={{ border: "none", width: "90px", padding: "5px" }}
+          >
+            Register
+          </button>
+          <button
+            className={isLoginPage ? "purpleButton fw-bolder" : "btn fw-bolder"}
+            onClick={handleLoginClick}
+            style={{ border: "none", width: "90px", padding: "5px" }}
+          >
+            Log in
+          </button>
         </div>
-      </Background>
-    </div>
+
+        <div className={`fade-container ${fadeIn ? "fade-in" : "fade-out"}`}>
+          {isLoginPage ? <Login /> : <Register />}
+        </div>
+        <Background>
+          <div className="vh-100 position-relative">
+            <div>
+              <img
+                className="position-absolute"
+                src={BackgroundImg1}
+                alt=""
+                style={{ left: "0", top: "0px" }}
+              />
+            </div>
+            <div>
+              <img
+                className="position-absolute"
+                src={BackgroundImg2}
+                alt=""
+                style={{ right: "0", bottom: "0px" }}
+              />
+            </div>
+          </div>
+        </Background>
+      </div>
+    </>
   );
 };
 
