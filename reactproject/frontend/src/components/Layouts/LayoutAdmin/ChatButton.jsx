@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import Pusher from "pusher-js";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ChatIcon from "../../../assets/ChatIcon.png";
 import SendIcon from "../../../assets/SendIcon.png";
-import DefaultProfile from "../../../assets/userDefaultProfile.png";
+import DefaultProfile from "../../../assets/anonymous.png";
 
 const ChatButton = () => {
   const [show, setShow] = useState(false);
@@ -179,7 +180,7 @@ const ChatButton = () => {
         </Modal.Header>
         <Modal.Body
           className="p-1"
-          style={{ height: "clamp(475px, 50vh, 500px)", overflow: "hidden" }}
+          style={{ height: "clamp(420px, 55vh, 500px)", overflow: "hidden" }}
         >
           <div>
             {!selectedUser ? (
@@ -187,15 +188,20 @@ const ChatButton = () => {
                 className="UserList"
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
-                <div className="d-flex justify-content-between">
-                  <h5 className="m-1">Users</h5>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="mb-2 w-50"
-                  />
+                <div className="d-flex justify-content-between px-3 py-2 mb-2 border-bottom">
+                  <h5 className="m-0 mt-1">Users</h5>
+                  <InputGroup className="m-0 w-50">
+                    <InputGroup.Text id="basic-addon1">
+                      <i class="bx bx-search-alt-2"></i>
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      placeholder="Search users..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className=""
+                    />
+                  </InputGroup>
                 </div>
                 <div style={{ height: "85%" }}>
                   <div
@@ -205,38 +211,36 @@ const ChatButton = () => {
                     {filteredUsers.map((userItem, index) => (
                       <div
                         key={index}
-                        className="grayHover d-flex align-items-center gap-2 bg-light p-2 rounded"
+                        className="grayHover d-flex align-items-center justify-content-between gap-2 bg-light p-2 pe-3 rounded"
                         onClick={() => handleUserClick(userItem)}
                         style={{ cursor: "pointer" }}
                       >
-                        <div className="profilePicture">
-                          <img
-                            src={DefaultProfile}
-                            alt="Profile"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
+                        <div className=" d-flex align-items-center gap-2">
+                          <div className="profilePicture">
+                            <img
+                              src={DefaultProfile}
+                              alt="Profile"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
+                          </div>
+                          <p className="m-0">
+                            {userItem.firstName} {userItem.lastName} or (Alias)
+                          </p>
                         </div>
-                        <p className="m-0">
-                          {userItem.firstName} {userItem.lastName} or (Alias)
-                        </p>
                         <div
                           className="p-0 m-0 d-flex align-items-center justify-content-center"
                           style={{
-                            backgroundColor: "red",
-                            height: "20px",
-                            width: "20px",
+                            backgroundColor: "var(--primary)",
+                            height: "15px",
+                            width: "15px",
                             borderRadius: "50%",
                             color: "#ffff",
                           }}
-                        >
-                          <p className="m-0 p-0" style={{ fontSize: "13px" }}>
-                            0
-                          </p>
-                        </div>
+                        ></div>
                       </div>
                     ))}
                   </div>
@@ -245,14 +249,19 @@ const ChatButton = () => {
             ) : (
               <div
                 className="ChatRoom mb-1 p-2"
-                style={{ height: "clamp(400px, 30vh, 500px)" }}
+                style={{ height: "clamp(420px, 55vh, 500px)" }}
               >
-                <div onClick={handleBackClick} style={{ cursor: "pointer" }}>
-                  <i className="bx bx-arrow-back"></i> {selectedUser.username}
+                <div
+                  className="py-2 d-flex align-items-center gap-2"
+                  onClick={handleBackClick}
+                  style={{ cursor: "pointer" }}
+                >
+                  <i className="bx bx-arrow-back"></i>{" "}
+                  <h5 className="m-0">{selectedUser.username}</h5>
                 </div>
                 <div>
                   <div
-                    className="border rounded mb-1 p-2"
+                    className="border rounded mb-1 p-2 overflow-x-hidden"
                     style={{ height: "300px", overflowY: "scroll" }}
                   >
                     {messages.map((msg, index) => (
@@ -263,21 +272,29 @@ const ChatButton = () => {
                         }`}
                       >
                         <div
-                          className="rounded p-2 text-white"
+                          className="rounded p-2 mt-1 text-light"
                           style={{
                             backgroundColor:
                               msg.senderID === user?.userID
                                 ? "#ff8533"
                                 : "#990099",
+                            maxWidth: "300px",
+                            width: "fit-content",
+                            wordWrap: "break-word",
                           }}
                         >
-                          {msg.message}
+                          <p
+                            className="m-0 text-wrap"
+                            style={{ width: "100%" }}
+                          >
+                            {msg.message}
+                          </p>
                         </div>
                       </div>
                     ))}
                     <div ref={messagesEndRef} /> {/* Scroll reference */}
                   </div>
-                  <div className="">
+                  <div className="position-relative">
                     <FloatingLabel
                       controlId="floatingTextarea2"
                       label="Message"
@@ -290,26 +307,21 @@ const ChatButton = () => {
                         onChange={(e) => setNewMessage(e.target.value)}
                       />
                     </FloatingLabel>
-                  </div>
-                  <div>
-                    <Button
-                      className="orangeButton py-2 d-flex align-items-center justify-content-center"
+                    <button
+                      className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
                       onClick={sendMessage}
                       style={{
-                        height: "50px",
-                        width: "50px",
-                        marginLeft: "5px",
+                        height: "40px",
+                        width: "40px",
+                        borderRadius: "50%",
+                        backgroundColor: "#ffff",
+                        right: "10px",
+                        bottom: "10px",
+                        color: "var(--primary)",
                       }}
                     >
-                      <img
-                        src={SendIcon}
-                        alt=""
-                        style={{
-                          width: "25px",
-                          height: "25px",
-                        }}
-                      />
-                    </Button>
+                      <i className="bx bxs-send bx-sm"></i>
+                    </button>
                   </div>
                 </div>
               </div>
