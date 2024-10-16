@@ -87,26 +87,24 @@ const Center = () => {
               : entry
           )
         );
+
+        // Add notification for the entry owner
+        if (user.userID !== entry.userID) {
+          // Only notify if the user is not the owner
+          axios
+            .post(`http://localhost:8081/notifications`, {
+              userID: entry.userID,
+              actorID: user.userID,
+              entryID: entryID,
+              type: "gadify",
+              message: `${user.username} gadified your diary entry.`,
+            })
+            .catch((err) =>
+              console.error("Error sending gadify notification:", err)
+            );
+        }
       })
       .catch((err) => console.error("Error updating gadify count:", err));
-  };
-
-  const handleClick = (entryID) => {
-    const updatedActiveButtons = {
-      ...activeButtons,
-      [entryID]: !activeButtons[entryID],
-    };
-    setActiveButtons(updatedActiveButtons);
-
-    const updatedExpandButtons = { ...expandButtons, [entryID]: true };
-    setExpandButtons(updatedExpandButtons);
-
-    setTimeout(() => {
-      updatedExpandButtons[entryID] = false;
-      setExpandButtons({ ...updatedExpandButtons });
-    }, 300);
-
-    handleGadify(entryID);
   };
 
   const handleFollowToggle = async (followUserId) => {
@@ -130,7 +128,14 @@ const Center = () => {
 
         setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
         alert(`You have unfollowed user ${followUserId}`);
-        window.location.reload();
+
+        // Send unfollow notification
+        await axios.post(`http://localhost:8081/notifications`, {
+          userID: followUserId, // Notify the user who was unfollowed
+          actorID: user.userID, // The user who performed the unfollow action
+          type: "unfollow",
+          message: `${user.username} has unfollowed you.`,
+        });
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
@@ -138,7 +143,14 @@ const Center = () => {
 
         setFollowedUsers((prev) => [...prev, followUserId]);
         alert(`You are now following user ${followUserId}`);
-        window.location.reload();
+
+        // Send follow notification
+        await axios.post(`http://localhost:8081/notifications`, {
+          userID: followUserId, // Notify the user who was followed
+          actorID: user.userID, // The user who performed the follow action
+          type: "follow",
+          message: `${user.username} has followed you.`,
+        });
       }
 
       await fetchFollowedUsers(user.userID);
@@ -146,6 +158,24 @@ const Center = () => {
       console.error("Error toggling follow status:", error);
       alert("There was an error processing your request.");
     }
+  };
+
+  const handleClick = (entryID) => {
+    const updatedActiveButtons = {
+      ...activeButtons,
+      [entryID]: !activeButtons[entryID],
+    };
+    setActiveButtons(updatedActiveButtons);
+
+    const updatedExpandButtons = { ...expandButtons, [entryID]: true };
+    setExpandButtons(updatedExpandButtons);
+
+    setTimeout(() => {
+      updatedExpandButtons[entryID] = false;
+      setExpandButtons({ ...updatedExpandButtons });
+    }, 300);
+
+    handleGadify(entryID);
   };
 
   if (!user) return null;

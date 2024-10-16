@@ -1,11 +1,8 @@
-// src/Layouts/LayoutUser/CommentSection.jsx
-
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import Accordion from "react-bootstrap/Accordion";
 import CommentDropdown from "./CommentDropdown";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import SendIcon from "../../../assets/SendIcon.png";
@@ -18,8 +15,11 @@ const CommentSection = ({ userID, entryID }) => {
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [replyText, setReplyText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // State for error messages
 
   const fetchComments = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `http://localhost:8081/fetchComments/${entryID}`
@@ -29,6 +29,9 @@ const CommentSection = ({ userID, entryID }) => {
       setComments(nestedComments);
     } catch (error) {
       console.error("Error fetching comments:", error);
+      setError("Failed to fetch comments. Please try again."); // Set error message
+    } finally {
+      setLoading(false); // Always set loading to false
     }
   }, [entryID]);
 
@@ -38,7 +41,6 @@ const CommentSection = ({ userID, entryID }) => {
     }
   }, [show, fetchComments]);
 
-  // Helper function to nest comments
   const nestComments = (comments) => {
     const commentMap = {};
     const nested = [];
@@ -60,7 +62,10 @@ const CommentSection = ({ userID, entryID }) => {
   };
 
   const handleSendComment = async () => {
-    if (newComment.trim() === "") return;
+    if (!userID || !entryID || newComment.trim() === "") {
+      console.error("User ID, Entry ID, and comment text are required.");
+      return;
+    }
 
     const newCommentObj = {
       userID,
@@ -68,32 +73,54 @@ const CommentSection = ({ userID, entryID }) => {
       text: newComment,
     };
 
+    setLoading(true);
     try {
       await axios.post("http://localhost:8081/comments", newCommentObj);
       setNewComment("");
-      fetchComments();
+      fetchComments(); // Optimistically update the UI by fetching comments
     } catch (error) {
       console.error("Error posting comment:", error);
+      setError("Failed to post comment. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+
+    if (userID !== entry.userID) {
+      axios
+        .post(`http://localhost:8081/notifications`, {
+          userID: entry.userID,
+          actorID: userID,
+          entryID,
+          type: "comment",
+          message: `${user.username} commented on your diary entry.`,
+        })
+        .catch((err) => {
+          console.error("Error sending comment notification:", err);
+          setError("Failed to send notification."); // Set error message for notification
+        });
     }
   };
 
   const handleDeleteComment = async (commentID) => {
-    // Prompt for confirmation before deletion
     const confirmed = window.confirm(
       "Are you sure you want to delete this comment?"
     );
 
     if (!confirmed) {
-      return; // If the user did not confirm, exit the function
+      return; // Exit if the user did not confirm
     }
 
+    setLoading(true);
     try {
       await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
-        data: { userID }, // Pass the userID in the request body
+        data: { userID },
       });
       fetchComments(); // Refresh comments after deletion
     } catch (error) {
       console.error("Error deleting comment:", error);
+      setError("Failed to delete comment. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,9 +131,10 @@ const CommentSection = ({ userID, entryID }) => {
       userID,
       entryID,
       text: replyText,
-      replyCommentID: parentID, // Correct variable
+      replyCommentID: parentID,
     };
 
+    setLoading(true);
     try {
       await axios.post("http://localhost:8081/comments", newReplyObj);
       setReplyTo(null);
@@ -114,6 +142,9 @@ const CommentSection = ({ userID, entryID }) => {
       fetchComments();
     } catch (error) {
       console.error("Error posting reply:", error);
+      setError("Failed to post reply. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,7 +152,9 @@ const CommentSection = ({ userID, entryID }) => {
     setShow(false);
     setReplyTo(null);
     setReplyText("");
+    setError(null); // Reset error message on close
   };
+
   const handleShow = () => setShow(true);
 
   const Comment = React.memo(({ comment, depth = 0 }) => {
@@ -202,7 +235,6 @@ const CommentSection = ({ userID, entryID }) => {
           </div>
         )}
 
-        {/* Render Replies */}
         {comment.replies && comment.replies.length > 0 && (
           <div className="mt-2">
             {comment.replies.map((reply) => (
@@ -229,20 +261,14 @@ const CommentSection = ({ userID, entryID }) => {
           <Modal.Title>Comments</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div
-            className="d-flex flex-column gap-2"
-            style={{ height: "55vh", overflowY: "scroll" }}
-          >
-            {comments.length === 0 ? (
-              <p>No comments yet. Be the first to comment!</p>
-            ) : (
-              comments.map((comment) => (
-                <Comment key={comment.commentID} comment={comment} />
-              ))
-            )}
+          {loading && <p>Loading comments...</p>}
+          {error && <p className="text-danger">{error}</p>}
+          <div className="comments-container">
+            {comments.map((comment) => (
+              <Comment key={comment.commentID} comment={comment} />
+            ))}
           </div>
         </Modal.Body>
-
         <Modal.Footer className="">
           <div className="w-100 position-relative">
             <FloatingLabel controlId="floatingTextarea2" label="Comment">

@@ -907,6 +907,38 @@ app.get("/messages", (req, res) => {
   });
 });
 
+app.post("/notifications", async (req, res) => {
+  const { userID, actorID, message, entryID, type } = req.body;
+
+  // 1. Insert notification into the database
+  const insertNotificationQuery = `
+    INSERT INTO notifications (userID, actorID, message, entryID, type)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    insertNotificationQuery,
+    [userID, actorID, message, entryID, type],
+    (error, results) => {
+      if (error) {
+        console.error("Error inserting notification into database:", error);
+        return res.status(500).send("Error saving notification");
+      }
+
+      // 2. Trigger Pusher to notify the user
+      pusher.trigger(`notifications-${userID}`, "new-notification", {
+        actorID,
+        message,
+        entryID,
+        type,
+        timestamp: new Date().toISOString(),
+      });
+
+      res.status(200).send("Notification sent");
+    }
+  );
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
