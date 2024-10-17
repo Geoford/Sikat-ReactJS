@@ -51,7 +51,7 @@ const IndexPage = () => {
       </nav> */}
         <div
           className="d-flex align-items-center position-absolute  gap-1"
-          style={{ top: "20px", right: "30px", zIndex: "-1" }}
+          style={{ top: "20px", right: "30px" }}
         >
           <button
             className={isLoginPage ? "btn fw-bolder" : "purpleButton fw-bolder"}
