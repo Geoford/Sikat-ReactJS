@@ -147,7 +147,7 @@ const Center = () => {
           ) : (
             entries.map((entry) => (
               <Link
-                to="/DiaryEntry"
+                to={`/DiaryEntry/${entry.entryID}`}
                 className="rounded text-decoration-none"
                 style={{ cursor: "pointer" }}
               >

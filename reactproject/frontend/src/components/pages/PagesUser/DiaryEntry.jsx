@@ -1,13 +1,75 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import sampleBackground from "../../../assets/Background.jpg";
 import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import CommentDropdown from "../../Layouts/LayoutUser/CommentDropdown";
+import axios from "axios";
 
 const DiaryEntry = () => {
+  const [user, setUser] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeButton, setActiveButton] = useState(false);
   const [expandButton, setExpandButton] = useState(false);
   const [gadifyCount, setGadifyCount] = useState(0);
+  const navigate = useNavigate();
+
+  // Fetch the user from localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const fetchUser = JSON.parse(userData);
+
+      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("User not found");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  // Fetch the entries once the user data is available
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
+
+  // Function to fetch the user's diary entries
+  const fetchEntries = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+      );
+      if (response.data.entries && Array.isArray(response.data.entries)) {
+        setEntries(response.data.entries);
+      } else {
+        console.error("Response data is not an array", response.data);
+        setEntries([]);
+      }
+    } catch (error) {
+      console.error("Error fetching entries:", error);
+      setError("No entry.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Create a ref for the comment section
   const commentSectionRef = useRef(null);
@@ -38,62 +100,78 @@ const DiaryEntry = () => {
   return (
     <UserPageMainLayout>
       <div className="d-flex align-items-center flex-column">
-        <div
-          className="bg-light rounded shadow-sm mt-5 p-0 text-start"
-          style={{ width: "800px" }}
-        >
-          <div className="text-center border-bottom border-2 py-2">
-            <h3 className="m-0">Journal Title</h3>
-          </div>
-          <div className="px-4 py-3">
-            <div className="w-100 d-flex align-items-center justify-content-between gap-2">
-              <div className="d-flex align-items-center">
-                <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                  <img src={AnonymousIcon} alt="" style={{ width: "80%" }} />
+        {entries.length === 0 ? (
+          <p>No entries available.</p>
+        ) : (
+          entries.map((entry) => (
+            <div
+              className="bg-light rounded shadow-sm mt-5 p-0 text-start"
+              style={{ width: "800px" }}
+            >
+              <div className="text-center border-bottom border-2 py-2">
+                <h3 className="m-0">{entry.title}</h3>
+              </div>
+              <div className="px-4 py-3">
+                <div className="w-100 d-flex align-items-center justify-content-between gap-2">
+                  <div className="d-flex align-items-center">
+                    <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                      <img
+                        src={
+                          entry.profile_image
+                            ? `http://localhost:8081${entry.profile_image}`
+                            : DefaultProfile
+                        }
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                    <h6 className="m-0 ms-2">{entry.username}</h6>
+                  </div>
                 </div>
-                <h6 className="m-0 ms-2">UserName</h6>
-              </div>
-            </div>
-            <div className="border-top border-bottom my-2 p-2">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum
-                quaerat, excepturi, voluptate et pariatur at nam temporibus
-                magni cupiditate eos impedit voluptates, tenetur nihil repellat!
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magni
-                repudiandae autem neque! Assumenda, ipsam molestiae.
-              </p>
-              <img
-                className="rounded"
-                src={sampleBackground}
-                alt=""
-                style={{ width: "100%" }}
-              />
-            </div>
+                <div className="border-top border-bottom my-2 p-2">
+                  <p>{entry.description}</p>
+                  {entry.diary_image && (
+                    <img
+                      className="DiaryImage mt-1 rounded"
+                      src={`http://localhost:8081${entry.diary_image}`}
+                      alt="Diary"
+                    />
+                  )}
+                </div>
 
-            {/* Display when the diary is public */}
-            <div className="row">
-              <div className="col">
-                <button
-                  className={`InteractButton ${activeButton ? "active" : ""} ${
-                    expandButton ? "expand" : ""
-                  }`}
-                  onClick={handleClick}
-                >
-                  <span>({gadifyCount}) </span>Gadify
-                </button>
-              </div>
-              <div className="col">
-                {/* Scroll to the comment section when this button is clicked */}
-                <button className="InteractButton" onClick={scrollToComments}>
-                  Comment
-                </button>
-              </div>
-              <div className="col">
-                <button className="InteractButton">Flag</button>
+                {/* Display when the diary is public */}
+                <div className="row">
+                  <div className="col">
+                    <button
+                      className={`InteractButton ${
+                        activeButton ? "active" : ""
+                      } ${expandButton ? "expand" : ""}`}
+                      onClick={handleClick}
+                    >
+                      <span>({gadifyCount}) </span>Gadify
+                    </button>
+                  </div>
+                  <div className="col">
+                    {/* Scroll to the comment section when this button is clicked */}
+                    <button
+                      className="InteractButton"
+                      onClick={scrollToComments}
+                    >
+                      Comment
+                    </button>
+                  </div>
+                  <div className="col">
+                    <button className="InteractButton">Flag</button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          ))
+        )}
 
         {/* COMMENT SECTION */}
         <div
