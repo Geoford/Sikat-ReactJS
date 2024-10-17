@@ -3,6 +3,7 @@ import SampleImage from "../../../../assets/Background.jpg";
 import DefaultProfile from "../../../../assets/userDefaultProfile.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { LeftSideLoader } from "../../../loaders/LeftSideLoader";
 import axios from "axios";
 
 const Center = () => {
@@ -74,7 +75,7 @@ const Center = () => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <LeftSideLoader />;
   }
 
   if (!user) return null;

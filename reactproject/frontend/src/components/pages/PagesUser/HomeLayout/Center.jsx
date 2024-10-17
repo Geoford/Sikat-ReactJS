@@ -5,6 +5,7 @@ import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
+import CenterLoader from "../../../loaders/CenterLoader";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -12,6 +13,7 @@ const Center = () => {
   const [followedUsers, setFollowedUsers] = useState([]);
   const [activeButtons, setActiveButtons] = useState({});
   const [expandButtons, setExpandButtons] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -60,6 +62,8 @@ const Center = () => {
       setEntries(updatedEntries);
     } catch (error) {
       console.error("There was an error fetching the diary entries!", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -177,6 +181,10 @@ const Center = () => {
 
     handleGadify(entryID);
   };
+
+  if (isLoading) {
+    return <CenterLoader></CenterLoader>;
+  }
 
   if (!user) return null;
 
