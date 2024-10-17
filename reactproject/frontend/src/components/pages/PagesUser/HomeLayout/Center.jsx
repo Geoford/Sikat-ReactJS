@@ -214,7 +214,7 @@ const Center = () => {
             </div>
             <div className="d-flex align-items-center border-bottom pb-2">
               <Link
-                to="/Profile"
+                to={`/Profile/${entry.userID}`}
                 className="linkText rounded"
                 style={{ cursor: "pointer" }}
               >

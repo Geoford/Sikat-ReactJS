@@ -4,7 +4,7 @@ import axios from "axios";
 import ProfileDiaryDropdown from "../../../Layouts/LayoutUser/ProfileDiaryDropdown";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 
-const UserDiary = ({ userID }) => {
+const OtherProfileDiary = ({ userID }) => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ const UserDiary = ({ userID }) => {
     if (user) {
       const fetchUser = JSON.parse(user);
 
-      fetch(`http://localhost:8081/fetchUserEntry/user/${fetchUser.userID}`)
+      fetch(`http://localhost:8081/fetchUserEntry/user/${userID}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("No entry found");
@@ -140,4 +140,4 @@ const UserDiary = ({ userID }) => {
   );
 };
 
-export default UserDiary;
+export default OtherProfileDiary;
