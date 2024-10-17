@@ -12,6 +12,7 @@ const Center = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const loadingEntry = Array(8).fill(null); // Creates an array of 5 null values
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -70,7 +71,76 @@ const Center = () => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="p-2">
+        <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
+          <div>
+            <div className="d-flex justify-content-center align-items-center">
+              <div
+                style={{
+                  backgroundColor: "#ffff",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "21vh",
+                  height: "21vh",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={DefaultProfile}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <p className="m-0 mt-1 text-light fs-5">Loading...</p>
+        </div>
+
+        <div className=" mt-3">
+          <div className="d-flex justify-content-between border-bottom">
+            <div>
+              <h4 className="text-secondary">Recent Post</h4>
+            </div>
+            <div>
+              <Link
+                to="/DiaryEntries"
+                className="linkText rounded"
+                style={{ cursor: "pointer" }}
+              >
+                View All
+              </Link>
+            </div>
+          </div>
+          <div
+            className="mt-2 ps-3 custom-scrollbar"
+            style={{ height: "45vh", overflowY: "hidden" }}
+          >
+            {loadingEntry.map((_, index) => (
+              <div
+                key={index}
+                className="d-flex align-items-start flex-column rounded ps-2 mt-3"
+              >
+                <h6
+                  style={{
+                    height: "20px",
+                    width: "80%",
+                    backgroundColor: "lightgray",
+                    marginBottom: "10px", // Optional, adds space between divs
+                  }}
+                ></h6>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!user) return null;

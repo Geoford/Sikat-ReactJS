@@ -5,7 +5,7 @@ export const preLoaderAnim = () => {
   gsap.fromTo(
     ".preloader img",
     { opacity: 0, scale: 0 },
-    { opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" }
+    { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }
   );
 
   // Animate the text fading in sequentially
@@ -15,10 +15,10 @@ export const preLoaderAnim = () => {
     {
       y: 0,
       opacity: 1,
-      duration: 1,
+      duration: 0.5,
       stagger: 0.3, // Stagger effect for each span
       ease: "power2.out",
-      delay: 1.5, // Delay after the logo animation
+      delay: 1, // Delay after the logo animation
     }
   );
 
