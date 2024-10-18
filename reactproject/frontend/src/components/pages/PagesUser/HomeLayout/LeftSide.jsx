@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LeftSideLoader } from "../../../loaders/LeftSideLoader";
 import axios from "axios";
 
-const Center = () => {
+const LeftSide = () => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -147,14 +147,12 @@ const Center = () => {
           ) : (
             entries.map((entry) => (
               <Link
+                key={entry.entryID} // Add key prop here
                 to={`/DiaryEntry/${entry.entryID}`}
                 className="rounded text-decoration-none"
                 style={{ cursor: "pointer" }}
               >
-                <div
-                  key={entry.entryID}
-                  className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-2"
-                >
+                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-2">
                   <h6 className="m-0 p-2 text-start text-secondary">
                     {entry.title} - {formatDate(entry.created_at)}
                   </h6>
@@ -168,4 +166,4 @@ const Center = () => {
   );
 };
 
-export default Center;
+export default LeftSide;

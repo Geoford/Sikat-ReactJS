@@ -239,8 +239,10 @@ app.post(
     });
   },
   (req, res) => {
-    const { title, description, userID, visibility, anonimity } = req.body;
+    const { title, description, userID, visibility, anonimity, subjects } =
+      req.body;
     const file = req.file;
+    const parsedSubjects = JSON.parse(subjects); // Parse the subjects
 
     if (!title || !description || !userID) {
       return res
@@ -254,8 +256,8 @@ app.post(
     }
 
     const query = `
-      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       title,
@@ -264,6 +266,7 @@ app.post(
       visibility,
       anonimity,
       diary_image,
+      JSON.stringify(parsedSubjects), // Store the subjects as JSON in the database
     ];
 
     db.query(query, values, (err, result) => {
@@ -280,8 +283,10 @@ app.post(
 
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
+  const { filter } = req.query; // Get filter parameters from the request
 
-  const query = `
+  // Start building the query
+  let query = `
     SELECT 
       diary_entries.entryID, 
       diary_entries.userID,  
@@ -298,10 +303,33 @@ app.get("/entries", (req, res) => {
     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     WHERE (diary_entries.visibility = 'public' 
     OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
-    ORDER BY diary_entries.created_at DESC
   `;
 
-  db.query(query, [userID], (err, results) => {
+  // Array to hold query parameters
+  const queryParams = [userID];
+
+  // Add filtering conditions based on the provided filter
+  if (filter) {
+    const filterConditions = [];
+
+    if (filter.includes("sexualHarassment")) {
+      filterConditions.push("diary_entries.category = 'sexualHarassment'");
+    }
+    if (filter.includes("domesticAbuse")) {
+      filterConditions.push("diary_entries.category = 'domesticAbuse'");
+    }
+    if (filter.includes("genderRelated")) {
+      filterConditions.push("diary_entries.category = 'genderRelated'");
+    }
+
+    if (filterConditions.length > 0) {
+      query += ` AND (${filterConditions.join(" OR ")})`;
+    }
+  }
+
+  query += ` ORDER BY diary_entries.created_at DESC`;
+
+  db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });

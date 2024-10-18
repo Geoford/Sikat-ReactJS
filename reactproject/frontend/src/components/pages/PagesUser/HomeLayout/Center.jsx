@@ -6,6 +6,7 @@ import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import CenterLoader from "../../../loaders/CenterLoader";
+import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -134,12 +135,12 @@ const Center = () => {
         alert(`You have unfollowed user ${followUserId}`);
 
         // Send unfollow notification
-        await axios.post(`http://localhost:8081/notifications`, {
-          userID: followUserId, // Notify the user who was unfollowed
-          actorID: user.userID, // The user who performed the unfollow action
-          type: "unfollow",
-          message: `${user.username} has unfollowed you.`,
-        });
+        // await axios.post(`http://localhost:8081/notifications`, {
+        //   userID: followUserId, // Notify the user who was unfollowed
+        //   actorID: user.userID, // The user who performed the unfollow action
+        //   type: "unfollow",
+        //   message: `${user.username} has unfollowed you.`,
+        // });
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
@@ -149,12 +150,12 @@ const Center = () => {
         alert(`You are now following user ${followUserId}`);
 
         // Send follow notification
-        await axios.post(`http://localhost:8081/notifications`, {
-          userID: followUserId, // Notify the user who was followed
-          actorID: user.userID, // The user who performed the follow action
-          type: "follow",
-          message: `${user.username} has followed you.`,
-        });
+        // await axios.post(`http://localhost:8081/notifications`, {
+        //   userID: followUserId, // Notify the user who was followed
+        //   actorID: user.userID, // The user who performed the follow action
+        //   type: "follow",
+        //   message: `${user.username} has followed you.`,
+        // });
       }
 
       await fetchFollowedUsers(user.userID);

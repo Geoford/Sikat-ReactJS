@@ -43,7 +43,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   </div>
 );
 
-const Center = () => {
+const RightSide = () => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -167,4 +167,4 @@ const Center = () => {
   );
 };
 
-export default Center;
+export default RightSide;

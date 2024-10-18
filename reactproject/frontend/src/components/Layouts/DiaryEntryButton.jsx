@@ -10,6 +10,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "./LayoutUser/SubjectSelection";
+import userDefaultProfile from "../../assets/userDefaultProfile.png";
 
 function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -22,6 +23,12 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [visibility, setVisibility] = useState("private");
   const [anonimity, setAnonimity] = useState("private");
   const [file, setFile] = useState(null);
+  const [selectedSubjects, setSelectedSubjects] = useState("");
+
+  // Update the selected subjects when changed in SubjectSelection
+  const handleSubjectsChange = (subjectsText) => {
+    setSelectedSubjects(subjectsText); // This is the text string now
+  };
 
   const navigate = useNavigate();
 
@@ -75,6 +82,10 @@ function DiaryEntryButton({ onEntrySaved }) {
     formData.append("userID", user.userID);
     formData.append("visibility", visibility);
     formData.append("anonimity", anonimity);
+
+    // Append selected subjects
+    formData.append("subjects", JSON.stringify(selectedSubjects));
+
     if (file) {
       formData.append("file", file);
     }
@@ -125,7 +136,21 @@ function DiaryEntryButton({ onEntrySaved }) {
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="profilePicture"></div>
+            <div className="profilePicture">
+              <img
+                src={
+                  user?.profile_image
+                    ? `http://localhost:8081${user?.profile_image}`
+                    : userDefaultProfile
+                }
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
             <p className="m-0">{user?.username || "User"}</p>
             <div>
               <select
@@ -151,7 +176,7 @@ function DiaryEntryButton({ onEntrySaved }) {
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
           <div>
-            <SubjectSelection></SubjectSelection>
+            <SubjectSelection onSubjectsChange={handleSubjectsChange} />
           </div>
           <div className="">
             <InputGroup className="mb-1">

@@ -2,7 +2,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 
-const SubjectSelection = () => {
+const SubjectSelection = ({ onSubjectsChange }) => {
   const [selectedItems, setSelectedItems] = useState({
     all: false,
     sexualHarassment: false,
@@ -10,31 +10,62 @@ const SubjectSelection = () => {
     genderRelated: false,
   });
 
+  const [customReason, setCustomReason] = useState(""); // State for custom input
+
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
+    let updatedItems;
     if (name === "all") {
-      // When "All" is selected, check or uncheck all other options
-      setSelectedItems({
+      updatedItems = {
         all: checked,
         sexualHarassment: checked,
         domesticAbuse: checked,
         genderRelated: checked,
-      });
+      };
     } else {
-      // Handle individual selections
-      setSelectedItems((prevState) => {
-        const updatedItems = { ...prevState, [name]: checked };
-
-        // If all other checkboxes are selected, check "All"
-        const allSelected =
-          updatedItems.sexualHarassment &&
-          updatedItems.domesticAbuse &&
-          updatedItems.genderRelated;
-
-        return { ...updatedItems, all: allSelected };
-      });
+      updatedItems = { ...selectedItems, [name]: checked };
+      updatedItems.all =
+        updatedItems.sexualHarassment &&
+        updatedItems.domesticAbuse &&
+        updatedItems.genderRelated;
     }
+
+    setSelectedItems(updatedItems);
+
+    // Convert the selected subjects to a text format
+    const selectedSubjectsText = [];
+    if (updatedItems.sexualHarassment)
+      selectedSubjectsText.push("Sexual Harassment");
+    if (updatedItems.domesticAbuse) selectedSubjectsText.push("Domestic Abuse");
+    if (updatedItems.genderRelated) selectedSubjectsText.push("Gender Related");
+
+    // Include the custom reason if provided
+    if (customReason) selectedSubjectsText.push(customReason);
+
+    // Send the comma-separated string of selected subjects to the parent
+    onSubjectsChange(selectedSubjectsText.join(", "));
+  };
+
+  const handleCustomReasonChange = (event) => {
+    setCustomReason(event.target.value);
+  };
+
+  const handleSaveFilter = () => {
+    // Create the selected subjects string for saving
+    const selectedSubjectsText = [];
+    if (selectedItems.sexualHarassment)
+      selectedSubjectsText.push("Sexual Harassment");
+    if (selectedItems.domesticAbuse)
+      selectedSubjectsText.push("Domestic Abuse");
+    if (selectedItems.genderRelated)
+      selectedSubjectsText.push("Gender Related");
+
+    // Include the custom reason if provided
+    if (customReason) selectedSubjectsText.push(customReason);
+
+    // Send the comma-separated string of selected subjects to the parent
+    onSubjectsChange(selectedSubjectsText.join(", "));
   };
 
   return (
@@ -76,7 +107,21 @@ const SubjectSelection = () => {
           checked={selectedItems.genderRelated}
           onChange={handleCheckboxChange}
         />
-        <button className="orangeButton w-100">Save Filter</button>
+        <Form.Group className="mt-2">
+          <Form.Label>Other Reason</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Type other reasons here..."
+            value={customReason}
+            onChange={handleCustomReasonChange}
+          />
+        </Form.Group>
+        <button
+          className="orangeButton w-100"
+          onClick={handleSaveFilter} // Update the button's onClick handler
+        >
+          Save Filter
+        </button>
       </Dropdown.Menu>
     </Dropdown>
   );
