@@ -90,7 +90,6 @@ const RightSide = () => {
       );
       const followedUsersData = response.data; // Store full user data
       setFollowedUsers(followedUsersData); // Set the full data to state
-      console.log("Fetched followed users:", followedUsersData);
       localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
     } catch (error) {
       console.error("Error fetching followed users:", error);

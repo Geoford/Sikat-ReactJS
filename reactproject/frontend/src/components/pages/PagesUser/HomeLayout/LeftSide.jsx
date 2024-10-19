@@ -38,7 +38,7 @@ const LeftSide = () => {
     } else {
       navigate("/");
     }
-  }, [navigate, entries]);
+  }, [navigate, user]);
 
   useEffect(() => {
     if (user) {
@@ -54,9 +54,7 @@ const LeftSide = () => {
       if (response.data.entries && Array.isArray(response.data.entries)) {
         setEntries(response.data.entries);
 
-        response.data.entries.forEach((entry) => {
-          console.log("Entry ID:", entry.entryID); // Adjust this to the correct field name
-        });
+        response.data.entries.forEach((entry) => {});
       } else {
         console.error("Response data is not an array", response.data);
         setEntries([]);
