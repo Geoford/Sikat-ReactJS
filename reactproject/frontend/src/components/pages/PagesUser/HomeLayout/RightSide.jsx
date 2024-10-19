@@ -61,7 +61,7 @@ const RightSide = () => {
     } else {
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, followedUsers, followers]);
 
   const fetchUsers = async () => {
     try {

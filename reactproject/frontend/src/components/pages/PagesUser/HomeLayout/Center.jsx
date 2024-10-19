@@ -15,6 +15,11 @@ const Center = () => {
   const [activeButtons, setActiveButtons] = useState({});
   const [expandButtons, setExpandButtons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    sexualHarassment: false,
+    domesticAbuse: false,
+    genderRelated: false,
+  });
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -22,12 +27,11 @@ const Center = () => {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
       fetchFollowedUsers(parsedUser.userID); // Fetch followed users from backend
-      fetchEntries(parsedUser.userID);
+      fetchEntries(parsedUser.userID, filters); // Fetch entries with filters
     } else {
-      // Redirect to login if user is not authenticated
       window.location.href = "/";
     }
-  }, []);
+  }, [filters, followedUsers, entries]);
 
   const fetchFollowedUsers = async (userID) => {
     try {
@@ -43,12 +47,11 @@ const Center = () => {
     }
   };
 
-  const fetchEntries = async (userID) => {
+  const fetchEntries = async (userID, filters) => {
     try {
       const response = await axios.get("http://localhost:8081/entries", {
-        params: { userID: userID },
+        params: { userID: userID, filters: filters },
       });
-
       const gadifyStatusResponse = await axios.get(
         `http://localhost:8081/gadifyStatus/${userID}`
       );
@@ -66,6 +69,13 @@ const Center = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFilterChange = (selectedFilters) => {
+    console.log("Selected filters:", selectedFilters);
+    // Extract relevant filters from selectedFilters
+    const { sexualHarassment, domesticAbuse, genderRelated } = selectedFilters;
+    setFilters({ sexualHarassment, domesticAbuse, genderRelated });
   };
 
   const handleGadify = (entryID) => {
@@ -183,6 +193,27 @@ const Center = () => {
     handleGadify(entryID);
   };
 
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    // Check if the time difference is less than 24 hours (in milliseconds)
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      // Return time formatted as "HH:MM AM/PM"
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      // Return date formatted as "MMM D"
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
   if (isLoading) {
     return <CenterLoader></CenterLoader>;
   }
@@ -195,12 +226,13 @@ const Center = () => {
         className="rounded shadow-sm p-3 mt-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton onEntrySaved={() => fetchEntries(user.userID)} />
+        <DiaryEntryButton
+          onEntrySaved={() => fetchEntries(user.userID, filters)}
+        />
       </div>
       <div className="d-flex justify-content-end">
-        <FilterButton />
+        <FilterButton onFilterChange={handleFilterChange} />
       </div>
-
       {entries.length === 0 ? (
         <p>No entries available.</p>
       ) : (
@@ -211,13 +243,12 @@ const Center = () => {
             style={{ backgroundColor: "white" }}
           >
             <div className="position-absolute" style={{ right: "20px" }}>
-              <HomeDiaryDropdown></HomeDiaryDropdown>
+              <HomeDiaryDropdown />
             </div>
             <div className="d-flex align-items-center border-bottom pb-2">
               <Link
                 to={`/Profile/${entry.userID}`}
                 className="linkText rounded"
-                style={{ cursor: "pointer" }}
               >
                 <div className="d-flex align-items-center gap-2">
                   <div className="profilePicture">
@@ -225,7 +256,7 @@ const Center = () => {
                       src={
                         entry.profile_image
                           ? `http://localhost:8081${entry.profile_image}`
-                          : DefaultProfile
+                          : userDefaultProfile
                       }
                       alt="Profile"
                       style={{
@@ -235,20 +266,9 @@ const Center = () => {
                       }}
                     />
                   </div>
-                  <p className="m-0">
-                    {user && entry.userID === user.userID
-                      ? entry.visibility === "public" &&
-                        entry.anonimity === "private"
-                        ? `${entry.username} - Anonymous`
-                        : entry.username
-                      : entry.visibility === "public" &&
-                        entry.anonimity === "private"
-                      ? "Anonymous"
-                      : entry.username}
-                  </p>
+                  <p className="m-0">{entry.username}</p>
                 </div>
               </Link>
-
               {user && user.userID !== entry.userID && (
                 <div className="d-flex ">
                   <p className="m-0 mb-1 fs-2 text-secondary">·</p>
@@ -263,11 +283,12 @@ const Center = () => {
                   </button>
                 </div>
               )}
+              <div>{formatDate(entry.created_at)}</div>
             </div>
 
             <div className="text-start border-bottom p-2">
               <h5>{entry.title}</h5>
-              <p className="m-0">{entry.description}</p>
+              <p>{entry.description}</p>
               {entry.diary_image && (
                 <img
                   className="DiaryImage mt-1 rounded"
@@ -276,7 +297,6 @@ const Center = () => {
                 />
               )}
             </div>
-
             <div className="row pt-2">
               <div className="col">
                 <button

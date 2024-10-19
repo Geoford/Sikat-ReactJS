@@ -283,7 +283,7 @@ app.post(
 
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
-  const { filter } = req.query; // Get filter parameters from the request
+  const filters = req.query.filters; // Get filter parameters from the request
 
   // Start building the query
   let query = `
@@ -296,6 +296,8 @@ app.get("/entries", (req, res) => {
       diary_entries.description, 
       diary_entries.diary_image, 
       diary_entries.gadifyCount, 
+      diary_entries.subjects,
+      diary_entries.created_at,
       user_table.username,
       user_profiles.profile_image
     FROM diary_entries
@@ -308,18 +310,18 @@ app.get("/entries", (req, res) => {
   // Array to hold query parameters
   const queryParams = [userID];
 
-  // Add filtering conditions based on the provided filter
-  if (filter) {
+  // Add filtering conditions based on the provided filters
+  if (filters) {
     const filterConditions = [];
 
-    if (filter.includes("sexualHarassment")) {
-      filterConditions.push("diary_entries.category = 'sexualHarassment'");
+    if (filters.sexualHarassment === "true") {
+      filterConditions.push("diary_entries.subjects = 'Sexual Harassment'");
     }
-    if (filter.includes("domesticAbuse")) {
-      filterConditions.push("diary_entries.category = 'domesticAbuse'");
+    if (filters.domesticAbuse === "true") {
+      filterConditions.push("diary_entries.subjects = 'Domestic Abuse'");
     }
-    if (filter.includes("genderRelated")) {
-      filterConditions.push("diary_entries.category = 'genderRelated'");
+    if (filters.genderRelated === "true") {
+      filterConditions.push("diary_entries.subjects = 'Gender Related'");
     }
 
     if (filterConditions.length > 0) {

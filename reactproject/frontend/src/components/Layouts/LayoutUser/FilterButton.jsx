@@ -2,7 +2,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 
-const FilterButton = () => {
+const FilterButton = ({ onFilterChange }) => {
   const [selectedItems, setSelectedItems] = useState({
     all: false,
     sexualHarassment: false,
@@ -13,28 +13,47 @@ const FilterButton = () => {
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
+    let updatedItems;
     if (name === "all") {
-      // When "All" is selected, check or uncheck all other options
-      setSelectedItems({
+      updatedItems = {
         all: checked,
         sexualHarassment: checked,
         domesticAbuse: checked,
         genderRelated: checked,
-      });
+      };
     } else {
-      // Handle individual selections
-      setSelectedItems((prevState) => {
-        const updatedItems = { ...prevState, [name]: checked };
-
-        // If all other checkboxes are selected, check "All"
-        const allSelected =
-          updatedItems.sexualHarassment &&
-          updatedItems.domesticAbuse &&
-          updatedItems.genderRelated;
-
-        return { ...updatedItems, all: allSelected };
-      });
+      updatedItems = { ...selectedItems, [name]: checked };
+      updatedItems.all =
+        updatedItems.sexualHarassment &&
+        updatedItems.domesticAbuse &&
+        updatedItems.genderRelated;
     }
+
+    setSelectedItems(updatedItems);
+
+    // Convert the selected items to a descriptive text format
+    const selectedSubjectsText = [];
+    if (updatedItems.sexualHarassment)
+      selectedSubjectsText.push("Sexual Harassment");
+    if (updatedItems.domesticAbuse) selectedSubjectsText.push("Domestic Abuse");
+    if (updatedItems.genderRelated) selectedSubjectsText.push("Gender Related");
+
+    // Send the descriptive text to the parent component
+    onFilterChange(selectedSubjectsText);
+  };
+
+  const applyFilters = () => {
+    // Convert the selected items to descriptive text format
+    const selectedSubjectsText = [];
+    if (selectedItems.sexualHarassment)
+      selectedSubjectsText.push("Sexual Harassment");
+    if (selectedItems.domesticAbuse)
+      selectedSubjectsText.push("Domestic Abuse");
+    if (selectedItems.genderRelated)
+      selectedSubjectsText.push("Gender Related");
+
+    // Pass the descriptive text to the parent component
+    onFilterChange(selectedSubjectsText.join(", "));
   };
 
   return (
@@ -76,7 +95,9 @@ const FilterButton = () => {
           checked={selectedItems.genderRelated}
           onChange={handleCheckboxChange}
         />
-        <button className="orangeButton w-100">Save Filter</button>
+        <button className="orangeButton w-100" onClick={applyFilters}>
+          Save Filter
+        </button>
       </Dropdown.Menu>
     </Dropdown>
   );

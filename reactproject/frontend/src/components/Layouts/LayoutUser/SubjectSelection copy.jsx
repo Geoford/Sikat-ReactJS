@@ -8,11 +8,9 @@ const SubjectSelection = ({ onSubjectsChange }) => {
     sexualHarassment: false,
     domesticAbuse: false,
     genderRelated: false,
-    other: false, // State for "Other" checkbox
   });
 
   const [customReason, setCustomReason] = useState(""); // State for custom input
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown open/close
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -24,7 +22,6 @@ const SubjectSelection = ({ onSubjectsChange }) => {
         sexualHarassment: checked,
         domesticAbuse: checked,
         genderRelated: checked,
-        other: checked,
       };
     } else {
       updatedItems = { ...selectedItems, [name]: checked };
@@ -44,8 +41,7 @@ const SubjectSelection = ({ onSubjectsChange }) => {
     if (updatedItems.genderRelated) selectedSubjectsText.push("Gender Related");
 
     // Include the custom reason if provided
-    if (updatedItems.other && customReason)
-      selectedSubjectsText.push(customReason);
+    if (customReason) selectedSubjectsText.push(customReason);
 
     // Send the comma-separated string of selected subjects to the parent
     onSubjectsChange(selectedSubjectsText.join(", "));
@@ -66,18 +62,14 @@ const SubjectSelection = ({ onSubjectsChange }) => {
       selectedSubjectsText.push("Gender Related");
 
     // Include the custom reason if provided
-    if (selectedItems.other && customReason)
-      selectedSubjectsText.push(customReason);
+    if (customReason) selectedSubjectsText.push(customReason);
 
     // Send the comma-separated string of selected subjects to the parent
     onSubjectsChange(selectedSubjectsText.join(", "));
-
-    // Close the dropdown
-    setDropdownOpen(false);
   };
 
   return (
-    <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
+    <Dropdown>
       <Dropdown.Toggle className="border-0" variant="" id="dropdown-basic">
         Subject
       </Dropdown.Toggle>
@@ -115,26 +107,19 @@ const SubjectSelection = ({ onSubjectsChange }) => {
           checked={selectedItems.genderRelated}
           onChange={handleCheckboxChange}
         />
-        <Form.Check
-          type="checkbox"
-          id="other"
-          label="Other"
-          name="other"
-          checked={selectedItems.other}
-          onChange={handleCheckboxChange}
-        />
-        {selectedItems.other && ( // Show the input field only if "Other" is checked
-          <Form.Group className="mt-2">
-            <Form.Label>Other reasons:</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Type other reasons here..."
-              value={customReason}
-              onChange={handleCustomReasonChange}
-            />
-          </Form.Group>
-        )}
-        <button className="orangeButton w-100" onClick={handleSaveFilter}>
+        <Form.Group className="mt-2">
+          <Form.Label>Other Reason</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Type other reasons here..."
+            value={customReason}
+            onChange={handleCustomReasonChange}
+          />
+        </Form.Group>
+        <button
+          className="orangeButton w-100"
+          onClick={handleSaveFilter} // Update the button's onClick handler
+        >
           Save Filter
         </button>
       </Dropdown.Menu>

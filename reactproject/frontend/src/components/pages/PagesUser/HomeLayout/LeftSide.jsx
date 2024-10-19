@@ -38,7 +38,7 @@ const LeftSide = () => {
     } else {
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, entries]);
 
   useEffect(() => {
     if (user) {
