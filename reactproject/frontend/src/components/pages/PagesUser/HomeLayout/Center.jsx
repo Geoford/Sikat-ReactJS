@@ -26,12 +26,17 @@ const Center = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchFollowedUsers(parsedUser.userID); // Fetch followed users from backend
-      fetchEntries(parsedUser.userID, filters); // Fetch entries with filters
     } else {
       window.location.href = "/";
     }
-  }, [filters, followedUsers, entries]);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchFollowedUsers(user.userID);
+      fetchEntries(user.userID, filters);
+    }
+  }, [user, filters]);
 
   const fetchFollowedUsers = async (userID) => {
     try {
@@ -40,8 +45,6 @@ const Center = () => {
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
-      // Optionally, you can remove or update localStorage
-      // localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
     } catch (error) {
       console.error("Error fetching followed users:", error);
     }
@@ -72,8 +75,6 @@ const Center = () => {
   };
 
   const handleFilterChange = (selectedFilters) => {
-    console.log("Selected filters:", selectedFilters);
-    // Extract relevant filters from selectedFilters
     const { sexualHarassment, domesticAbuse, genderRelated } = selectedFilters;
     setFilters({ sexualHarassment, domesticAbuse, genderRelated });
   };
