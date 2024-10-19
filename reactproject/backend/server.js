@@ -937,7 +937,7 @@ app.get("/messages", (req, res) => {
   });
 });
 
-app.post("/notifications", async (req, res) => {
+app.post("/notifications/:userID", async (req, res) => {
   const { userID, actorID, message, entryID, type } = req.body;
 
   // 1. Insert notification into the database
@@ -967,6 +967,37 @@ app.post("/notifications", async (req, res) => {
       res.status(200).send("Notification sent");
     }
   );
+});
+
+app.get("/notifications/:userID", async (req, res) => {
+  const { userID } = req.params;
+
+  // Query to fetch notifications for the specified userID
+  const fetchNotificationsQuery = `
+    SELECT 
+      n.*, 
+      u.username AS actorUsername, 
+      up.profile_image AS actorProfileImage 
+    FROM 
+      notifications n
+    JOIN 
+      user_table u ON n.actorID = u.userID
+    LEFT JOIN 
+      user_profile up ON u.userID = up.userID
+    WHERE 
+      n.userID = ?
+    ORDER BY 
+      n.timestamp DESC
+  `;
+
+  db.query(fetchNotificationsQuery, [userID], (error, results) => {
+    if (error) {
+      console.error("Error fetching notifications from database:", error);
+      return res.status(500).send("Error fetching notifications");
+    }
+
+    res.status(200).json(results); // Send the notifications as JSON response
+  });
 });
 
 const PORT = process.env.PORT || 8081;

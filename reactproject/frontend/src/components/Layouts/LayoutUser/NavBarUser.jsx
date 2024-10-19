@@ -39,7 +39,7 @@ const NavBarUser = () => {
 
         <div className="d-flex align-items-center gap-2">
           <div>
-            <NotificationButton />
+            <NotificationButton userID={user.userID} />
           </div>
           <div>
             <UserAccountDropdown />
