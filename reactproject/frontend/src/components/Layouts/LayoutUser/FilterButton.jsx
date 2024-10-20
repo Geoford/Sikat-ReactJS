@@ -43,17 +43,15 @@ const FilterButton = ({ onFilterChange }) => {
   };
 
   const applyFilters = () => {
-    // Convert the selected items to descriptive text format
-    const selectedSubjectsText = [];
+    const selectedFilters = [];
     if (selectedItems.sexualHarassment)
-      selectedSubjectsText.push("Sexual Harassment");
-    if (selectedItems.domesticAbuse)
-      selectedSubjectsText.push("Domestic Abuse");
-    if (selectedItems.genderRelated)
-      selectedSubjectsText.push("Gender Related");
+      selectedFilters.push("Sexual Harassment");
+    if (selectedItems.domesticAbuse) selectedFilters.push("Domestic Abuse");
+    if (selectedItems.genderRelated) selectedFilters.push("Gender Related");
 
-    // Pass the descriptive text to the parent component
-    onFilterChange(selectedSubjectsText.join(", "));
+    console.log("Selected Filters:", JSON.stringify(selectedFilters, null, 2));
+
+    onFilterChange(selectedFilters); // This will now pass the array of selected filters
   };
 
   return (

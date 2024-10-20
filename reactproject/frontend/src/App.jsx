@@ -46,7 +46,7 @@ function App() {
           <Route path="/UserProfile/:userID" element={<UserProfile />} />
           <Route path="/Profile/:userID" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
-          <Route path="/DiaryEntry/:userID" element={<DiaryEntry />} />
+          <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />

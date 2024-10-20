@@ -288,16 +288,8 @@ app.get("/entries", (req, res) => {
   // Start building the query
   let query = `
     SELECT 
-      diary_entries.entryID, 
-      diary_entries.userID,  
-      diary_entries.title, 
-      diary_entries.visibility, 
-      diary_entries.anonimity, 
-      diary_entries.description, 
-      diary_entries.diary_image, 
-      diary_entries.gadifyCount, 
-      diary_entries.subjects,
-      diary_entries.created_at,
+      diary_entries.*, 
+      
       user_table.username,
       user_profiles.profile_image
     FROM diary_entries
@@ -311,22 +303,13 @@ app.get("/entries", (req, res) => {
   const queryParams = [userID];
 
   // Add filtering conditions based on the provided filters
-  if (filters) {
-    const filterConditions = [];
+  if (filters && filters.length > 0) {
+    const filterConditions = filters.map((filter) => {
+      return `diary_entries.subjects = ?`; // Use placeholders to avoid SQL injection
+    });
 
-    if (filters.sexualHarassment === "true") {
-      filterConditions.push("diary_entries.subjects = 'Sexual Harassment'");
-    }
-    if (filters.domesticAbuse === "true") {
-      filterConditions.push("diary_entries.subjects = 'Domestic Abuse'");
-    }
-    if (filters.genderRelated === "true") {
-      filterConditions.push("diary_entries.subjects = 'Gender Related'");
-    }
-
-    if (filterConditions.length > 0) {
-      query += ` AND (${filterConditions.join(" OR ")})`;
-    }
+    query += ` AND (${filterConditions.join(" OR ")})`;
+    queryParams.push(...filters); // Add filter values to query parameters
   }
 
   query += ` ORDER BY diary_entries.created_at DESC`;
