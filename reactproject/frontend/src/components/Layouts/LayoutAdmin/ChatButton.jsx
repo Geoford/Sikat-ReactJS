@@ -178,10 +178,7 @@ const ChatButton = () => {
         <Modal.Header closeButton>
           <Modal.Title>Messages</Modal.Title>
         </Modal.Header>
-        <Modal.Body
-          className="p-1"
-          style={{ height: "clamp(420px, 55vh, 500px)", overflow: "hidden" }}
-        >
+        <Modal.Body className="p-1" style={{ overflow: "hidden" }}>
           <div>
             {!selectedUser ? (
               <div
@@ -248,8 +245,8 @@ const ChatButton = () => {
               </div>
             ) : (
               <div
-                className="ChatRoom mb-1 p-2"
-                style={{ height: "clamp(420px, 55vh, 500px)" }}
+                className="ChatRoom p-2 pt-0"
+                style={{ minHeight: "clamp(400px, 30vh, 500px)" }}
               >
                 <div
                   className="py-2 d-flex align-items-center gap-2"
@@ -267,7 +264,7 @@ const ChatButton = () => {
                     {messages.map((msg, index) => (
                       <div
                         key={index}
-                        className={`w-100 p-2 d-flex justify-content-${
+                        className={`w-100 p-0 d-flex justify-content-${
                           msg.senderID === user?.userID ? "end" : "start"
                         }`}
                       >
@@ -276,8 +273,8 @@ const ChatButton = () => {
                           style={{
                             backgroundColor:
                               msg.senderID === user?.userID
-                                ? "#ff8533"
-                                : "#990099",
+                                ? "var(--secondary)"
+                                : "var(--primary)",
                             maxWidth: "300px",
                             width: "fit-content",
                             wordWrap: "break-word",

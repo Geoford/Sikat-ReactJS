@@ -8,7 +8,10 @@ import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
-  <div className="mt-2 pe-1" style={{ height: "33vh", overflowY: "scroll" }}>
+  <div
+    className="custom-scrollbar mt-2 pe-1"
+    style={{ height: "60vh", overflowY: "scroll" }}
+  >
     {users.map((user) => (
       <div key={user.userID} className="border-bottom pb-2 pe-2 mb-2">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
@@ -140,11 +143,21 @@ const RightSide = () => {
   if (!user) return null;
 
   return (
-    <div className="p-2">
-      <div className="rounded p-3 mb-2">
+    <div className="p-2 " style={{ height: "87vh" }}>
+      <div className="text-end" style={{ fontSize: "15px", color: "gray" }}>
+        <p className="m-0 mb-1">
+          Are you or someone you know experiencing gender-based violence?
+        </p>
+        <button className="secondaryButton text-decoration-underline">
+          Get Support Now
+        </button>
+      </div>
+
+      <div className="rounded p-3 mb-2" style={{}}>
         <div className="d-flex justify-content-between border-bottom">
           <h4 className="text-secondary">Followers</h4>
         </div>
+
         <UserList
           users={followers}
           handleFollowToggle={handleFollowToggle}
@@ -152,7 +165,7 @@ const RightSide = () => {
         />
       </div>
 
-      <div className="p-3">
+      {/* <div className="p-3">
         <div className="d-flex justify-content-between border-bottom">
           <h4 className="text-secondary">Following</h4>
         </div>
@@ -161,7 +174,7 @@ const RightSide = () => {
           handleFollowToggle={handleFollowToggle}
           isFollowing={() => true}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

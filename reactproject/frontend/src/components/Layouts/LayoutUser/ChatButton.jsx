@@ -164,10 +164,17 @@ const UserChatButton = () => {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
-            {user?.isAdmin
-              ? "Select a User to Chat"
-              : `Hello, ${user?.username || "UserName"}!`}
+          <Modal.Title className="w-100 pe-2 d-flex align-items-end justify-content-between">
+            <h4 className="m-0">
+              {" "}
+              {user?.isAdmin
+                ? "Select a User to Chat"
+                : `Hello, ${user?.username || "UserName"}!`}
+            </h4>
+
+            <button className="secondaryButton text-decoration-underline">
+              <p className="m-0 fs-6">Get Support Now</p>
+            </button>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -187,7 +194,7 @@ const UserChatButton = () => {
           ) : (
             <div>
               <div
-                className="border rounded mb-1 p-2"
+                className="custom-scrollbar rounded mb-1 p-2"
                 style={{ height: "300px", overflowY: "scroll" }}
               >
                 <div className="mb-2">
@@ -201,7 +208,7 @@ const UserChatButton = () => {
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`w-100 d-flex justify-content-${
+                    className={`w-100 p-0 d-flex justify-content-${
                       msg.senderID === user?.userID ? "end" : "start"
                     }`}
                   >
@@ -209,13 +216,16 @@ const UserChatButton = () => {
                       className="rounded p-2 mt-1 text-light"
                       style={{
                         backgroundColor:
-                          msg.senderID === user?.userID ? "#ff8533" : "#990099",
-                        maxWidth: "200px",
+                          msg.senderID === user?.userID
+                            ? "var(--secondary)"
+                            : "var(--primary)",
+                        maxWidth: "300px",
                         width: "fit-content",
                         wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
                       }}
                     >
-                      <p className="m-0">{msg.message}</p>
+                      <par className="m-0">{msg.message}</par>
                     </div>
                   </div>
                 ))}
@@ -231,31 +241,35 @@ const UserChatButton = () => {
                     style={{ height: "70px" }}
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault(); // Prevents the default "Enter" behavior (like creating a new line)
+                        sendMessage();
+                      }
+                    }}
                   />
                 </FloatingLabel>
+                {user?.isAdmin || admin ? (
+                  <button
+                    className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                    onClick={sendMessage}
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      borderRadius: "50%",
+                      backgroundColor: "#ffff",
+                      right: "10px",
+                      bottom: "10px",
+                      color: "var(--primary)",
+                    }}
+                  >
+                    <i className="bx bxs-send bx-sm"></i>
+                  </button>
+                ) : null}
               </div>
             </div>
           )}
         </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          {user?.isAdmin || admin ? (
-            <button
-              className="orangeButton py-2 d-flex align-items-center justify-content-center"
-              onClick={sendMessage}
-            >
-              <p className="me-2 mb-0">Send</p>
-              <img
-                src={SendIcon}
-                alt=""
-                style={{ width: "20px", height: "20px" }}
-              />
-            </button>
-          ) : null}
-        </Modal.Footer>
       </Modal>
     </>
   );
