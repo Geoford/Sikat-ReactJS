@@ -2,7 +2,7 @@ import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
 import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
@@ -148,9 +148,11 @@ const RightSide = () => {
         <p className="m-0 mb-1">
           Are you or someone you know experiencing gender-based violence?
         </p>
-        <button className="secondaryButton text-decoration-underline">
-          Get Support Now
-        </button>
+        <Link to={"/GetHelp/"}>
+          <button className="secondaryButton text-decoration-underline">
+            Get Support Now
+          </button>
+        </Link>
       </div>
 
       <div className="rounded p-3 mb-2" style={{}}>
