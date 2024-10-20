@@ -55,6 +55,7 @@ const Center = () => {
       const response = await axios.get("http://localhost:8081/entries", {
         params: { userID: userID, filters: filters },
       });
+
       const gadifyStatusResponse = await axios.get(
         `http://localhost:8081/gadifyStatus/${userID}`
       );
@@ -74,9 +75,14 @@ const Center = () => {
     }
   };
 
-  const handleFilterChange = (selectedFilters) => {
-    const { sexualHarassment, domesticAbuse, genderRelated } = selectedFilters;
-    setFilters({ sexualHarassment, domesticAbuse, genderRelated });
+  const handleFilterChange = (selectedFiltersArray) => {
+    const newFilters = {
+      sexualHarassment: selectedFiltersArray.includes("Sexual Harassment"),
+      domesticAbuse: selectedFiltersArray.includes("Domestic Abuse"),
+      genderRelated: selectedFiltersArray.includes("Gender Related"),
+    };
+
+    setFilters(newFilters);
   };
 
   const handleGadify = (entryID) => {
@@ -248,7 +254,7 @@ const Center = () => {
             </div>
             <div className="d-flex align-items-center border-bottom pb-2">
               <Link
-                to={`/Profile/${entry.userID}`}
+                to={`/OtherProfile/${entry.userID}`}
                 className="linkText rounded"
               >
                 <div className="d-flex align-items-center gap-2">

@@ -107,7 +107,10 @@ const DiaryEntries = () => {
 
   const findEntryForDay = (day) => {
     return entries.find((entry) => {
-      const entryDate = new Date(entry.date);
+      // Extract the date part from created_at (YYYY-MM-DD)
+      const entryDateParts = entry.created_at.split(" ")[0]; // Get the date part
+      const entryDate = new Date(entryDateParts); // Create a Date object from the date part
+
       return (
         entryDate.getDate() === day &&
         entryDate.getMonth() === months.indexOf(selectedMonth) &&

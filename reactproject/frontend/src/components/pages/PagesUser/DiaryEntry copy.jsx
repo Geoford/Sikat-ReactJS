@@ -7,10 +7,9 @@ import CommentDropdown from "../../Layouts/LayoutUser/CommentDropdown";
 import axios from "axios";
 
 const DiaryEntry = () => {
-  const { entryID } = useParams();
+  const { entryID } = useParams(); //
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
-  const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,14 +52,14 @@ const DiaryEntry = () => {
     }
   }, [user, entryID]);
 
-  // Function to fetch the user's diary entry
+  // Function to fetch the user's diary entries
   const fetchEntry = async () => {
     try {
       const response = await axios.get(
         `http://localhost:8081/fetchDiaryEntry/${entryID}`
       );
       if (response.data.entry) {
-        setEntries([response.data.entry]);
+        setEntries([response.data.entry]); // This should be an array for map to work
       } else {
         console.error("Response data is not an array", response.data);
       }
@@ -71,27 +70,6 @@ const DiaryEntry = () => {
       setIsLoading(false);
     }
   };
-
-  // Fetch comments for the entry
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8081/fetchComments/${entryID}`
-      );
-      setComments(response.data);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-      setError("Failed to load comments.");
-    }
-  };
-
-  // Call fetchComments when entryID changes
-  useEffect(() => {
-    if (entryID) {
-      fetchComments();
-    }
-  }, [entryID]);
-
   // Create a ref for the comment section
   const commentSectionRef = useRef(null);
 
@@ -126,7 +104,6 @@ const DiaryEntry = () => {
         ) : (
           entries.map((entry) => (
             <div
-              key={entry.entryID}
               className="bg-light rounded shadow-sm mt-5 p-0 text-start"
               style={{ width: "800px" }}
             >
@@ -141,7 +118,7 @@ const DiaryEntry = () => {
                         src={
                           entry.profile_image
                             ? `http://localhost:8081${entry.profile_image}`
-                            : AnonymousIcon
+                            : DefaultProfile
                         }
                         alt="Profile"
                         style={{
@@ -178,6 +155,7 @@ const DiaryEntry = () => {
                     </button>
                   </div>
                   <div className="col">
+                    {/* Scroll to the comment section when this button is clicked */}
                     <button
                       className="InteractButton"
                       onClick={scrollToComments}
@@ -196,7 +174,7 @@ const DiaryEntry = () => {
 
         {/* COMMENT SECTION */}
         <div
-          ref={commentSectionRef}
+          ref={commentSectionRef} // Attach ref to the comment section
           className="bg-light rounded shadow-sm mt-2 mb-3 px-3 pt-2 text-start"
           style={{ width: "800px" }}
         >
@@ -205,49 +183,70 @@ const DiaryEntry = () => {
           </div>
           <div
             className="d-flex flex-column gap-2 mb-3"
-            style={{ overflowY: "scroll" }}
+            style={{ height: "", overflowY: "scroll" }}
           >
-            {comments.length === 0 ? (
-              <p>No comments available.</p>
-            ) : (
-              comments.map((comment) => (
-                <div key={comment.commentID}>
-                  <div className="d-flex align-items-start flex-column gap-2 pb-2">
-                    <div className="w-100 d-flex align-items-center justify-content-between pe-3">
-                      <div className="d-flex align-items-center gap-2">
-                        <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
-                          <img
-                            src={
-                              comment.profile_image
-                                ? `http://localhost:8081${comment.profile_image}`
-                                : AnonymousIcon
-                            }
-                            alt="Profile"
-                            style={{ width: "80%" }}
-                          />
-                        </div>
-                        <div className="d-flex justify-content-start flex-column">
-                          <h6 className="m-0 text-start">{comment.username}</h6>
-                          <p className="m-0 text-secondary">{comment.text}</p>
-                        </div>
-                      </div>
-                      <CommentDropdown />
+            <div>
+              <div className="d-flex align-items-start flex-column gap-2 pb-2">
+                <div className="w-100 d-flex align-items-center justify-content-between pe-3">
+                  <div className="d-flex align-items-center gap-2">
+                    <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                      <img
+                        src={AnonymousIcon}
+                        alt=""
+                        style={{ width: "80%" }}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-start flex-column">
+                      <h6 className="m-0 text-start">UserName</h6>
                     </div>
                   </div>
+                  <div>
+                    <CommentDropdown></CommentDropdown>
+                  </div>
+                </div>
+              </div>
 
-                  {/* Replies */}
-                  {comment.replyCommentID && (
-                    <div className="ms-4 ps-2 border-start border-2 rounded-bottom-5">
-                      <p className="m-0 text-secondary">{comment.text}</p>
-                      <div className="">
-                        <button className="btn btn-light btn-sm">Gadify</button>
-                        <button className="btn btn-light btn-sm">Reply</button>
+              {/* Replies */}
+              <div className="ms-4 ps-2 border-start border-2 rounded-bottom-5">
+                <p className="m-0 text-secondary">
+                  Sample Comment Lorem ipsum, dolor sit amet consectetur
+                  adipisicing elit. Quisquam explicabo accusamus nobis rem ipsa
+                  illo?
+                </p>
+                <div className="">
+                  <button className="btn btn-light btn-sm">Gadify</button>
+                  <button className="btn btn-light btn-sm">Reply</button>
+                </div>
+                <div className="d-flex align-items-start flex-column gap-2 ps-1 pb-2 mt-2">
+                  <div className="w-100 d-flex align-items-center justify-content-between pe-3">
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+                        <img
+                          src={AnonymousIcon}
+                          alt=""
+                          style={{ width: "80%" }}
+                        />
+                      </div>
+                      <div className="d-flex justify-content-start flex-column">
+                        <h6 className="m-0 text-start">UserName</h6>
                       </div>
                     </div>
-                  )}
+                    <div>
+                      <CommentDropdown></CommentDropdown>
+                    </div>
+                  </div>
+                  <p className="ps-5 m-0 text-secondary">
+                    Sample Comment Lorem ipsum, dolor sit amet consectetur
+                    adipisicing elit. Quisquam explicabo accusamus nobis rem
+                    ipsa illo?
+                  </p>
+                  <div className="ps-5">
+                    <button className="btn btn-light btn-sm">Gadify</button>
+                    <button className="btn btn-light btn-sm">Reply</button>
+                  </div>
                 </div>
-              ))
-            )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

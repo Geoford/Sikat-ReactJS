@@ -8,6 +8,7 @@ import DefaultProfile from "../../../../src/assets/userDefaultProfile.png";
 function OffCanvassNotification() {
   const [show, setShow] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [user, setUser] = useState(null);
 
   const handleClose = () => setShow(false);
@@ -19,7 +20,6 @@ function OffCanvassNotification() {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
 
-      // Subscribe to Pusher notifications channel
       const pusher = new Pusher("4810211a14a19b86f640", {
         cluster: "ap1",
       });
@@ -30,16 +30,15 @@ function OffCanvassNotification() {
         console.log("New notification received:", data);
         setNotifications((prevNotifications) => {
           const updatedNotifications = [...prevNotifications, data];
-          // Save to localStorage
           localStorage.setItem(
             "notifications",
             JSON.stringify(updatedNotifications)
           );
+          setUnreadCount((prevCount) => prevCount + 1);
           return updatedNotifications;
         });
       });
 
-      // Clean up the subscription on component unmount
       return () => {
         pusher.unsubscribe(`notifications-${parsedUser.userID}`);
       };
@@ -56,7 +55,6 @@ function OffCanvassNotification() {
         );
         const fetchedNotifications = await Promise.all(
           response.data.map(async (notification) => {
-            // Fetch the user profile of the actor for each notification
             const userResponse = await axios.get(
               `http://localhost:8081/fetchUser/user/${notification.actorID}`
             );
@@ -65,12 +63,17 @@ function OffCanvassNotification() {
             return {
               ...notification,
               actorUsername: actorData.username,
-              actorProfileImage: actorData.profile_image || DefaultProfile, // Fallback to default image
+              actorProfileImage: actorData.profile_image || DefaultProfile,
             };
           })
         );
         setNotifications(fetchedNotifications);
-        // Save fetched notifications to localStorage
+
+        const unread = fetchedNotifications.filter(
+          (notification) => !notification.read
+        ).length;
+        setUnreadCount(unread);
+
         localStorage.setItem(
           "notifications",
           JSON.stringify(fetchedNotifications)
@@ -88,12 +91,33 @@ function OffCanvassNotification() {
   useEffect(() => {
     const storedNotifications = localStorage.getItem("notifications");
     if (storedNotifications) {
-      setNotifications(JSON.parse(storedNotifications));
+      const parsedNotifications = JSON.parse(storedNotifications);
+      setNotifications(parsedNotifications);
+
+      const unread = parsedNotifications.filter(
+        (notification) => !notification.read
+      ).length;
+      setUnreadCount(unread);
     }
   }, []);
 
-  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    if (show && notifications.length > 0) {
+      const updatedNotifications = notifications.map((notification) => ({
+        ...notification,
+        read: true,
+      }));
+      setNotifications(updatedNotifications);
+      setUnreadCount(0);
 
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(updatedNotifications)
+      );
+    }
+  }, [show]);
+
+  const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
@@ -123,7 +147,7 @@ function OffCanvassNotification() {
           }}
         >
           <p className="m-0" style={{ fontSize: "10px" }}>
-            0
+            {unreadCount}
           </p>
         </div>
       </button>
@@ -138,7 +162,7 @@ function OffCanvassNotification() {
           ) : (
             notifications.map((notification) => (
               <Link
-                key={notification.timestamp} // Assuming unique timestamps
+                key={notification.timestamp}
                 className="text-decoration-none text-dark"
                 to={`/DiaryEntry/${notification.entryID || ""}`}
               >

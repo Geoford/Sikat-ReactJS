@@ -288,16 +288,8 @@ app.get("/entries", (req, res) => {
   // Start building the query
   let query = `
     SELECT 
-      diary_entries.entryID, 
-      diary_entries.userID,  
-      diary_entries.title, 
-      diary_entries.visibility, 
-      diary_entries.anonimity, 
-      diary_entries.description, 
-      diary_entries.diary_image, 
-      diary_entries.gadifyCount, 
-      diary_entries.subjects,
-      diary_entries.created_at,
+      diary_entries.*, 
+      
       user_table.username,
       user_profiles.profile_image
     FROM diary_entries
@@ -311,22 +303,13 @@ app.get("/entries", (req, res) => {
   const queryParams = [userID];
 
   // Add filtering conditions based on the provided filters
-  if (filters) {
-    const filterConditions = [];
+  if (filters && filters.length > 0) {
+    const filterConditions = filters.map((filter) => {
+      return `diary_entries.subjects = ?`; // Use placeholders to avoid SQL injection
+    });
 
-    if (filters.sexualHarassment === "true") {
-      filterConditions.push("diary_entries.subjects = 'Sexual Harassment'");
-    }
-    if (filters.domesticAbuse === "true") {
-      filterConditions.push("diary_entries.subjects = 'Domestic Abuse'");
-    }
-    if (filters.genderRelated === "true") {
-      filterConditions.push("diary_entries.subjects = 'Gender Related'");
-    }
-
-    if (filterConditions.length > 0) {
-      query += ` AND (${filterConditions.join(" OR ")})`;
-    }
+    query += ` AND (${filterConditions.join(" OR ")})`;
+    queryParams.push(...filters); // Add filter values to query parameters
   }
 
   query += ` ORDER BY diary_entries.created_at DESC`;
@@ -456,6 +439,29 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
     }
 
     return res.status(200).json({ entries: result });
+  });
+});
+
+app.get("/fetchDiaryEntry/:entryID", (req, res) => {
+  const entryID = req.params.entryID;
+
+  // Assuming you're fetching data from a database
+  const query = `SELECT diary_entries.*, user_table.username, user_profiles.*
+    FROM diary_entries 
+    INNER JOIN user_table ON diary_entries.userID = user_table.userID 
+    INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
+    WHERE diary_entries.entryID = ?`; // Corrected the WHERE clause
+
+  db.query(query, [entryID], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Entry not found" });
+    }
+
+    res.status(200).json({ entry: result[0] });
   });
 });
 
