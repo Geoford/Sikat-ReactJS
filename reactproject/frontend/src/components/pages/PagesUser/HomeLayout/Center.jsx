@@ -254,7 +254,7 @@ const Center = () => {
             </div>
             <div className="d-flex align-items-center border-bottom pb-2">
               <Link
-                to={`/Profile/${entry.userID}`}
+                to={`/OtherProfile/${entry.userID}`}
                 className="linkText rounded"
               >
                 <div className="d-flex align-items-center gap-2">

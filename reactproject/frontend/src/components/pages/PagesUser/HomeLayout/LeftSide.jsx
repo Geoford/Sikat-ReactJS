@@ -126,7 +126,7 @@ const LeftSide = () => {
           </div>
           <div>
             <Link
-              to={`/DiaryEntries${user.userID} `}
+              to="/DiaryEntries"
               className="linkText rounded"
               style={{ cursor: "pointer" }}
             >

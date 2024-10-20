@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const RecentJournalEntries = () => {
+const RecentJournalEntries = ({ userID }) => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,31 +9,22 @@ const RecentJournalEntries = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-
-    if (user) {
-      const fetchUser = JSON.parse(user);
-
-      fetch(`http://localhost:8081/fetchUserEntry/user/${fetchUser.userID}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("No entry found");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setUser(fetchUser);
-          setEntries(data.entries);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoading(false);
-        });
-    } else {
-      navigate("/Login");
-    }
-  }, [navigate]);
+    fetch(`http://localhost:8081/fetchUserEntry/user/${userID}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("No entry found");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setEntries(data.entries);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [userID]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };

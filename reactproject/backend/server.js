@@ -442,6 +442,29 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   });
 });
 
+app.get("/fetchDiaryEntry/:entryID", (req, res) => {
+  const entryID = req.params.entryID;
+
+  // Assuming you're fetching data from a database
+  const query = `SELECT diary_entries.*, user_table.username, user_profiles.*
+    FROM diary_entries 
+    INNER JOIN user_table ON diary_entries.userID = user_table.userID 
+    INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
+    WHERE diary_entries.entryID = ?`; // Corrected the WHERE clause
+
+  db.query(query, [entryID], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Entry not found" });
+    }
+
+    res.status(200).json({ entry: result[0] });
+  });
+});
+
 app.get("/users", (req, res) => {
   const query = "SELECT * FROM user_table WHERE isAdmin = 0";
 

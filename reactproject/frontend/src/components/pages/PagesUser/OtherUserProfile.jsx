@@ -100,7 +100,7 @@ const OtherUserProfile = () => {
               style={{ minHeight: "37vh", top: "70px" }}
             >
               <div>
-                <RecentJournalEntries />
+                <RecentJournalEntries userID={userID} />
               </div>
             </div>
           </div>

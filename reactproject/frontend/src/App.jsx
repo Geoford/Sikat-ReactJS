@@ -44,7 +44,7 @@ function App() {
           {/* USER ROUTES */}
           <Route path="/Home" element={<Home />} />
           <Route path="/UserProfile/:userID" element={<UserProfile />} />
-          <Route path="/Profile/:userID" element={<Profile />} />
+          <Route path="/OtherProfile/:userID" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
 
