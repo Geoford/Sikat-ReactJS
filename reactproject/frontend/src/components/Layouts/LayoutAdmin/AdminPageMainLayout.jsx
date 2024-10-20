@@ -4,7 +4,7 @@ import Background from "../Background";
 
 const AdminPageMainLayout = ({ children }) => {
   return (
-    <div>
+    <div style={{ height: "100vh" }}>
       <NavBarAdmin />
       <div>{children}</div>
       <Background />

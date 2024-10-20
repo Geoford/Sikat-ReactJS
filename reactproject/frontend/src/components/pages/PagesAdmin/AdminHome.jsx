@@ -22,7 +22,7 @@ export default function Home() {
 
   return (
     <AdminPageMainLayout>
-      <div className="row mt-3 px-3">
+      <div className="row mt-3 px-3" style={{}}>
         <div>
           <ChatButton />
         </div>
