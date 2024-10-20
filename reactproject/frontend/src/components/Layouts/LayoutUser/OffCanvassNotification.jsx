@@ -5,7 +5,7 @@ import axios from "axios";
 import Pusher from "pusher-js";
 import DefaultProfile from "../../../../src/assets/userDefaultProfile.png";
 
-function OffCanvassLayouts() {
+function OffCanvassNotification() {
   const [show, setShow] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
@@ -92,10 +92,40 @@ function OffCanvassLayouts() {
     }
   }, []);
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
   return (
     <>
-      <button className="logo" onClick={handleShow}>
-        <i className="bx bxs-bell bx-sm"></i>
+      <button
+        className="logo overflow-visible position-relative d-flex align-items-center justify-content-center"
+        onClick={handleShow}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <i
+          className={isHovered ? "bx bxs-bell-ring bx-sm" : "bx bxs-bell bx-sm"}
+        ></i>
+
+        <div
+          className="position-absolute p-0 d-flex align-items-center justify-content-center"
+          style={{
+            backgroundColor: "red",
+            top: "0",
+            left: "-10px",
+            height: "20px",
+            width: "20px",
+            borderRadius: "50%",
+            color: "#ffff",
+            border: "2px solid var(--primary)",
+          }}
+        >
+          <p className="m-0" style={{ fontSize: "10px" }}>
+            0
+          </p>
+        </div>
       </button>
 
       <Offcanvas show={show} onHide={handleClose} placement="end">
@@ -143,4 +173,4 @@ function OffCanvassLayouts() {
   );
 }
 
-export default OffCanvassLayouts;
+export default OffCanvassNotification;

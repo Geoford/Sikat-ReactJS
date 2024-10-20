@@ -209,7 +209,9 @@ const UserChatButton = () => {
                       className="rounded p-2 mt-1 text-light"
                       style={{
                         backgroundColor:
-                          msg.senderID === user?.userID ? "#ff8533" : "#990099",
+                          msg.senderID === user?.userID
+                            ? "var(--secondary)"
+                            : "var(--primary)",
                         maxWidth: "200px",
                         width: "fit-content",
                         wordWrap: "break-word",
@@ -233,29 +235,27 @@ const UserChatButton = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                   />
                 </FloatingLabel>
+                {user?.isAdmin || admin ? (
+                  <button
+                    className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                    onClick={sendMessage}
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      borderRadius: "50%",
+                      backgroundColor: "#ffff",
+                      right: "10px",
+                      bottom: "10px",
+                      color: "var(--primary)",
+                    }}
+                  >
+                    <i className="bx bxs-send bx-sm"></i>
+                  </button>
+                ) : null}
               </div>
             </div>
           )}
         </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          {user?.isAdmin || admin ? (
-            <button
-              className="orangeButton py-2 d-flex align-items-center justify-content-center"
-              onClick={sendMessage}
-            >
-              <p className="me-2 mb-0">Send</p>
-              <img
-                src={SendIcon}
-                alt=""
-                style={{ width: "20px", height: "20px" }}
-              />
-            </button>
-          ) : null}
-        </Modal.Footer>
       </Modal>
     </>
   );
