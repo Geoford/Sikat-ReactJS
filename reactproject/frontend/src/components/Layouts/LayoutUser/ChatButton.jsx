@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ChatIcon from "../../../assets/ChatIcon.png";
 import SendIcon from "../../../assets/SendIcon.png";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserChatButton = () => {
   const [show, setShow] = useState(false);
@@ -171,10 +172,11 @@ const UserChatButton = () => {
                 ? "Select a User to Chat"
                 : `Hello, ${user?.username || "UserName"}!`}
             </h4>
-
-            <button className="secondaryButton text-decoration-underline">
-              <p className="m-0 fs-6">Get Support Now</p>
-            </button>
+            <Link to={"/GetHelp/"}>
+              <button className="secondaryButton text-decoration-underline">
+                <p className="m-0 fs-6">Get Support Now</p>
+              </button>
+            </Link>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
