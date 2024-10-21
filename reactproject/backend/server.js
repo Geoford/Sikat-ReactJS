@@ -944,67 +944,76 @@ app.get("/messages", (req, res) => {
 });
 
 app.post("/notifications/:userID", async (req, res) => {
-  const { userID, actorID, message, entryID, type } = req.body;
+  const { userID } = req.params;
+  const { actorID, message, entryID, type } = req.body;
 
-  // 1. Insert notification into the database
+  console.log("Request received:", req.body);
+
   const insertNotificationQuery = `
-    INSERT INTO notifications (userID, actorID, message, entryID, type)
+    INSERT INTO notifications (userID, actorID, message, entryID  , type)
     VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     insertNotificationQuery,
-    [userID, actorID, message, entryID, type],
+    [userID, actorID, message, entryID || null, type], // Use null if entryID is undefined
     (error, results) => {
       if (error) {
         console.error("Error inserting notification into database:", error);
         return res.status(500).send("Error saving notification");
       }
 
-      // 2. Trigger Pusher to notify the user
-      pusher.trigger(`notifications-${userID}`, "new-notification", {
-        actorID,
-        message,
-        entryID,
-        type,
-        timestamp: new Date().toISOString(),
-      });
+      // Trigger Pusher notification
+      pusher
+        .trigger(`notifications-${userID}`, "new-notification", {
+          actorID,
+          message,
+          entryID: entryID || null, // Send null if there's no entryID
+          type,
+          timestamp: new Date().toISOString(),
+        })
+        .then(() => {
+          console.log("Pusher notification sent");
+        })
+        .catch((err) => {
+          console.error("Error sending Pusher notification:", err);
+        });
 
       res.status(200).send("Notification sent");
     }
   );
 });
 
-app.get("/notifications/:userID", async (req, res) => {
-  const { userID } = req.params;
+// app.get("/notifications/:userID", async (req, res) => {
+//   const { userID } = req.params;
 
-  // Query to fetch notifications for the specified userID
-  const fetchNotificationsQuery = `
-    SELECT 
-      n.*, 
-      u.username AS actorUsername, 
-      up.profile_image AS actorProfileImage 
-    FROM 
-      notifications n
-    JOIN 
-      user_table u ON n.actorID = u.userID
-    LEFT JOIN 
-      user_profile up ON u.userID = up.userID
-    WHERE 
-      n.userID = ?
-    ORDER BY 
-      n.timestamp DESC
-  `;
+//   // Query to fetch notifications for the specified userID
+//   const fetchNotificationsQuery = `
+//     SELECT
+//       n.*,
+//       u.username AS actorUsername,
+//       up.profile_image AS actorProfileImage
+//     FROM
+//       notifications n
+//     JOIN
+//       user_table u ON n.actorID = u.userID
+//     LEFT JOIN
+//       user_profile up ON u.userID = up.userID
+//     WHERE
+//       n.userID = ?
+//     ORDER BY
+//       n.timestamp DESC
+//   `;
 
-  db.query(fetchNotificationsQuery, [userID], (error, results) => {
-    if (error) {
-      console.error("Error fetching notifications from database:", error);
-      return res.status(500).send("Error fetching notifications");
-    }
+//   db.query(fetchNotificationsQuery, [userID], (error, results) => {
+//     if (error) {
+//       console.error("Error fetching notifications from database:", error);
+//       return res.status(500).send("Error fetching notifications");
+//     }
 
-    res.status(200).json(results); // Send the notifications as JSON response
-  });
-});
+//     res.status(200).json(results); // Send the notifications as JSON response
+//   });
+// });
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

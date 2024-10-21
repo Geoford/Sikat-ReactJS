@@ -9,7 +9,8 @@ import SendIcon from "../../../assets/SendIcon.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
 
-const CommentSection = ({ userID, entryID }) => {
+const CommentSection = ({ userID, entryID, entry }) => {
+  const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -17,6 +18,16 @@ const CommentSection = ({ userID, entryID }) => {
   const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // State for error messages
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+    } else {
+      window.location.href = "/";
+    }
+  }, []);
 
   const fetchComments = useCallback(async () => {
     setLoading(true);
@@ -85,10 +96,10 @@ const CommentSection = ({ userID, entryID }) => {
       setLoading(false);
     }
 
-    if (userID !== entry.userID) {
+    if (userID !== entry) {
       axios
-        .post(`http://localhost:8081/notifications`, {
-          userID: entry.userID,
+        .post(`http://localhost:8081/notifications/${entry}`, {
+          userID: entry,
           actorID: userID,
           entryID,
           type: "comment",
