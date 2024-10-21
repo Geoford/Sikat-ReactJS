@@ -450,7 +450,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
-    WHERE diary_entries.entryID = ?`; // Corrected the WHERE clause
+    WHERE diary_entries.entryID = ?`;
 
   db.query(query, [entryID], (err, result) => {
     if (err) {
@@ -724,6 +724,7 @@ app.get("/fetchComments/:entryID", (req, res) => {
   const query = `
     SELECT 
       comments.commentID, comments.text, comments.created_at, comments.replyCommentID,
+      comments.userID,  -- Add this line to fetch userID
       user_table.username, user_profiles.profile_image
     FROM comments
     INNER JOIN user_table ON comments.userID = user_table.userID
@@ -774,15 +775,15 @@ app.post("/comments", (req, res) => {
 
 app.delete("/deleteComments/:commentID", (req, res) => {
   const { commentID } = req.params;
-  const userID = req.body.userID; // Assuming you pass userID in the request body
+  const { userID } = req.query; // Get userID from query string
 
   // Step 1: Check if the comment exists and retrieve the entryID and userID
   const commentQuery = `
-    SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
-    FROM comments
-    INNER JOIN entries ON comments.entryID = entries.entryID
-    WHERE comments.commentID = ?
-  `;
+  SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
+  FROM comments
+  INNER JOIN entries ON comments.entryID = entries.entryID
+  WHERE comments.commentID = ?;
+`;
 
   db.query(commentQuery, [commentID], (err, results) => {
     if (err || results.length === 0) {
@@ -792,7 +793,7 @@ app.delete("/deleteComments/:commentID", (req, res) => {
     const commentUserID = results[0].commentUserID;
     const entryUserID = results[0].entryUserID;
 
-    // Step 2: Check if the requesting user is the owner of the comment and the diary entry
+    // Step 2: Check if the requesting user is the owner of the comment or the diary entry
     if (commentUserID !== userID && entryUserID !== userID) {
       return res
         .status(403)

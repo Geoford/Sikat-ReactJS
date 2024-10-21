@@ -80,7 +80,7 @@ const OtherProfileDiary = ({ userID }) => {
                 style={{ backgroundColor: "white" }}
               >
                 <div className="position-absolute" style={{ right: "20px" }}>
-                  <ProfileDiaryDropdown></ProfileDiaryDropdown>
+                  {/* <ProfileDiaryDropdown></ProfileDiaryDropdown> */}
                 </div>
                 <div className="d-flex align-items-center gap-2 border-bottom pb-2">
                   <div className="profilePicture">

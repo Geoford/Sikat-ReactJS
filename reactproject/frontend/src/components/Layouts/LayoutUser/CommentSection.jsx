@@ -18,6 +18,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // State for error messages
+  const [commentsFetched, setCommentsFetched] = useState(false); // Flag to track fetching
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -36,8 +37,10 @@ const CommentSection = ({ userID, entryID, entry }) => {
         `http://localhost:8081/fetchComments/${entryID}`
       );
       const fetchedComments = response.data;
+      console.log("Fetched Comments:", fetchedComments); // Add this to debug
       const nestedComments = nestComments(fetchedComments);
       setComments(nestedComments);
+      setCommentsFetched(true); // Set flag to true after fetching
     } catch (error) {
       console.error("Error fetching comments:", error);
       setError("Failed to fetch comments. Please try again."); // Set error message
@@ -47,10 +50,10 @@ const CommentSection = ({ userID, entryID, entry }) => {
   }, [entryID]);
 
   useEffect(() => {
-    if (show) {
+    if (show && !commentsFetched) {
       fetchComments();
     }
-  }, [show, fetchComments]);
+  }, [show, fetchComments, commentsFetched]);
 
   const nestComments = (comments) => {
     const commentMap = {};
@@ -79,57 +82,54 @@ const CommentSection = ({ userID, entryID, entry }) => {
     }
 
     const newCommentObj = {
+      commentID: Date.now(), // Temporary ID for optimistic update
       userID,
       entryID,
       text: newComment,
+      username: user.username,
+      profile_image: user.profile_image, // Assuming you have this in the user object
+      replies: [],
     };
+
+    // Optimistically update comments UI
+    setComments((prevComments) => [...prevComments, newCommentObj]);
+    setNewComment("");
 
     setLoading(true);
     try {
       await axios.post("http://localhost:8081/comments", newCommentObj);
-      setNewComment("");
-      fetchComments(); // Optimistically update the UI by fetching comments
+      // Optionally fetch comments again from server to sync with backend
+      fetchComments();
     } catch (error) {
       console.error("Error posting comment:", error);
       setError("Failed to post comment. Please try again.");
     } finally {
       setLoading(false);
     }
-
-    if (userID !== entry) {
-      axios
-        .post(`http://localhost:8081/notifications/${entry}`, {
-          userID: entry,
-          actorID: userID,
-          entryID,
-          type: "comment",
-          message: `${user.username} commented on your diary entry.`,
-        })
-        .catch((err) => {
-          console.error("Error sending comment notification:", err);
-          setError("Failed to send notification."); // Set error message for notification
-        });
-    }
   };
 
   const handleDeleteComment = async (commentID) => {
+    console.log("Deleting commentID:", commentID);
+    console.log("UserID:", userID);
     const confirmed = window.confirm(
       "Are you sure you want to delete this comment?"
     );
+    if (!confirmed) return;
 
-    if (!confirmed) {
-      return; // Exit if the user did not confirm
-    }
+    // Optimistically update comments UI
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.commentID !== commentID)
+    );
 
     setLoading(true);
     try {
       await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
-        data: { userID },
+        params: { userID },
       });
-      fetchComments(); // Refresh comments after deletion
     } catch (error) {
       console.error("Error deleting comment:", error);
       setError("Failed to delete comment. Please try again.");
+      fetchComments();
     } finally {
       setLoading(false);
     }
@@ -164,12 +164,15 @@ const CommentSection = ({ userID, entryID, entry }) => {
     setReplyTo(null);
     setReplyText("");
     setError(null); // Reset error message on close
+    setCommentsFetched(false); // Reset fetching flag
   };
 
   const handleShow = () => setShow(true);
 
   const Comment = React.memo(({ comment, depth = 0 }) => {
-    const canDelete = comment.userID === userID;
+    const canDelete = comment.userID === user?.userID;
+    console.log("Comment User ID:", comment.userID); // Add this to debug
+    console.log("Can Delete:", canDelete); // Add this to verify condition
     return (
       <div style={{ marginLeft: depth * 20, marginTop: "10px" }}>
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
@@ -274,6 +277,13 @@ const CommentSection = ({ userID, entryID, entry }) => {
         <Modal.Body>
           {loading && <p>Loading comments...</p>}
           {error && <p className="text-danger">{error}</p>}
+
+          {!loading && !error && comments.length === 0 && (
+            <p className="text-secondary">
+              No comments yet. Be the first to comment!
+            </p>
+          )}
+
           <div className="comments-container">
             {comments.map((comment) => (
               <Comment key={comment.commentID} comment={comment} />
