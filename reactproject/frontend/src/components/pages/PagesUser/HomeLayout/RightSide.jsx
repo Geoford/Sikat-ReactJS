@@ -15,25 +15,30 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
     {users.map((user) => (
       <div key={user.userID} className="pb-2 pe-2 mb-2">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
-          <div className="d-flex align-items-center">
-            <div className="profilePicture">
-              <img
-                src={
-                  user.profile_image
-                    ? `http://localhost:8081${user.profile_image}`
-                    : DefaultProfile
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
-            <p className="m-0 ms-2">{user.username}</p>
-          </div>
+          <Link
+            to={`/OtherProfile/${user.userID}`}
+            className="linkText rounded "
+          >
+            <div className="d-flex align-items-center">
+              <div className="profilePicture">
+                <img
+                  src={
+                    user.profile_image
+                      ? `http://localhost:8081${user.profile_image}`
+                      : DefaultProfile
+                  }
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
 
+              <p className="m-0 ms-2">{user.username}</p>
+            </div>
+          </Link>
           <button
             className="secondaryButton"
             onClick={() => handleFollowToggle(user.userID)}
