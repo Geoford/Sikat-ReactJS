@@ -45,13 +45,16 @@ const GetHelp = () => {
       <div className="d-flex justify-content-center pt-5">
         <div
           className="rounded p-3"
-          style={{ backgroundColor: "#ffff", width: "500px" }}
+          style={{
+            backgroundColor: "#ffff",
+            width: "clamp(30rem, 50vw, 40rem)",
+          }}
         >
-          <div>
-            <h5>Gender-Based Crime Reporting Form</h5>
+          <div className="border-bottom border-2">
+            <h4>Gender-Based Crime Reporting Form</h4>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form className="text-start" onSubmit={handleSubmit}>
             {/* Step 1: Report Details */}
             {step === 1 && (
               <div>
@@ -105,9 +108,14 @@ const GetHelp = () => {
                   </select>
                 </div>
 
-                <button type="button" onClick={handleNext}>
-                  Next
-                </button>
+                <div className="d-flex justify-content-between">
+                  <button type="button" onClick={handlePrev}>
+                    Previous
+                  </button>
+                  <button type="button" onClick={handleNext}>
+                    Next
+                  </button>
+                </div>
               </div>
             )}
 
