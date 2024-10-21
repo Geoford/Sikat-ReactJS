@@ -120,7 +120,7 @@ const LeftSide = () => {
       </Link>
 
       <div className=" mt-3">
-        <div className="d-flex justify-content-between border-bottom">
+        <div className="d-flex justify-content-between border-bottom border-secondary-subtle">
           <div>
             <h4 className="text-secondary">Journal Entries</h4>
           </div>
@@ -135,7 +135,7 @@ const LeftSide = () => {
           </div>
         </div>
         <div
-          className="mt-2 pe-1 custom-scrollbar"
+          className="mt-1 pe-1 custom-scrollbar"
           style={{ height: "45vh", overflowY: "scroll" }}
         >
           {error ? (
@@ -150,7 +150,7 @@ const LeftSide = () => {
                 className="rounded text-decoration-none"
                 style={{ cursor: "pointer" }}
               >
-                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-2">
+                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-1">
                   <h6 className="m-0 p-2 text-start text-secondary">
                     {entry.title} - {formatDate(entry.created_at)}
                   </h6>

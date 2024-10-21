@@ -250,7 +250,7 @@ const Center = () => {
             <div className="position-absolute" style={{ right: "20px" }}>
               <HomeDiaryDropdown />
             </div>
-            <div className="d-flex align-items-center border-bottom pb-2">
+            <div className="d-flex align-items-start border-bottom pb-2">
               <Link
                 to={`/OtherProfile/${entry.userID}`}
                 className="linkText rounded"
@@ -271,16 +271,22 @@ const Center = () => {
                       }}
                     />
                   </div>
-                  <p className="m-0">{entry.username}</p>
+                  <div className="d-flex flex-column align-items-start">
+                    <p className="m-0">{entry.username}</p>
+                    <p className="m-0" style={{ fontSize: ".7rem" }}>
+                      {formatDate(entry.created_at)}
+                    </p>
+                  </div>
                 </div>
               </Link>
               {user && user.userID !== entry.userID && (
-                <div className="d-flex ">
-                  <p className="m-0 mb-1 fs-2 text-secondary">·</p>
+                <div className="d-flex align-items-center gap-1">
+                  <p className="m-0 fs-3 text-secondary">·</p>
 
                   <button
-                    className="secondaryButton"
+                    className="secondaryButton p-0 m-0"
                     onClick={() => handleFollowToggle(entry.userID)}
+                    style={{ height: "1.5rem" }}
                   >
                     {followedUsers.includes(entry.userID)
                       ? "Following"
@@ -288,7 +294,6 @@ const Center = () => {
                   </button>
                 </div>
               )}
-              <div>{formatDate(entry.created_at)}</div>
             </div>
 
             <div className="text-start border-bottom p-2">

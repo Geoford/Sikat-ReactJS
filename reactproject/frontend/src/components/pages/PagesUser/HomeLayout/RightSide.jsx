@@ -2,7 +2,7 @@ import DiaryEntry from "../../../../assets/DiaryEntry.png";
 import SampleImage from "../../../../assets/Background.jpg";
 import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
@@ -10,10 +10,10 @@ import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
     className="custom-scrollbar mt-2 pe-1"
-    style={{ height: "60vh", overflowY: "scroll" }}
+    style={{ height: "65vh", overflowY: "scroll" }}
   >
     {users.map((user) => (
-      <div key={user.userID} className="border-bottom pb-2 pe-2 mb-2">
+      <div key={user.userID} className="pb-2 pe-2 mb-2">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
           <div className="d-flex align-items-center">
             <div className="profilePicture">
@@ -148,14 +148,16 @@ const RightSide = () => {
         <p className="m-0 mb-1">
           Are you or someone you know experiencing gender-based violence?
         </p>
-        <button className="secondaryButton text-decoration-underline">
-          Get Support Now
-        </button>
+        <Link to={"/GetHelp/"}>
+          <button className="secondaryButton text-decoration-underline">
+            Get Support Now
+          </button>
+        </Link>
       </div>
 
-      <div className="rounded p-3 mb-2" style={{}}>
-        <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Followers</h4>
+      <div className="rounded mb-2 mt-3" style={{}}>
+        <div className="d-flex justify-content-between border-top border-secondary-subtle">
+          <h4 className="text-secondary mt-2 ">Followers</h4>
         </div>
 
         <UserList
