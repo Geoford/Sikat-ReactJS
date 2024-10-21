@@ -5,6 +5,7 @@ import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
+import OthersRecentJournalEntries from "./UserProfileLayout/OthersJournalEntries";
 
 const OtherUserProfile = () => {
   const { userID } = useParams();
@@ -100,7 +101,7 @@ const OtherUserProfile = () => {
               style={{ minHeight: "37vh", top: "70px" }}
             >
               <div>
-                <RecentJournalEntries userID={userID} />
+                <OthersRecentJournalEntries userID={userID} />
               </div>
             </div>
           </div>
