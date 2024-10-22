@@ -289,7 +289,6 @@ app.get("/entries", (req, res) => {
   let query = `
     SELECT 
       diary_entries.*, 
-      
       user_table.username,
       user_profiles.profile_image
     FROM diary_entries
@@ -302,23 +301,29 @@ app.get("/entries", (req, res) => {
   // Array to hold query parameters
   const queryParams = [userID];
 
-  // Add filtering conditions based on the provided filters
-  if (filters && filters.length > 0) {
+  // Ensure filters is an array and contains valid data
+  if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map((filter) => {
-      return `diary_entries.subjects = ?`; // Use placeholders to avoid SQL injection
+      return `LOWER(diary_entries.subjects) LIKE ?`; // Case-insensitive matching
     });
 
+    // Append the filtering conditions to the query
     query += ` AND (${filterConditions.join(" OR ")})`;
-    queryParams.push(...filters); // Add filter values to query parameters
+
+    // Add the filter values to the query parameters, converting to lowercase
+    queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
   }
 
+  // Append the ordering of entries by creation date
   query += ` ORDER BY diary_entries.created_at DESC`;
 
+  // Execute the query
   db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
     }
+    // Send the result back to the client
     res.status(200).json(results);
   });
 });
@@ -983,6 +988,59 @@ app.post("/notifications/:userID", async (req, res) => {
       res.status(200).send("Notification sent");
     }
   );
+});
+
+app.post("/submit-report", (req, res) => {
+  upload.single("supportingDocuments")(req, res, (err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ error: "File upload error: " + err.message });
+    }
+
+    const {
+      victimName,
+      perpetratorName,
+      contactInfo,
+      gender,
+      incidentDescription,
+      location,
+      date,
+      time,
+      witnesses,
+    } = req.body;
+
+    const supportingDocuments = req.file ? req.file.filename : null; // Retrieve file info
+
+    const query = `
+      INSERT INTO gender_based_crime_reports 
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, time, witnesses, supportingDocuments) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      query,
+      [
+        victimName,
+        perpetratorName,
+        contactInfo,
+        gender,
+        incidentDescription,
+        location,
+        date,
+        time,
+        witnesses || null,
+        supportingDocuments, // Store the file name in DB
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Error inserting report:", err.message);
+          return res.status(500).json({ error: "Error submitting report" });
+        }
+        res.status(200).json({ message: "Report submitted successfully" });
+      }
+    );
+  });
 });
 
 // app.get("/notifications/:userID", async (req, res) => {

@@ -36,7 +36,23 @@ const GetHelp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission
+
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+
+    fetch("http://localhost:8081/submit-report", {
+      method: "POST",
+      body: formDataToSend,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert(data.message); // Display success message
+      })
+      .catch((error) => {
+        console.error("Error submitting report:", error);
+      });
   };
 
   return (
@@ -109,9 +125,6 @@ const GetHelp = () => {
                 </div>
 
                 <div className="d-flex justify-content-between">
-                  <button type="button" onClick={handlePrev}>
-                    Previous
-                  </button>
                   <button type="button" onClick={handleNext}>
                     Next
                   </button>
