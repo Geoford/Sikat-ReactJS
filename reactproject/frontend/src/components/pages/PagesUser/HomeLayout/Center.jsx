@@ -322,7 +322,7 @@ const Center = () => {
             <div className="text-start border-bottom p-2">
               <h5>
                 {entry.title}{" "}
-                <span className="text-secondary fs-6">(Filter or Subject)</span>
+                <span className="text-secondary fs-6">{entry.subjects}</span>
               </h5>
               <p>{entry.description}</p>
               {entry.diary_image && (
