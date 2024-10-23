@@ -8,6 +8,8 @@ import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import CenterLoader from "../../../loaders/CenterLoader";
 import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
+import ReportButton from "../../../Layouts/LayoutUser/ReportButton";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -339,6 +341,22 @@ const Center = () => {
                     </button>
                   </div>
                 )}
+              <div>
+                <Dropdown>
+                  <Dropdown.Toggle
+                    className="btn-light d-flex align-items-center pt-0 pb-2"
+                    id="dropdown-basic"
+                    bsPrefix="custom-toggle"
+                  >
+                    <h5 className="m-0">...</h5>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="p-2">
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <ReportButton />
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
             </div>
 
             <div className="text-start border-bottom p-2">
