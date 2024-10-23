@@ -198,20 +198,26 @@ const Center = () => {
   };
 
   const handleClick = (entryID) => {
-    const updatedActiveButtons = {
-      ...activeButtons,
-      [entryID]: !activeButtons[entryID],
-    };
-    setActiveButtons(updatedActiveButtons);
+    // Toggle the isGadified state for the clicked entry
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.entryID === entryID
+          ? { ...entry, isGadified: !entry.isGadified }
+          : entry
+      )
+    );
 
+    // Trigger the expand animation
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
+    // Remove the expand class after the animation completes
     setTimeout(() => {
       updatedExpandButtons[entryID] = false;
       setExpandButtons({ ...updatedExpandButtons });
     }, 300);
 
+    // Perform the Gadify action
     handleGadify(entryID);
   };
 
@@ -314,7 +320,10 @@ const Center = () => {
             </div>
 
             <div className="text-start border-bottom p-2">
-              <h5>{entry.title}</h5>
+              <h5>
+                {entry.title}{" "}
+                <span className="text-secondary fs-6">(Filter or Subject)</span>
+              </h5>
               <p>{entry.description}</p>
               {entry.diary_image && (
                 <img
@@ -327,14 +336,22 @@ const Center = () => {
             <div className="row pt-2">
               <div className="col">
                 <button
-                  className={`InteractButton ${
+                  className={`InteractButton d-flex align-items-center justify-content-center gap-1 ${
                     entry.isGadified ? "active" : ""
                   } ${expandButtons[entry.entryID] ? "expand" : ""}`}
                   onClick={() => handleClick(entry.entryID)}
                 >
-                  <span>({entry.gadifyCount}) </span>Gadify
+                  {/* Conditionally render the icon based on isGadified */}
+                  {entry.isGadified ? (
+                    <i className="bx bxs-heart"></i> // Solid heart when active
+                  ) : (
+                    <i className="bx bx-heart "></i> // Outline heart when not active
+                  )}
+                  Gadify
+                  <span> ({entry.gadifyCount}) </span>
                 </button>
               </div>
+
               <div className="col">
                 <CommentSection
                   userID={user.userID}

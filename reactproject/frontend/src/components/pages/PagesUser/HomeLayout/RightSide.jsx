@@ -17,7 +17,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
           <Link
             to={`/OtherProfile/${user.userID}`}
-            className="linkText rounded "
+            className="linkText position-relative rounded d-flex justify-content-between w-100 p-2"
           >
             <div className="d-flex align-items-center">
               <div className="profilePicture">
@@ -40,8 +40,9 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
             </div>
           </Link>
           <button
-            className="secondaryButton"
+            className="secondaryButton position-absolute"
             onClick={() => handleFollowToggle(user.userID)}
+            style={{ right: "55px" }}
           >
             {isFollowing(user.userID) ? "Unfollow" : "Follow"}
           </button>

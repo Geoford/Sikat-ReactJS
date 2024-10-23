@@ -105,22 +105,6 @@ const GetHelp = () => {
     // Handle form submission
   };
 
-  // Validate required fields based on the current step
-  useEffect(() => {
-    const validateStep = () => {
-      if (step === 1) {
-        setIsNextDisabled(!formData.contactInfo || !formData.gender);
-      } else if (step === 2) {
-        setIsNextDisabled(
-          !formData.incidentDescription || !formData.location || !formData.date
-        );
-      } else {
-        setIsNextDisabled(false); // No required fields in step 3
-      }
-    };
-    validateStep();
-  }, [formData, step]);
-
   const inputStyle = {
     height: "2.5rem",
     width: "100%",
