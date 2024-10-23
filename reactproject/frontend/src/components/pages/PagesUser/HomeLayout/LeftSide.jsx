@@ -121,8 +121,9 @@ const LeftSide = () => {
 
       <div className=" mt-3">
         <div className="d-flex justify-content-between border-bottom border-secondary-subtle">
-          <div>
-            <h4 className="text-secondary">Journal Entries</h4>
+          <div className="d-flex align-items-center text-secondary gap-1">
+            <i class="bx bx-edit bx-sm"></i>
+            <h4 className="m-0 ">Journal Entries</h4>
           </div>
           <div>
             <Link

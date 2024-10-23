@@ -162,8 +162,9 @@ const RightSide = () => {
       </div>
 
       <div className="rounded mb-2 mt-3" style={{}}>
-        <div className="d-flex justify-content-between border-top border-secondary-subtle">
-          <h4 className="text-secondary mt-2 ">Followers</h4>
+        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
+          <i class="bx bx-group bx-sm"></i>
+          <h4 className="m-0">Followers</h4>
         </div>
 
         <UserList
