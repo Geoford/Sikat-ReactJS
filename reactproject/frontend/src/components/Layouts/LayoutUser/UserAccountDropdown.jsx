@@ -44,7 +44,47 @@ const UserAccountDropdown = () => {
     navigate("/");
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div>
+        <Dropdown.Toggle
+          as="button"
+          className="logo position-relative custom-button d-flex align-items-center justify-content-center overflow-visible p-0"
+          id="UserAccountDropdown"
+          bsPrefix="custom-toggle"
+        >
+          <div
+            className="position-absolute rounded-circle d-flex justify-content-center align-items-center p-0"
+            style={{
+              width: "20px",
+              height: "20px",
+              backgroundColor: "white",
+              right: "-3px",
+              bottom: "-1px",
+              border: "2px solid var(--primary)",
+            }}
+          >
+            <img
+              className="mt-1"
+              src={DropDownButton}
+              alt=""
+              style={{ width: "60%", height: "60%" }}
+            />
+          </div>
+          <div
+            className="overflow-hidden rounded-circle"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <img
+              className=" "
+              src={DefaultProfile}
+              alt="User Profile"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div>
+        </Dropdown.Toggle>
+      </div>
+    );
 
   if (error) return <div>Error: {error}</div>;
 

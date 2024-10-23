@@ -153,6 +153,7 @@
   padding: 5px 20px;
   transition: all 0.3s ease;
   color: gray;
+  font-size: 0.9rem;
 }
 
 .InteractButton:hover {
