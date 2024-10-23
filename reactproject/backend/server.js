@@ -289,7 +289,6 @@ app.get("/entries", (req, res) => {
   let query = `
     SELECT 
       diary_entries.*, 
-      
       user_table.username,
       user_profiles.profile_image
     FROM diary_entries
@@ -302,23 +301,29 @@ app.get("/entries", (req, res) => {
   // Array to hold query parameters
   const queryParams = [userID];
 
-  // Add filtering conditions based on the provided filters
-  if (filters && filters.length > 0) {
+  // Ensure filters is an array and contains valid data
+  if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map((filter) => {
-      return `diary_entries.subjects = ?`; // Use placeholders to avoid SQL injection
+      return `LOWER(diary_entries.subjects) LIKE ?`; // Case-insensitive matching
     });
 
+    // Append the filtering conditions to the query
     query += ` AND (${filterConditions.join(" OR ")})`;
-    queryParams.push(...filters); // Add filter values to query parameters
+
+    // Add the filter values to the query parameters, converting to lowercase
+    queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
   }
 
+  // Append the ordering of entries by creation date
   query += ` ORDER BY diary_entries.created_at DESC`;
 
+  // Execute the query
   db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
     }
+    // Send the result back to the client
     res.status(200).json(results);
   });
 });
@@ -450,7 +455,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
-    WHERE diary_entries.entryID = ?`; // Corrected the WHERE clause
+    WHERE diary_entries.entryID = ?`;
 
   db.query(query, [entryID], (err, result) => {
     if (err) {
@@ -724,6 +729,7 @@ app.get("/fetchComments/:entryID", (req, res) => {
   const query = `
     SELECT 
       comments.commentID, comments.text, comments.created_at, comments.replyCommentID,
+      comments.userID,  -- Add this line to fetch userID
       user_table.username, user_profiles.profile_image
     FROM comments
     INNER JOIN user_table ON comments.userID = user_table.userID
@@ -774,15 +780,15 @@ app.post("/comments", (req, res) => {
 
 app.delete("/deleteComments/:commentID", (req, res) => {
   const { commentID } = req.params;
-  const userID = req.body.userID; // Assuming you pass userID in the request body
+  const { userID } = req.query; // Get userID from query string
 
   // Step 1: Check if the comment exists and retrieve the entryID and userID
   const commentQuery = `
-    SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
-    FROM comments
-    INNER JOIN entries ON comments.entryID = entries.entryID
-    WHERE comments.commentID = ?
-  `;
+  SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
+  FROM comments
+  INNER JOIN entries ON comments.entryID = entries.entryID
+  WHERE comments.commentID = ?;
+`;
 
   db.query(commentQuery, [commentID], (err, results) => {
     if (err || results.length === 0) {
@@ -792,7 +798,7 @@ app.delete("/deleteComments/:commentID", (req, res) => {
     const commentUserID = results[0].commentUserID;
     const entryUserID = results[0].entryUserID;
 
-    // Step 2: Check if the requesting user is the owner of the comment and the diary entry
+    // Step 2: Check if the requesting user is the owner of the comment or the diary entry
     if (commentUserID !== userID && entryUserID !== userID) {
       return res
         .status(403)
@@ -944,67 +950,129 @@ app.get("/messages", (req, res) => {
 });
 
 app.post("/notifications/:userID", async (req, res) => {
-  const { userID, actorID, message, entryID, type } = req.body;
+  const { userID } = req.params;
+  const { actorID, message, entryID, type } = req.body;
 
-  // 1. Insert notification into the database
+  console.log("Request received:", req.body);
+
   const insertNotificationQuery = `
-    INSERT INTO notifications (userID, actorID, message, entryID, type)
+    INSERT INTO notifications (userID, actorID, message, entryID  , type)
     VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     insertNotificationQuery,
-    [userID, actorID, message, entryID, type],
+    [userID, actorID, message, entryID || null, type], // Use null if entryID is undefined
     (error, results) => {
       if (error) {
         console.error("Error inserting notification into database:", error);
         return res.status(500).send("Error saving notification");
       }
 
-      // 2. Trigger Pusher to notify the user
-      pusher.trigger(`notifications-${userID}`, "new-notification", {
-        actorID,
-        message,
-        entryID,
-        type,
-        timestamp: new Date().toISOString(),
-      });
+      // Trigger Pusher notification
+      pusher
+        .trigger(`notifications-${userID}`, "new-notification", {
+          actorID,
+          message,
+          entryID: entryID || null, // Send null if there's no entryID
+          type,
+          timestamp: new Date().toISOString(),
+        })
+        .then(() => {
+          console.log("Pusher notification sent");
+        })
+        .catch((err) => {
+          console.error("Error sending Pusher notification:", err);
+        });
 
       res.status(200).send("Notification sent");
     }
   );
 });
 
-app.get("/notifications/:userID", async (req, res) => {
-  const { userID } = req.params;
-
-  // Query to fetch notifications for the specified userID
-  const fetchNotificationsQuery = `
-    SELECT 
-      n.*, 
-      u.username AS actorUsername, 
-      up.profile_image AS actorProfileImage 
-    FROM 
-      notifications n
-    JOIN 
-      user_table u ON n.actorID = u.userID
-    LEFT JOIN 
-      user_profile up ON u.userID = up.userID
-    WHERE 
-      n.userID = ?
-    ORDER BY 
-      n.timestamp DESC
-  `;
-
-  db.query(fetchNotificationsQuery, [userID], (error, results) => {
-    if (error) {
-      console.error("Error fetching notifications from database:", error);
-      return res.status(500).send("Error fetching notifications");
+app.post("/submit-report", (req, res) => {
+  upload.single("supportingDocuments")(req, res, (err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ error: "File upload error: " + err.message });
     }
 
-    res.status(200).json(results); // Send the notifications as JSON response
+    const {
+      victimName,
+      perpetratorName,
+      contactInfo,
+      gender,
+      incidentDescription,
+      location,
+      date,
+      time,
+      witnesses,
+    } = req.body;
+
+    const supportingDocuments = req.file ? req.file.filename : null; // Retrieve file info
+
+    const query = `
+      INSERT INTO gender_based_crime_reports 
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, time, witnesses, supportingDocuments) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      query,
+      [
+        victimName,
+        perpetratorName,
+        contactInfo,
+        gender,
+        incidentDescription,
+        location,
+        date,
+        time,
+        witnesses || null,
+        supportingDocuments, // Store the file name in DB
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Error inserting report:", err.message);
+          return res.status(500).json({ error: "Error submitting report" });
+        }
+        res.status(200).json({ message: "Report submitted successfully" });
+      }
+    );
   });
 });
+
+// app.get("/notifications/:userID", async (req, res) => {
+//   const { userID } = req.params;
+
+//   // Query to fetch notifications for the specified userID
+//   const fetchNotificationsQuery = `
+//     SELECT
+//       n.*,
+//       u.username AS actorUsername,
+//       up.profile_image AS actorProfileImage
+//     FROM
+//       notifications n
+//     JOIN
+//       user_table u ON n.actorID = u.userID
+//     LEFT JOIN
+//       user_profile up ON u.userID = up.userID
+//     WHERE
+//       n.userID = ?
+//     ORDER BY
+//       n.timestamp DESC
+//   `;
+
+//   db.query(fetchNotificationsQuery, [userID], (error, results) => {
+//     if (error) {
+//       console.error("Error fetching notifications from database:", error);
+//       return res.status(500).send("Error fetching notifications");
+//     }
+
+//     res.status(200).json(results); // Send the notifications as JSON response
+//   });
+// });
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

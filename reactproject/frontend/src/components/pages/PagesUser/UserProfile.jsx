@@ -169,7 +169,7 @@ const UserProfile = () => {
               style={{ minHeight: "37vh", top: "70px" }}
             >
               <div>
-                <RecentJournalEntries />
+                <RecentJournalEntries userID={user.userID} />
               </div>
             </div>
           </div>

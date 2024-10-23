@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
-import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
+import OthersJournalEntries from "./UserProfileLayout/OthersJournalEntries";
 import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
+import OthersProfileDropdown from "../../Layouts/LayoutUser/OthersProfileDropdown";
 
 const OtherUserProfile = () => {
   const { userID } = useParams();
@@ -86,7 +87,7 @@ const OtherUserProfile = () => {
               <p className="mt-3">{user.bio || "No bio available."}</p>
             </div>
             <div>
-              <ProfileDropdown />
+              <OthersProfileDropdown />
             </div>
           </div>
         </div>
@@ -100,7 +101,7 @@ const OtherUserProfile = () => {
               style={{ minHeight: "37vh", top: "70px" }}
             >
               <div>
-                <RecentJournalEntries userID={userID} />
+                <OthersJournalEntries userID={userID} />
               </div>
             </div>
           </div>

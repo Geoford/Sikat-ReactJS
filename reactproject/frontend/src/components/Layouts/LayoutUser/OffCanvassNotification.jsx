@@ -114,6 +114,14 @@ function OffCanvassNotification() {
         "notifications",
         JSON.stringify(updatedNotifications)
       );
+
+      axios
+        .post(`http://localhost:8081/notifications/mark-as-read`, {
+          userID: user.userID,
+        })
+        .catch((error) =>
+          console.error("Error marking notifications as read:", error)
+        );
     }
   }, [show]);
 
@@ -163,10 +171,10 @@ function OffCanvassNotification() {
             notifications.map((notification) => (
               <Link
                 key={notification.timestamp}
-                className="text-decoration-none text-dark"
+                className="text-decoration-none text-dark "
                 to={`/DiaryEntry/${notification.entryID || ""}`}
               >
-                <div className="grayHover d-flex align-items-center gap-2 p-2 rounded">
+                <div className="grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
                   <div className="profilePicture">
                     <img
                       src={notification.actorProfileImage}

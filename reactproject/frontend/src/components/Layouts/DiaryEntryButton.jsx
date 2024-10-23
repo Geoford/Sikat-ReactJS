@@ -174,8 +174,9 @@ function DiaryEntryButton({ onEntrySaved }) {
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          <div>
+          <div className="d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
+            {selectedSubjects && <div className=""> {selectedSubjects} </div>}
           </div>
           <div className="">
             <InputGroup className="mb-1">
