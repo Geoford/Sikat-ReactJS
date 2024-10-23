@@ -114,23 +114,24 @@ const Center = () => {
         userID: user.userID,
       })
       .then((res) => {
+        const isGadified =
+          res.data.message === "Gadify action recorded successfully";
+
         setEntries((prevEntries) =>
           prevEntries.map((entry) =>
             entry.entryID === entryID
               ? {
                   ...entry,
-                  gadifyCount:
-                    res.data.message === "Gadify action recorded successfully"
-                      ? entry.gadifyCount + 1
-                      : entry.gadifyCount - 1,
+                  gadifyCount: isGadified
+                    ? entry.gadifyCount + 1
+                    : entry.gadifyCount - 1,
                 }
               : entry
           )
         );
 
-        // Add notification for the entry owner
-        if (user.userID !== entry.userID) {
-          // Only notify if the user is not the owner
+        // Only send notification if gadified (count is incremented) and user is not the owner
+        if (isGadified && user.userID !== entry.userID) {
           axios
             .post(`http://localhost:8081/notifications/${entry.userID}`, {
               actorID: user.userID,
@@ -271,24 +272,12 @@ const Center = () => {
             className="position-relative rounded shadow-sm p-3 mb-2"
             style={{ backgroundColor: "white" }}
           >
-            <div className="position-absolute" style={{ right: "20px" }}>
-              <HomeDiaryDropdown />
-            </div>
             <div className="d-flex align-items-start border-bottom pb-2">
-              <Link
-                to={`/OtherProfile/${entry.userID}`}
-                className="linkText rounded"
-              >
+              {entry.anonimity === "private" ? (
                 <div className="d-flex align-items-center gap-2">
                   <div className="profilePicture">
                     <img
-                      src={
-                        entry.anonimity === "private"
-                          ? anonymous
-                          : entry.profile_image
-                          ? `http://localhost:8081${entry.profile_image}`
-                          : userDefaultProfile
-                      }
+                      src={anonymous}
                       alt="Profile"
                       style={{
                         width: "100%",
@@ -298,30 +287,58 @@ const Center = () => {
                     />
                   </div>
                   <div className="d-flex flex-column align-items-start">
-                    {entry.anonimity === "private"
-                      ? entry.alias
-                      : entry.username}
+                    {entry.alias}
                     <p className="m-0" style={{ fontSize: ".7rem" }}>
                       {formatDate(entry.created_at)}
                     </p>
                   </div>
                 </div>
-              </Link>
-              {user && user.userID !== entry.userID && (
-                <div className="d-flex align-items-center gap-1">
-                  <p className="m-0 fs-3 text-secondary">·</p>
-
-                  <button
-                    className="secondaryButton p-0 m-0"
-                    onClick={() => handleFollowToggle(entry.userID)}
-                    style={{ height: "1.5rem" }}
-                  >
-                    {followedUsers.includes(entry.userID)
-                      ? "Following"
-                      : "Follow"}
-                  </button>
-                </div>
+              ) : (
+                <Link
+                  to={`/OtherProfile/${entry.userID}`}
+                  className="linkText rounded"
+                >
+                  <div className="d-flex align-items-center gap-2">
+                    <div className="profilePicture">
+                      <img
+                        src={
+                          entry.profile_image
+                            ? `http://localhost:8081${entry.profile_image}`
+                            : userDefaultProfile
+                        }
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                    <div className="d-flex flex-column align-items-start">
+                      {entry.username}
+                      <p className="m-0" style={{ fontSize: ".7rem" }}>
+                        {formatDate(entry.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               )}
+              {user &&
+                user.userID !== entry.userID &&
+                entry.anonimity !== "private" && ( // Added condition to check anonymity
+                  <div className="d-flex align-items-center gap-1">
+                    <p className="m-0 fs-3 text-secondary">·</p>
+                    <button
+                      className="secondaryButton p-0 m-0"
+                      onClick={() => handleFollowToggle(entry.userID)}
+                      style={{ height: "1.5rem" }}
+                    >
+                      {followedUsers.includes(entry.userID)
+                        ? "Following"
+                        : "Follow"}
+                    </button>
+                  </div>
+                )}
             </div>
 
             <div className="text-start border-bottom p-2">

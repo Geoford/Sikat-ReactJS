@@ -25,9 +25,8 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [file, setFile] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState("");
 
-  // Update the selected subjects when changed in SubjectSelection
   const handleSubjectsChange = (subjectsText) => {
-    setSelectedSubjects(subjectsText); // This is the text string now
+    setSelectedSubjects(subjectsText);
   };
 
   const navigate = useNavigate();

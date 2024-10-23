@@ -1,13 +1,32 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import CommentDropdown from "./CommentDropdown";
 import AnonymousIcon from "../../../assets/Anonymous.png";
-import SendIcon from "../../../assets/SendIcon.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
+
+// Throttle function to optimize input handling
+const throttle = (func, limit) => {
+  let lastFunc;
+  let lastRan;
+  return (...args) => {
+    if (!lastRan) {
+      func(...args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if (Date.now() - lastRan >= limit) {
+          func(...args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
+};
 
 const CommentSection = ({ userID, entryID, entry }) => {
   const [user, setUser] = useState(null);
@@ -15,9 +34,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
-  const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // State for error messages
+  const [error, setError] = useState(null);
+
+  // Using refs to hold reply text instead of state
+  const replyTextsRef = useRef({});
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -40,9 +61,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
       setComments(nestedComments);
     } catch (error) {
       console.error("Error fetching comments:", error);
-      setError("Failed to fetch comments. Please try again."); // Set error message
+      setError("Failed to fetch comments. Please try again.");
     } finally {
-      setLoading(false); // Always set loading to false
+      setLoading(false);
     }
   }, [entryID]);
 
@@ -88,7 +109,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
     try {
       await axios.post("http://localhost:8081/comments", newCommentObj);
       setNewComment("");
-      fetchComments(); // Optimistically update the UI by fetching comments
+      fetchComments();
     } catch (error) {
       console.error("Error posting comment:", error);
       setError("Failed to post comment. Please try again.");
@@ -107,7 +128,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         })
         .catch((err) => {
           console.error("Error sending comment notification:", err);
-          setError("Failed to send notification."); // Set error message for notification
+          setError("Failed to send notification.");
         });
     }
   };
@@ -118,7 +139,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
     );
 
     if (!confirmed) {
-      return; // Exit if the user did not confirm
+      return;
     }
 
     setLoading(true);
@@ -126,7 +147,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
       await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
         data: { userID },
       });
-      fetchComments(); // Refresh comments after deletion
+      fetchComments();
     } catch (error) {
       console.error("Error deleting comment:", error);
       setError("Failed to delete comment. Please try again.");
@@ -135,7 +156,13 @@ const CommentSection = ({ userID, entryID, entry }) => {
     }
   };
 
+  // Function to handle reply text changes
+  const handleReplyTextChange = (commentID, value) => {
+    replyTextsRef.current[commentID] = value; // Set reply text for specific comment
+  };
+
   const handleSendReply = async (parentID) => {
+    const replyText = replyTextsRef.current[parentID] || ""; // Get reply text for the specific comment
     if (replyText.trim() === "") return;
 
     const newReplyObj = {
@@ -149,7 +176,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
     try {
       await axios.post("http://localhost:8081/comments", newReplyObj);
       setReplyTo(null);
-      setReplyText("");
+      replyTextsRef.current[parentID] = ""; // Clear the reply text after submission
       fetchComments();
     } catch (error) {
       console.error("Error posting reply:", error);
@@ -162,8 +189,8 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const handleClose = () => {
     setShow(false);
     setReplyTo(null);
-    setReplyText("");
-    setError(null); // Reset error message on close
+    replyTextsRef.current = {}; // Clear reply texts
+    setError(null);
   };
 
   const handleShow = () => setShow(true);
@@ -226,9 +253,10 @@ const CommentSection = ({ userID, entryID, entry }) => {
               <Form.Control
                 as="textarea"
                 placeholder="Leave a reply here"
-                style={{ height: "60px" }}
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+                style={{ height: "80px" }}
+                onChange={(e) =>
+                  handleReplyTextChange(comment.commentID, e.target.value)
+                }
               />
             </FloatingLabel>
             <button
@@ -246,17 +274,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
           </div>
         )}
 
-        {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-2">
-            {comment.replies.map((reply) => (
-              <Comment
-                key={reply.commentID}
-                comment={reply}
-                depth={depth + 1}
-              />
-            ))}
-          </div>
-        )}
+        {comment.replies.map((reply) => (
+          <Comment key={reply.commentID} comment={reply} depth={depth + 1} />
+        ))}
       </div>
     );
   });
@@ -264,48 +284,47 @@ const CommentSection = ({ userID, entryID, entry }) => {
   return (
     <>
       <button className="InteractButton" onClick={handleShow}>
-        Comment
+        {" "}
+        Comments
       </button>
 
-      <Modal show={show} onHide={handleClose} centered size="lg">
+      <Modal
+        show={show}
+        onHide={handleClose}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Comments</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {loading && <p>Loading comments...</p>}
           {error && <p className="text-danger">{error}</p>}
-          <div className="comments-container">
-            {comments.map((comment) => (
-              <Comment key={comment.commentID} comment={comment} />
-            ))}
+          {!loading && comments.length === 0 && <p>No comments yet.</p>}
+          {comments.map((comment) => (
+            <Comment key={comment.commentID} comment={comment} />
+          ))}
+
+          <FloatingLabel
+            controlId="newCommentTextarea"
+            label="Add a comment"
+            className="mt-3"
+          >
+            <Form.Control
+              as="textarea"
+              placeholder="Leave a comment here"
+              style={{ height: "100px" }}
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+          </FloatingLabel>
+          <div className="d-flex justify-content-end mt-2">
+            <Button variant="primary" onClick={handleSendComment}>
+              Send
+            </Button>
           </div>
         </Modal.Body>
-        <Modal.Footer className="">
-          <div className="w-100 position-relative">
-            <FloatingLabel controlId="floatingTextarea2" label="Comment">
-              <Form.Control
-                className="custom-scrollbar pe-5"
-                as="textarea"
-                placeholder="Leave a comment here"
-                style={{ height: "100px" }}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              />
-            </FloatingLabel>
-            <button
-              className="position-absolute p-2 rounded-circle"
-              onClick={handleSendComment}
-              style={{
-                right: "10px",
-                bottom: "10px",
-                backgroundColor: "#ffff",
-                border: "none",
-              }}
-            >
-              <img className="miniIcon m-0" src={SendIcon} alt="Send" />
-            </button>
-          </div>
-        </Modal.Footer>
       </Modal>
     </>
   );
