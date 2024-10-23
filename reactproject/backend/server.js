@@ -256,17 +256,17 @@ app.post(
     }
 
     const query = `
-      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
+    INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
     const values = [
       title,
       description,
       userID,
       visibility,
-      anonimity,
+      anonimity, // Ensure this value is passed correctly
       diary_image,
-      JSON.stringify(parsedSubjects), // Store the subjects as JSON in the database
+      JSON.stringify(parsedSubjects),
     ];
 
     db.query(query, values, (err, result) => {
@@ -290,7 +290,8 @@ app.get("/entries", (req, res) => {
     SELECT 
       diary_entries.*, 
       user_table.username,
-      user_profiles.profile_image
+      user_profiles.profile_image,
+      user_profiles.alias
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
@@ -417,6 +418,38 @@ app.get("/fetchUser/user/:id", (req, res) => {
     }
 
     res.json(result[0]); // Merged result since the JOIN already includes profile data
+  });
+});
+
+app.get("/notificationUser/user/:id", (req, res) => {
+  const userID = req.params.id;
+
+  const userValues = `
+    SELECT 
+      user_table.userID, 
+      user_table.username, 
+      user_profiles.profile_image, 
+      user_profiles.bio, 
+      user_profiles.alias, 
+      user_profiles.followersCount, 
+      user_profiles.followingCount 
+    FROM user_table 
+    JOIN user_profiles ON user_table.userID = user_profiles.userID 
+    WHERE user_table.userID = ?
+  `;
+
+  db.query(userValues, [userID], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("API Result:", result[0]); // Add this to check the result
+    res.json(result[0]); // Return the merged user and profile data
   });
 });
 

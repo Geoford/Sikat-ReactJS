@@ -56,14 +56,16 @@ function OffCanvassNotification() {
         const fetchedNotifications = await Promise.all(
           response.data.map(async (notification) => {
             const userResponse = await axios.get(
-              `http://localhost:8081/fetchUser/user/${notification.actorID}`
+              `http://localhost:8081/notificationUser/user/${notification.actorID}`
             );
             const actorData = userResponse.data;
 
             return {
               ...notification,
-              actorUsername: actorData.username,
-              actorProfileImage: actorData.profile_image || DefaultProfile,
+              actorUsername: actorData.alias || actorData.username,
+              actorProfileImage:
+                `http://localhost:8081${actorData.profile_image}` ||
+                DefaultProfile,
             };
           })
         );
@@ -186,6 +188,8 @@ function OffCanvassNotification() {
                       }}
                     />
                   </div>
+                  {console.log("Image URL:", notification.actorProfileImage)}{" "}
+                  {/* Add this */}
                   <p className="m-0">
                     {notification.actorUsername} {notification.message}
                     <span

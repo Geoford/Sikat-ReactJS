@@ -1,6 +1,7 @@
 import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import anonymous from "../../../../assets/anonymous.png";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
@@ -282,7 +283,9 @@ const Center = () => {
                   <div className="profilePicture">
                     <img
                       src={
-                        entry.profile_image
+                        entry.anonimity === "private"
+                          ? anonymous
+                          : entry.profile_image
                           ? `http://localhost:8081${entry.profile_image}`
                           : userDefaultProfile
                       }
@@ -295,7 +298,9 @@ const Center = () => {
                     />
                   </div>
                   <div className="d-flex flex-column align-items-start">
-                    <p className="m-0">{entry.username}</p>
+                    {entry.anonimity === "private"
+                      ? entry.alias
+                      : entry.username}
                     <p className="m-0" style={{ fontSize: ".7rem" }}>
                       {formatDate(entry.created_at)}
                     </p>
