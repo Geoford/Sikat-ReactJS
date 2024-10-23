@@ -435,3 +435,26 @@ input.form-control:focus {
   font-weight: bold;
   opacity: 0; /* Starts hidden */
 }
+
+/* FOR GETHELP UPLOADING IMAGE */
+.supportImageContainer {
+  border-radius: 0.5rem;
+  width: 9rem;
+  height: 11rem;
+  border: 0.2rem solid lightgray;
+  cursor: pointer;
+}
+.supportImageContainer button {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  height: 25px;
+  width: 25px;
+  top: 10px;
+  right: 10px;
+}
+.imagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.3rem;
+}

@@ -3,7 +3,6 @@ import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import { PreLoader } from "../PreLoader";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import SubjectSelection from "../../Layouts/LayoutUser/SubjectSelection";
 
 const GetHelp = () => {
   const [formData, setFormData] = useState({
@@ -130,12 +129,12 @@ const GetHelp = () => {
   return (
     <UserPageMainLayout>
       <PreLoader></PreLoader>
-      <div className="d-flex justify-content-center py-3">
+      <div className="d-flex justify-content-center pt-5">
         <div
-          className=" container-fluid container-lg rounded shadow p-3"
+          className="rounded p-3"
           style={{
             backgroundColor: "#ffff",
-            // width: "clamp(30rem, 50vw, 40rem)",
+            width: "clamp(30rem, 50vw, 40rem)",
           }}
         >
           <div className="border-bottom border-2">
@@ -148,33 +147,35 @@ const GetHelp = () => {
             style={{ minHeight: "20rem" }}
           >
             {/* Step 1: Report Details */}
-
-            <div className="d-flex flex-column justify-content-between">
-              <div className="d-flex flex-column gap-0">
-                <h5 className="mt-2">Report Details</h5>
-                <div className="input-group mb-1">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Victim's Name(Optional)"
-                    name="victimName"
-                    value={formData.victimName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="row">
-                  <div className="col-sm-12 col-md input-group mb-2">
+            {step === 1 && (
+              <div
+                className="d-flex flex-column justify-content-between"
+                style={{ height: "20rem" }}
+              >
+                <div className="d-flex flex-column gap-2">
+                  <h5 className="my-2">Step 1: Report Details</h5>
+                  <div className="input-group mb-1">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Contact Number"
+                      placeholder="Victim's Name(Optional)"
+                      name="victimName"
+                      value={formData.victimName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="input-group mb-1">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Your Contact Information"
                       name="contactInfo"
                       value={formData.contactInfo}
                       onChange={handleChange}
                       required
                     />
                   </div>
-                  <div className="col-sm-12 col-md">
+                  <div>
                     <select
                       className="ps-2 rounded"
                       name="gender"
@@ -192,15 +193,34 @@ const GetHelp = () => {
                     </select>
                   </div>
                 </div>
+
+                <div className="d-flex justify-content-between mt-2">
+                  <button
+                    className="btn btn-secondary disabled"
+                    type="button"
+                    onClick={handlePrev}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="primaryButton"
+                    type="button"
+                    onClick={handleNext}
+                    disabled={isNextDisabled}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Step 2: Incident Details */}
-            <div className="d-flex flex-column justify-content-between">
-              <div className="d-flex flex-column gap-0">
-                <h5 className="my-2">Incident Details</h5>
-                <div className="row">
-                  <div className="col-sm-12 col-md input-group mb-1">
+            {step === 2 && (
+              <div className="d-flex flex-column justify-content-between">
+                <div className="d-flex flex-column gap-2">
+                  <h5 className="my-2">Step 2: Incident Details</h5>
+
+                  <div className="input-group mb-1">
                     <input
                       type="text"
                       className="form-control"
@@ -210,27 +230,22 @@ const GetHelp = () => {
                       onChange={handleChange}
                     />
                   </div>
-                  <div className="col-sm-12 col-md-2 ">
-                    <SubjectSelection></SubjectSelection>
-                  </div>
-                </div>
+                  <FloatingLabel
+                    controlId="floatingTextarea2"
+                    label="Description of the Incident"
+                  >
+                    <Form.Control
+                      as="textarea"
+                      placeholder="Leave a comment here"
+                      style={{ height: "100px" }}
+                      name="incidentDescription"
+                      value={formData.incidentDescription}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FloatingLabel>
 
-                <FloatingLabel
-                  controlId="floatingTextarea2"
-                  label="Description of the Incident"
-                >
-                  <Form.Control
-                    as="textarea"
-                    placeholder="Leave a comment here"
-                    style={{ height: "100px" }}
-                    name="incidentDescription"
-                    value={formData.incidentDescription}
-                    onChange={handleChange}
-                    required
-                  />
-                </FloatingLabel>
-                <div className="row">
-                  <div className="col-sm-12 col-md input-group mb-1 d-flex flex-column">
+                  <div className="input-group mb-1 d-flex flex-column">
                     <label htmlFor="location" className="form-label m-0">
                       Location of Incident
                     </label>
@@ -245,7 +260,7 @@ const GetHelp = () => {
                     />
                   </div>
 
-                  <div className="col-sm-12 col-md input-group mb-1 d-flex flex-column">
+                  <div className="input-group mb-1 d-flex flex-column">
                     <label htmlFor="date" className="form-label m-0">
                       Date of Incident
                     </label>
@@ -260,25 +275,53 @@ const GetHelp = () => {
                     />
                   </div>
                 </div>
+
+                <div className="d-flex justify-content-between mt-2">
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    onClick={handlePrev}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="primaryButton"
+                    type="button"
+                    onClick={handleNext}
+                    disabled={isNextDisabled}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Step 3: Evidence Upload */}
-            <div className="d-flex flex-column justify-content-between">
-              <div>
-                <h5 className="my-2">Upload Proof of Incident (optional)</h5>
-                {/* <p className="m-0">Photo Evidence</p> */}
-                {/* Supporting Document Uploads */}
-                <div className="d-flex flex-wrap gap-2">
+            {step === 3 && (
+              <div className="d-flex flex-column justify-content-between">
+                <div>
+                  <h5 className="my-2">Step 3: Upload Supporting Documents</h5>
+
+                  {/* Supporting Document Uploads */}
                   {[1, 2, 3, 4, 5].map((index) => {
                     const docKey = `supportingDocuments${index}`;
                     const previewKey = `imagePreview${index}`;
                     const imagePreview = eval(previewKey); // Get the current image preview state
                     return (
-                      <div key={index} className="mb-1">
+                      <div key={index} className="mb-3">
                         <label
                           htmlFor={docKey}
-                          className="form-label supportImageContainer position-relative d-flex justify-content-center align-items-center"
+                          className="form-label supportImageContainer position-relative"
+                          style={{
+                            display: "inline-block",
+                            width: "100px",
+                            height: "100px",
+                            border: "1px solid lightgray",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            lineHeight: "100px",
+                            cursor: "pointer",
+                          }}
                         >
                           {/* Show image preview or icon when no image */}
                           {imagePreview ? (
@@ -289,14 +332,14 @@ const GetHelp = () => {
                               style={{ maxWidth: "100%", maxHeight: "100%" }}
                             />
                           ) : (
-                            <i className="bx bx-image-add bx-md text-secondary"></i> // Display icon
+                            <i className="bx bx-image-add bx-md"></i> // Display icon
                           )}
 
                           {/* Remove button when image is present */}
                           {formData[docKey] && (
                             <button
                               type="button"
-                              className="position-absolute text-light rounded p-0"
+                              className="position-absolute top-0 end-0 rounded text-light p-0 bg-danger"
                               onClick={() => handleRemoveImage(docKey)}
                               style={{
                                 width: "20px",
@@ -325,14 +368,21 @@ const GetHelp = () => {
                     );
                   })}
                 </div>
-              </div>
 
-              <div className="d-flex justify-content-end mt-2">
-                <button className="primaryButton w-100 py-2" type="submit">
-                  Submit
-                </button>
+                <div className="d-flex justify-content-between mt-2">
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    onClick={handlePrev}
+                  >
+                    Previous
+                  </button>
+                  <button className="primaryButton" type="submit">
+                    Submit
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </form>
         </div>
       </div>
