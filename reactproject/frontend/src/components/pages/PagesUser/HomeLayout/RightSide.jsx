@@ -120,6 +120,13 @@ const RightSide = () => {
 
     try {
       if (isFollowing) {
+        const confirmed = window.confirm(
+          `Are you sure you want to unfollow this ${followUserId}?`
+        );
+
+        if (!confirmed) {
+          return;
+        }
         await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
           data: { followerId: user.userID },
         });
