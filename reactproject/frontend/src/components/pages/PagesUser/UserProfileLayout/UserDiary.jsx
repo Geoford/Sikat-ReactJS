@@ -40,21 +40,74 @@ const UserDiary = ({ userID }) => {
     }
   }, [navigate]);
 
-  const handleClick = (entryID) => {
-    const updatedActiveButtons = {
-      ...activeButtons,
-      [entryID]: !activeButtons[entryID],
-    };
-    setActiveButtons(updatedActiveButtons);
+  const handleGadify = (entryID) => {
+    if (!user) return;
 
+    const entry = entries.find((entry) => entry.entryID === entryID);
+    if (!entry) return;
+
+    axios
+      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
+        userID: user.userID,
+      })
+      .then((res) => {
+        const isGadified =
+          res.data.message === "Gadify action recorded successfully";
+
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.entryID === entryID
+              ? {
+                  ...entry,
+                  gadifyCount: isGadified
+                    ? entry.gadifyCount + 1
+                    : entry.gadifyCount - 1,
+                }
+              : entry
+          )
+        );
+
+        // Only send notification if gadified (count is incremented) and user is not the owner
+        if (isGadified && user.userID !== entry.userID) {
+          axios
+            .post(`http://localhost:8081/notifications/${entry.userID}`, {
+              actorID: user.userID,
+              entryID: entryID,
+              type: "gadify",
+              message: `${user.username} gadified your diary entry.`,
+            })
+            .then((res) => {
+              console.log("Notification response:", res.data);
+            })
+            .catch((err) => {
+              console.error("Error sending gadify notification:", err);
+            });
+        }
+      })
+      .catch((err) => console.error("Error updating gadify count:", err));
+  };
+
+  const handleClick = (entryID) => {
+    // Toggle the isGadified state for the clicked entry
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.entryID === entryID
+          ? { ...entry, isGadified: !entry.isGadified }
+          : entry
+      )
+    );
+
+    // Trigger the expand animation
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
+    // Remove the expand class after the animation completes
     setTimeout(() => {
       updatedExpandButtons[entryID] = false;
       setExpandButtons({ ...updatedExpandButtons });
     }, 300);
 
+    // Perform the Gadify action
     handleGadify(entryID);
   };
 
@@ -116,12 +169,19 @@ const UserDiary = ({ userID }) => {
                 <div className="row pt-2">
                   <div className="col">
                     <button
-                      className={`InteractButton ${
-                        activeButtons[entry.entryID] ? "active" : ""
+                      className={`InteractButton d-flex align-items-center justify-content-center gap-1 ${
+                        entry.isGadified ? "active" : ""
                       } ${expandButtons[entry.entryID] ? "expand" : ""}`}
                       onClick={() => handleClick(entry.entryID)}
                     >
-                      <span>({entry.gadifyCount}) </span>Gadify
+                      {/* Conditionally render the icon based on isGadified */}
+                      {entry.isGadified ? (
+                        <i className="bx bxs-heart"></i> // Solid heart when active
+                      ) : (
+                        <i className="bx bx-heart "></i> // Outline heart when not active
+                      )}
+                      Gadify
+                      <span> ({entry.gadifyCount}) </span>
                     </button>
                   </div>
                   <div className="col">

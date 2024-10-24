@@ -374,10 +374,9 @@ app.post(
         });
       }
 
-      // Return success message, with additional information on alarming words
       res.status(200).send({
         message: "Entry added successfully!",
-        containsAlarmingWords: hasAlarmingWords, // This field indicates if alarming words were found
+        containsAlarmingWords: hasAlarmingWords,
       });
     });
   }
@@ -390,7 +389,7 @@ app.get("/entries", (req, res) => {
   // Start building the query
   let query = `
     SELECT 
-      diary_entries.*, 
+      diary_entries.*,
       user_table.username,
       user_profiles.profile_image,
       user_profiles.alias

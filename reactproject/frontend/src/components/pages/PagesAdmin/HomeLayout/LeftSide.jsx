@@ -3,10 +3,10 @@ import SampleImage from "../../../../assets/Background.jpg";
 import DefaultProfile from "../../../../assets/userDefaultProfile.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { LeftSideLoader } from "../../../loaders/LeftSideLoader";
+import axios from "axios";
 
-const Center = () => {
+const LeftSideAdmin = () => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +38,7 @@ const Center = () => {
     } else {
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   useEffect(() => {
     if (user) {
@@ -53,6 +53,8 @@ const Center = () => {
       );
       if (response.data.entries && Array.isArray(response.data.entries)) {
         setEntries(response.data.entries);
+
+        response.data.entries.forEach((entry) => {});
       } else {
         console.error("Response data is not an array", response.data);
         setEntries([]);
@@ -80,7 +82,7 @@ const Center = () => {
     <div className="p-2">
       <Link
         className="text-decoration-none text-dark"
-        to={`/Admin/Profile/${user.userID}`}
+        to={`/UserProfile/${user.userID}`}
       >
         <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
           <div>
@@ -113,14 +115,15 @@ const Center = () => {
               </div>
             </div>
           </div>
-          <p className="m-0 mt-1 text-light fs-5">{user.firstName} (Admin)</p>
+          <p className="m-0 mt-1 text-light fs-5">{user.firstName}</p>
         </div>
       </Link>
 
       <div className=" mt-3">
-        <div className="d-flex justify-content-between border-bottom">
-          <div>
-            <h4 className="text-secondary">Recent Post</h4>
+        <div className="d-flex justify-content-between border-bottom border-secondary-subtle">
+          <div className="d-flex align-items-center text-secondary gap-1">
+            <i class="bx bx-edit bx-sm"></i>
+            <h4 className="m-0 ">Journal Entries</h4>
           </div>
           <div>
             <Link
@@ -133,7 +136,7 @@ const Center = () => {
           </div>
         </div>
         <div
-          className="mt-2 pe-1 custom-scrollbar"
+          className="mt-1 pe-1 custom-scrollbar"
           style={{ height: "45vh", overflowY: "scroll" }}
         >
           {error ? (
@@ -143,14 +146,12 @@ const Center = () => {
           ) : (
             entries.map((entry) => (
               <Link
-                to="/DiaryEntry"
+                key={entry.entryID} // Add key prop here
+                to={`/DiaryEntry/${entry.entryID}`}
                 className="rounded text-decoration-none"
                 style={{ cursor: "pointer" }}
               >
-                <div
-                  key={entry.entryID}
-                  className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-2"
-                >
+                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-1">
                   <h6 className="m-0 p-2 text-start text-secondary">
                     {entry.title} - {formatDate(entry.created_at)}
                   </h6>
@@ -164,4 +165,4 @@ const Center = () => {
   );
 };
 
-export default Center;
+export default LeftSideAdmin;
