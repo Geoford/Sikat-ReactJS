@@ -16,6 +16,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [replyTo, setReplyTo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [openAccordions, setOpenAccordions] = useState([]); // Keep track of open accordions
 
   const replyTextsRef = useRef({});
 
@@ -156,6 +157,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
       setReplyTo(null);
       replyTextsRef.current[parentID] = "";
       fetchComments();
+
+      // Keep the current accordion open
+      setOpenAccordions((prevOpen) => [...prevOpen, parentID]);
     } catch (error) {
       console.error("Error posting reply:", error);
       setError("Failed to post reply. Please try again.");
@@ -173,8 +177,19 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
   const handleShow = () => setShow(true);
 
+  const toggleAccordion = (commentID) => {
+    if (openAccordions.includes(commentID)) {
+      setOpenAccordions((prevOpen) =>
+        prevOpen.filter((id) => id !== commentID)
+      );
+    } else {
+      setOpenAccordions((prevOpen) => [...prevOpen, commentID]);
+    }
+  };
+
   const Comment = React.memo(({ comment, depth = 0 }) => {
     const canDelete = comment.userID === userID;
+    const isAccordionOpen = openAccordions.includes(comment.commentID);
     return (
       <div
         className="position-relative"
@@ -210,16 +225,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
           </div>
         </div>
 
-        {/* Comments  */}
+        {/* Comments */}
         <div>
-          <div
-            className="ps-5 ms-2"
-            style={
-              {
-                // zIndex: "10",
-              }
-            }
-          >
+          <div className="ps-5 ms-2">
             <p
               className="m-0 p-2 rounded border-2 text-secondary"
               style={{
@@ -255,7 +263,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
         {/* Accordion to display replies */}
         {comment.replies.length > 0 && (
-          <Accordion className="commentAccordion text-secondary mt-2 ps-4">
+          <Accordion
+            className="commentAccordion text-secondary mt-2 ps-4"
+            activeKey={isAccordionOpen ? `reply-${comment.commentID}` : null}
+            onSelect={() => toggleAccordion(comment.commentID)}
+          >
             <Accordion.Item eventKey={`reply-${comment.commentID}`}>
               <Accordion.Header>
                 View Replies ({comment.replies.length})
@@ -336,7 +348,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
           className="d-flex flex-column justify-content-between"
           style={{ height: "600px" }}
         >
-          <div className="pe-2" style={{ overflowY: "scroll" }}>
+          <div className="pe-2" style={{ overflowY: "scroll", height: "100%" }}>
             {loading && <p className="text-center">Loading comments...</p>}
             {error && <p className="text-danger">{error}</p>}
             {!loading && comments.length === 0 && (
