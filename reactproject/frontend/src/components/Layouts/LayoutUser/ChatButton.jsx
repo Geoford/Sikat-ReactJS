@@ -174,9 +174,6 @@ const UserChatButton = () => {
                   ? "Select a User to Chat"
                   : `Hello, ${user?.username || "UserName"}!`}
               </h4>{" "}
-              <div>
-                <FrequentlyAskQuestion></FrequentlyAskQuestion>
-              </div>
             </div>
 
             <Link to={"/GetHelp/"}>
@@ -206,8 +203,6 @@ const UserChatButton = () => {
                 className="custom-scrollbar rounded mb-1 p-2"
                 style={{ height: "300px", overflowY: "scroll" }}
               >
-                {/* FAQ */}
-
                 {/* ChatBox */}
                 <div className="mb-2">
                   <p className="m-0 text-secondary text-center">
@@ -215,6 +210,11 @@ const UserChatButton = () => {
                     reach out if you need assistance, and ensure that all
                     interactions remain respectful.
                   </p>
+                </div>
+
+                <div>
+                  <p className="m-0">Frequently Ask Questions</p>
+                  <FrequentlyAskQuestion></FrequentlyAskQuestion>
                 </div>
 
                 {messages.map((msg, index) => (

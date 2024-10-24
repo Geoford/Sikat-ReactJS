@@ -257,6 +257,12 @@ const CommentSection = ({ userID, entryID, entry }) => {
                 onChange={(e) =>
                   handleReplyTextChange(comment.commentID, e.target.value)
                 }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendReply(comment.commentID);
+                  }
+                }}
               />
             </FloatingLabel>
             <button
@@ -298,18 +304,26 @@ const CommentSection = ({ userID, entryID, entry }) => {
         <Modal.Header closeButton>
           <Modal.Title>Comments</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {loading && <p>Loading comments...</p>}
-          {error && <p className="text-danger">{error}</p>}
-          {!loading && comments.length === 0 && <p>No comments yet.</p>}
-          {comments.map((comment) => (
-            <Comment key={comment.commentID} comment={comment} />
-          ))}
-
+        <Modal.Body
+          className="d-flex flex-column justify-content-between"
+          style={{ height: "600px" }}
+        >
+          <div style={{ overflowY: "scroll" }}>
+            {loading && <p className="text-center">Loading comments...</p>}
+            {error && <p className="text-danger">{error}</p>}
+            {!loading && comments.length === 0 && (
+              <p className="text-center">
+                No comments yet. Be the first to share your thoughts.
+              </p>
+            )}
+            {comments.map((comment) => (
+              <Comment key={comment.commentID} comment={comment} />
+            ))}
+          </div>
           <FloatingLabel
             controlId="newCommentTextarea"
-            label="Add a comment"
-            className="mt-3"
+            label="Comment"
+            className="mt-3 position-relative"
           >
             <Form.Control
               as="textarea"
@@ -317,13 +331,31 @@ const CommentSection = ({ userID, entryID, entry }) => {
               style={{ height: "100px" }}
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendComment();
+                }
+              }}
             />
+            <div className="d-flex justify-content-end mt-2">
+              <button
+                onClick={handleSendComment}
+                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                style={{
+                  height: "40px",
+                  width: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "#ffff",
+                  right: "10px",
+                  bottom: "10px",
+                  color: "var(--primary)",
+                }}
+              >
+                <i className="bx bxs-send bx-sm"></i>
+              </button>
+            </div>
           </FloatingLabel>
-          <div className="d-flex justify-content-end mt-2">
-            <Button variant="primary" onClick={handleSendComment}>
-              Send
-            </Button>
-          </div>
         </Modal.Body>
       </Modal>
     </>
