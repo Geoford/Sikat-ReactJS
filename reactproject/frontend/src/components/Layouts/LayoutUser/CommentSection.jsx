@@ -3,30 +3,10 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import CommentDropdown from "./CommentDropdown";
+import Accordion from "react-bootstrap/Accordion";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
-
-// Throttle function to optimize input handling
-const throttle = (func, limit) => {
-  let lastFunc;
-  let lastRan;
-  return (...args) => {
-    if (!lastRan) {
-      func(...args);
-      lastRan = Date.now();
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(() => {
-        if (Date.now() - lastRan >= limit) {
-          func(...args);
-          lastRan = Date.now();
-        }
-      }, limit - (Date.now() - lastRan));
-    }
-  };
-};
 
 const CommentSection = ({ userID, entryID, entry }) => {
   const [user, setUser] = useState(null);
@@ -37,7 +17,6 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Using refs to hold reply text instead of state
   const replyTextsRef = useRef({});
 
   useEffect(() => {
@@ -156,13 +135,12 @@ const CommentSection = ({ userID, entryID, entry }) => {
     }
   };
 
-  // Function to handle reply text changes
   const handleReplyTextChange = (commentID, value) => {
-    replyTextsRef.current[commentID] = value; // Set reply text for specific comment
+    replyTextsRef.current[commentID] = value;
   };
 
   const handleSendReply = async (parentID) => {
-    const replyText = replyTextsRef.current[parentID] || ""; // Get reply text for the specific comment
+    const replyText = replyTextsRef.current[parentID] || "";
     if (replyText.trim() === "") return;
 
     const newReplyObj = {
@@ -176,7 +154,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
     try {
       await axios.post("http://localhost:8081/comments", newReplyObj);
       setReplyTo(null);
-      replyTextsRef.current[parentID] = ""; // Clear the reply text after submission
+      replyTextsRef.current[parentID] = "";
       fetchComments();
     } catch (error) {
       console.error("Error posting reply:", error);
@@ -189,7 +167,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const handleClose = () => {
     setShow(false);
     setReplyTo(null);
-    replyTextsRef.current = {}; // Clear reply texts
+    replyTextsRef.current = {};
     setError(null);
   };
 
@@ -198,11 +176,23 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const Comment = React.memo(({ comment, depth = 0 }) => {
     const canDelete = comment.userID === userID;
     return (
-      <div style={{ marginLeft: depth * 20, marginTop: "10px" }}>
+      <div
+        className="position-relative"
+        style={{ marginLeft: depth * 20, marginTop: "10px" }}
+      >
+        <div
+          className="position-absolute border-start rounded-5 border-2"
+          style={{ height: "85%", width: "3%", left: "25px", zIndex: "1" }}
+        ></div>
+
+        {/* Profile */}
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
           <div className="w-100 d-flex align-items-center justify-content-between pe-3">
             <div className="d-flex align-items-center gap-2">
-              <div className="profilePicture d-flex align-items-center justify-content-center pt-1">
+              <div
+                className="profilePicture d-flex align-items-center justify-content-center"
+                style={{ zIndex: "2" }}
+              >
                 <img
                   src={
                     comment.profile_image
@@ -210,39 +200,78 @@ const CommentSection = ({ userID, entryID, entry }) => {
                       : AnonymousIcon
                   }
                   alt="Profile"
-                  style={{ width: "80%" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
               <div className="d-flex justify-content-start flex-column">
                 <h6 className="m-0 text-start">{comment.username}</h6>
               </div>
             </div>
-            <div>
-              <CommentDropdown />
-            </div>
           </div>
         </div>
 
-        <p className="ms-4 ps-2 border-start border-2 rounded-bottom-5 text-secondary">
-          {comment.text}
-        </p>
-        <div className="ps-5">
-          <button className="btn btn-light btn-sm me-2">Gadify</button>
-          <button
-            className="btn btn-light btn-sm"
-            onClick={() => setReplyTo(comment.commentID)}
+        {/* Comments  */}
+        <div>
+          <div
+            className="ps-5 ms-2"
+            style={
+              {
+                // zIndex: "10",
+              }
+            }
           >
-            Reply
-          </button>
-          {canDelete && (
-            <button
-              className="btn btn-danger btn-sm ms-2"
-              onClick={() => handleDeleteComment(comment.commentID)}
+            <p
+              className="m-0 p-2 rounded border-2 text-secondary"
+              style={{
+                whiteSpace: "pre-wrap",
+                maxWidth: "500px",
+                width: "fit-content",
+                wordWrap: "break-word",
+                backgroundColor: "var(--background_light)",
+              }}
             >
-              Delete
+              {comment.text}
+            </p>
+          </div>
+
+          <div className="ps-5">
+            <button className="btn btn-light btn-sm me-2">Gadify</button>
+            <button
+              className="btn btn-light btn-sm"
+              onClick={() => setReplyTo(comment.commentID)}
+            >
+              Reply
             </button>
-          )}
+            {canDelete && (
+              <button
+                className="btn btn-danger btn-sm ms-2"
+                onClick={() => handleDeleteComment(comment.commentID)}
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Accordion to display replies */}
+        {comment.replies.length > 0 && (
+          <Accordion className="commentAccordion text-secondary mt-2 ps-4">
+            <Accordion.Item eventKey={`reply-${comment.commentID}`}>
+              <Accordion.Header>
+                View Replies ({comment.replies.length})
+              </Accordion.Header>
+              <Accordion.Body>
+                {comment.replies.map((reply) => (
+                  <Comment
+                    key={reply.commentID}
+                    comment={reply}
+                    depth={depth + 1}
+                  />
+                ))}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        )}
 
         {replyTo === comment.commentID && (
           <div className="ps-5 mt-2">
@@ -264,25 +293,24 @@ const CommentSection = ({ userID, entryID, entry }) => {
                   }
                 }}
               />
+              <button
+                onClick={() => handleSendReply(comment.commentID)}
+                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                style={{
+                  height: "40px",
+                  width: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "#ffff",
+                  right: "10px",
+                  bottom: "10px",
+                  color: "var(--primary)",
+                }}
+              >
+                <i className="bx bxs-send bx-sm"></i>
+              </button>
             </FloatingLabel>
-            <button
-              className="btn btn-primary btn-sm mt-2"
-              onClick={() => handleSendReply(comment.commentID)}
-            >
-              Send Reply
-            </button>
-            <button
-              className="btn btn-secondary btn-sm mt-2 ms-2"
-              onClick={() => setReplyTo(null)}
-            >
-              Cancel
-            </button>
           </div>
         )}
-
-        {comment.replies.map((reply) => (
-          <Comment key={reply.commentID} comment={reply} depth={depth + 1} />
-        ))}
       </div>
     );
   });
@@ -308,7 +336,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
           className="d-flex flex-column justify-content-between"
           style={{ height: "600px" }}
         >
-          <div style={{ overflowY: "scroll" }}>
+          <div className="pe-2" style={{ overflowY: "scroll" }}>
             {loading && <p className="text-center">Loading comments...</p>}
             {error && <p className="text-danger">{error}</p>}
             {!loading && comments.length === 0 && (

@@ -1,10 +1,11 @@
 :root {
   --primary: #5c0099;
   --primary_hover: #4c0080;
-  --primary_light: #ffe6cc;
+  --primary_light: #f5e6ff;
   --secondary: #ff9933;
   --secondary_hover: #e65c00;
   --background: #d9d9d9;
+  --background_light: #f2f2f2;
 }
 
 .background {
@@ -352,30 +353,31 @@ input.form-control:focus {
 }
 
 /* FOR COMMENT REPLIES */
-/* .accordion-item {
+.commentAccordion .accordion-item {
   border: none !important;
   background-color: transparent !important;
   color: gray !important;
 }
 
-.accordion-button {
+.commentAccordion .accordion-button {
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  color: gray !important;
 }
 
-.accordion-button:focus {
+.commentAccordion .accordion-button:focus {
   box-shadow: none !important;
 }
 
-.accordion-button:not(.collapsed) {
+.commentAccordion .accordion-button:not(.collapsed) {
   background-color: transparent !important;
-  color: transparent !important;
+  color: black !important;
 }
 
-.accordion-button::after {
+.commentAccordion .accordion-button::after {
   display: none !important;
-} */
+}
 /* FOR REGISTRATION STEPS */
 .stepsIndicator {
   width: 40px;
