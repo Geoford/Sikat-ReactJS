@@ -218,6 +218,25 @@ app.put("/EditProfile/:userID", (req, res) => {
   }
 });
 
+// Define alarming words
+const alarmingWords = [
+  "abuse",
+  "violence",
+  "harassment",
+  "threat",
+  "danger",
+  "bullying",
+  "assault",
+  "self-harm",
+  "suicide",
+  "exploitation",
+];
+
+// Function to check for alarming words in text
+const containsAlarmingWords = (text) => {
+  return alarmingWords.some((word) => text.toLowerCase().includes(word));
+};
+
 app.post(
   "/entry",
   (req, res, next) => {
@@ -255,10 +274,15 @@ app.post(
       diary_image = `/uploads/${file.filename}`;
     }
 
+    // Check for alarming words in title or description
+    const hasAlarmingWords =
+      containsAlarmingWords(title) || containsAlarmingWords(description);
+
+    // Insert diary entry into the database with containsAlarmingWords
     const query = `
-    INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
+      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects, containsAlarmingWords)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
     const values = [
       title,
       description,
@@ -267,6 +291,7 @@ app.post(
       anonimity, // Ensure this value is passed correctly
       diary_image,
       JSON.stringify(parsedSubjects),
+      hasAlarmingWords ? 1 : 0, // Add the flag here (1 = true, 0 = false)
     ];
 
     db.query(query, values, (err, result) => {
@@ -276,7 +301,84 @@ app.post(
           .status(500)
           .send({ message: "Failed to save diary entry. Please try again." });
       }
-      res.status(200).send({ message: "Entry added successfully!" });
+
+      // Notify admins if alarming words are found
+      if (hasAlarmingWords) {
+        const notificationMessage = `A diary entry containing alarming words has been posted by user ${userID}`;
+
+        // Query for all users where isAdmin = 1
+        const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
+
+        db.query(adminQuery, (adminError, adminResults) => {
+          if (adminError) {
+            console.error("Error fetching admin users:", adminError);
+            return res
+              .status(500)
+              .send({ message: "Failed to notify admins." });
+          }
+
+          if (adminResults.length > 0) {
+            adminResults.forEach((admin) => {
+              const notificationQuery = `
+                INSERT INTO notifications (userID, actorID, message, entryID, type)
+                VALUES (?, ?, ?, ?, ?)
+              `;
+              db.query(
+                notificationQuery,
+                [
+                  admin.userID,
+                  userID,
+                  notificationMessage,
+                  result.insertId,
+                  "alarming_entry",
+                ],
+                (notificationError) => {
+                  if (notificationError) {
+                    console.error(
+                      "Error inserting admin notification:",
+                      notificationError
+                    );
+                    return res
+                      .status(500)
+                      .send({ message: "Failed to save admin notification." });
+                  }
+
+                  // Optionally trigger Pusher notification for each admin
+                  pusher
+                    .trigger(
+                      `notifications-${admin.userID}`,
+                      "new-notification",
+                      {
+                        actorID: userID,
+                        message: notificationMessage,
+                        entryID: result.insertId,
+                        type: "alarming_entry",
+                        timestamp: new Date().toISOString(),
+                      }
+                    )
+                    .then(() => {
+                      console.log(
+                        `Admin ${admin.userID} notified of alarming diary entry.`
+                      );
+                    })
+                    .catch((err) => {
+                      console.error(
+                        "Error sending admin Pusher notification:",
+                        err
+                      );
+                    });
+                }
+              );
+            });
+          }
+        });
+      }
+
+      // Return success message, with additional information on alarming words
+      res.status(200).send({
+        message: "Entry added successfully!",
+        containsAlarmingWords: hasAlarmingWords, // This field indicates if alarming words were found
+      });
     });
   }
 );
