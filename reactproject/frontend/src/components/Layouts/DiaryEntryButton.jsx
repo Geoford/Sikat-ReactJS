@@ -11,6 +11,7 @@ import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "./LayoutUser/SubjectSelection";
 import userDefaultProfile from "../../assets/userDefaultProfile.png";
+import alarmingWords from "./AlarmingWords"; // Correct import for alarming words
 
 function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -24,6 +25,7 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [anonimity, setAnonimity] = useState("private");
   const [file, setFile] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState("");
+  const [alarmingWordWarning, setAlarmingWordWarning] = useState(""); // Change from Error to Warning
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);
@@ -59,14 +61,29 @@ function DiaryEntryButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
+    setAlarmingWordWarning(""); // Reset warning
   };
+
   const handleShow = () => setShow(true);
+
+  const containsAlarmingWords = (text) => {
+    return alarmingWords.some((word) => text.toLowerCase().includes(word));
+  };
 
   const handleSubmit = () => {
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
     setFormErrors(errors);
+
+    // Check for alarming words in title and description
+    if (containsAlarmingWords(title) || containsAlarmingWords(description)) {
+      setAlarmingWordWarning(
+        "Warning: Your entry contains potentially harmful words. Proceed with caution."
+      );
+    } else {
+      setAlarmingWordWarning("");
+    }
 
     if (Object.keys(errors).length > 0) return;
 
@@ -173,6 +190,9 @@ function DiaryEntryButton({ onEntrySaved }) {
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
+          {alarmingWordWarning && (
+            <p className="text-warning">{alarmingWordWarning}</p>
+          )}
           <div className="d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
             {selectedSubjects && <div className=""> {selectedSubjects} </div>}
