@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import ChatIcon from "../../../assets/ChatIcon.png";
 import SendIcon from "../../../assets/SendIcon.png";
 import { Link, useNavigate } from "react-router-dom";
+import FrequentlyAskQuestion from "./FrequentlyAskQuestion";
 
 const UserChatButton = () => {
   const [show, setShow] = useState(false);
@@ -166,12 +167,18 @@ const UserChatButton = () => {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title className="w-100 pe-2 d-flex align-items-end justify-content-between">
-            <h4 className="m-0">
-              {" "}
-              {user?.isAdmin
-                ? "Select a User to Chat"
-                : `Hello, ${user?.username || "UserName"}!`}
-            </h4>
+            <div className="d-flex align-items-center gap-2">
+              <h4 className="m-0">
+                {" "}
+                {user?.isAdmin
+                  ? "Select a User to Chat"
+                  : `Hello, ${user?.username || "UserName"}!`}
+              </h4>{" "}
+              <div>
+                <FrequentlyAskQuestion></FrequentlyAskQuestion>
+              </div>
+            </div>
+
             <Link to={"/GetHelp/"}>
               <button className="secondaryButton text-decoration-underline">
                 <p className="m-0 fs-6">Get Support Now</p>
@@ -199,6 +206,9 @@ const UserChatButton = () => {
                 className="custom-scrollbar rounded mb-1 p-2"
                 style={{ height: "300px", overflowY: "scroll" }}
               >
+                {/* FAQ */}
+
+                {/* ChatBox */}
                 <div className="mb-2">
                   <p className="m-0 text-secondary text-center">
                     You are now communicating with Admin. Please feel free to
