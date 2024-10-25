@@ -307,7 +307,7 @@ const Center = () => {
                 </div>
               ) : (
                 <Link
-                  to={`/OtherProfile/${entry.userID}`}
+                  to={`/Profile/${entry.userID}`}
                   className="linkText rounded"
                 >
                   <div className="d-flex align-items-center gap-2">

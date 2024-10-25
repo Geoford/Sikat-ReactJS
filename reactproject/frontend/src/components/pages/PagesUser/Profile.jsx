@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
-import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
+import UserPageMainLayout from "../../Layouts/MainLayout";
 import OthersJournalEntries from "./UserProfileLayout/OthersJournalEntries";
 import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
 import OthersProfileDropdown from "../../Layouts/LayoutUser/OthersProfileDropdown";
 
-const OtherUserProfile = () => {
+const Profile = () => {
   const { userID } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -117,4 +117,4 @@ const OtherUserProfile = () => {
   );
 };
 
-export default OtherUserProfile;
+export default Profile;

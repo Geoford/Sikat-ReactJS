@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import sampleBackground from "../../../assets/Background.jpg";
-import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
+import UserPageMainLayout from "../../Layouts/MainLayout";
 import CommentDropdown from "../../Layouts/LayoutUser/CommentDropdown";
 import axios from "axios";
 
@@ -119,7 +119,7 @@ const DiaryEntry = () => {
   };
 
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <div className="d-flex align-items-center flex-column">
         {entries.length === 0 ? (
           <p>No entries available.</p>
@@ -251,7 +251,7 @@ const DiaryEntry = () => {
           </div>
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 

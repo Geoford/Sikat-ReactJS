@@ -8,7 +8,7 @@ import Home from "./components/pages/PagesUser/Home";
 import UserProfile from "./components/pages/PagesUser/UserProfile";
 import DiaryEntries from "./components/pages/PagesUser/DiaryEntries";
 import DiaryEntry from "./components/pages/PagesUser/DiaryEntry";
-import Profile from "./components/pages/PagesUser/OtherUserProfile";
+import Profile from "./components/pages/PagesUser/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
 
 // ADMIN
@@ -43,8 +43,8 @@ function App() {
           />
           {/* USER ROUTES */}
           <Route path="/Home" element={<Home />} />
-          <Route path="/UserProfile/:userID" element={<UserProfile />} />
-          <Route path="/OtherProfile/:userID" element={<Profile />} />
+          {/* <Route path="/Profile/:userID" element={<UserProfile />} /> */}
+          <Route path="/Profile/:userID" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
           <Route path="GetHelp" element={<GetHelp />} />
