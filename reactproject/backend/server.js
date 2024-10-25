@@ -1084,8 +1084,8 @@ app.get("/messages", (req, res) => {
 
     const query = `
       SELECT * FROM messages 
-      WHERE (senderID = ? AND recipientID = ? AND isAdmin = 1) 
-         OR (senderID = ? AND recipientID = ?  )
+      WHERE (senderID = ? AND recipientID = ?) 
+         OR (senderID = ? AND recipientID = ?)
       ORDER BY created_at ASC
     `;
 

@@ -323,9 +323,7 @@ const CenterAdmin = () => {
                       />
                     </div>
                     <div className="d-flex flex-column align-items-start">
-                      {entry.isAdmin === 1
-                        ? "Gender and Development"
-                        : entry.username}
+                      {entry.isAdmin === 1 ? entry.username : "Alias"}
                       <p className="m-0" style={{ fontSize: ".7rem" }}>
                         {formatDate(entry.created_at)}
                       </p>
