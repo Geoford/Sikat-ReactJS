@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfileIcon from "../../../assets/uploadProfile.png";
-import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
+import MainLayout from "../../Layouts/MainLayout";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
 import ActivityLogs from "./UserProfileLayout/ActivityLogs";
 import FiledCases from "./UserProfileLayout/FiledCases";
@@ -73,7 +73,7 @@ const UserProfile = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <div
         className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
         style={{ background: "#ffff" }}
@@ -181,7 +181,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 

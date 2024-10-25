@@ -290,7 +290,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
         {/* Comments */}
         <div>
-          <div className="ps-5 ms-2">
+          <div className="ps-5 ms-2 d-flex align-items-center gap-2">
             <p
               className="m-0 p-2 rounded border-2 text-secondary"
               style={{
@@ -308,10 +308,13 @@ const CommentSection = ({ userID, entryID, entry }) => {
             >
               {comment.text}
             </p>
+            <p className="m-0" style={{ fontSize: ".7rem", color: "gray" }}>
+              0 hrs ago
+            </p>
           </div>
 
-          <div className="ps-5">
-            <button className="btn btn-light btn-sm me-2">Gadify</button>
+          <div className="ps-5 d-flex align-items-center gap-2">
+            <button className="btn btn-light btn-sm ">Gadify</button>
             <button
               className="btn btn-light btn-sm"
               onClick={() => setReplyTo(comment.commentID)}
@@ -400,7 +403,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Comments</Modal.Title>
+          <Modal.Title>Comments on First name or Alias's Diary</Modal.Title>
         </Modal.Header>
         <Modal.Body
           className="d-flex flex-column justify-content-between"

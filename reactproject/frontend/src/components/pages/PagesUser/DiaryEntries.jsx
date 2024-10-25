@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
+import MainLayout from "../../Layouts/MainLayout";
 import publicIcon from "../../../assets/public.png";
 import privateIcon from "../../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -130,7 +130,7 @@ const DiaryEntries = () => {
   if (!user) return null;
 
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <div>
         <div className="container-fluid container-md mb-2 mt-5">
           <div className="dateContainer shadow">
@@ -207,7 +207,7 @@ const DiaryEntries = () => {
           )}
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 

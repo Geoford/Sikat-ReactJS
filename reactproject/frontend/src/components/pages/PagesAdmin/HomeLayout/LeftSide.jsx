@@ -123,7 +123,7 @@ const LeftSideAdmin = () => {
         <div className="d-flex justify-content-between border-bottom border-secondary-subtle">
           <div className="d-flex align-items-center text-secondary gap-1">
             <i class="bx bx-edit bx-sm"></i>
-            <h4 className="m-0 ">Journal Entries</h4>
+            <h4 className="m-0 ">Latest Post</h4>
           </div>
           <div>
             <Link

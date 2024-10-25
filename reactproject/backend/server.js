@@ -630,6 +630,23 @@ app.get("/admin", (req, res) => {
   );
 });
 
+// FOR CHECKING IF THE USER IS ADMIN OR NOT
+app.get("/user/:id", (req, res) => {
+  const userId = req.params.id;
+  const query = "SELECT isAdmin FROM user_table WHERE userID = ?";
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching user:", err.message);
+      return res.status(500).json({ error: "Error fetching user" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ isAdmin: results[0].isAdmin });
+  });
+});
+
 app.post("/follow/:followUserId", (req, res) => {
   const { followerId } = req.body;
   const followUserId = req.params.followUserId;
