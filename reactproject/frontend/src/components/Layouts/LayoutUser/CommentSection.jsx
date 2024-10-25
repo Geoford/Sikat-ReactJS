@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -7,6 +8,8 @@ import Accordion from "react-bootstrap/Accordion";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
+import Dropdown from "react-bootstrap/Dropdown";
+import ReportButton from "./ReportButton";
 
 const CommentSection = ({ userID, entryID, entry }) => {
   const [user, setUser] = useState(null);
@@ -19,6 +22,8 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [openAccordions, setOpenAccordions] = useState([]); // Keep track of open accordions
 
   const replyTextsRef = useRef({});
+  const newCommentRef = useRef(null);
+  const newReplyRef = useRef(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -90,6 +95,10 @@ const CommentSection = ({ userID, entryID, entry }) => {
       await axios.post("http://localhost:8081/comments", newCommentObj);
       setNewComment("");
       fetchComments();
+      // Scroll to the newly added comment after it is added
+      setTimeout(() => {
+        newCommentRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     } catch (error) {
       console.error("Error posting comment:", error);
       setError("Failed to post comment. Please try again.");
@@ -158,8 +167,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
       replyTextsRef.current[parentID] = "";
       fetchComments();
 
-      // Keep the current accordion open
+      // Keep the current accordion open and scroll to the new reply
       setOpenAccordions((prevOpen) => [...prevOpen, parentID]);
+      setTimeout(() => {
+        newReplyRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     } catch (error) {
       console.error("Error posting reply:", error);
       setError("Failed to post reply. Please try again.");
@@ -194,6 +206,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
       <div
         className="position-relative"
         style={{ marginLeft: depth * 20, marginTop: "10px" }}
+        ref={comment.commentID === replyTo ? newReplyRef : null}
       >
         <div
           className="position-absolute border-start rounded-5 border-2"
@@ -203,24 +216,74 @@ const CommentSection = ({ userID, entryID, entry }) => {
         {/* Profile */}
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
           <div className="w-100 d-flex align-items-center justify-content-between pe-3">
-            <div className="d-flex align-items-center gap-2">
-              <div
-                className="profilePicture d-flex align-items-center justify-content-center"
-                style={{ zIndex: "2" }}
-              >
-                <img
-                  src={
-                    comment.profile_image
-                      ? `http://localhost:8081${comment.profile_image}`
-                      : AnonymousIcon
-                  }
-                  alt="Profile"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
+            <Link
+              to={`/OtherProfile/${comment.userID}`}
+              className="linkText rounded"
+            >
+              <div className="d-flex align-items-center gap-2">
+                <div
+                  className="profilePicture d-flex align-items-center justify-content-center"
+                  style={{ zIndex: "2" }}
+                >
+                  <img
+                    src={
+                      comment.profile_image
+                        ? `http://localhost:8081${comment.profile_image}`
+                        : AnonymousIcon
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <div className="d-flex justify-content-start flex-column">
+                  <h6 className="m-0 text-start">{comment.username}</h6>
+                </div>
               </div>
-              <div className="d-flex justify-content-start flex-column">
-                <h6 className="m-0 text-start">{comment.username}</h6>
-              </div>
+            </Link>
+            {/* FOR COMMENT OPTIONS */}
+            <div>
+              <Dropdown>
+                <Dropdown.Toggle
+                  className="btn-light d-flex align-items-center pt-0 pb-2"
+                  id="dropdown-basic"
+                  bsPrefix="custom-toggle"
+                >
+                  <h5 className="m-0">...</h5>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu className="p-2 ">
+                  {!canDelete && (
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <ReportButton></ReportButton>
+                    </Dropdown.Item>
+                  )}
+
+                  {canDelete && (
+                    <Dropdown.Item className="p-0 btn btn-light ">
+                      <button
+                        className="btn btn-light w-100 "
+                        onClick={() => handleDeleteComment(comment.commentID)}
+                      >
+                        Delete
+                      </button>
+                    </Dropdown.Item>
+                  )}
+                  {canDelete && (
+                    <Dropdown.Item className="p-0 btn btn-light ">
+                      <button
+                        className="btn btn-light w-100 "
+                        onClick={() => handleDeleteComment(comment.commentID)}
+                      >
+                        Edit
+                      </button>
+                    </Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </div>
         </div>
@@ -237,6 +300,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
                 wordWrap: "break-word",
                 backgroundColor: "var(--background_light)",
               }}
+              ref={
+                comment.commentID === comments[comments.length - 1]?.commentID
+                  ? newCommentRef
+                  : null
+              }
             >
               {comment.text}
             </p>
@@ -250,41 +318,8 @@ const CommentSection = ({ userID, entryID, entry }) => {
             >
               Reply
             </button>
-            {canDelete && (
-              <button
-                className="btn btn-danger btn-sm ms-2"
-                onClick={() => handleDeleteComment(comment.commentID)}
-              >
-                Delete
-              </button>
-            )}
           </div>
         </div>
-
-        {/* Accordion to display replies */}
-        {comment.replies.length > 0 && (
-          <Accordion
-            className="commentAccordion text-secondary mt-2 ps-4"
-            activeKey={isAccordionOpen ? `reply-${comment.commentID}` : null}
-            onSelect={() => toggleAccordion(comment.commentID)}
-          >
-            <Accordion.Item eventKey={`reply-${comment.commentID}`}>
-              <Accordion.Header>
-                View Replies ({comment.replies.length})
-              </Accordion.Header>
-              <Accordion.Body>
-                {comment.replies.map((reply) => (
-                  <Comment
-                    key={reply.commentID}
-                    comment={reply}
-                    depth={depth + 1}
-                  />
-                ))}
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        )}
-
         {replyTo === comment.commentID && (
           <div className="ps-5 mt-2">
             <FloatingLabel
@@ -322,6 +357,29 @@ const CommentSection = ({ userID, entryID, entry }) => {
               </button>
             </FloatingLabel>
           </div>
+        )}
+        {/* Accordion to display replies */}
+        {comment.replies.length > 0 && (
+          <Accordion
+            className="commentAccordion text-secondary mt-2 ps-4"
+            activeKey={isAccordionOpen ? `reply-${comment.commentID}` : null}
+            onSelect={() => toggleAccordion(comment.commentID)}
+          >
+            <Accordion.Item eventKey={`reply-${comment.commentID}`}>
+              <Accordion.Header>
+                View Replies ({comment.replies.length})
+              </Accordion.Header>
+              <Accordion.Body>
+                {comment.replies.map((reply) => (
+                  <Comment
+                    key={reply.commentID}
+                    comment={reply}
+                    depth={depth + 1}
+                  />
+                ))}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         )}
       </div>
     );

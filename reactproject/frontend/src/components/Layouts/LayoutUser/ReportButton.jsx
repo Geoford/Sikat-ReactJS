@@ -15,10 +15,7 @@ function ReportButton() {
 
   return (
     <>
-      <button
-        className="btn btn-light w-100 m-0 text-start"
-        onClick={handleShow}
-      >
+      <button className="btn btn-light w-100 m-0 " onClick={handleShow}>
         Report
       </button>
 
