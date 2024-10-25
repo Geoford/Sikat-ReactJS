@@ -200,7 +200,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
   };
 
   const Comment = React.memo(({ comment, depth = 0 }) => {
-    const canDelete = comment.userID === userID;
+    const canManage = comment.userID === userID;
     const isAccordionOpen = openAccordions.includes(comment.commentID);
     return (
       <div
@@ -256,13 +256,13 @@ const CommentSection = ({ userID, entryID, entry }) => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="p-2 ">
-                  {!canDelete && (
+                  {!canManage && (
                     <Dropdown.Item className="p-0 btn btn-light">
                       <ReportButton></ReportButton>
                     </Dropdown.Item>
                   )}
 
-                  {canDelete && (
+                  {canManage && (
                     <Dropdown.Item className="p-0 btn btn-light ">
                       <button
                         className="btn btn-light w-100 "
@@ -272,7 +272,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
                       </button>
                     </Dropdown.Item>
                   )}
-                  {canDelete && (
+                  {canManage && (
                     <Dropdown.Item className="p-0 btn btn-light ">
                       <button
                         className="btn btn-light w-100 "
