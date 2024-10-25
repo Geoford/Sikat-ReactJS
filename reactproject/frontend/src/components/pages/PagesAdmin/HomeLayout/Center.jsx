@@ -8,6 +8,7 @@ import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import CenterLoader from "../../../loaders/CenterLoader";
 import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
+import TransparentLogo from "../../../../assets/TransparentLogo.png";
 import ReportButton from "../../../Layouts/LayoutUser/ReportButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -261,15 +262,12 @@ const CenterAdmin = () => {
   return (
     <div className="p-2">
       <div
-        className="rounded shadow-sm p-3 mt-1"
+        className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}
       >
         <DiaryEntryButton
           onEntrySaved={() => fetchEntries(user.userID, filters)}
         />
-      </div>
-      <div className="d-flex justify-content-end">
-        <FilterButton onFilterChange={handleFilterChange} />
       </div>
       {entries.length === 0 ? (
         <p>No entries available.</p>
@@ -285,7 +283,7 @@ const CenterAdmin = () => {
                 <div className="d-flex align-items-center gap-2">
                   <div className="profilePicture">
                     <img
-                      src={anonymous}
+                      src={entry.isAdmin === 1 ? TransparentLogo : anonymous}
                       alt="Profile"
                       style={{
                         width: "100%",
@@ -295,7 +293,9 @@ const CenterAdmin = () => {
                     />
                   </div>
                   <div className="d-flex flex-column align-items-start">
-                    {entry.alias}
+                    {entry.isAdmin === 1
+                      ? "Gender and Development"
+                      : entry.alias}
                     <p className="m-0" style={{ fontSize: ".7rem" }}>
                       {formatDate(entry.created_at)}
                     </p>
@@ -323,7 +323,9 @@ const CenterAdmin = () => {
                       />
                     </div>
                     <div className="d-flex flex-column align-items-start">
-                      {entry.username}
+                      {entry.isAdmin === 1
+                        ? "Gender and Development"
+                        : entry.username}
                       <p className="m-0" style={{ fontSize: ".7rem" }}>
                         {formatDate(entry.created_at)}
                       </p>
@@ -331,6 +333,7 @@ const CenterAdmin = () => {
                   </div>
                 </Link>
               )}
+
               {user &&
                 user.userID !== entry.userID &&
                 entry.anonimity !== "private" && ( // Added condition to check anonymity

@@ -343,7 +343,6 @@ app.post(
                       .send({ message: "Failed to save admin notification." });
                   }
 
-                  // Optionally trigger Pusher notification for each admin
                   pusher
                     .trigger(
                       `notifications-${admin.userID}`,
@@ -390,7 +389,7 @@ app.get("/entries", (req, res) => {
   let query = `
     SELECT 
       diary_entries.*,
-      user_table.username,
+      user_table.*,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -1031,9 +1030,11 @@ app.post("/message", (req, res) => {
       .send("SenderID, recipientID, and message are required.");
   }
 
+  const isAdmin = 1;
+
   db.query(
-    "INSERT INTO messages (senderID, recipientID, message) VALUES (?, ?, ?)",
-    [senderID, recipientID, message],
+    "INSERT INTO messages (senderID, recipientID, message, isAdmin) VALUES (?, ?, ?, ?)",
+    [senderID, recipientID, message, isAdmin],
     (err) => {
       if (err) {
         console.error("Database error:", err);
@@ -1059,56 +1060,85 @@ app.post("/message", (req, res) => {
 });
 
 app.get("/messages", (req, res) => {
-  const { userID, withUserID } = req.query;
+  const { userID, withUserID, isAdmin } = req.query;
 
-  if (!userID || !withUserID) {
-    return res.status(400).send("userID and withUserID are required.");
-  }
+  if (isAdmin === "1") {
+    // Admin can view all messages
+    const query = `
+      SELECT * FROM messages 
+      ORDER BY created_at ASC
+    `;
 
-  // Fetch messages where (senderID = userID AND recipientID = withUserID)
-  // OR (senderID = withUserID AND recipientID = userID)
-  const query = `
-    SELECT * FROM messages 
-    WHERE (senderID = ? AND recipientID = ?) 
-       OR (senderID = ? AND recipientID = ?)
-    ORDER BY created_at ASC
-  `;
-
-  db.query(query, [userID, withUserID, withUserID, userID], (err, messages) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      return res.status(500).send("Error fetching messages.");
+    db.query(query, (err, messages) => {
+      if (err) {
+        console.error("Error fetching all messages:", err);
+        return res.status(500).send("Error fetching all messages.");
+      }
+      res.json(messages);
+    });
+  } else {
+    // Non-admin request requires userID and withUserID
+    if (!userID || !withUserID) {
+      return res.status(400).send("userID and withUserID are required.");
     }
-    res.json(messages);
-  });
+
+    const query = `
+      SELECT * FROM messages 
+      WHERE (senderID = ? AND recipientID = ? AND isAdmin = 1) 
+         OR (senderID = ? AND recipientID = ?  )
+      ORDER BY created_at ASC
+    `;
+
+    //   const query = `
+    //   SELECT * FROM messages
+    //   WHERE (senderID = ? AND recipientID = ?)
+    //      OR (senderID = ? AND recipientID = ?)
+    //   ORDER BY created_at ASC
+    // `;
+
+    db.query(
+      query,
+      [userID, withUserID, withUserID, userID],
+      (err, messages) => {
+        if (err) {
+          console.error("Error fetching messages:", err);
+          return res.status(500).send("Error fetching messages.");
+        }
+        res.json(messages);
+      }
+    );
+  }
 });
 
 app.post("/notifications/:userID", async (req, res) => {
   const { userID } = req.params;
-  const { actorID, message, entryID, type } = req.body;
+  const { actorID, message, entryID, type, isAdmin } = req.body;
 
   console.log("Request received:", req.body);
 
   const insertNotificationQuery = `
-    INSERT INTO notifications (userID, actorID, message, entryID  , type)
+    INSERT INTO notifications (userID, actorID, message, entryID, type)
     VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     insertNotificationQuery,
-    [userID, actorID, message, entryID || null, type], // Use null if entryID is undefined
+    [userID, actorID, message, entryID || null, type],
     (error, results) => {
       if (error) {
         console.error("Error inserting notification into database:", error);
         return res.status(500).send("Error saving notification");
       }
 
-      // Trigger Pusher notification
+      // Trigger notification to the specified user or to all users if it's an admin notification
+      const channelID =
+        isAdmin === 1 ? "notifications-admin" : `notifications-${userID}`;
+
       pusher
-        .trigger(`notifications-${userID}`, "new-notification", {
+        .trigger(channelID, "new-notification", {
           actorID,
           message,
-          entryID: entryID || null, // Send null if there's no entryID
+          entryID: entryID || null,
           type,
           timestamp: new Date().toISOString(),
         })

@@ -61,13 +61,10 @@ const ChatButton = () => {
       forceTLS: true,
     });
 
-    // Subscribe to the user's personal channel
     const channel = pusher.subscribe(`user-${user.userID}`);
 
-    // Subscribe to the admin channel to receive all messages
     const adminChannel = pusher.subscribe("admin-channel");
 
-    // Listen for messages in the personal channel
     channel.bind("message-event", function (data) {
       if (selectedUser && data.recipientID === selectedUser.userID) {
         setMessages((prevMessages) => [

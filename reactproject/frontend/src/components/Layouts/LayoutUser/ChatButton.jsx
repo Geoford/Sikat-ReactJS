@@ -71,7 +71,6 @@ const UserChatButton = () => {
     }
   }, []);
 
-  // Set up Pusher subscription only after user data is set
   useEffect(() => {
     if (user) {
       pusherRef.current = new Pusher("4810211a14a19b86f640", {
