@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
-import UserPageMainLayout from "../../Layouts/MainLayout";
+import MainLayout from "../../Layouts/MainLayout";
 import OthersJournalEntries from "./UserProfileLayout/OthersJournalEntries";
 import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
@@ -12,10 +12,20 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch the current user from localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
   useEffect(() => {
+    if (!currentUser) {
+      // If no user data is found, redirect to the homepage
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
+    // Fetch user data from the server based on the userID in the URL
     fetch(`http://localhost:8081/fetchUser/user/${userID}`)
       .then((response) => {
         if (!response.ok) {
@@ -36,8 +46,11 @@ const Profile = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
+  // Check if the current user is viewing their own profile
+  const ownProfile = currentUser.userID == userID;
+
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <div
         className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
         style={{ background: "#ffff" }}
@@ -87,7 +100,7 @@ const Profile = () => {
               <p className="mt-3">{user.bio || "No bio available."}</p>
             </div>
             <div>
-              <OthersProfileDropdown />
+              {ownProfile ? <ProfileDropdown /> : <OthersProfileDropdown />}
             </div>
           </div>
         </div>
@@ -100,6 +113,15 @@ const Profile = () => {
               className="position-sticky d-flex flex-column gap-2"
               style={{ minHeight: "37vh", top: "70px" }}
             >
+              {/* <div>
+                <p>{currentUser.userID}</p>
+                <p>{userID}</p>
+                {ownProfile ? (
+                  <p>This is your profile</p>
+                ) : (
+                  <p>This is another user's profile</p>
+                )}
+              </div> */}
               <div>
                 <OthersJournalEntries userID={userID} />
               </div>
@@ -113,7 +135,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 
