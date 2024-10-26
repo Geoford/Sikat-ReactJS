@@ -6,12 +6,16 @@ import OthersJournalEntries from "./UserProfileLayout/OthersJournalEntries";
 import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
 import OthersProfileDropdown from "../../Layouts/LayoutUser/OthersProfileDropdown";
+import axios from "axios";
 
 const Profile = () => {
   const { userID } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null); // State to manage file
+  const [isHovered, setIsHovered] = useState(false); // State to track hover
+
   const navigate = useNavigate();
 
   // Fetch the current user from localStorage
@@ -21,33 +25,63 @@ const Profile = () => {
     if (!currentUser) {
       // If no user data is found, redirect to the homepage
       navigate("/");
+      return;
     }
-  }, [currentUser, navigate]);
 
-  useEffect(() => {
-    // Fetch user data from the server based on the userID in the URL
-    fetch(`http://localhost:8081/fetchUser/user/${userID}`)
-      .then((response) => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8081/fetchUser/user/${userID}`
+        );
         if (!response.ok) {
           throw new Error("User not found");
         }
-        return response.json();
-      })
-      .then((data) => {
+        const data = await response.json();
         setUser(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userID, navigate, currentUser]);
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      uploadProfile(selectedFile);
+    }
+  };
+
+  const uploadProfile = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userID", user.userID);
+
+    axios
+      .post("http://localhost:8081/uploadProfile", formData)
+      .then((res) => {
+        console.log("Profile uploaded successfully", res.data);
+        alert("Profile uploaded successfully");
+      })
+      .catch((error) => {
+        console.error("Error uploading profile:", error);
       });
-  }, [userID]);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   // Check if the current user is viewing their own profile
   const ownProfile = currentUser.userID == userID;
+
+  // Functions to toggle hover state
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
 
   return (
     <MainLayout>
@@ -83,6 +117,39 @@ const Profile = () => {
                   borderRadius: "50%",
                 }}
               />
+              {ownProfile && (
+                <label
+                  htmlFor="uploadProfile"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div
+                    className="grayHover  d-flex align-items-center justify-content-center"
+                    style={{
+                      position: "absolute",
+                      borderRadius: "50%",
+                      width: "50px",
+                      height: "50px",
+                      border: "3px solid #ffff",
+                      right: "15px",
+                      bottom: "15px",
+                    }}
+                  >
+                    <i
+                      className={
+                        isHovered ? "bx bxs-camera bx-sm" : "bx bx-camera bx-sm"
+                      }
+                      style={{ color: "var(--primary)" }}
+                    ></i>
+                    <input
+                      type="file"
+                      id="uploadProfile"
+                      hidden
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                </label>
+              )}
             </div>
           </div>
           <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-md-start">
@@ -113,18 +180,7 @@ const Profile = () => {
               className="position-sticky d-flex flex-column gap-2"
               style={{ minHeight: "37vh", top: "70px" }}
             >
-              {/* <div>
-                <p>{currentUser.userID}</p>
-                <p>{userID}</p>
-                {ownProfile ? (
-                  <p>This is your profile</p>
-                ) : (
-                  <p>This is another user's profile</p>
-                )}
-              </div> */}
-              <div>
-                <OthersJournalEntries userID={userID} />
-              </div>
+              <OthersJournalEntries userID={userID} />
             </div>
           </div>
 
