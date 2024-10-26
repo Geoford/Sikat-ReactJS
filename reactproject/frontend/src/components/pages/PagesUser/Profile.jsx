@@ -136,10 +136,8 @@ const Profile = () => {
                     }}
                   >
                     <i
-                      className={
-                        isHovered ? "bx bxs-camera bx-sm" : "bx bx-camera bx-sm"
-                      }
-                      style={{ color: "var(--primary)" }}
+                      className={isHovered ? "bx bxs-camera" : "bx bx-camera"}
+                      style={{ color: "var(--primary)", fontSize: "2rem" }}
                     ></i>
                     <input
                       type="file"
