@@ -5,6 +5,7 @@ import privateIcon from "../../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
+import MainLayout from "../../Layouts/MainLayout";
 
 const DiaryEntries = () => {
   const [user, setUser] = useState(null);
@@ -127,7 +128,7 @@ const DiaryEntries = () => {
   if (!user) return null;
 
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <div>
         <div className="container-fluid container-md mb-2 mt-5">
           <div className="dateContainer shadow">
@@ -204,7 +205,7 @@ const DiaryEntries = () => {
           )}
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 

@@ -1,12 +1,12 @@
-import "../style.css";
-import Logo from "../../../assets/logo.jpg";
-import Notification from "../../../assets/Notification.png";
+import "./style.css";
+import Logo from "../../assets/logo.jpg";
+import Notification from "../../assets/Notification.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationButton from "../LayoutUser/OffCanvassNotification";
-import UserAccountDropdown from "./UserAccountDropdown";
+import NotificationButton from "./NotificationButton";
+import AccountDropdown from "./AccountDropdown";
 
-const NavBarUser = () => {
+const NavBar = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -32,9 +32,15 @@ const NavBarUser = () => {
     >
       <div className="container-fluid py-2 px-3 shadow-sm">
         <div className="logo">
-          <Link to="/Home">
-            <img className="logoImage" src={Logo} alt="Logo" />
-          </Link>
+          {user && user.isAdmin ? (
+            <Link to="/Admin/Home">
+              <img className="logoImage" src={Logo} alt="Logo" />
+            </Link>
+          ) : (
+            <Link to="/Home">
+              <img className="logoImage" src={Logo} alt="Logo" />
+            </Link>
+          )}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -42,7 +48,7 @@ const NavBarUser = () => {
             <NotificationButton userID={user.userID} />
           </div>
           <div>
-            <UserAccountDropdown />
+            <AccountDropdown />
           </div>
         </div>
       </div>
@@ -50,4 +56,4 @@ const NavBarUser = () => {
   );
 };
 
-export default NavBarUser;
+export default NavBar;

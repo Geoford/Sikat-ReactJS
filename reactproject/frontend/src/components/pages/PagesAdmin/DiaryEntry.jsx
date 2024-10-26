@@ -3,6 +3,7 @@ import AnonymousIcon from "../../../assets/Anonymous.png";
 import sampleBackground from "../../../assets/Background.jpg";
 import AdminPageMainLayout from "../../Layouts/LayoutAdmin/AdminPageMainLayout";
 import CommentDropdown from "../../Layouts/LayoutUser/CommentDropdown";
+import MainLayout from "../../Layouts/MainLayout";
 
 const DiaryEntry = () => {
   const [activeButton, setActiveButton] = useState(false);
@@ -94,7 +95,7 @@ const DiaryEntry = () => {
   };
 
   return (
-    <AdminPageMainLayout>
+    <MainLayout>
       <div className="d-flex align-items-center flex-column">
         <div
           className="bg-light rounded shadow-sm mt-5 p-0 text-start"
@@ -231,7 +232,7 @@ const DiaryEntry = () => {
           </div>
         </div>
       </div>
-    </AdminPageMainLayout>
+    </MainLayout>
   );
 };
 

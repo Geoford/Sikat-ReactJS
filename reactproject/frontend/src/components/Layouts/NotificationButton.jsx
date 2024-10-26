@@ -3,9 +3,9 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Pusher from "pusher-js";
-import DefaultProfile from "../../../../src/assets/userDefaultProfile.png";
+import DefaultProfile from "../../../src/assets/userDefaultProfile.png";
 
-function OffCanvassNotification() {
+function NotificationButton() {
   const [show, setShow] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -209,4 +209,4 @@ function OffCanvassNotification() {
   );
 }
 
-export default OffCanvassNotification;
+export default NotificationButton;

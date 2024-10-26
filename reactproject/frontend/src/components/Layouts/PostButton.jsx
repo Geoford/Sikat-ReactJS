@@ -11,7 +11,7 @@ import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "./LayoutUser/SubjectSelection";
 
-function DiaryEntryButton({ onEntrySaved }) {
+function PostButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -232,4 +232,4 @@ function DiaryEntryButton({ onEntrySaved }) {
   );
 }
 
-export default DiaryEntryButton;
+export default PostButton;
