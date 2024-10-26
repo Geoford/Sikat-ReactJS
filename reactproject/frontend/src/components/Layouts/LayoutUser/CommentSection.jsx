@@ -217,7 +217,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
           <div className="w-100 d-flex align-items-center justify-content-between pe-3">
             <Link
-              to={`/OtherProfile/${comment.userID}`}
+              to={`/Profile/${comment.userID}`}
               className="linkText rounded"
             >
               <div className="d-flex align-items-center gap-2">

@@ -16,7 +16,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
       <div key={user.userID} className="pb-2 pe-2 mb-2">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
           <Link
-            to={`/OtherProfile/${user.userID}`}
+            to={`/Profile/${user.userID}`}
             className="linkText position-relative rounded d-flex justify-content-between w-100 p-2"
           >
             <div className="d-flex align-items-center">
