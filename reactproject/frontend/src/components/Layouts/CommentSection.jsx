@@ -5,7 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
-import AnonymousIcon from "../../../assets/Anonymous.png";
+import AnonymousIcon from "../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -133,12 +133,15 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
-        data: { userID },
-      });
+      await axios.delete(
+        `http://localhost:8081/deleteComments/${commentID}?userID=${userID}`,
+        {
+          data: { userID },
+        }
+      );
       fetchComments();
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error("Error deleting comment:", error.response || error);
       setError("Failed to delete comment. Please try again.");
     } finally {
       setLoading(false);
@@ -217,7 +220,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
           <div className="w-100 d-flex align-items-center justify-content-between pe-3">
             <Link
-              to={`/OtherProfile/${comment.userID}`}
+              to={`/Profile/${comment.userID}`}
               className="linkText rounded"
             >
               <div className="d-flex align-items-center gap-2">

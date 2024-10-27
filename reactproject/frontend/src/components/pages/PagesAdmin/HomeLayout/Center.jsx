@@ -1,16 +1,18 @@
-import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
+import DiaryEntryButton from "../../../Layouts/Home/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import anonymous from "../../../../assets/anonymous.png";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
-import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
+import CommentSection from "../../../Layouts/CommentSection";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import CenterLoader from "../../../loaders/CenterLoader";
 import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
 import TransparentLogo from "../../../../assets/TransparentLogo.png";
-import ReportButton from "../../../Layouts/LayoutUser/ReportButton";
+import ReportButton from "../../../Layouts/ReportButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import DiaryEntryLayout from "../../../Layouts/Home/DiaryEntryLayout";
+import PostButton from "../../../Layouts/Home/PostButton";
 
 const CenterAdmin = () => {
   const [entries, setEntries] = useState([]);
@@ -265,168 +267,22 @@ const CenterAdmin = () => {
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton
-          onEntrySaved={() => fetchEntries(user.userID, filters)}
-        />
+        <PostButton onEntrySaved={() => fetchEntries(user.userID, filters)} />
       </div>
       {entries.length === 0 ? (
         <p>No entries available.</p>
       ) : (
         entries.map((entry) => (
-          <div
+          <DiaryEntryLayout
             key={entry.entryID}
-            className="position-relative rounded shadow-sm p-3 mb-2"
-            style={{ backgroundColor: "white" }}
-          >
-            <div className="d-flex align-items-start border-bottom pb-2">
-              {entry.anonimity === "private" ? (
-                <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture">
-                    <img
-                      src={entry.isAdmin === 1 ? TransparentLogo : anonymous}
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                  <div className="d-flex flex-column align-items-start">
-                    {entry.isAdmin === 1
-                      ? "Gender and Development"
-                      : entry.alias}
-                    <p className="m-0" style={{ fontSize: ".7rem" }}>
-                      {formatDate(entry.created_at)}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  to={`/Profile/${entry.userID}`}
-                  className="linkText rounded"
-                >
-                  <div className="d-flex align-items-center gap-2">
-                    <div className="profilePicture">
-                      <img
-                        src={
-                          entry.profile_image
-                            ? `http://localhost:8081${entry.profile_image}`
-                            : userDefaultProfile
-                        }
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <div className="d-flex flex-column align-items-start">
-                      {entry.isAdmin === 1 ? entry.username : "Alias"}
-                      <p className="m-0" style={{ fontSize: ".7rem" }}>
-                        {formatDate(entry.created_at)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              )}
-
-              {user &&
-                user.userID !== entry.userID &&
-                entry.anonimity !== "private" && ( // Added condition to check anonymity
-                  <div className="d-flex align-items-center gap-1">
-                    <p className="m-0 fs-3 text-secondary">·</p>
-                    <button
-                      className="secondaryButton p-0 m-0"
-                      onClick={() => handleFollowToggle(entry.userID)}
-                      style={{ height: "1.5rem" }}
-                    >
-                      {followedUsers.includes(entry.userID)
-                        ? "Following"
-                        : "Follow"}
-                    </button>
-                  </div>
-                )}
-              <div>
-                <Dropdown>
-                  <Dropdown.Toggle
-                    className="btn-light d-flex align-items-center pt-0 pb-2"
-                    id="dropdown-basic"
-                    bsPrefix="custom-toggle"
-                  >
-                    <h5 className="m-0">...</h5>
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="p-2">
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <ReportButton />
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
-            </div>
-
-            <div className="text-start border-bottom p-2">
-              {entry.containsAlarmingWords === 1 ? (
-                <div className="bg-danger">
-                  <h5 className="">
-                    {entry.title}{" "}
-                    <span className="text-secondary fs-6 ">
-                      {entry.subjects}
-                    </span>
-                  </h5>
-                  <p>{entry.description}</p>
-                </div>
-              ) : (
-                <>
-                  <h5>
-                    {entry.title}{" "}
-                    <span className="text-secondary fs-6">
-                      {entry.subjects}
-                    </span>
-                  </h5>
-                  <p>{entry.description}</p>
-                </>
-              )}
-              {entry.diary_image && (
-                <img
-                  className="DiaryImage mt-1 rounded"
-                  src={`http://localhost:8081${entry.diary_image}`}
-                  alt="Diary"
-                />
-              )}
-            </div>
-            <div className="row pt-2">
-              <div className="col">
-                <button
-                  className={`InteractButton d-flex align-items-center justify-content-center gap-1 ${
-                    entry.isGadified ? "active" : ""
-                  } ${expandButtons[entry.entryID] ? "expand" : ""}`}
-                  onClick={() => handleClick(entry.entryID)}
-                >
-                  {/* Conditionally render the icon based on isGadified */}
-                  {entry.isGadified ? (
-                    <i className="bx bxs-heart"></i> // Solid heart when active
-                  ) : (
-                    <i className="bx bx-heart "></i> // Outline heart when not active
-                  )}
-                  Gadify
-                  <span> ({entry.gadifyCount}) </span>
-                </button>
-              </div>
-
-              <div className="col">
-                <CommentSection
-                  userID={user.userID}
-                  entryID={entry.entryID}
-                  entry={entry.userID}
-                />
-              </div>
-              <div className="col">
-                <button className="InteractButton">Flag</button>
-              </div>
-            </div>
-          </div>
+            entry={entry}
+            user={user}
+            followedUsers={followedUsers}
+            handleFollowToggle={handleFollowToggle}
+            handleClick={handleClick}
+            expandButtons={expandButtons}
+            formatDate={formatDate}
+          />
         ))
       )}
     </div>

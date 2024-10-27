@@ -8,6 +8,7 @@ const mysql = require("mysql2");
 const fs = require("fs");
 const app = express();
 const Pusher = require("pusher");
+const { profile } = require("console");
 
 app.use(express.json());
 app.use(cors());
@@ -120,7 +121,13 @@ app.post("/Login", (req, res) => {
       .json({ error: "Username and password are required" });
   }
 
-  const sql = "SELECT * FROM user_table WHERE username = ?";
+  const sql = `
+    SELECT user_table.*, user_profiles.profile_image
+    FROM user_table
+    JOIN user_profiles ON user_table.userID = user_profiles.userID
+    WHERE user_table.username = ?
+  `;
+
   db.query(sql, [username], (err, data) => {
     if (err) {
       console.error("Error retrieving data: ", err);
@@ -141,6 +148,7 @@ app.post("/Login", (req, res) => {
       userID: user.userID,
       username: user.username,
       isAdmin: user.isAdmin,
+      profile_image: user.profile_image,
     });
   });
 });
@@ -928,42 +936,26 @@ app.post("/comments", (req, res) => {
   );
 });
 
-app.delete("/deleteComments/:commentID", (req, res) => {
+// Backend delete route to handle comment deletion
+app.delete("/deleteComments/:commentID", async (req, res) => {
   const { commentID } = req.params;
-  const { userID } = req.query; // Get userID from query string
+  const { userID } = req.body; // Assuming userID verification is needed
 
-  // Step 1: Check if the comment exists and retrieve the entryID and userID
-  const commentQuery = `
-  SELECT comments.userID AS commentUserID, entries.userID AS entryUserID
-  FROM comments
-  INNER JOIN entries ON comments.entryID = entries.entryID
-  WHERE comments.commentID = ?;
-`;
-
-  db.query(commentQuery, [commentID], (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(404).json({ error: "Comment not found." });
+  try {
+    // Verify user permission to delete
+    const comment = await CommentModel.findById(commentID);
+    if (!comment || comment.userID !== userID) {
+      return res.status(403).json({ message: "Unauthorized action." });
     }
 
-    const commentUserID = results[0].commentUserID;
-    const entryUserID = results[0].entryUserID;
-
-    // Step 2: Check if the requesting user is the owner of the comment or the diary entry
-    if (commentUserID !== userID && entryUserID !== userID) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to delete this comment." });
-    }
-
-    // Step 3: Proceed with deletion if checks pass
-    db.query("DELETE FROM comments WHERE commentID = ?", [commentID], (err) => {
-      if (err) {
-        console.error("Error deleting comment:", err);
-        return res.status(500).json({ error: "Failed to delete comment." });
-      }
-      res.status(204).send(); // Successfully deleted
-    });
-  });
+    await CommentModel.deleteOne({ _id: commentID });
+    res.status(200).json({ message: "Comment deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res
+      .status(500)
+      .json({ message: "Error deleting comment. Please try again." });
+  }
 });
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
@@ -1169,6 +1161,18 @@ app.post("/notifications/:userID", async (req, res) => {
       res.status(200).send("Notification sent");
     }
   );
+});
+
+app.get("/user_profile/:userID", (req, res) => {
+  const query = "SELECT * FROM user_profiles WHERE userID = ?";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching users:", err.message);
+      return res.status(500).json({ error: "Error fetching users" });
+    }
+    res.status(200).json(results);
+  });
 });
 
 app.post("/submit-report", (req, res) => {

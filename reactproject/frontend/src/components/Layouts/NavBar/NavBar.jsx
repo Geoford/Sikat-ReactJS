@@ -1,26 +1,44 @@
 import "../style.css";
 import Logo from "../../../assets/logo.jpg";
-import Notification from "../../../assets/Notification.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationButton from "../LayoutUser/OffCanvassNotification";
-import UserAccountDropdown from "./UserAccountDropdown";
+import NotificationButton from "./NotificationButton";
+import AccountDropdown from "./AccountDropdown";
 
-const NavBarUser = () => {
+const NavBar = () => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const fetchUserData = async (userID) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/fetchUser/user/${userID}`
+      );
+
+      if (!response.ok) {
+        throw new Error("User not found");
+      }
+
+      const data = await response.json();
+      setUser(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      fetchUserData(parsedUser.userID);
     } else {
       navigate("/");
     }
-    setIsLoading(false);
   }, [navigate]);
 
   if (!user) return null;
@@ -32,7 +50,7 @@ const NavBarUser = () => {
     >
       <div className="container-fluid py-2 px-3 shadow-sm">
         <div className="logo">
-          <Link to="/Home">
+          <Link to={user && user.isAdmin ? "/Admin/Home" : "/Home"}>
             <img className="logoImage" src={Logo} alt="Logo" />
           </Link>
         </div>
@@ -42,7 +60,7 @@ const NavBarUser = () => {
             <NotificationButton userID={user.userID} />
           </div>
           <div>
-            <UserAccountDropdown />
+            <AccountDropdown />
           </div>
         </div>
       </div>
@@ -50,4 +68,4 @@ const NavBarUser = () => {
   );
 };
 
-export default NavBarUser;
+export default NavBar;

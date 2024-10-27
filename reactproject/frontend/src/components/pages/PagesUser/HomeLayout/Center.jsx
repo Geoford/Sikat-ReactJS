@@ -1,29 +1,17 @@
-import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
-import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import anonymous from "../../../../assets/anonymous.png";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
-import CommentSection from "../../../Layouts/LayoutUser/CommentSection";
-import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import CenterLoader from "../../../loaders/CenterLoader";
-import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
-import TransparentLogo from "../../../../assets/TransparentLogo.png";
-import ReportButton from "../../../Layouts/LayoutUser/ReportButton";
-import Dropdown from "react-bootstrap/Dropdown";
+import DiaryEntryButton from "../../../Layouts/Home/DiaryEntryButton";
+import DiaryEntryLayout from "../../../Layouts/Home/DiaryEntryLayout";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
   const [user, setUser] = useState(null);
   const [followedUsers, setFollowedUsers] = useState([]);
-  const [activeButtons, setActiveButtons] = useState({});
-  const [expandButtons, setExpandButtons] = useState([]);
+  const [expandButtons, setExpandButtons] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    sexualHarassment: false,
-    domesticAbuse: false,
-    genderRelated: false,
-  });
+  const [filters, setFilters] = useState([]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -56,20 +44,13 @@ const Center = () => {
 
   const fetchEntries = async (userID, filters) => {
     try {
-      console.log("Fetching entries for user:", userID);
-      console.log("Applied filters:", filters);
-
       const response = await axios.get("http://localhost:8081/entries", {
-        params: { userID: userID, filters: filters }, // Now passing an array of filter strings
+        params: { userID: userID, filters: filters },
       });
-
-      console.log("Entries response:", response.data);
 
       const gadifyStatusResponse = await axios.get(
         `http://localhost:8081/gadifyStatus/${userID}`
       );
-
-      console.log("Gadify status response:", gadifyStatusResponse.data);
 
       const updatedEntries = response.data.map((entry) => {
         const isGadified = gadifyStatusResponse.data.some(
@@ -87,7 +68,6 @@ const Center = () => {
   };
 
   const handleFilterChange = (selectedFiltersArray) => {
-    // Build an array of active filters as strings
     const activeFilters = [];
 
     if (selectedFiltersArray.includes("Sexual Harassment")) {
@@ -102,7 +82,6 @@ const Center = () => {
       activeFilters.push("Gender Related");
     }
 
-    // Send the array of active filters to the state
     setFilters(activeFilters);
   };
 
@@ -132,23 +111,6 @@ const Center = () => {
               : entry
           )
         );
-
-        // Only send notification if gadified (count is incremented) and user is not the owner
-        if (isGadified && user.userID !== entry.userID) {
-          axios
-            .post(`http://localhost:8081/notifications/${entry.userID}`, {
-              actorID: user.userID,
-              entryID: entryID,
-              type: "gadify",
-              message: `${user.username} gadified your diary entry.`,
-            })
-            .then((res) => {
-              console.log("Notification response:", res.data);
-            })
-            .catch((err) => {
-              console.error("Error sending gadify notification:", err);
-            });
-        }
       })
       .catch((err) => console.error("Error updating gadify count:", err));
   };
@@ -159,58 +121,30 @@ const Center = () => {
       return;
     }
 
-    if (user.userID === followUserId) {
-      alert("You cannot follow yourself.");
-      return;
-    }
-
     const isFollowing = followedUsers.includes(followUserId);
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow this ${followUserId}?`
-        );
-
-        if (!confirmed) {
-          return;
-        }
         await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
           data: { followerId: user.userID },
         });
 
         setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-        alert(`You have unfollowed user ${followUserId}`);
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
         setFollowedUsers((prev) => [...prev, followUserId]);
-        alert(`You are now following user ${followUserId}`);
-
-        // Send follow notification
-        await axios.post(
-          `http://localhost:8081/notifications/${followUserId}`,
-          {
-            userID: followUserId, // Notify the user who was followed
-            actorID: user.userID, // The user who performed the follow action
-            entryID: null,
-            type: "follow",
-            message: `${user.username} has followed you.`,
-          }
-        );
       }
 
       await fetchFollowedUsers(user.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
     }
   };
 
   const handleClick = (entryID) => {
-    // Toggle the isGadified state for the clicked entry
     setEntries((prevEntries) =>
       prevEntries.map((entry) =>
         entry.entryID === entryID
@@ -219,17 +153,14 @@ const Center = () => {
       )
     );
 
-    // Trigger the expand animation
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
-    // Remove the expand class after the animation completes
     setTimeout(() => {
       updatedExpandButtons[entryID] = false;
       setExpandButtons({ ...updatedExpandButtons });
     }, 300);
 
-    // Perform the Gadify action
     handleGadify(entryID);
   };
 
@@ -238,15 +169,12 @@ const Center = () => {
     const now = new Date();
     const timeDiff = now - entryDate;
 
-    // Check if the time difference is less than 24 hours (in milliseconds)
     if (timeDiff < 24 * 60 * 60 * 1000) {
-      // Return time formatted as "HH:MM AM/PM"
       return entryDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
     } else {
-      // Return date formatted as "MMM D"
       return entryDate.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -255,7 +183,7 @@ const Center = () => {
   };
 
   if (isLoading) {
-    return <CenterLoader></CenterLoader>;
+    return <CenterLoader />;
   }
 
   if (!user) return null;
@@ -277,143 +205,16 @@ const Center = () => {
         <p>No entries available.</p>
       ) : (
         entries.map((entry) => (
-          <div
+          <DiaryEntryLayout
             key={entry.entryID}
-            className="position-relative rounded shadow-sm p-3 mb-2"
-            style={{ backgroundColor: "white" }}
-          >
-            <div className="d-flex align-items-start border-bottom pb-2">
-              {entry.anonimity === "private" ? (
-                <div className="d-flex align-items-center gap-2">
-                  <div className="profilePicture">
-                    <img
-                      src={entry.isAdmin === 1 ? TransparentLogo : anonymous}
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                  <div className="d-flex flex-column align-items-start">
-                    {entry.isAdmin === 1
-                      ? "Gender and Development"
-                      : entry.alias}
-                    <p className="m-0" style={{ fontSize: ".7rem" }}>
-                      {formatDate(entry.created_at)}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  to={`/Profile/${entry.userID}`}
-                  className="linkText rounded"
-                >
-                  <div className="d-flex align-items-center gap-2">
-                    <div className="profilePicture">
-                      <img
-                        src={
-                          entry.profile_image
-                            ? `http://localhost:8081${entry.profile_image}`
-                            : userDefaultProfile
-                        }
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <div className="d-flex flex-column align-items-start">
-                      {entry.isAdmin === 1 ? entry.username : "Alias"}
-                      <p className="m-0" style={{ fontSize: ".7rem" }}>
-                        {formatDate(entry.created_at)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              )}
-              {user &&
-                user.userID !== entry.userID &&
-                entry.anonimity !== "private" && ( // Added condition to check anonymity
-                  <div className="d-flex align-items-center gap-1">
-                    <p className="m-0 fs-3 text-secondary">·</p>
-                    <button
-                      className="secondaryButton p-0 m-0"
-                      onClick={() => handleFollowToggle(entry.userID)}
-                      style={{ height: "1.5rem" }}
-                    >
-                      {followedUsers.includes(entry.userID)
-                        ? "Following"
-                        : "Follow"}
-                    </button>
-                  </div>
-                )}
-              <div>
-                <Dropdown>
-                  <Dropdown.Toggle
-                    className="btn-light d-flex align-items-center pt-0 pb-2"
-                    id="dropdown-basic"
-                    bsPrefix="custom-toggle"
-                  >
-                    <h5 className="m-0">...</h5>
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="p-2">
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <ReportButton />
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
-            </div>
-
-            <div className="text-start border-bottom p-2">
-              <h5>
-                {entry.title}{" "}
-                <span className="text-secondary fs-6">{entry.subjects}</span>
-              </h5>
-              <p>{entry.description}</p>
-              {entry.diary_image && (
-                <img
-                  className="DiaryImage mt-1 rounded"
-                  src={`http://localhost:8081${entry.diary_image}`}
-                  alt="Diary"
-                />
-              )}
-            </div>
-            <div className="row pt-2">
-              <div className="col">
-                <button
-                  className={`InteractButton d-flex align-items-center justify-content-center gap-1 ${
-                    entry.isGadified ? "active" : ""
-                  } ${expandButtons[entry.entryID] ? "expand" : ""}`}
-                  onClick={() => handleClick(entry.entryID)}
-                >
-                  {/* Conditionally render the icon based on isGadified */}
-                  {entry.isGadified ? (
-                    <i className="bx bxs-heart"></i> // Solid heart when active
-                  ) : (
-                    <i className="bx bx-heart "></i> // Outline heart when not active
-                  )}
-                  Gadify
-                  <span> ({entry.gadifyCount}) </span>
-                </button>
-              </div>
-
-              <div className="col">
-                <CommentSection
-                  userID={user.userID}
-                  entryID={entry.entryID}
-                  entry={entry.userID}
-                />
-              </div>
-              <div className="col">
-                <button className="InteractButton">Flag</button>
-              </div>
-            </div>
-          </div>
+            entry={entry}
+            user={user}
+            followedUsers={followedUsers}
+            handleFollowToggle={handleFollowToggle}
+            handleClick={handleClick}
+            expandButtons={expandButtons}
+            formatDate={formatDate}
+          />
         ))
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../Layouts/MainLayout";
-import publicIcon from "../../../assets/public.png";
-import privateIcon from "../../../assets/private.png";
+import MainLayout from "../Layouts/MainLayout";
+import publicIcon from "../../assets/public.png";
+import privateIcon from "../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed

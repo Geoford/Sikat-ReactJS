@@ -1,5 +1,5 @@
-import "./style.css";
-import Logo from "../../assets/logo.jpg";
+import "../style.css";
+import Logo from "../../../assets/logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
 const UserNavBar = () => {

@@ -4,7 +4,7 @@ import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const UserAccountDropdown = () => {
+const AccountDropdown = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -139,9 +139,15 @@ const UserAccountDropdown = () => {
           <Dropdown.Item className="w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
-              to={`/UserProfile/${user.userID}`}
+              to={`/Profile/${user.userID}`}
             >
-              <button className="w-100 btn btn-light text-end">Account</button>
+              <button className="w-100 btn btn-light text-end">
+                {user && user.isAdmin ? (
+                  <p className="m-0">Admin Account</p>
+                ) : (
+                  <p className="m-0">Account</p>
+                )}
+              </button>
             </Link>
           </Dropdown.Item>
         )}
@@ -165,4 +171,4 @@ const UserAccountDropdown = () => {
   );
 };
 
-export default UserAccountDropdown;
+export default AccountDropdown;
