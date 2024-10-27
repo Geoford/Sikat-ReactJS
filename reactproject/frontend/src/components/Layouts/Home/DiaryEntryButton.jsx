@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import DiaryEntry from "../../assets/DiaryEntry.png";
-import uploadIcon from "../../assets/upload.png";
+import DiaryEntry from "../../../assets/DiaryEntry.png";
+import uploadIcon from "../../../assets/upload.png";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import SubjectSelection from "./LayoutUser/SubjectSelection";
+import SubjectSelection from "../LayoutUser/SubjectSelection";
+import userDefaultProfile from "../../../assets/userDefaultProfile.png";
+import alarmingWords from "../AlarmingWords"; // Correct import for alarming words
 
-function PostButton({ onEntrySaved }) {
+function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,6 +24,12 @@ function PostButton({ onEntrySaved }) {
   const [visibility, setVisibility] = useState("private");
   const [anonimity, setAnonimity] = useState("private");
   const [file, setFile] = useState(null);
+  const [selectedSubjects, setSelectedSubjects] = useState("");
+  const [alarmingWordWarning, setAlarmingWordWarning] = useState(""); // Change from Error to Warning
+
+  const handleSubjectsChange = (subjectsText) => {
+    setSelectedSubjects(subjectsText);
+  };
 
   const navigate = useNavigate();
 
@@ -53,14 +61,29 @@ function PostButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
+    setAlarmingWordWarning(""); // Reset warning
   };
+
   const handleShow = () => setShow(true);
+
+  const containsAlarmingWords = (text) => {
+    return alarmingWords.some((word) => text.toLowerCase().includes(word));
+  };
 
   const handleSubmit = () => {
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
     setFormErrors(errors);
+
+    // Check for alarming words in title and description
+    if (containsAlarmingWords(title) || containsAlarmingWords(description)) {
+      setAlarmingWordWarning(
+        "Warning: Your entry contains potentially harmful words. Proceed with caution."
+      );
+    } else {
+      setAlarmingWordWarning("");
+    }
 
     if (Object.keys(errors).length > 0) return;
 
@@ -75,6 +98,10 @@ function PostButton({ onEntrySaved }) {
     formData.append("userID", user.userID);
     formData.append("visibility", visibility);
     formData.append("anonimity", anonimity);
+
+    // Append selected subjects
+    formData.append("subjects", JSON.stringify(selectedSubjects));
+
     if (file) {
       formData.append("file", file);
     }
@@ -97,7 +124,6 @@ function PostButton({ onEntrySaved }) {
         if (onEntrySaved) {
           onEntrySaved();
         }
-        window.location.reload();
       })
       .catch((error) => {
         console.error("There was an error saving the diary entry!", error);
@@ -114,7 +140,7 @@ function PostButton({ onEntrySaved }) {
         className="primaryButton w-100 d-flex align-items-center justify-content-center"
         onClick={handleShow}
       >
-        <p className="m-0">Create Post</p>
+        <p className="m-0">Diary Entry</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
 
@@ -124,7 +150,21 @@ function PostButton({ onEntrySaved }) {
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="profilePicture"></div>
+            <div className="profilePicture">
+              <img
+                src={
+                  user?.profile_image
+                    ? `http://localhost:8081${user?.profile_image}`
+                    : userDefaultProfile
+                }
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
             <p className="m-0">{user?.username || "User"}</p>
             <div>
               <select
@@ -149,8 +189,12 @@ function PostButton({ onEntrySaved }) {
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          <div>
-            <SubjectSelection></SubjectSelection>
+          {alarmingWordWarning && (
+            <p className="text-warning">{alarmingWordWarning}</p>
+          )}
+          <div className="d-flex align-items-center">
+            <SubjectSelection onSubjectsChange={handleSubjectsChange} />
+            {selectedSubjects && <div className=""> {selectedSubjects} </div>}
           </div>
           <div className="">
             <InputGroup className="mb-1">
@@ -232,4 +276,4 @@ function PostButton({ onEntrySaved }) {
   );
 }
 
-export default PostButton;
+export default DiaryEntryButton;

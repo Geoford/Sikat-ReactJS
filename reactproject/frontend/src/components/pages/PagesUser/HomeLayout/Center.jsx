@@ -1,9 +1,9 @@
-import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import FilterButton from "../../../Layouts/LayoutUser/FilterButton";
 import CenterLoader from "../../../loaders/CenterLoader";
-import DiaryEntryLayout from "../../../Layouts/DiaryEntryLayout";
+import DiaryEntryButton from "../../../Layouts/Home/DiaryEntryButton";
+import DiaryEntryLayout from "../../../Layouts/Home/DiaryEntryLayout";
 
 const Center = () => {
   const [entries, setEntries] = useState([]);
@@ -164,23 +164,23 @@ const Center = () => {
     handleGadify(entryID);
   };
 
-  // const formatDate = (dateString) => {
-  //   const entryDate = new Date(dateString);
-  //   const now = new Date();
-  //   const timeDiff = now - entryDate;
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
 
-  //   if (timeDiff < 24 * 60 * 60 * 1000) {
-  //     return entryDate.toLocaleTimeString([], {
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //     });
-  //   } else {
-  //     return entryDate.toLocaleDateString("en-US", {
-  //       month: "short",
-  //       day: "numeric",
-  //     });
-  //   }
-  // };
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
 
   if (isLoading) {
     return <CenterLoader />;
@@ -213,6 +213,7 @@ const Center = () => {
             handleFollowToggle={handleFollowToggle}
             handleClick={handleClick}
             expandButtons={expandButtons}
+            formatDate={formatDate}
           />
         ))
       )}

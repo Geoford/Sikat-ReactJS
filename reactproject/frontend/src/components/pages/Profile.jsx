@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DefaultProfile from "../../../assets/userDefaultProfile.png";
-import MainLayout from "../../Layouts/MainLayout";
-import OthersJournalEntries from "./UserProfileLayout/OthersJournalEntries";
-import OtherProfileDiary from "./UserProfileLayout/OtherProfileDiary";
-import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
-import OthersProfileDropdown from "../../Layouts/LayoutUser/OthersProfileDropdown";
+import DefaultProfile from "../../assets/userDefaultProfile.png";
+import MainLayout from "../Layouts/MainLayout";
+import OthersJournalEntries from "./PagesUser/UserProfileLayout/OthersJournalEntries";
+import OtherProfileDiary from "./PagesUser/UserProfileLayout/OtherProfileDiary";
+import ProfileDropdown from "../Layouts/LayoutUser/ProfileDropdown";
+import OthersProfileDropdown from "../Layouts/LayoutUser/OthersProfileDropdown";
+import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import axios from "axios";
 
 const Profile = () => {
@@ -15,15 +16,17 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null); // State to manage file
   const [isHovered, setIsHovered] = useState(false); // State to track hover
+  const [entries, setEntries] = useState([]); // State to store diary entries
+  const [followedUsers, setFollowedUsers] = useState([]); // State for followed users
+  const [filters, setFilters] = useState([]); // State for filters
+  const [expandButtons, setExpandButtons] = useState({}); // State to track expanded entries
+  const [isLoading, setIsLoading] = useState(false); // Loading state for entries
 
   const navigate = useNavigate();
-
-  // Fetch the current user from localStorage
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     if (!currentUser) {
-      // If no user data is found, redirect to the homepage
       navigate("/");
       return;
     }
@@ -46,7 +49,14 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [userID, navigate, currentUser]);
+  }, [userID, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchFollowedUsers(user.userID);
+      fetchEntries(user.userID, filters);
+    }
+  }, [user, filters]);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -73,13 +83,147 @@ const Profile = () => {
       });
   };
 
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      const followedUsersData = response.data.map((user) => user.userID);
+      setFollowedUsers(followedUsersData);
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
+    }
+  };
+
+  const fetchEntries = async (userID, filters) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8081/entries", {
+        params: { userID, filters },
+      });
+
+      const gadifyStatusResponse = await axios.get(
+        `http://localhost:8081/gadifyStatus/${userID}`
+      );
+
+      const updatedEntries = response.data.map((entry) => {
+        const isGadified = gadifyStatusResponse.data.some(
+          (g) => g.entryID === entry.entryID
+        );
+        return { ...entry, isGadified };
+      });
+
+      setEntries(updatedEntries);
+    } catch (error) {
+      console.error("There was an error fetching the diary entries!", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFilterChange = (selectedFiltersArray) => {
+    const activeFilters = selectedFiltersArray.filter((filter) =>
+      ["Sexual Harassment", "Domestic Abuse", "Gender Related"].includes(filter)
+    );
+    setFilters(activeFilters);
+  };
+
+  const handleGadify = (entryID) => {
+    if (!user) return;
+
+    const entry = entries.find((entry) => entry.entryID === entryID);
+    if (!entry) return;
+
+    axios
+      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
+        userID: user.userID,
+      })
+      .then((res) => {
+        const isGadified =
+          res.data.message === "Gadify action recorded successfully";
+
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.entryID === entryID
+              ? {
+                  ...entry,
+                  gadifyCount: isGadified
+                    ? entry.gadifyCount + 1
+                    : entry.gadifyCount - 1,
+                }
+              : entry
+          )
+        );
+      })
+      .catch((err) => console.error("Error updating gadify count:", err));
+  };
+
+  const handleFollowToggle = async (followUserId) => {
+    if (!followUserId) return;
+
+    const isFollowing = followedUsers.includes(followUserId);
+
+    try {
+      if (isFollowing) {
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
+        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
+      } else {
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
+        setFollowedUsers((prev) => [...prev, followUserId]);
+      }
+      await fetchFollowedUsers(user.userID);
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  };
+
+  const handleClick = (entryID) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.entryID === entryID
+          ? { ...entry, isGadified: !entry.isGadified }
+          : entry
+      )
+    );
+
+    const updatedExpandButtons = { ...expandButtons, [entryID]: true };
+    setExpandButtons(updatedExpandButtons);
+
+    setTimeout(() => {
+      updatedExpandButtons[entryID] = false;
+      setExpandButtons({ ...updatedExpandButtons });
+    }, 300);
+
+    handleGadify(entryID);
+  };
+
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  // Check if the current user is viewing their own profile
   const ownProfile = currentUser.userID == userID;
 
-  // Functions to toggle hover state
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
@@ -184,7 +328,18 @@ const Profile = () => {
 
           <div className="col p-0 px-md-2">
             <div style={{ minHeight: "60vh" }}>
-              <OtherProfileDiary userID={userID} />
+              {entries.map((entry) => (
+                <DiaryEntryLayout
+                  key={entry.entryID}
+                  entry={entry}
+                  user={user}
+                  followedUsers={followedUsers}
+                  handleFollowToggle={handleFollowToggle}
+                  handleClick={handleClick}
+                  expandButtons={expandButtons}
+                  formatDate={formatDate}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Pusher from "pusher-js";
-import DefaultProfile from "../../../src/assets/userDefaultProfile.png";
+import DefaultProfile from "../../../../src/assets/userDefaultProfile.png";
 
 function NotificationButton() {
   const [show, setShow] = useState(false);

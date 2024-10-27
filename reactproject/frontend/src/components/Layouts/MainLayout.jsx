@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "./NavBar"; // Import the regular user navigation bar
+import NavBar from "./NavBar/NavBar"; // Import the regular user navigation bar
 import Background from "./Background"; // Import the background component
 import NavBarAdmin from "./LayoutAdmin/NavBarAdmin"; // Import the admin-specific navigation bar
 import "boxicons/css/boxicons.min.css";

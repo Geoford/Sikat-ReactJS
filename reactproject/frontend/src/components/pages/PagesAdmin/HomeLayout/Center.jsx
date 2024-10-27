@@ -1,4 +1,4 @@
-import DiaryEntryButton from "../../../Layouts/DiaryEntryButton";
+import DiaryEntryButton from "../../../Layouts/Home/DiaryEntryButton";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import anonymous from "../../../../assets/anonymous.png";
@@ -11,7 +11,8 @@ import userDefaultProfile from "../../../../assets/userDefaultProfile.png";
 import TransparentLogo from "../../../../assets/TransparentLogo.png";
 import ReportButton from "../../../Layouts/ReportButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import DiaryEntryLayout from "../../../Layouts/DiaryEntryLayout";
+import DiaryEntryLayout from "../../../Layouts/Home/DiaryEntryLayout";
+import PostButton from "../../../Layouts/Home/PostButton";
 
 const CenterAdmin = () => {
   const [entries, setEntries] = useState([]);
@@ -266,9 +267,7 @@ const CenterAdmin = () => {
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}
       >
-        <DiaryEntryButton
-          onEntrySaved={() => fetchEntries(user.userID, filters)}
-        />
+        <PostButton onEntrySaved={() => fetchEntries(user.userID, filters)} />
       </div>
       {entries.length === 0 ? (
         <p>No entries available.</p>
@@ -282,6 +281,7 @@ const CenterAdmin = () => {
             handleFollowToggle={handleFollowToggle}
             handleClick={handleClick}
             expandButtons={expandButtons}
+            formatDate={formatDate}
           />
         ))
       )}

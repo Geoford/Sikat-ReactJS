@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import AnonymousIcon from "../../../assets/Anonymous.png";
-import sampleBackground from "../../../assets/Background.jpg";
-import MainLayout from "../../Layouts/MainLayout";
-import CommentDropdown from "../../Layouts/LayoutUser/CommentDropdown";
+import AnonymousIcon from "../../assets/Anonymous.png";
+import sampleBackground from "../../assets/Background.jpg";
+import MainLayout from "../Layouts/MainLayout";
+import CommentDropdown from "../Layouts/CommentDropdown";
 import axios from "axios";
 
 const DiaryEntry = () => {

@@ -5,16 +5,16 @@ import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
 // USER
 import Home from "./components/pages/PagesUser/Home";
-import UserProfile from "./components/pages/PagesUser/UserProfile";
-import DiaryEntries from "./components/pages/PagesUser/DiaryEntries";
-import DiaryEntry from "./components/pages/PagesUser/DiaryEntry";
-import Profile from "./components/pages/PagesUser/Profile";
+// import UserProfile from "./components/pages/PagesUser/UserProfile";
+import DiaryEntries from "./components/pages/DiaryEntries";
+import DiaryEntry from "./components/pages/DiaryEntry";
+import Profile from "./components/pages/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
 
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
-import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
-import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
+// import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
+// import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -51,8 +51,8 @@ function App() {
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />
-          <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
-          <Route path="/Admin/DiaryEntry" element={<AdminDiaryEntry />} />
+          {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
+          <Route path="/Admin/DiaryEntry" element={<AdminDiaryEntry />} /> */}
         </Routes>
       </BrowserRouter>
     </div>

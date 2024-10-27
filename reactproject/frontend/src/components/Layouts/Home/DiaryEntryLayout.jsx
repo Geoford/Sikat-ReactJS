@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import anonymous from "../../assets/anonymous.png";
-import userDefaultProfile from "../../assets/userDefaultProfile.png";
-import TransparentLogo from "../../assets/TransparentLogo.png";
-import ReportButton from "./ReportButton";
-import CommentSection from "./CommentSection";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import anonymous from "../../../assets/anonymous.png";
+import userDefaultProfile from "../../../assets/userDefaultProfile.png";
+import TransparentLogo from "../../../assets/TransparentLogo.png";
+import ReportButton from "../ReportButton";
+import CommentSection from "../CommentSection";
 import Dropdown from "react-bootstrap/Dropdown";
 import axios from "axios";
+import ReportDiaryButton from "./ReportDiaryButton";
+import FlagButton from "./FlagButton";
 
 const DiaryEntryLayout = ({
   entry,
@@ -15,7 +17,9 @@ const DiaryEntryLayout = ({
   handleFollowToggle,
   handleClick,
   expandButtons,
+  formatDate,
 }) => {
+  const { userID } = useParams();
   const [entries, setEntries] = useState([]); // This is needed for entries
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -23,6 +27,37 @@ const DiaryEntryLayout = ({
     domesticAbuse: false,
     genderRelated: false,
   });
+  const navigate = useNavigate();
+
+  // Fetch the current user from localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    if (!currentUser) {
+      // If no user data is found, redirect to the homepage
+      navigate("/");
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8081/fetchUser/user/${userID}`
+        );
+        if (!response.ok) {
+          throw new Error("User not found");
+        }
+        const data = await response.json();
+        setUser(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userID, navigate, currentUser]);
 
   useEffect(() => {
     if (user) {
@@ -62,91 +97,11 @@ const DiaryEntryLayout = ({
     }
   };
 
-  const handleFilterChange = (selectedFiltersArray) => {
-    const activeFilters = [];
-
-    if (selectedFiltersArray.includes("Sexual Harassment")) {
-      activeFilters.push("Sexual Harassment");
-    }
-
-    if (selectedFiltersArray.includes("Domestic Abuse")) {
-      activeFilters.push("Domestic Abuse");
-    }
-
-    if (selectedFiltersArray.includes("Gender Related")) {
-      activeFilters.push("Gender Related");
-    }
-
-    setFilters(activeFilters);
-  };
-
-  const handleGadify = (entryID) => {
-    if (!user) return;
-
-    const entry = entries.find((entry) => entry.entryID === entryID);
-    if (!entry) return;
-
-    axios
-      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
-        userID: user.userID,
-      })
-      .then((res) => {
-        const isGadified =
-          res.data.message === "Gadify action recorded successfully";
-
-        setEntries((prevEntries) =>
-          prevEntries.map((entry) =>
-            entry.entryID === entryID
-              ? {
-                  ...entry,
-                  gadifyCount: isGadified
-                    ? entry.gadifyCount + 1
-                    : entry.gadifyCount - 1,
-                }
-              : entry
-          )
-        );
-
-        if (isGadified && user.userID !== entry.userID) {
-          axios
-            .post(`http://localhost:8081/notifications/${entry.userID}`, {
-              actorID: user.userID,
-              entryID: entryID,
-              type: "gadify",
-              message: `${user.username} gadified your diary entry.`,
-            })
-            .then((res) => {
-              console.log("Notification response:", res.data);
-            })
-            .catch((err) => {
-              console.error("Error sending gadify notification:", err);
-            });
-        }
-      })
-      .catch((err) => console.error("Error updating gadify count:", err));
-  };
-
-  const formatDate = (dateString) => {
-    const entryDate = new Date(dateString);
-    const now = new Date();
-    const timeDiff = now - entryDate;
-
-    if (timeDiff < 24 * 60 * 60 * 1000) {
-      return entryDate.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } else {
-      return entryDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    }
-  };
-
   if (isLoading) {
     return <div>Loading...</div>; // Replace with proper loader
   }
+
+  const ownDiary = currentUser.userID === entry.userID;
 
   return (
     <div
@@ -217,20 +172,29 @@ const DiaryEntryLayout = ({
             </div>
           )}
         <div>
-          <Dropdown>
-            <Dropdown.Toggle
-              className="btn-light d-flex align-items-center pt-0 pb-2"
-              id="dropdown-basic"
-              bsPrefix="custom-toggle"
-            >
-              <h5 className="m-0">...</h5>
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="p-2">
-              <Dropdown.Item className="p-0 btn btn-light">
-                <ReportButton></ReportButton>
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          <div>
+            {ownDiary ? (
+              <Dropdown>
+                <Dropdown.Toggle
+                  className="btn-light d-flex align-items-center pt-0 pb-2"
+                  id="dropdown-basic"
+                  bsPrefix="custom-toggle"
+                >
+                  <h5 className="m-0">...</h5>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="p-2">
+                  <Dropdown.Item className="p-0 btn btn-light">
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item className="p-0 btn btn-light">
+                    Delete
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              <p></p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -273,7 +237,7 @@ const DiaryEntryLayout = ({
           />
         </div>
         <div className="col">
-          <button className="InteractButton">Flag</button>
+          <FlagButton></FlagButton>
         </div>
       </div>
     </div>

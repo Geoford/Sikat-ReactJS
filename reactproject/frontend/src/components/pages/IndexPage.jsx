@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import IndexNavBar from "../Layouts/NavBarIndex";
+import IndexNavBar from "../Layouts/NavBar/NavBarIndex";
 import Background from "../Layouts/Background";
 import Login from "./Login";
 import Register from "./Register";
