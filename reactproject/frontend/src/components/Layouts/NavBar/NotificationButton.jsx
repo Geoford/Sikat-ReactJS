@@ -55,18 +55,27 @@ function NotificationButton() {
         );
         const fetchedNotifications = await Promise.all(
           response.data.map(async (notification) => {
-            const userResponse = await axios.get(
-              `http://localhost:8081/notificationUser/user/${notification.actorID}`
-            );
-            const actorData = userResponse.data;
+            try {
+              const actorResponse = await axios.get(
+                `http://localhost:8081/user_profile/${notification.actorID}`
+              );
+              const actorData = actorResponse.data;
 
-            return {
-              ...notification,
-              actorUsername: actorData.alias || actorData.username,
-              actorProfileImage:
-                `http://localhost:8081${actorData.profile_image}` ||
-                DefaultProfile,
-            };
+              return {
+                ...notification,
+                actorUsername: actorData.alias || actorData.username,
+                actorProfileImage: actorData.profile_image
+                  ? `http://localhost:8081${actorData.profile_image}`
+                  : DefaultProfile,
+              };
+            } catch (actorError) {
+              console.error("Error fetching actor data:", actorError);
+              return {
+                ...notification,
+                actorUsername: "Unknown User",
+                actorProfileImage: DefaultProfile,
+              };
+            }
           })
         );
         setNotifications(fetchedNotifications);
@@ -179,7 +188,11 @@ function NotificationButton() {
                 <div className="grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
                   <div className="profilePicture">
                     <img
-                      src={notification.actorProfileImage}
+                      src={
+                        notification.actorProfileImage
+                          ? notification.actorProfileImage
+                          : DefaultProfile
+                      }
                       alt="Profile"
                       style={{
                         width: "100%",

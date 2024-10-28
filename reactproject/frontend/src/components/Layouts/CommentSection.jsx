@@ -133,12 +133,15 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
-        data: { userID },
-      });
+      await axios.delete(
+        `http://localhost:8081/deleteComments/${commentID}?userID=${userID}`,
+        {
+          data: { userID },
+        }
+      );
       fetchComments();
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error("Error deleting comment:", error.response || error);
       setError("Failed to delete comment. Please try again.");
     } finally {
       setLoading(false);
