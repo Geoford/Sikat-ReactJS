@@ -3,10 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
 import OthersJournalEntries from "./PagesUser/UserProfileLayout/OthersJournalEntries";
-import OtherProfileDiary from "./PagesUser/UserProfileLayout/OtherProfileDiary";
+import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/LayoutUser/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/LayoutUser/OthersProfileDropdown";
-import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import axios from "axios";
 
 const Profile = () => {
@@ -18,7 +17,6 @@ const Profile = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [entries, setEntries] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
-  const [filters, setFilters] = useState([]);
   const [expandButtons, setExpandButtons] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,9 +40,7 @@ const Profile = () => {
         const response = await fetch(
           `http://localhost:8081/fetchUser/user/${userID}`
         );
-        if (!response.ok) {
-          throw new Error("User not found");
-        }
+        if (!response.ok) throw new Error("User not found");
         const data = await response.json();
         setUser(data);
       } catch (err) {
@@ -60,18 +56,16 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       fetchFollowedUsers(user.userID);
-      fetchProfileOwnerEntries(); // Call the new fetch function
+      fetchProfileOwnerEntries();
     }
-  }, [user, filters]);
+  }, [user]);
 
   const fetchProfileOwnerEntries = async () => {
     try {
       const response = await fetch(
         `http://localhost:8081/fetchUserEntry/user/${userID}`
       );
-      if (!response.ok) {
-        throw new Error("No entry found");
-      }
+      if (!response.ok) throw new Error("No entry found");
       const data = await response.json();
       setEntries(data.entries);
     } catch (error) {
@@ -141,6 +135,7 @@ const Profile = () => {
                   gadifyCount: isGadified
                     ? entry.gadifyCount + 1
                     : entry.gadifyCount - 1,
+                  isGadified: !entry.isGadified, // Toggle gadify status
                 }
               : entry
           )
@@ -150,14 +145,6 @@ const Profile = () => {
   };
 
   const handleClick = (entryID) => {
-    setEntries((prevEntries) =>
-      prevEntries.map((entry) =>
-        entry.entryID === entryID
-          ? { ...entry, isGadified: !entry.isGadified }
-          : entry
-      )
-    );
-
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
@@ -167,10 +154,6 @@ const Profile = () => {
     }, 300);
 
     handleGadify(entryID);
-  };
-
-  const handleFollowToggle = (entryID) => {
-    // Implement handleFollowToggle logic here
   };
 
   const formatDate = (dateString) => {
@@ -306,8 +289,7 @@ const Profile = () => {
                   entry={entry}
                   user={user}
                   followedUsers={followedUsers}
-                  handleFollowToggle={handleFollowToggle}
-                  handleClick={handleClick}
+                  handleClick={() => handleClick(entry.entryID)}
                   expandButtons={expandButtons}
                   formatDate={formatDate}
                 />

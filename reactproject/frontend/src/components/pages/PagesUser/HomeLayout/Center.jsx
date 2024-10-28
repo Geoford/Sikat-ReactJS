@@ -85,6 +85,35 @@ const Center = () => {
     setFilters(activeFilters);
   };
 
+  const handleFollowToggle = async (followUserId) => {
+    if (!followUserId) {
+      console.error("User ID to follow/unfollow is undefined");
+      return;
+    }
+
+    const isFollowing = followedUsers.includes(followUserId);
+
+    try {
+      if (isFollowing) {
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
+
+        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
+      } else {
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
+
+        setFollowedUsers((prev) => [...prev, followUserId]);
+      }
+
+      await fetchFollowedUsers(user.userID);
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  };
+
   const handleGadify = (entryID) => {
     if (!user) return;
 
@@ -113,35 +142,6 @@ const Center = () => {
         );
       })
       .catch((err) => console.error("Error updating gadify count:", err));
-  };
-
-  const handleFollowToggle = async (followUserId) => {
-    if (!followUserId) {
-      console.error("User ID to follow/unfollow is undefined");
-      return;
-    }
-
-    const isFollowing = followedUsers.includes(followUserId);
-
-    try {
-      if (isFollowing) {
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
-        });
-
-        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-      } else {
-        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
-          followerId: user.userID,
-        });
-
-        setFollowedUsers((prev) => [...prev, followUserId]);
-      }
-
-      await fetchFollowedUsers(user.userID);
-    } catch (error) {
-      console.error("Error toggling follow status:", error);
-    }
   };
 
   const handleClick = (entryID) => {

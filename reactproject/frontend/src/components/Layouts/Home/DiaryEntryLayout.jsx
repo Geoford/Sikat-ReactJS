@@ -244,7 +244,7 @@ const DiaryEntryLayout = ({
     <div
       key={entry.entryID}
       className="position-relative rounded shadow-sm p-3 mb-2"
-      style={{ backgroundColor: "white" }}
+      style={{ backgroundColor: "white", width: "100%" }}
     >
       <div className="d-flex align-items-start border-bottom pb-2">
         {entry.anonymity === "private" ? (
@@ -333,7 +333,10 @@ const DiaryEntryLayout = ({
         </div>
       </div>
 
-      <div className="text-start border-bottom p-2">
+      <div
+        className="text-start border-bottom p-2"
+        style={{ minHeight: "10rem" }}
+      >
         <h5>
           {entry.title}{" "}
           <span className="text-secondary fs-6">{entry.subjects}</span>
