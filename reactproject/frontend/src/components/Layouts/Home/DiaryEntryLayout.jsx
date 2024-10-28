@@ -12,7 +12,7 @@ import FlagButton from "./FlagButton";
 
 const DiaryEntryLayout = ({
   entry,
-  user, // Props instead of state
+  user,
   followedUsers,
   handleFollowToggle,
   handleClick,
@@ -20,24 +20,29 @@ const DiaryEntryLayout = ({
   formatDate,
 }) => {
   const { userID } = useParams();
-  const [entries, setEntries] = useState([]); // This is needed for entries
-  const [isLoading, setIsLoading] = useState(true);
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     sexualHarassment: false,
     domesticAbuse: false,
     genderRelated: false,
   });
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   // Fetch the current user from localStorage
-  const currentUser = JSON.parse(localStorage.getItem("user"));
-
   useEffect(() => {
-    if (!currentUser) {
-      // If no user data is found, redirect to the homepage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser) {
       navigate("/");
       return;
     }
+    setCurrentUser(storedUser);
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!currentUser) return;
 
     const fetchUserData = async () => {
       try {
@@ -48,7 +53,7 @@ const DiaryEntryLayout = ({
           throw new Error("User not found");
         }
         const data = await response.json();
-        setUser(data);
+        setEntries(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -57,7 +62,7 @@ const DiaryEntryLayout = ({
     };
 
     fetchUserData();
-  }, [userID, navigate, currentUser]);
+  }, [userID, currentUser]);
 
   useEffect(() => {
     if (user) {
@@ -67,20 +72,13 @@ const DiaryEntryLayout = ({
 
   const fetchEntries = async (userID, filters) => {
     try {
-      console.log("Fetching entries for user:", userID);
-      console.log("Applied filters:", filters);
-
       const response = await axios.get("http://localhost:8081/entries", {
-        params: { userID: userID, filters: filters },
+        params: { userID, filters },
       });
-
-      console.log("Entries response:", response.data);
 
       const gadifyStatusResponse = await axios.get(
         `http://localhost:8081/gadifyStatus/${userID}`
       );
-
-      console.log("Gadify status response:", gadifyStatusResponse.data);
 
       const updatedEntries = response.data.map((entry) => {
         const isGadified = gadifyStatusResponse.data.some(
@@ -91,17 +89,156 @@ const DiaryEntryLayout = ({
 
       setEntries(updatedEntries);
     } catch (error) {
-      console.error("There was an error fetching the diary entries!", error);
+      console.error("Error fetching diary entries:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Replace with proper loader
+  if (loading) {
+    return (
+      <div
+        className="position-relative rounded shadow-sm p-3 mb-2"
+        style={{ backgroundColor: "white" }}
+      >
+        <div className="d-flex align-items-center border-bottom pb-2 gap-2">
+          <div className="profilePicture" style={{ backgroundColor: "#ffff" }}>
+            <img
+              src={userDefaultProfile}
+              alt="Profile"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <p
+            className="m-0 mt-2"
+            style={{
+              height: "14px",
+              width: "70px",
+              backgroundColor: "lightgray",
+              marginBottom: "10px", // Optional, adds space between divs
+            }}
+          ></p>
+
+          <p
+            className="m-0 mt-2"
+            style={{
+              height: "14px",
+              width: "50px",
+              backgroundColor: "lightgray",
+              marginBottom: "10px", // Optional, adds space between divs
+            }}
+          ></p>
+        </div>
+
+        <div className="text-start border-bottom p-2">
+          <h5
+            className="m-0 mt-2"
+            style={{
+              height: "20px",
+              width: "190px",
+              backgroundColor: "lightgray",
+              marginBottom: "10px", // Optional, adds space between divs
+            }}
+          ></h5>
+          <div>
+            <p
+              className="m-0 mt-3"
+              style={{
+                height: "14px",
+                width: "100%",
+                backgroundColor: "lightgray",
+                marginBottom: "10px", // Optional, adds space between divs
+              }}
+            ></p>
+            <p
+              className="m-0 mt-3"
+              style={{
+                height: "14px",
+                width: "100%",
+                backgroundColor: "lightgray",
+                marginBottom: "10px", // Optional, adds space between divs
+              }}
+            ></p>
+            <p
+              className="m-0 mt-3"
+              style={{
+                height: "14px",
+                width: "100%",
+                backgroundColor: "lightgray",
+                marginBottom: "10px", // Optional, adds space between divs
+              }}
+            ></p>{" "}
+            <p
+              className="m-0 mt-3"
+              style={{
+                height: "14px",
+                width: "100%",
+                backgroundColor: "lightgray",
+                marginBottom: "10px", // Optional, adds space between divs
+              }}
+            ></p>
+            <p
+              className="m-0 mt-3"
+              style={{
+                height: "14px",
+                width: "50%",
+                backgroundColor: "lightgray",
+                marginBottom: "10px", // Optional, adds space between divs
+              }}
+            ></p>
+          </div>
+        </div>
+
+        <div className="row pt-2">
+          <div className="col">
+            <button className="InteractButton">
+              <p
+                className="m-0 my-2"
+                style={{
+                  height: "14px",
+                  width: "100%",
+                  backgroundColor: "lightgray",
+                  marginBottom: "10px", // Optional, adds space between divs
+                }}
+              ></p>
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">
+              <p
+                className="m-0 my-2"
+                style={{
+                  height: "14px",
+                  width: "100%",
+                  backgroundColor: "lightgray",
+                  marginBottom: "10px", // Optional, adds space between divs
+                }}
+              ></p>
+            </button>
+          </div>
+          <div className="col">
+            <button className="InteractButton">
+              <p
+                className="m-0 my-2"
+                style={{
+                  height: "14px",
+                  width: "100%",
+                  backgroundColor: "lightgray",
+                  marginBottom: "10px", // Optional, adds space between divs
+                }}
+              ></p>
+            </button>
+          </div>
+        </div>
+      </div>
+    ); // Simplified loading screen
   }
 
-  const ownDiary = currentUser.userID === entry.userID;
+  const ownDiary = currentUser?.userID === entry.userID;
 
   return (
     <div
@@ -110,7 +247,7 @@ const DiaryEntryLayout = ({
       style={{ backgroundColor: "white" }}
     >
       <div className="d-flex align-items-start border-bottom pb-2">
-        {entry.anonimity === "private" ? (
+        {entry.anonymity === "private" ? (
           <div className="d-flex align-items-center gap-2">
             <div className="profilePicture">
               <img
@@ -159,7 +296,7 @@ const DiaryEntryLayout = ({
         )}
         {user &&
           user.userID !== entry.userID &&
-          entry.anonimity !== "private" && (
+          entry.anonymity !== "private" && (
             <div className="d-flex align-items-center gap-1">
               <p className="m-0 fs-3 text-secondary">·</p>
               <button
@@ -172,29 +309,27 @@ const DiaryEntryLayout = ({
             </div>
           )}
         <div>
-          <div>
-            {ownDiary ? (
-              <Dropdown>
-                <Dropdown.Toggle
-                  className="btn-light d-flex align-items-center pt-0 pb-2"
-                  id="dropdown-basic"
-                  bsPrefix="custom-toggle"
-                >
-                  <h5 className="m-0">...</h5>
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="p-2">
-                  <Dropdown.Item className="p-0 btn btn-light">
-                    Edit
-                  </Dropdown.Item>
-                  <Dropdown.Item className="p-0 btn btn-light">
-                    Delete
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            ) : (
-              <p></p>
-            )}
-          </div>
+          {ownDiary ? (
+            <Dropdown>
+              <Dropdown.Toggle
+                className="btn-light d-flex align-items-center pt-0 pb-2"
+                id="dropdown-basic"
+                bsPrefix="custom-toggle"
+              >
+                <h5 className="m-0">...</h5>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="p-2">
+                <Dropdown.Item className="p-0 btn btn-light">
+                  Edit
+                </Dropdown.Item>
+                <Dropdown.Item className="p-0 btn btn-light">
+                  Delete
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            <p></p>
+          )}
         </div>
       </div>
 
@@ -237,7 +372,7 @@ const DiaryEntryLayout = ({
           />
         </div>
         <div className="col">
-          <FlagButton></FlagButton>
+          <FlagButton />
         </div>
       </div>
     </div>

@@ -14,16 +14,22 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [file, setFile] = useState(null); // State to manage file
-  const [isHovered, setIsHovered] = useState(false); // State to track hover
-  const [entries, setEntries] = useState([]); // State to store diary entries
-  const [followedUsers, setFollowedUsers] = useState([]); // State for followed users
-  const [filters, setFilters] = useState([]); // State for filters
-  const [expandButtons, setExpandButtons] = useState({}); // State to track expanded entries
-  const [isLoading, setIsLoading] = useState(false); // Loading state for entries
+  const [file, setFile] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [followedUsers, setFollowedUsers] = useState([]);
+  const [filters, setFilters] = useState([]);
+  const [expandButtons, setExpandButtons] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  let currentUser = null;
+
+  try {
+    currentUser = JSON.parse(localStorage.getItem("user"));
+  } catch (err) {
+    console.error("Error parsing current user:", err);
+  }
 
   useEffect(() => {
     if (!currentUser) {
@@ -54,9 +60,27 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       fetchFollowedUsers(user.userID);
-      fetchEntries(user.userID, filters);
+      fetchProfileOwnerEntries(); // Call the new fetch function
     }
   }, [user, filters]);
+
+  const fetchProfileOwnerEntries = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/fetchUserEntry/user/${userID}`
+      );
+      if (!response.ok) {
+        throw new Error("No entry found");
+      }
+      const data = await response.json();
+      setEntries(data.entries);
+    } catch (error) {
+      setError("There was an error fetching the profile owner's entries.");
+      console.error("Error fetching entries:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -95,39 +119,6 @@ const Profile = () => {
     }
   };
 
-  const fetchEntries = async (userID, filters) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get("http://localhost:8081/entries", {
-        params: { userID, filters },
-      });
-
-      const gadifyStatusResponse = await axios.get(
-        `http://localhost:8081/gadifyStatus/${userID}`
-      );
-
-      const updatedEntries = response.data.map((entry) => {
-        const isGadified = gadifyStatusResponse.data.some(
-          (g) => g.entryID === entry.entryID
-        );
-        return { ...entry, isGadified };
-      });
-
-      setEntries(updatedEntries);
-    } catch (error) {
-      console.error("There was an error fetching the diary entries!", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFilterChange = (selectedFiltersArray) => {
-    const activeFilters = selectedFiltersArray.filter((filter) =>
-      ["Sexual Harassment", "Domestic Abuse", "Gender Related"].includes(filter)
-    );
-    setFilters(activeFilters);
-  };
-
   const handleGadify = (entryID) => {
     if (!user) return;
 
@@ -158,29 +149,6 @@ const Profile = () => {
       .catch((err) => console.error("Error updating gadify count:", err));
   };
 
-  const handleFollowToggle = async (followUserId) => {
-    if (!followUserId) return;
-
-    const isFollowing = followedUsers.includes(followUserId);
-
-    try {
-      if (isFollowing) {
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
-        });
-        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-      } else {
-        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
-          followerId: user.userID,
-        });
-        setFollowedUsers((prev) => [...prev, followUserId]);
-      }
-      await fetchFollowedUsers(user.userID);
-    } catch (error) {
-      console.error("Error toggling follow status:", error);
-    }
-  };
-
   const handleClick = (entryID) => {
     setEntries((prevEntries) =>
       prevEntries.map((entry) =>
@@ -199,6 +167,10 @@ const Profile = () => {
     }, 300);
 
     handleGadify(entryID);
+  };
+
+  const handleFollowToggle = (entryID) => {
+    // Implement handleFollowToggle logic here
   };
 
   const formatDate = (dateString) => {
@@ -222,7 +194,7 @@ const Profile = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const ownProfile = currentUser.userID == userID;
+  const ownProfile = currentUser?.userID == userID;
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
@@ -268,7 +240,7 @@ const Profile = () => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <div
-                    className="grayHover  d-flex align-items-center justify-content-center"
+                    className="grayHover d-flex align-items-center justify-content-center"
                     style={{
                       position: "absolute",
                       borderRadius: "50%",
