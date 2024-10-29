@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function ReportButton() {
+function ReportCommentButton() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -55,4 +55,4 @@ function ReportButton() {
   );
 }
 
-export default ReportButton;
+export default ReportCommentButton;

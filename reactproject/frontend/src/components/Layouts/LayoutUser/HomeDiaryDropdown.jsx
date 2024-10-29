@@ -1,5 +1,5 @@
 import Dropdown from "react-bootstrap/Dropdown";
-import ReportButton from "../ReportButton";
+import ReportButton from "../CommentSection/ReportCommentButton";
 
 const HomeDiaryDropdown = () => {
   return (

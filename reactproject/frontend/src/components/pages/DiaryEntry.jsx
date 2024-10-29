@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AnonymousIcon from "../../assets/Anonymous.png";
 import MainLayout from "../Layouts/MainLayout";
-import CommentDropdown from "../Layouts/CommentDropdown";
+import CommentDropdown from "../Layouts/CommentSection/CommentDropdown";
 import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import axios from "axios";
 

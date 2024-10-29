@@ -5,11 +5,11 @@ import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
-import AnonymousIcon from "../../assets/Anonymous.png";
+import AnonymousIcon from "../../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import ReportButton from "./ReportButton";
+import ReportButton from "./ReportCommentButton";
 
 const CommentSection = ({ userID, entryID, entry }) => {
   const [user, setUser] = useState(null);
