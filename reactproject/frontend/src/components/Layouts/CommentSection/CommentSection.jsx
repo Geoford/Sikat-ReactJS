@@ -261,7 +261,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
                 <Dropdown.Menu className="p-2 ">
                   {!canManage && (
                     <Dropdown.Item className="p-0 btn btn-light">
-                      <ReportButton></ReportButton>
+                      <ReportButton />
                     </Dropdown.Item>
                   )}
 

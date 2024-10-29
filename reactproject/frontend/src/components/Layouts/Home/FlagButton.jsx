@@ -106,7 +106,7 @@ function FlagButton() {
               {isOtherSelected && (
                 <input
                   type="text"
-                  className="form-control mt-1"
+                  className="form-control mt-"
                   placeholder="Please specify"
                   value={otherText}
                   onChange={handleOtherTextChange}
