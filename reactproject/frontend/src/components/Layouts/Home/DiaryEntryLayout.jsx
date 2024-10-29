@@ -98,7 +98,7 @@ const DiaryEntryLayout = ({
   if (loading) {
     return (
       <div
-        className="position-relative rounded shadow-sm p-3 mb-2"
+        className="position-relative rounded shadow-sm p-3 mb-2 w-100"
         style={{ backgroundColor: "white" }}
       >
         <div className="d-flex align-items-center border-bottom pb-2 gap-2">

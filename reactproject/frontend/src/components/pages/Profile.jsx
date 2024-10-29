@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
-import OthersJournalEntries from "./PagesUser/UserProfileLayout/OthersJournalEntries";
+import JournalEntries from "./PagesUser/UserProfileLayout/JournalEntries";
 import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/LayoutUser/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/LayoutUser/OthersProfileDropdown";
@@ -277,7 +277,7 @@ const Profile = () => {
               className="position-sticky d-flex flex-column gap-2"
               style={{ minHeight: "37vh", top: "70px" }}
             >
-              <OthersJournalEntries userID={userID} />
+              <JournalEntries userID={userID} />
             </div>
           </div>
 

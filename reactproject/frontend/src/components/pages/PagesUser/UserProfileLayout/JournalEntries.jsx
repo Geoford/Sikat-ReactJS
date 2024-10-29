@@ -67,13 +67,18 @@ const RecentJournalEntries = ({ userID }) => {
         ) : (
           <div style={{ height: "35vh", overflowY: "scroll" }}>
             {entries.map((entry) => (
-              <div key={entry.entryID} className="pe-1 mt-1">
+              <Link
+                to={`/DiaryEntry/${entry.entryID}`}
+                key={entry.entryID}
+                className="rounded text-decoration-none  text-secondary"
+                style={{ cursor: "pointer" }}
+              >
                 <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 py-2">
                   <p className="m-0">
                     {entry.title} - {formatDate(entry.created_at)}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
