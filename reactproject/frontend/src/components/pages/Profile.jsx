@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
-import JournalEntries from "./PagesUser/UserProfileLayout/JournalEntries";
+import JournalEntries from "../Layouts/Profile/JournalEntries";
 import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
-import ProfileDropdown from "../Layouts/LayoutUser/ProfileDropdown";
-import OthersProfileDropdown from "../Layouts/LayoutUser/OthersProfileDropdown";
+import ProfileDropdown from "../Layouts/Profile/ProfileDropdown";
+import OthersProfileDropdown from "../Layouts/Profile/OthersProfileDropdown";
 import axios from "axios";
 
 const Profile = () => {
