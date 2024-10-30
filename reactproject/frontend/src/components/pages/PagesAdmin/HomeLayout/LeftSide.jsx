@@ -53,14 +53,12 @@ const LeftSideAdmin = () => {
       );
       if (response.data.entries && Array.isArray(response.data.entries)) {
         setEntries(response.data.entries);
-
-        response.data.entries.forEach((entry) => {});
       } else {
         console.error("Response data is not an array", response.data);
         setEntries([]);
       }
     } catch (error) {
-      console.error("Error fetching entries:", error);
+      console.error("Error fetching entries:", error.response || error.message);
       setError("No entry.");
     } finally {
       setIsLoading(false);

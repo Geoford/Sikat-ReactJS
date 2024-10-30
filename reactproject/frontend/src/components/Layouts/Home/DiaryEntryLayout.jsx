@@ -31,7 +31,6 @@ const DiaryEntryLayout = ({
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch the current user from localStorage
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (!storedUser) {
@@ -42,13 +41,14 @@ const DiaryEntryLayout = ({
   }, [navigate]);
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!userID || !currentUser) return;
 
     const fetchUserData = async () => {
       try {
         const response = await fetch(
           `http://localhost:8081/fetchUser/user/${userID}`
         );
+
         if (!response.ok) {
           throw new Error("User not found");
         }
@@ -247,7 +247,7 @@ const DiaryEntryLayout = ({
       style={{ backgroundColor: "white", width: "100%" }}
     >
       <div className="d-flex align-items-start border-bottom pb-2">
-        {entry.anonymity === "private" ? (
+        {entry.anonimity === "private" ? (
           <div className="d-flex align-items-center gap-2">
             <div className="profilePicture">
               <img
@@ -286,7 +286,7 @@ const DiaryEntryLayout = ({
                 />
               </div>
               <div className="d-flex flex-column align-items-start">
-                {entry.isAdmin === 1 ? entry.username : "Alias"}
+                {entry.isAdmin === 1 ? entry.username : entry.username}
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
                   {formatDate(entry.created_at)}
                 </p>

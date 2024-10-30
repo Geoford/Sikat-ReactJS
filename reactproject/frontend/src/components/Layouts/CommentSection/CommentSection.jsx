@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
+import AnonymousIcon from "../../assets/Anonymous.png";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
@@ -133,12 +134,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
     setLoading(true);
     try {
-      await axios.delete(
-        `http://localhost:8081/deleteComments/${commentID}?userID=${userID}`,
-        {
-          data: { userID },
-        }
-      );
+      await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
+        data: { userID },
+      });
       fetchComments();
     } catch (error) {
       console.error("Error deleting comment:", error.response || error);
