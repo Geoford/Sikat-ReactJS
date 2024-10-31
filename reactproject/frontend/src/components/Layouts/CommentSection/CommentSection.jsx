@@ -7,7 +7,6 @@ import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
 import AnonymousIcon from "../../../assets/Anonymous.png";
 import Button from "react-bootstrap/Button";
-import AnonymousIcon from "../../assets/Anonymous.png";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
@@ -20,7 +19,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [replyTo, setReplyTo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [openAccordions, setOpenAccordions] = useState([]); // Keep track of open accordions
+  const [openAccordions, setOpenAccordions] = useState([]);
 
   const replyTextsRef = useRef({});
   const newCommentRef = useRef(null);
@@ -123,29 +122,6 @@ const CommentSection = ({ userID, entryID, entry }) => {
     }
   };
 
-  const handleDeleteComment = async (commentID) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this comment?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:8081/deleteComments/${commentID}`, {
-        data: { userID },
-      });
-      fetchComments();
-    } catch (error) {
-      console.error("Error deleting comment:", error.response || error);
-      setError("Failed to delete comment. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleReplyTextChange = (commentID, value) => {
     replyTextsRef.current[commentID] = value;
   };
@@ -178,6 +154,21 @@ const CommentSection = ({ userID, entryID, entry }) => {
       setError("Failed to post reply. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentID) => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      setLoading(true);
+      try {
+        await axios.delete(`http://localhost:8081/deleteComment/${commentID}`);
+        fetchComments(); // Refresh comments after deletion
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        setError("Failed to delete comment. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -275,12 +266,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
                   )}
                   {canManage && (
                     <Dropdown.Item className="p-0 btn btn-light ">
-                      <button
-                        className="btn btn-light w-100 "
-                        onClick={() => handleDeleteComment(comment.commentID)}
-                      >
-                        Edit
-                      </button>
+                      <button className="btn btn-light w-100 ">Edit</button>
                     </Dropdown.Item>
                   )}
                 </Dropdown.Menu>
@@ -289,7 +275,6 @@ const CommentSection = ({ userID, entryID, entry }) => {
           </div>
         </div>
 
-        {/* Comments */}
         <div>
           <div className="ps-5 ms-2 d-flex align-items-center gap-2">
             <p

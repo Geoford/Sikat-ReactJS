@@ -437,6 +437,21 @@ app.get("/entries", (req, res) => {
   });
 });
 
+app.delete("/deleteEntry/:entryID", (req, res) => {
+  const { entryID } = req.params;
+
+  const deleteQuery = "DELETE FROM diary_entries WHERE entryID = ?";
+
+  db.query(deleteQuery, [entryID], (err, result) => {
+    if (err) {
+      console.error("Error deleting entry:", err);
+      res.status(500).send("Error deleting the entry.");
+    } else {
+      res.status(200).send("Diary entry deleted successfully.");
+    }
+  });
+});
+
 app.post("/entry/:entryID/gadify", (req, res) => {
   const { entryID } = req.params;
   const userID = req.body.userID;
@@ -936,26 +951,17 @@ app.post("/comments", (req, res) => {
   );
 });
 
-// Backend delete route to handle comment deletion
-app.delete("/deleteComments/:commentID", async (req, res) => {
-  const { commentID } = req.params;
-  const { userID } = req.body; // Assuming userID verification is needed
+app.delete("/deleteComment/:commentID", (req, res) => {
+  const commentID = req.params.commentID;
 
-  try {
-    // Verify user permission to delete
-    const comment = await CommentModel.findById(commentID);
-    if (!comment || comment.userID !== userID) {
-      return res.status(403).json({ message: "Unauthorized action." });
+  const sqlDelete = "DELETE FROM comments WHERE commentID = ?";
+  db.query(sqlDelete, [commentID], (err, result) => {
+    if (err) {
+      console.error("Error deleting comment:", err);
+      return res.status(500).json({ error: "Failed to delete comment" });
     }
-
-    await CommentModel.deleteOne({ _id: commentID });
-    res.status(200).json({ message: "Comment deleted successfully." });
-  } catch (error) {
-    console.error("Error deleting comment:", error);
-    res
-      .status(500)
-      .json({ message: "Error deleting comment. Please try again." });
-  }
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  });
 });
 
 app.post("/uploadProfile", upload.single("file"), (req, res) => {
