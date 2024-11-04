@@ -9,11 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/react-datepicker": "^7.0.0",
     "bootstrap": "^5.3.3",
     "boxicons": "^2.1.4",
     "gsap": "^3.12.5",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.4",
+    "react-datepicker": "^7.5.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.26.2",
     "react-transition-group": "^4.4.5"

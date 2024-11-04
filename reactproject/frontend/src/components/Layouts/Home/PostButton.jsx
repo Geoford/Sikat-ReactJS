@@ -9,6 +9,8 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "../LayoutUser/SubjectSelection";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function PostButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -18,14 +20,18 @@ function PostButton({ onEntrySaved }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [visibility, setVisibility] = useState("private");
-  const [anonimity, setAnonimity] = useState("private");
+  const [visibility, setVisibility] = useState("now");
+  const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
+  const [scheduledDate, setScheduledDate] = useState(null);
 
   const navigate = useNavigate();
 
   const handleChangeVisibility = (event) => {
     setVisibility(event.target.value);
+    if (event.target.value === "now") {
+      setScheduledDate(null); // Reset date when changing to "Post Now"
+    }
   };
 
   const handleChangeAnonimity = (event) => {
@@ -52,6 +58,7 @@ function PostButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
+    setScheduledDate(null);
   };
   const handleShow = () => setShow(true);
 
@@ -59,6 +66,9 @@ function PostButton({ onEntrySaved }) {
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
+    if (visibility === "later" && !scheduledDate) {
+      errors.scheduledDate = "Please select a date and time for your post.";
+    }
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) return;
@@ -74,6 +84,9 @@ function PostButton({ onEntrySaved }) {
     formData.append("userID", user.userID);
     formData.append("visibility", visibility);
     formData.append("anonimity", anonimity);
+    if (scheduledDate) {
+      formData.append("scheduledDate", scheduledDate.toISOString());
+    }
     if (file) {
       formData.append("file", file);
     }
@@ -119,7 +132,7 @@ function PostButton({ onEntrySaved }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Diary</Modal.Title>
+          <Modal.Title>Create New Post</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
@@ -127,36 +140,40 @@ function PostButton({ onEntrySaved }) {
             <p className="m-0">{user?.username || "User"}</p>
             <div>
               <select
+                className="py-1"
                 id="visibility"
                 value={visibility}
                 onChange={handleChangeVisibility}
               >
-                <option value="private">Private</option>
-                <option value="public">Public</option>
+                <option value="now">Post Now</option>
+                <option value="later">Post Later</option>
               </select>
             </div>
-            <div>
-              <select
-                id="anonimity"
-                value={anonimity}
-                onChange={handleChangeAnonimity}
-                disabled={visibility === "private"}
-              >
-                <option value="private">Anonymous</option>
-                <option value="public">Not Anonymous</option>
-              </select>
-            </div>
+            {visibility === "later" && (
+              <div className="">
+                <DatePicker
+                  selected={scheduledDate}
+                  onChange={(date) => setScheduledDate(date)}
+                  showTimeSelect
+                  dateFormat="Pp"
+                  className="form-control"
+                  isInvalid={!!formErrors.scheduledDate}
+                  placeholderText="Select Date and Time"
+                />
+                {formErrors.scheduledDate && (
+                  <div className="text-danger">{formErrors.scheduledDate}</div>
+                )}
+              </div>
+            )}
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          <div>
-            <SubjectSelection></SubjectSelection>
-          </div>
+
           <div className="">
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"
-                placeholder="Journal Title"
-                aria-label="Journal Title"
+                placeholder="Title"
+                aria-label="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 isInvalid={!!formErrors.title}
@@ -166,13 +183,9 @@ function PostButton({ onEntrySaved }) {
                 {formErrors.title}
               </Form.Control.Feedback>
             </InputGroup>
-            <FloatingLabel
-              controlId="floatingTextarea2"
-              label={`Describe your day, ${user?.username || "User"}!`}
-            >
+            <FloatingLabel controlId="floatingTextarea2" label="Description">
               <Form.Control
                 as="textarea"
-                placeholder=""
                 style={{ height: "100px" }}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -183,7 +196,8 @@ function PostButton({ onEntrySaved }) {
                 {formErrors.description}
               </Form.Control.Feedback>
             </FloatingLabel>
-            <div className="ps-1 pt-2">
+
+            <div className="ps-1 pt-2 mt-2">
               <label htmlFor="uploadPhoto">
                 <div style={{ cursor: "pointer" }}>
                   <img className="miniIcon mb-1 me-1" src={uploadIcon} alt="" />
@@ -204,7 +218,7 @@ function PostButton({ onEntrySaved }) {
             Close
           </Button>
           <button
-            className="orangeButton py-2"
+            className="orangeButton py-2 px-3"
             variant="primary"
             onClick={handleSubmit}
             disabled={loading}
@@ -219,10 +233,10 @@ function PostButton({ onEntrySaved }) {
                   role="status"
                   aria-hidden="true"
                 />{" "}
-                Saving Changes...
+                Creating Post...
               </>
             ) : (
-              "Save Changes"
+              "Publish"
             )}
           </button>
         </Modal.Footer>
