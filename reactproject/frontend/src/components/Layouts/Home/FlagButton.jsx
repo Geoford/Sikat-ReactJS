@@ -1,44 +1,59 @@
 import { useState } from "react";
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function FlagButton() {
-  const [show, setShow] = useState(false); // Initialize show state
+function FlagButton({ userID, entryID, entry }) {
+  const [show, setShow] = useState(false);
   const [selectedBehaviors, setSelectedBehaviors] = useState([]);
-  const [otherText, setOtherText] = useState(""); // State to manage the text input for "Others"
-  const [isOtherSelected, setIsOtherSelected] = useState(false); // Track if "Others" checkbox is selected
+  const [otherText, setOtherText] = useState("");
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
 
   const handleClose = () => {
     setShow(false);
-    setOtherText(""); // Reset the "Others" text when closing the modal
-    setIsOtherSelected(false); // Reset the checkbox for "Others"
+    setSelectedBehaviors([]);
+    setOtherText("");
+    setIsOtherSelected(false);
   };
 
   const handleShow = () => setShow(true);
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
+    if (value === "others") setIsOtherSelected(checked);
+    setSelectedBehaviors((prevSelected) =>
+      checked
+        ? [...prevSelected, value]
+        : prevSelected.filter((behavior) => behavior !== value)
+    );
+  };
 
-    if (value === "others") {
-      setIsOtherSelected(checked); // Show the input when "Others" is checked
-    }
+  const handleOtherTextChange = (event) => setOtherText(event.target.value);
 
-    // Update selected behaviors array based on whether the checkbox is checked or unchecked
-    if (checked) {
-      setSelectedBehaviors((prevSelected) => [...prevSelected, value]);
-    } else {
-      setSelectedBehaviors((prevSelected) =>
-        prevSelected.filter((behavior) => behavior !== value)
+  const handleSubmit = async () => {
+    const reportData = {
+      userID,
+      entryID,
+      behaviors: selectedBehaviors.join(", "), // Convert behaviors array to a comma-separated string
+      otherText: isOtherSelected ? otherText : null,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/report",
+        reportData
       );
+
+      if (response.status === 200) {
+        console.log("Report submitted successfully");
+        handleClose();
+      } else {
+        console.error("Failed to submit report");
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error);
     }
   };
-
-  const handleOtherTextChange = (event) => {
-    setOtherText(event.target.value); // Update the text input for "Others"
-  };
-
-  const checkboxStyle = "border rounded p-2";
-  const labelStyle = "ms-1";
 
   return (
     <>
@@ -59,54 +74,54 @@ function FlagButton() {
               )}
             </label>
             <div className="d-flex flex-column gap-2">
-              <label htmlFor="bullying" className={checkboxStyle}>
+              <label className="border rounded p-2">
                 <input
                   type="checkbox"
                   id="bullying"
                   value="bullying"
                   onChange={handleCheckboxChange}
                 />
-                <label className={labelStyle} htmlFor="bullying">
+                <label className="ms-1" htmlFor="bullying">
                   Bullying
                 </label>
               </label>
-              <label htmlFor="harassment" className={checkboxStyle}>
+              <label className="border rounded p-2">
                 <input
                   type="checkbox"
                   id="harassment"
                   value="harassment"
                   onChange={handleCheckboxChange}
                 />
-                <label className={labelStyle} htmlFor="harassment">
+                <label className="ms-1" htmlFor="harassment">
                   Harassment
                 </label>
               </label>
-              <label htmlFor="pretending" className={checkboxStyle}>
+              <label className="border rounded p-2">
                 <input
                   type="checkbox"
                   id="pretending"
                   value="pretending"
                   onChange={handleCheckboxChange}
                 />
-                <label className={labelStyle} htmlFor="pretending">
+                <label className="ms-1" htmlFor="pretending">
                   Pretending to be someone
                 </label>
               </label>
-              <label htmlFor="others" className={checkboxStyle}>
+              <label className="border rounded p-2">
                 <input
                   type="checkbox"
                   id="others"
                   value="others"
                   onChange={handleCheckboxChange}
                 />
-                <label className={labelStyle} htmlFor="others">
+                <label className="ms-1" htmlFor="others">
                   Others:
                 </label>
               </label>
               {isOtherSelected && (
                 <input
                   type="text"
-                  className="form-control mt-"
+                  className="form-control mt-2"
                   placeholder="Please specify"
                   value={otherText}
                   onChange={handleOtherTextChange}
@@ -119,7 +134,7 @@ function FlagButton() {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <button className="primaryButton py-2 rounded" onClick={handleClose}>
+          <button className="primaryButton py-2 rounded" onClick={handleSubmit}>
             Save Changes
           </button>
         </Modal.Footer>

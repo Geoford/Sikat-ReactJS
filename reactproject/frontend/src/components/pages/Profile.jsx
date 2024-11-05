@@ -56,23 +56,24 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       fetchFollowedUsers(user.userID);
-      fetchProfileOwnerEntries();
+      fetchEntries();
     }
   }, [user]);
 
-  const fetchProfileOwnerEntries = async () => {
+  const fetchEntries = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8081/fetchUserEntry/user/${userID}`
+      const response = await axios.get(
+        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
       );
-      if (!response.ok) throw new Error("No entry found");
-      const data = await response.json();
-      setEntries(data.entries);
+
+      if (response.data.entries && Array.isArray(response.data.entries)) {
+        setEntries(response.data.entries);
+      } else {
+        setEntries([]); // Ensure entries is an empty array if no data found
+      }
     } catch (error) {
-      setError("There was an error fetching the profile owner's entries.");
       console.error("Error fetching entries:", error);
-    } finally {
-      setIsLoading(false);
+      setError("No entries available.");
     }
   };
 
