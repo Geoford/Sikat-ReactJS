@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function FlagButton({ userID, entryID, entry }) {
+function FlagButton({ userID, entryID }) {
   const [show, setShow] = useState(false);
   const [selectedBehaviors, setSelectedBehaviors] = useState([]);
   const [otherText, setOtherText] = useState("");
@@ -28,8 +28,6 @@ function FlagButton({ userID, entryID, entry }) {
     );
   };
 
-  const handleOtherTextChange = (event) => setOtherText(event.target.value);
-
   const handleSubmit = async () => {
     const reportData = {
       userID,
@@ -38,9 +36,11 @@ function FlagButton({ userID, entryID, entry }) {
       otherText: isOtherSelected ? otherText : null,
     };
 
+    console.log("Submitting report data:", reportData); // Log the data to check its format
+
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/report",
+        "http://localhost:8081/flag",
         reportData
       );
 

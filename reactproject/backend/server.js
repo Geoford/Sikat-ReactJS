@@ -269,7 +269,6 @@ app.post(
     const { title, description, userID, visibility, anonimity, subjects } =
       req.body;
     const file = req.file;
-    const parsedSubjects = JSON.parse(subjects); // Parse the subjects
 
     if (!title || !description || !userID) {
       return res
@@ -298,7 +297,7 @@ app.post(
       visibility,
       anonimity, // Ensure this value is passed correctly
       diary_image,
-      JSON.stringify(parsedSubjects),
+      subjects, // Store subjects as plain text
       hasAlarmingWords ? 1 : 0, // Add the flag here (1 = true, 0 = false)
     ];
 
@@ -1311,20 +1310,67 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
-app.post("/api/report", async (req, res) => {
+app.post("/flag", async (req, res) => {
   const { userID, entryID, behaviors, otherText } = req.body;
+
+  // Validate input data
+  if (!userID || !entryID || !behaviors) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
   try {
     await db.query(
       "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
-      [userID, entryID, behaviors, otherText]
+      [userID, entryID, behaviors, otherText || null]
     );
 
-    res.status(200).json({ message: "Report submitted successfully" });
+    // Send a success response
+    return res.status(200).json({ message: "Report submitted successfully" });
   } catch (error) {
     console.error("Error saving report:", error);
-    res.status(500).json({ message: "Error submitting report" });
+    // Provide detailed error information
+    return res
+      .status(500)
+      .json({ message: "Error submitting report", error: error.message });
   }
+});
+
+app.post("/verify-password/:userID", (req, res) => {
+  const { password } = req.body;
+  const { userID } = req.params;
+
+  // Validate input
+  if (!userID || !password) {
+    return res.status(400).json({ error: "User ID and password are required" });
+  }
+
+  // SQL query to retrieve the user password from the database
+  const sql = `
+    SELECT password
+    FROM user_table
+    WHERE userID = ?
+  `;
+
+  db.query(sql, [userID], (err, data) => {
+    if (err) {
+      console.error("Error retrieving data:", err);
+      return res.status(500).json({ error: "Error retrieving data" });
+    }
+
+    if (data.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = data[0];
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Respond with success if the password is valid
+    return res.json({ message: "Password verified successfully" });
+  });
 });
 
 // app.get("/notifications/:userID", async (req, res) => {

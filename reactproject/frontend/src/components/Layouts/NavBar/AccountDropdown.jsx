@@ -2,7 +2,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const AccountDropdown = () => {
   const [user, setUser] = useState(null);
@@ -161,7 +161,10 @@ const AccountDropdown = () => {
           </Link>
         </Dropdown.Item>
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
-          <Link className="text-decoration-none text-dark" to="/Settings">
+          <Link
+            className="text-decoration-none text-dark"
+            to={`/Settings/${user.userID}`}
+          >
             <button className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2">
               Settings <i class="bx bx-cog"></i>
             </button>

@@ -49,7 +49,7 @@ function App() {
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
           <Route path="/GetHelp" element={<GetHelp />} />
-          <Route path="/Settings" element={<Settings />} />
+          <Route path="/Settings/:userID" element={<Settings />} />
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />

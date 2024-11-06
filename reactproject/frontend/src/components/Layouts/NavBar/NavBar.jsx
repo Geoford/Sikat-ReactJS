@@ -60,7 +60,7 @@ const NavBar = () => {
             <NotificationButton userID={user.userID} />
           </div>
           <div>
-            <AccountDropdown />
+            <AccountDropdown userID={user.userID} />
           </div>
         </div>
       </div>
