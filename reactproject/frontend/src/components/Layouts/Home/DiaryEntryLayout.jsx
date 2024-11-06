@@ -340,7 +340,7 @@ const DiaryEntryLayout = ({
 
       <div
         className="text-start border-bottom p-2"
-        style={{ minHeight: "10rem" }}
+        style={{ minHeight: "5rem" }}
       >
         <h5>
           {entry.title}{" "}
