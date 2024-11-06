@@ -389,6 +389,83 @@ app.post(
   }
 );
 
+app.post(
+  "/entryadmin",
+  (req, res, next) => {
+    upload.single("file")(req, res, function (err) {
+      if (err) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res
+            .status(400)
+            .send({ message: "File size is too large. Maximum 5MB allowed." });
+        }
+        if (err.code === "INVALID_FILE_TYPE") {
+          return res
+            .status(400)
+            .send({ message: "Only image files are allowed." });
+        }
+        return res.status(500).send({ message: "File upload error." });
+      }
+      next();
+    });
+  },
+  (req, res) => {
+    const { title, description, userID } = req.body;
+    const file = req.file;
+
+    if (!title || !description || !userID) {
+      return res
+        .status(400)
+        .send({ message: "Title, description, and userID are required." });
+    }
+
+    let diary_image = "";
+    if (file) {
+      diary_image = `/uploads/${file.filename}`;
+    }
+
+    // Insert diary entry into the database with containsAlarmingWords
+    const query = `
+      INSERT INTO diary_entries (title, description, userID, diary_image)
+      VALUES (?, ?, ?, ?)
+    `;
+    const values = [title, description, userID, diary_image];
+
+    db.query(query, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting diary entry:", err);
+        return res
+          .status(500)
+          .send({ message: "Failed to save diary entry. Please try again." });
+      }
+
+      res.status(200).send({
+        message: "Entry added successfully!",
+      });
+    });
+  }
+);
+
+app.get("/flagged", (req, res) => {
+  const query = `
+  SELECT 
+    flagged_reports.*,
+    user_table.username,
+    diary_entries.title
+  FROM flagged_reports
+  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
   const filters = req.query.filters; // Get filter parameters from the request

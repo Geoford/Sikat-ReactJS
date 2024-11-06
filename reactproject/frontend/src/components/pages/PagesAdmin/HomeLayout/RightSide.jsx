@@ -1,56 +1,11 @@
-import DiaryEntry from "../../../../assets/DiaryEntry.png";
-import SampleImage from "../../../../assets/Background.jpg";
-import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/anonymous.png";
-import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
-
-const UserList = ({ users, handleFollowToggle, isFollowing }) => (
-  <div
-    className="custom-scrollbar mt-2 pe-1"
-    style={{ height: "25vh", overflowY: "scroll" }}
-  >
-    {users.map((user) => (
-      <div
-        key={user.userID}
-        className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 pe-2 mb-2"
-      >
-        <div className="d-flex align-items-center gap-2">
-          <div className="profilePicture">
-            <img
-              src={
-                user.profile_image
-                  ? `http://localhost:8081${user.profile_image}`
-                  : DefaultProfile
-              }
-              alt="Profile"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-          <p className="m-0 ms-2">{user.username}</p>
-          <button
-            className="secondaryButton"
-            onClick={() => handleFollowToggle(user.userID)}
-          >
-            {isFollowing(user.userID) ? "Unfollow" : "Follow"}
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-);
 
 const Center = () => {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [followers, setFollowers] = useState([]);
-  const [followedUsers, setFollowedUsers] = useState([]);
+  const [flaggedUsers, setFlaggedUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,86 +13,22 @@ const Center = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchFollowers(parsedUser.userID);
-      fetchUsers();
-      fetchFollowedUsers(parsedUser.userID);
+      fetchFlagged();
     } else {
       navigate("/");
     }
   }, [navigate]);
 
-  const fetchUsers = async () => {
+  const fetchFlagged = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/users");
-      setUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  const fetchFollowers = async (userID) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8081/followers/${userID}`
-      );
-      setFollowers(response.data);
-    } catch (error) {
-      console.error("Error fetching followers:", error);
-    }
-  };
-
-  const fetchFollowedUsers = async (userID) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8081/followedUsers/${userID}`
-      );
-      const followedUsersData = response.data; // Store full user data
-      setFollowedUsers(followedUsersData); // Set the full data to state
-      console.log("Fetched followed users:", followedUsersData);
-      localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
-    } catch (error) {
-      console.error("Error fetching followed users:", error);
-    }
-  };
-
-  const handleFollowToggle = async (followUserId) => {
-    if (!followUserId) {
-      console.error("User ID to follow/unfollow is undefined");
-      return;
-    }
-
-    if (user.userID === followUserId) {
-      alert("You cannot follow yourself.");
-      return;
-    }
-
-    const isFollowing = followedUsers.some((f) => f.userID === followUserId);
-
-    try {
-      if (isFollowing) {
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
-        });
-
-        setFollowedUsers((prev) =>
-          prev.filter((u) => u.userID !== followUserId)
-        );
-        alert(`You have unfollowed user ${followUserId}`);
+      const response = await axios.get("http://localhost:8081/flagged");
+      if (response.data.length > 0) {
+        setFlaggedUsers(response.data);
       } else {
-        const response = await axios.post(
-          `http://localhost:8081/follow/${followUserId}`,
-          {
-            followerId: user.userID,
-          }
-        );
-        const followedUserData = response.data; // Expect the user data in the response
-
-        setFollowedUsers((prev) => [...prev, followedUserData]);
-        alert(`You are now following user ${followUserId}`);
+        console.warn("No flagged reports found in response data.");
       }
     } catch (error) {
-      console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
+      console.error("Error fetching flagged users:", error);
     }
   };
 
@@ -191,75 +82,41 @@ const Center = () => {
             className="w-100 custom-scrollbar mt-2 pe-1"
             style={{ height: "40vh", overflowY: "scroll" }}
           >
-            <Link
-              to="/Admin/DiaryEntry"
-              className="text-decoration-none"
-              style={{ cursor: "pointer" }}
-            >
-              <div className="linkText d-flex align-items-center gap-2 rounded">
-                <div className="profilePicture">
-                  <img
-                    src={DefaultProfile}
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <div className="d-flex flex-column align-items-start">
-                  <p className="text-secondary m-0">FullName</p>
-                  <h5 className="text-secondary m-0">Journal Title</h5>
-                </div>
-              </div>
-            </Link>
-            <Link
-              to="/Admin/DiaryEntry"
-              className="text-decoration-none"
-              style={{ cursor: "pointer" }}
-            >
-              <div className="linkText d-flex align-items-center gap-2 rounded">
-                <div className="profilePicture">
-                  <img
-                    src={DefaultProfile}
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <div className="d-flex flex-column align-items-start">
-                  <p className="text-secondary m-0">FullName</p>
-                  <h5 className="text-secondary m-0">Journal Title</h5>
-                </div>
-              </div>
-            </Link>
-            <Link
-              to="/Admin/DiaryEntry"
-              className="text-decoration-none"
-              style={{ cursor: "pointer" }}
-            >
-              <div className="linkText d-flex align-items-center gap-2 rounded">
-                <div className="profilePicture">
-                  <img
-                    src={DefaultProfile}
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <div className="d-flex flex-column align-items-start">
-                  <p className="text-secondary m-0">FullName</p>
-                  <h5 className="text-secondary m-0">Journal Title</h5>
-                </div>
-              </div>
-            </Link>
+            {flaggedUsers.length > 0 ? (
+              flaggedUsers.map((flaggedUser) => (
+                <Link
+                  key={flaggedUser.userID}
+                  to="/Admin/DiaryEntry"
+                  className="text-decoration-none"
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="linkText d-flex align-items-center gap-2 rounded mb-2">
+                    <div className="profilePicture">
+                      <img
+                        src={flaggedUser.profile_image || DefaultProfile}
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                    <div className="d-flex flex-column align-items-start">
+                      <p className="text-secondary m-0">
+                        {flaggedUser.username}
+                      </p>
+                      <h5 className="text-secondary m-0">
+                        {flaggedUser.title}
+                      </h5>{" "}
+                      {/* Assuming journalTitle is available */}
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <p className="text-secondary">No flagged diaries found.</p>
+            )}
           </div>
         </div>
       </div>

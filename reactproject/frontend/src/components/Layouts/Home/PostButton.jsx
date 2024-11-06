@@ -82,8 +82,6 @@ function PostButton({ onEntrySaved }) {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("userID", user.userID);
-    formData.append("visibility", visibility);
-    formData.append("anonimity", anonimity);
     if (scheduledDate) {
       formData.append("scheduledDate", scheduledDate.toISOString());
     }
@@ -95,7 +93,7 @@ function PostButton({ onEntrySaved }) {
     setServerError("");
 
     axios
-      .post("http://localhost:8081/entry", formData, {
+      .post("http://localhost:8081/entryadmin", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
