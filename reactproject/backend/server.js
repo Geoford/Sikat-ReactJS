@@ -1234,6 +1234,22 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
+app.post("/api/report", async (req, res) => {
+  const { userID, entryID, behaviors, otherText } = req.body;
+
+  try {
+    await db.query(
+      "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
+      [userID, entryID, behaviors, otherText]
+    );
+
+    res.status(200).json({ message: "Report submitted successfully" });
+  } catch (error) {
+    console.error("Error saving report:", error);
+    res.status(500).json({ message: "Error submitting report" });
+  }
+});
+
 // app.get("/notifications/:userID", async (req, res) => {
 //   const { userID } = req.params;
 
