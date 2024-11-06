@@ -12,6 +12,7 @@ import AdminRightSide from "../../pages/PagesAdmin/HomeLayout/RightSide";
 import MainLayout from "../MainLayout";
 import ChatButton from "../LayoutUser/ChatButton";
 import AdminChatButton from "../LayoutAdmin/ChatButton";
+import CenterLayout from "./CenterLayout";
 
 export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
@@ -41,7 +42,7 @@ export default function HomeMainLayout({ isAdminPage }) {
           {isAdminPage ? <AdminLeftSide /> : <LeftSide />}
         </div>
         <div className="col-lg-6">
-          {isAdminPage ? <AdminCenter /> : <Center />}
+          <CenterLayout />
         </div>
         <div
           className="col-lg d-none d-lg-block"

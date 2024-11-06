@@ -141,29 +141,38 @@ const AccountDropdown = () => {
               className="text-decoration-none text-dark"
               to={`/Profile/${user.userID}`}
             >
-              <button className="w-100 btn btn-light text-end">
+              <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
                 {user && user.isAdmin ? (
                   <p className="m-0">Admin Account</p>
                 ) : (
                   <p className="m-0">Account</p>
                 )}
+                <i class="bx bx-user"></i>
               </button>
             </Link>
           </Dropdown.Item>
         )}
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link className="text-decoration-none text-dark" to="/DiaryEntries">
-            <button className="w-100 btn btn-light text-end">
+            <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
               Diary Entries
+              <i class="bx bx-edit"></i>
+            </button>
+          </Link>
+        </Dropdown.Item>
+        <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
+          <Link className="text-decoration-none text-dark" to="/Settings">
+            <button className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2">
+              Settings <i class="bx bx-cog"></i>
             </button>
           </Link>
         </Dropdown.Item>
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <button
-            className="w-100 btn btn-light text-end"
+            className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2"
             onClick={handleLogout}
           >
-            Log out
+            Log out <i class="bx bx-log-in"></i>
           </button>
         </Dropdown.Item>
       </Dropdown.Menu>

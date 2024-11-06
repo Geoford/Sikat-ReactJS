@@ -168,7 +168,7 @@ function PostButton({ onEntrySaved }) {
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
 
-          <div className="">
+          <div className="mt-2">
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"

@@ -10,6 +10,7 @@ import DiaryEntries from "./components/pages/DiaryEntries";
 import DiaryEntry from "./components/pages/DiaryEntry";
 import Profile from "./components/pages/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
+import Settings from "./components/pages/Settings";
 
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
@@ -47,7 +48,8 @@ function App() {
           <Route path="/Profile/:userID" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
-          <Route path="GetHelp" element={<GetHelp />} />
+          <Route path="/GetHelp" element={<GetHelp />} />
+          <Route path="/Settings" element={<Settings />} />
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />

@@ -461,3 +461,17 @@ input.form-control:focus {
   object-fit: cover;
   border-radius: 0.3rem;
 }
+
+/* FOR SETTINGS */
+.custom-nav .nav-link {
+  color: gray; /* Default color for unselected items */
+  background-color: #ffffff;
+}
+.custom-nav .nav-link:hover {
+  color: black; /* Default color for unselected items */
+  background-color: var(--background_light);
+}
+.custom-nav .nav-link.active {
+  color: #ffffff !important; /* Color for selected items */
+  background-color: var(--primary) !important;
+}
