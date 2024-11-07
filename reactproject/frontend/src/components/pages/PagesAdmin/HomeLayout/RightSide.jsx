@@ -104,7 +104,7 @@ const Center = () => {
                     </div>
                     <div className="d-flex flex-column align-items-start">
                       <p className="text-secondary m-0">
-                        {flaggedUser.username}
+                        {flaggedUser.firstName} {flaggedUser.lastName}
                       </p>
                       <h5 className="text-secondary m-0">
                         {flaggedUser.title}

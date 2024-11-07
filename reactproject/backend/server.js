@@ -226,7 +226,6 @@ app.put("/EditProfile/:userID", (req, res) => {
   }
 });
 
-// Define alarming words
 const alarmingWords = [
   "abuse",
   "violence",
@@ -240,7 +239,6 @@ const alarmingWords = [
   "exploitation",
 ];
 
-// Function to check for alarming words in text
 const containsAlarmingWords = (text) => {
   return alarmingWords.some((word) => text.toLowerCase().includes(word));
 };
@@ -445,26 +443,6 @@ app.post(
   }
 );
 
-app.get("/flagged", (req, res) => {
-  const query = `
-  SELECT 
-    flagged_reports.*,
-    user_table.username,
-    diary_entries.title
-  FROM flagged_reports
-  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
-`;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching reports:", err.message);
-      return res.status(500).json({ error: "Error fetching flagged reports" });
-    }
-    res.status(200).json(results);
-  });
-});
-
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
   const filters = req.query.filters; // Get filter parameters from the request
@@ -617,38 +595,6 @@ app.get("/fetchUser/user/:id", (req, res) => {
     }
 
     res.json(result[0]); // Merged result since the JOIN already includes profile data
-  });
-});
-
-app.get("/notificationUser/user/:id", (req, res) => {
-  const userID = req.params.id;
-
-  const userValues = `
-    SELECT 
-      user_table.userID, 
-      user_table.username, 
-      user_profiles.profile_image, 
-      user_profiles.bio, 
-      user_profiles.alias, 
-      user_profiles.followersCount, 
-      user_profiles.followingCount 
-    FROM user_table 
-    JOIN user_profiles ON user_table.userID = user_profiles.userID 
-    WHERE user_table.userID = ?
-  `;
-
-  db.query(userValues, [userID], (err, result) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ message: "Internal server error" });
-    }
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    console.log("API Result:", result[0]); // Add this to check the result
-    res.json(result[0]); // Return the merged user and profile data
   });
 });
 
@@ -1203,18 +1149,18 @@ app.get("/messages", (req, res) => {
 
 app.post("/notifications/:userID", async (req, res) => {
   const { userID } = req.params;
-  const { actorID, message, entryID, type, isAdmin } = req.body;
+  const { actorID, message, entryID, profile_image, type, isAdmin } = req.body;
 
   console.log("Request received:", req.body);
 
   const insertNotificationQuery = `
-    INSERT INTO notifications (userID, actorID, message, entryID, type)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO notifications (userID, actorID, message, entryID, profile_image, type)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     insertNotificationQuery,
-    [userID, actorID, message, entryID || null, type],
+    [userID, actorID, message, entryID || null, profile_image, type],
     (error, results) => {
       if (error) {
         console.error("Error inserting notification into database:", error);
@@ -1230,6 +1176,7 @@ app.post("/notifications/:userID", async (req, res) => {
           actorID,
           message,
           entryID: entryID || null,
+          profile_image,
           type,
           timestamp: new Date().toISOString(),
         })
@@ -1335,6 +1282,27 @@ app.post("/flag", async (req, res) => {
   }
 });
 
+app.get("/flagged", (req, res) => {
+  const query = `
+  SELECT 
+    flagged_reports.*,
+    user_table.firstName,
+    user_table.lastName,
+    diary_entries.title
+  FROM flagged_reports
+  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.post("/verify-password/:userID", (req, res) => {
   const { password } = req.body;
   const { userID } = req.params;
@@ -1373,36 +1341,31 @@ app.post("/verify-password/:userID", (req, res) => {
   });
 });
 
-// app.get("/notifications/:userID", async (req, res) => {
-//   const { userID } = req.params;
+app.get("/getnotifications/:userID", (req, res) => {
+  const { userID } = req.params;
 
-//   // Query to fetch notifications for the specified userID
-//   const fetchNotificationsQuery = `
-//     SELECT
-//       n.*,
-//       u.username AS actorUsername,
-//       up.profile_image AS actorProfileImage
-//     FROM
-//       notifications n
-//     JOIN
-//       user_table u ON n.actorID = u.userID
-//     LEFT JOIN
-//       user_profile up ON u.userID = up.userID
-//     WHERE
-//       n.userID = ?
-//     ORDER BY
-//       n.timestamp DESC
-//   `;
+  const fetchNotificationsQuery = `
+    SELECT
+      notifications.*,
+      notifications.profile_image AS actorProfileImage
+    FROM
+      notifications
+    
+    WHERE
+      notifications.userID = ?
+    ORDER BY
+      notifications.timestamp DESC
+  `;
 
-//   db.query(fetchNotificationsQuery, [userID], (error, results) => {
-//     if (error) {
-//       console.error("Error fetching notifications from database:", error);
-//       return res.status(500).send("Error fetching notifications");
-//     }
+  db.query(fetchNotificationsQuery, [userID], (error, results) => {
+    if (error) {
+      console.error("Error fetching notifications from database:", error);
+      return res.status(500).send("Error fetching notifications");
+    }
 
-//     res.status(200).json(results); // Send the notifications as JSON response
-//   });
-// });
+    res.status(200).json(results); // Send notifications as JSON response
+  });
+});
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

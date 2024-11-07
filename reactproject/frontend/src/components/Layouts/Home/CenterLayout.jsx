@@ -152,6 +152,7 @@ const CenterLayout = () => {
             .post(`http://localhost:8081/notifications/${entry.userID}`, {
               actorID: user.userID,
               entryID: entryID,
+              profile_image: user.profile_image,
               type: "gadify",
               message: `${user.username} gadified your diary entry.`,
             })
@@ -208,6 +209,7 @@ const CenterLayout = () => {
             userID: followUserId,
             actorID: user.userID,
             entryID: null,
+            profile_image: user.profile_image,
             type: "follow",
             message: `${user.username} has followed you.`,
           }

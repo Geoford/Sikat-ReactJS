@@ -2,7 +2,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AccountDropdown = () => {
   const [user, setUser] = useState(null);
