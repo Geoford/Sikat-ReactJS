@@ -151,7 +151,7 @@ function OffCanvassNotification() {
 
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Notifications asd</Offcanvas.Title>
+          <Offcanvas.Title>Notifications</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           {notifications.length === 0 ? (

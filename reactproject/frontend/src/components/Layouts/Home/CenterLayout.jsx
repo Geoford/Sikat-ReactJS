@@ -183,7 +183,7 @@ const CenterLayout = () => {
     try {
       if (isFollowing) {
         const confirmed = window.confirm(
-          `Are you sure you want to unfollow this ${followUserId}?`
+          `Are you sure you want to unfollow ${user.username}?`
         );
 
         if (!confirmed) {
@@ -194,14 +194,14 @@ const CenterLayout = () => {
         });
 
         setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-        alert(`You have unfollowed user ${followUserId}`);
+        alert(`You have unfollowed user ${user.username}`);
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
         setFollowedUsers((prev) => [...prev, followUserId]);
-        alert(`You are now following user ${followUserId}`);
+        alert(`You are now following ${user.username}`);
 
         await axios.post(
           `http://localhost:8081/notifications/${followUserId}`,
