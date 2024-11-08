@@ -48,8 +48,8 @@ const ProfileInformation = () => {
           </p>
           <Row className="mt-1 gap-2">
             <Col md={12}>
-              <FloatingLabel controlId="floatingInputGrid" label="Alias">
-                <Form.Control type="text" placeholder="Alias" />
+              <FloatingLabel controlId="floatingInputGrid" label="Username">
+                <Form.Control type="text" placeholder="Username" />
               </FloatingLabel>
             </Col>
             <Col>

@@ -6,6 +6,7 @@ import MainLayout from "../Layouts/MainLayout";
 import ProfileInformation from "../Layouts/SettingsLayouts/ProfileInformation";
 import PasswordAndSecurity from "../Layouts/SettingsLayouts/PasswordAndSecurity";
 import UserAuthentication from "../Layouts/SettingsLayouts/UserAuthentication";
+import FilterAndSubjects from "../Layouts/SettingsLayouts/FilterAndSubjects";
 
 const Settings = () => {
   const navItemStyle = "shadow d-flex align-items-center gap-2";
@@ -34,7 +35,7 @@ const Settings = () => {
                     <UserAuthentication></UserAuthentication>
                   </Nav.Link>
                 </Nav.Item>
-                <h5 className="m-0 text-start my-2">Manage System</h5>
+                <h5 className="m-0 text-start my-2">Managing Diaries</h5>
                 <Nav.Item>
                   <Nav.Link className={navItemStyle} eventKey="filter">
                     <i class="bx bx-filter-alt bx-sm"></i>
@@ -68,6 +69,18 @@ const Settings = () => {
                 </Tab.Pane>
                 <Tab.Pane eventKey="security">
                   <PasswordAndSecurity></PasswordAndSecurity>
+                </Tab.Pane>
+                <Tab.Pane eventKey="filter">
+                  <FilterAndSubjects></FilterAndSubjects>
+                </Tab.Pane>
+                <Tab.Pane eventKey="flag">
+                  <FilterAndSubjects></FilterAndSubjects>
+                </Tab.Pane>
+                <Tab.Pane eventKey="repComment">
+                  <FilterAndSubjects></FilterAndSubjects>
+                </Tab.Pane>
+                <Tab.Pane eventKey="repUser">
+                  <FilterAndSubjects></FilterAndSubjects>
                 </Tab.Pane>
               </Tab.Content>
             </Col>
