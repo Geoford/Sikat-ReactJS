@@ -226,7 +226,6 @@ app.put("/EditProfile/:userID", (req, res) => {
   }
 });
 
-// Define alarming words
 const alarmingWords = [
   "abuse",
   "violence",
@@ -240,7 +239,6 @@ const alarmingWords = [
   "exploitation",
 ];
 
-// Function to check for alarming words in text
 const containsAlarmingWords = (text) => {
   return alarmingWords.some((word) => text.toLowerCase().includes(word));
 };
@@ -269,7 +267,6 @@ app.post(
     const { title, description, userID, visibility, anonimity, subjects } =
       req.body;
     const file = req.file;
-    const parsedSubjects = JSON.parse(subjects); // Parse the subjects
 
     if (!title || !description || !userID) {
       return res
@@ -298,7 +295,7 @@ app.post(
       visibility,
       anonimity, // Ensure this value is passed correctly
       diary_image,
-      JSON.stringify(parsedSubjects),
+      subjects, // Store subjects as plain text
       hasAlarmingWords ? 1 : 0, // Add the flag here (1 = true, 0 = false)
     ];
 
@@ -445,26 +442,6 @@ app.post(
     });
   }
 );
-
-app.get("/flagged", (req, res) => {
-  const query = `
-  SELECT 
-    flagged_reports.*,
-    user_table.username,
-    diary_entries.title
-  FROM flagged_reports
-  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
-`;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching reports:", err.message);
-      return res.status(500).json({ error: "Error fetching flagged reports" });
-    }
-    res.status(200).json(results);
-  });
-});
 
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
@@ -618,38 +595,6 @@ app.get("/fetchUser/user/:id", (req, res) => {
     }
 
     res.json(result[0]); // Merged result since the JOIN already includes profile data
-  });
-});
-
-app.get("/notificationUser/user/:id", (req, res) => {
-  const userID = req.params.id;
-
-  const userValues = `
-    SELECT 
-      user_table.userID, 
-      user_table.username, 
-      user_profiles.profile_image, 
-      user_profiles.bio, 
-      user_profiles.alias, 
-      user_profiles.followersCount, 
-      user_profiles.followingCount 
-    FROM user_table 
-    JOIN user_profiles ON user_table.userID = user_profiles.userID 
-    WHERE user_table.userID = ?
-  `;
-
-  db.query(userValues, [userID], (err, result) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ message: "Internal server error" });
-    }
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    console.log("API Result:", result[0]); // Add this to check the result
-    res.json(result[0]); // Return the merged user and profile data
   });
 });
 
@@ -1204,18 +1149,18 @@ app.get("/messages", (req, res) => {
 
 app.post("/notifications/:userID", async (req, res) => {
   const { userID } = req.params;
-  const { actorID, message, entryID, type, isAdmin } = req.body;
+  const { actorID, message, entryID, profile_image, type, isAdmin } = req.body;
 
   console.log("Request received:", req.body);
 
   const insertNotificationQuery = `
-    INSERT INTO notifications (userID, actorID, message, entryID, type)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO notifications (userID, actorID, message, entryID, profile_image, type)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     insertNotificationQuery,
-    [userID, actorID, message, entryID || null, type],
+    [userID, actorID, message, entryID || null, profile_image, type],
     (error, results) => {
       if (error) {
         console.error("Error inserting notification into database:", error);
@@ -1231,6 +1176,7 @@ app.post("/notifications/:userID", async (req, res) => {
           actorID,
           message,
           entryID: entryID || null,
+          profile_image,
           type,
           timestamp: new Date().toISOString(),
         })
@@ -1311,52 +1257,115 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
-app.post("/api/report", async (req, res) => {
+app.post("/flag", async (req, res) => {
   const { userID, entryID, behaviors, otherText } = req.body;
+
+  // Validate input data
+  if (!userID || !entryID || !behaviors) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
   try {
     await db.query(
       "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
-      [userID, entryID, behaviors, otherText]
+      [userID, entryID, behaviors, otherText || null]
     );
 
-    res.status(200).json({ message: "Report submitted successfully" });
+    // Send a success response
+    return res.status(200).json({ message: "Report submitted successfully" });
   } catch (error) {
     console.error("Error saving report:", error);
-    res.status(500).json({ message: "Error submitting report" });
+    // Provide detailed error information
+    return res
+      .status(500)
+      .json({ message: "Error submitting report", error: error.message });
   }
 });
 
-// app.get("/notifications/:userID", async (req, res) => {
-//   const { userID } = req.params;
+app.get("/flagged", (req, res) => {
+  const query = `
+  SELECT 
+    flagged_reports.*,
+    user_table.firstName,
+    user_table.lastName,
+    diary_entries.title
+  FROM flagged_reports
+  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+`;
 
-//   // Query to fetch notifications for the specified userID
-//   const fetchNotificationsQuery = `
-//     SELECT
-//       n.*,
-//       u.username AS actorUsername,
-//       up.profile_image AS actorProfileImage
-//     FROM
-//       notifications n
-//     JOIN
-//       user_table u ON n.actorID = u.userID
-//     LEFT JOIN
-//       user_profile up ON u.userID = up.userID
-//     WHERE
-//       n.userID = ?
-//     ORDER BY
-//       n.timestamp DESC
-//   `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
 
-//   db.query(fetchNotificationsQuery, [userID], (error, results) => {
-//     if (error) {
-//       console.error("Error fetching notifications from database:", error);
-//       return res.status(500).send("Error fetching notifications");
-//     }
+app.post("/verify-password/:userID", (req, res) => {
+  const { password } = req.body;
+  const { userID } = req.params;
 
-//     res.status(200).json(results); // Send the notifications as JSON response
-//   });
-// });
+  // Validate input
+  if (!userID || !password) {
+    return res.status(400).json({ error: "User ID and password are required" });
+  }
+
+  // SQL query to retrieve the user password from the database
+  const sql = `
+    SELECT password
+    FROM user_table
+    WHERE userID = ?
+  `;
+
+  db.query(sql, [userID], (err, data) => {
+    if (err) {
+      console.error("Error retrieving data:", err);
+      return res.status(500).json({ error: "Error retrieving data" });
+    }
+
+    if (data.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = data[0];
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Respond with success if the password is valid
+    return res.json({ message: "Password verified successfully" });
+  });
+});
+
+app.get("/getnotifications/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  const fetchNotificationsQuery = `
+    SELECT
+      notifications.*,
+      notifications.profile_image AS actorProfileImage
+    FROM
+      notifications
+    
+    WHERE
+      notifications.userID = ?
+    ORDER BY
+      notifications.timestamp DESC
+  `;
+
+  db.query(fetchNotificationsQuery, [userID], (error, results) => {
+    if (error) {
+      console.error("Error fetching notifications from database:", error);
+      return res.status(500).send("Error fetching notifications");
+    }
+
+    res.status(200).json(results); // Send notifications as JSON response
+  });
+});
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

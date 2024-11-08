@@ -8,7 +8,12 @@ import PasswordAndSecurity from "../Layouts/SettingsLayouts/PasswordAndSecurity"
 import UserAuthentication from "../Layouts/SettingsLayouts/UserAuthentication";
 import FilterAndSubjects from "../Layouts/SettingsLayouts/FilterAndSubjects";
 
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 const Settings = () => {
+  const { userID } = useParams();
+
   const navItemStyle = "shadow d-flex align-items-center gap-2";
   return (
     <MainLayout>
@@ -32,7 +37,7 @@ const Settings = () => {
                     className="shadow d-flex align-items-center gap-2 p-0"
                     eventKey="security"
                   >
-                    <UserAuthentication></UserAuthentication>
+                    <UserAuthentication userID={userID}></UserAuthentication>
                   </Nav.Link>
                 </Nav.Item>
                 <h5 className="m-0 text-start my-2">Managing Diaries</h5>

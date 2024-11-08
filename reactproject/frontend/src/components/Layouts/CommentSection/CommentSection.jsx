@@ -112,6 +112,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
           userID: entry,
           actorID: userID,
           entryID,
+          profile_image: user.profile_image,
           type: "comment",
           message: `${user.username} commented on your diary entry.`,
         })

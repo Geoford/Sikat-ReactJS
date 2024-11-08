@@ -53,33 +53,20 @@ function OffCanvassNotification() {
         const response = await axios.get(
           `http://localhost:8081/notifications/${user.userID}`
         );
-        const fetchedNotifications = await Promise.all(
-          response.data.map(async (notification) => {
-            const userResponse = await axios.get(
-              `http://localhost:8081/notificationUser/user/${notification.actorID}`
-            );
-            const actorData = userResponse.data;
 
-            return {
-              ...notification,
-              actorUsername: actorData.alias || actorData.username,
-              actorProfileImage:
-                `http://localhost:8081${actorData.profile_image}` ||
-                DefaultProfile,
-            };
-          })
-        );
+        const fetchedNotifications = response.data.map((notification) => ({
+          ...notification,
+          actorProfileImage: notification.actorProfileImage
+            ? `http://localhost:8081${notification.actorProfileImage}`
+            : DefaultProfile,
+        }));
+
         setNotifications(fetchedNotifications);
 
         const unread = fetchedNotifications.filter(
           (notification) => !notification.read
         ).length;
         setUnreadCount(unread);
-
-        localStorage.setItem(
-          "notifications",
-          JSON.stringify(fetchedNotifications)
-        );
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -179,7 +166,7 @@ function OffCanvassNotification() {
                 <div className="grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
                   <div className="profilePicture">
                     <img
-                      src={notification.actorProfileImage}
+                      src={notification.profile_image}
                       alt="Profile"
                       style={{
                         width: "100%",
