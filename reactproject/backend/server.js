@@ -1341,6 +1341,35 @@ app.post("/verify-password/:userID", (req, res) => {
   });
 });
 
+app.post("/notifications/mark-as-read", (req, res) => {
+  const { userID, notificationID } = req.body;
+
+  if (!userID || !notificationID) {
+    return res
+      .status(400)
+      .json({ message: "User ID and Notification ID are required." });
+  }
+
+  const query = `
+  UPDATE notifications
+  SET read = TRUE
+  WHERE userID = ? AND read = FALSE
+`;
+  db.query(query, [userID, notificationID], (err, result) => {
+    if (err) {
+      console.error("Error updating notification:", err);
+      return res
+        .status(500)
+        .json({ message: "Error marking notification as read." });
+    }
+
+    return res.status(200).json({
+      message: "Notification marked as read successfully.",
+      updatedCount: result.affectedRows,
+    });
+  });
+});
+
 app.get("/getnotifications/:userID", (req, res) => {
   const { userID } = req.params;
 
@@ -1364,6 +1393,29 @@ app.get("/getnotifications/:userID", (req, res) => {
     }
 
     res.status(200).json(results); // Send notifications as JSON response
+  });
+});
+
+app.put("/editComment/:commentID", (req, res) => {
+  const { commentID } = req.params;
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ message: "Comment text is required." });
+  }
+
+  const sqlUpdate = "UPDATE comments SET text = ? WHERE commentID = ?";
+  db.query(sqlUpdate, [text, commentID], (err, result) => {
+    if (err) {
+      console.error("Error updating comment:", err);
+      return res.status(500).json({ message: "Failed to update comment." });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Comment not found." });
+    }
+
+    return res.status(200).json({ message: "Comment updated successfully." });
   });
 });
 

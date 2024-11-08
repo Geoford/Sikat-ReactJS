@@ -21,6 +21,9 @@ const CommentSection = ({ userID, entryID, entry }) => {
   const [error, setError] = useState(null);
   const [openAccordions, setOpenAccordions] = useState([]);
 
+  const [editCommentID, setEditCommentID] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
+
   const replyTextsRef = useRef({});
   const newCommentRef = useRef(null);
   const newReplyRef = useRef(null);
@@ -158,6 +161,29 @@ const CommentSection = ({ userID, entryID, entry }) => {
     }
   };
 
+  const handleEditComment = useCallback((comment) => {
+    setEditCommentID(comment.commentID);
+    setEditCommentText(comment.text);
+  }, []);
+
+  const handleSaveEditComment = useCallback(async () => {
+    if (!editCommentText.trim()) return; // Ensure non-empty edit text
+    setLoading(true);
+    try {
+      await axios.put(`http://localhost:8081/editComment/${editCommentID}`, {
+        text: editCommentText,
+      });
+      setEditCommentID(null);
+      setEditCommentText("");
+      fetchComments();
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      setError("Failed to edit comment. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [editCommentID, editCommentText, fetchComments]);
+
   const handleDeleteComment = async (commentID) => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
       setLoading(true);
@@ -267,7 +293,12 @@ const CommentSection = ({ userID, entryID, entry }) => {
                   )}
                   {canManage && (
                     <Dropdown.Item className="p-0 btn btn-light ">
-                      <button className="btn btn-light w-100 ">Edit</button>
+                      <button
+                        className="btn btn-light w-100"
+                        onClick={() => handleEditComment(comment)}
+                      >
+                        Edit
+                      </button>
                     </Dropdown.Item>
                   )}
                 </Dropdown.Menu>
@@ -309,7 +340,14 @@ const CommentSection = ({ userID, entryID, entry }) => {
               Reply
             </button>
           </div>
+
+          {editCommentID === comment.commentID ? (
+            <div className="mb-2 w-100"></div>
+          ) : (
+            <div></div>
+          )}
         </div>
+
         {replyTo === comment.commentID && (
           <div className="ps-5 mt-2">
             <FloatingLabel
@@ -348,7 +386,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
             </FloatingLabel>
           </div>
         )}
-        {/* Accordion to display replies */}
+
         {comment.replies.length > 0 && (
           <Accordion
             className="commentAccordion text-secondary mt-2 ps-4"
@@ -408,42 +446,81 @@ const CommentSection = ({ userID, entryID, entry }) => {
               <Comment key={comment.commentID} comment={comment} />
             ))}
           </div>
-          <FloatingLabel
-            controlId="newCommentTextarea"
-            label="Comment"
-            className="mt-3 position-relative"
-          >
-            <Form.Control
-              as="textarea"
-              placeholder="Leave a comment here"
-              style={{ height: "100px" }}
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendComment();
-                }
-              }}
-            />
-            <div className="d-flex justify-content-end mt-2">
-              <button
-                onClick={handleSendComment}
-                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
-                style={{
-                  height: "40px",
-                  width: "40px",
-                  borderRadius: "50%",
-                  backgroundColor: "#ffff",
-                  right: "10px",
-                  bottom: "10px",
-                  color: "var(--primary)",
+          {editCommentID ? (
+            <>
+              <Form.Control
+                as="textarea"
+                style={{ height: "100px" }}
+                rows={2}
+                value={editCommentText}
+                onChange={(e) => setEditCommentText(e.target.value)}
+                className="mb-2"
+              />
+
+              <div className="d-flex justify-content-end mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="me-5"
+                  onClick={() => setEditCommentID(null)}
+                >
+                  Cancel
+                </Button>
+                <button
+                  onClick={handleSaveEditComment}
+                  className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#ffff",
+                    right: "10px",
+                    bottom: "10px",
+                    color: "var(--primary)",
+                  }}
+                >
+                  <i className="bx bxs-send bx-sm"></i>
+                </button>
+              </div>
+            </>
+          ) : (
+            <FloatingLabel
+              controlId="newCommentTextarea"
+              label="Comment"
+              className="mt-3 position-relative"
+            >
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                style={{ height: "100px" }}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendComment();
+                  }
                 }}
-              >
-                <i className="bx bxs-send bx-sm"></i>
-              </button>
-            </div>
-          </FloatingLabel>
+              />
+              <div className="d-flex justify-content-end mt-2">
+                <button
+                  onClick={handleSendComment}
+                  className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#ffff",
+                    right: "10px",
+                    bottom: "10px",
+                    color: "var(--primary)",
+                  }}
+                >
+                  <i className="bx bxs-send bx-sm"></i>
+                </button>
+              </div>
+            </FloatingLabel>
+          )}
         </Modal.Body>
       </Modal>
     </>

@@ -121,7 +121,7 @@ const RightSide = () => {
     try {
       if (isFollowing) {
         const confirmed = window.confirm(
-          `Are you sure you want to unfollow this ${followUserId}?`
+          `Are you sure you want to unfollow ${user.username}?`
         );
 
         if (!confirmed) {
@@ -134,7 +134,7 @@ const RightSide = () => {
         setFollowedUsers((prev) =>
           prev.filter((u) => u.userID !== followUserId)
         );
-        alert(`You have unfollowed user ${followUserId}`);
+        alert(`You have unfollowed ${user.username}`);
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -145,7 +145,7 @@ const RightSide = () => {
         const followedUserData = response.data; // Expect the user data in the response
 
         setFollowedUsers((prev) => [...prev, followedUserData]);
-        alert(`You are now following user ${followUserId}`);
+        alert(`You are now following ${user.username}`);
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
