@@ -105,7 +105,7 @@ function NotificationButton() {
       );
 
       axios
-        .post(`http://localhost:8081/notifications/mark-as-read`, {
+        .post("http://localhost:8081/notifications/mark-as-read", {
           userID: user.userID,
         })
         .catch((error) =>
@@ -113,6 +113,25 @@ function NotificationButton() {
         );
     }
   }, [show]);
+
+  const markAsReadAndNavigate = (notificationID) => {
+    if (!user) return;
+
+    // Mark the notification as read
+    axios
+      .post("http://localhost:8081/notifications/mark-as-read", {
+        userID: user.userID,
+        notificationID,
+      })
+      .catch((error) =>
+        console.error("Error marking notification as read:", error)
+      );
+
+    // Navigate to the appropriate page
+    if (notificationID) {
+      // Navigate depending on the notification type
+    }
+  };
 
   const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => setIsHovered(true);
@@ -160,8 +179,15 @@ function NotificationButton() {
             notifications.map((notification) => (
               <Link
                 key={notification.timestamp}
-                className="text-decoration-none text-dark "
-                to={`/DiaryEntry/${notification.entryID || ""}`}
+                className="text-decoration-none text-dark"
+                to={
+                  notification.type === "follow"
+                    ? `/profile/${notification.actorID}`
+                    : `/DiaryEntry/${notification.entryID || ""}`
+                }
+                onClick={() =>
+                  markAsReadAndNavigate(notification.notificationID)
+                }
               >
                 <div className="grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
                   <div className="profilePicture">
@@ -179,8 +205,6 @@ function NotificationButton() {
                       }}
                     />
                   </div>
-                  {console.log("Image URL:", notification.actorProfileImage)}{" "}
-                  {/* Add this */}
                   <p className="m-0">
                     {notification.actorUsername} {notification.message}
                     <span
