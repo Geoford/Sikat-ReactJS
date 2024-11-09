@@ -1220,16 +1220,15 @@ app.post("/submit-report", (req, res) => {
       incidentDescription,
       location,
       date,
-      time,
-      witnesses,
     } = req.body;
 
     const supportingDocuments = req.file ? req.file.filename : null; // Retrieve file info
 
     const query = `
       INSERT INTO gender_based_crime_reports 
-      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, time, witnesses, supportingDocuments) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+
     `;
 
     db.query(
@@ -1242,8 +1241,6 @@ app.post("/submit-report", (req, res) => {
         incidentDescription,
         location,
         date,
-        time,
-        witnesses || null,
         supportingDocuments, // Store the file name in DB
       ],
       (err, result) => {

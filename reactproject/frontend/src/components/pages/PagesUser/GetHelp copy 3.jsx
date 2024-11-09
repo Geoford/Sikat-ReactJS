@@ -15,6 +15,8 @@ const GetHelp = () => {
     incidentDescription: "",
     location: "",
     date: "",
+    time: "",
+    witnesses: "",
     supportingDocuments: null,
   });
 

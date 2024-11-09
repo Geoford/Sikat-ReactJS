@@ -342,11 +342,24 @@ const DiaryEntryLayout = ({
         className="text-start border-bottom p-2"
         style={{ minHeight: "5rem" }}
       >
-        <h5>
-          {entry.title}{" "}
-          <span className="text-secondary fs-6">{entry.subjects}</span>
-        </h5>
-        <p>{entry.description}</p>
+        {entry.containsAlarmingWords === 1 ? (
+          <>
+            <h5>
+              {entry.title}{" "}
+              <span className="text-secondary fs-6">{entry.subjects}</span>
+            </h5>
+            <p>{entry.description}</p>
+          </>
+        ) : (
+          <>
+            <h5>
+              {entry.title}{" "}
+              <span className="text-secondary fs-6">{entry.subjects}</span>
+            </h5>
+            <p>{entry.description}</p>
+          </>
+        )}
+
         {entry.diary_image && (
           <img
             className="DiaryImage mt-1 rounded"
