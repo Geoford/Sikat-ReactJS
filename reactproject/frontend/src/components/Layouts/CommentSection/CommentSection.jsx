@@ -377,8 +377,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
 
   return (
     <>
-      <button className="InteractButton" onClick={handleShow}>
-        {" "}
+      <button
+        className="InteractButton d-flex align-items-center justify-content-center gap-2"
+        onClick={handleShow}
+      >
+        <i class="bx bx-comment"></i>
         Comments
       </button>
 

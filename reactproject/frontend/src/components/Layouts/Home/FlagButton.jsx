@@ -57,7 +57,11 @@ function FlagButton({ userID, entryID }) {
 
   return (
     <>
-      <button className="InteractButton" onClick={handleShow}>
+      <button
+        className="InteractButton d-flex align-items-center justify-content-center gap-2"
+        onClick={handleShow}
+      >
+        <i class="bx bx-flag"></i>
         Flag
       </button>
 

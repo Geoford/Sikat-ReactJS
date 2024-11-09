@@ -7,9 +7,12 @@ import ProfileInformation from "../Layouts/SettingsLayouts/ProfileInformation";
 import PasswordAndSecurity from "../Layouts/SettingsLayouts/PasswordAndSecurity";
 import UserAuthentication from "../Layouts/SettingsLayouts/UserAuthentication";
 import FilterAndSubjects from "../Layouts/SettingsLayouts/FilterAndSubjects";
+import ReportingComments from "../Layouts/SettingsLayouts/ReportingComments";
+import ReportingUsers from "../Layouts/SettingsLayouts/ReportingUsers";
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDIaries";
 
 const Settings = () => {
   const { userID } = useParams();
@@ -79,13 +82,13 @@ const Settings = () => {
                   <FilterAndSubjects></FilterAndSubjects>
                 </Tab.Pane>
                 <Tab.Pane eventKey="flag">
-                  <FilterAndSubjects></FilterAndSubjects>
+                  <FlaggingDiaries></FlaggingDiaries>
                 </Tab.Pane>
                 <Tab.Pane eventKey="repComment">
-                  <FilterAndSubjects></FilterAndSubjects>
+                  <ReportingComments></ReportingComments>
                 </Tab.Pane>
                 <Tab.Pane eventKey="repUser">
-                  <FilterAndSubjects></FilterAndSubjects>
+                  <ReportingUsers></ReportingUsers>
                 </Tab.Pane>
               </Tab.Content>
             </Col>

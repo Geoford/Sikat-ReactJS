@@ -13,7 +13,7 @@ const FlaggingDiaries = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <h4 className="border-bottom border-2 pb-2">Filter and Subjects</h4>
+      <h4 className="border-bottom border-2 pb-2">Flagging DIaries</h4>
       <div className=" text-start mt-3 pe-2">
         <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
           Filtering diaries allows users to control the content they see,
@@ -29,7 +29,7 @@ const FlaggingDiaries = () => {
         >
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -43,7 +43,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -54,7 +54,7 @@ const FlaggingDiaries = () => {
           </div>
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -68,7 +68,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -79,7 +79,7 @@ const FlaggingDiaries = () => {
           </div>
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -93,7 +93,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -104,7 +104,7 @@ const FlaggingDiaries = () => {
           </div>
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -118,7 +118,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -129,7 +129,7 @@ const FlaggingDiaries = () => {
           </div>
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -143,7 +143,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -154,7 +154,7 @@ const FlaggingDiaries = () => {
           </div>
           <div className="d-flex justify-content-between align-items-center border rounded p-3">
             <div className="d-flex gap-2">
-              <h5 className="m-0">SampleFilter</h5>
+              <h5 className="m-0">SampleFlaggingReason</h5>
               <div
                 className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
                 style={{
@@ -168,7 +168,7 @@ const FlaggingDiaries = () => {
                   className="tooltip-text p-2 rounded"
                   style={{ fontSize: ".9rem" }}
                 >
-                  Number of diary with this filter
+                  Number of diary flagged with this reason
                 </span>
               </div>
             </div>
@@ -181,7 +181,7 @@ const FlaggingDiaries = () => {
       </div>
       <form action="">
         <div className="row text-start mt-2">
-          <h5 className="m-0 mt-2">Add Filter</h5>
+          <h5 className="m-0 mt-2">Add Flagging Option</h5>
           <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
             Adding filters gives users a variety of options to categorize or
             group their diaries, helping them to organize more effectively and
@@ -189,7 +189,7 @@ const FlaggingDiaries = () => {
           </p>
           <Row className="mt-1 pe-0 gap-2">
             <Col md={12} className="pe-0">
-              <FloatingLabel controlId="floatingInputGrid" label="New Filter">
+              <FloatingLabel controlId="floatingInputGrid" label="New Option">
                 <Form.Control type="text" placeholder="New Filter" />
               </FloatingLabel>
             </Col>
