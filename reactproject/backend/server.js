@@ -9,6 +9,8 @@ const fs = require("fs");
 const app = express();
 const Pusher = require("pusher");
 const { profile } = require("console");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 app.use(express.json());
 app.use(cors());
@@ -56,6 +58,64 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+const otpStore = {};
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "ndendi00@gmail.com",
+    pass: "kbhjlreosquqajjl",
+  },
+});
+
+app.post("/send-otp", async (req, res) => {
+  const { email } = req.body;
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  otpStore[email] = otp;
+  console.log(`Sending OTP: ${otp} to email: ${email}`);
+
+  try {
+    let info = await transporter.sendMail({
+      from: "ndendi00@gmail.com",
+      to: email,
+      subject: "Your OTP for Registration",
+      text: `Your OTP is: ${otp}`,
+    });
+
+    res.status(200).json({ success: true, message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+});
+
+app.post("/verify-otp", (req, res) => {
+  const { email, otp } = req.body;
+
+  // Validate input
+  if (!email || !otp) {
+    return res.status(400).json({ error: "Email and OTP are required" });
+  }
+
+  if (otpStore[email]) {
+    const storedOtp = otpStore[email];
+
+    console.log("Comparing received OTP:", otp, "with stored OTP:", storedOtp);
+
+    // Convert both to strings for comparison
+    if (String(otp) === String(storedOtp)) {
+      return res.json({ success: true });
+    } else {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+  } else {
+    return res.status(400).json({ error: "No OTP found for this email" });
+  }
+});
+
 app.post("/Register", (req, res) => {
   const {
     firstName,
@@ -78,10 +138,17 @@ app.post("/Register", (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // Generate verification token and OTP
+  const verificationToken = crypto.randomBytes(20).toString("hex");
+  const otp = Math.floor(100000 + Math.random() * 900000); // Example OTP
+
+  // Store OTP temporarily
+  otpStore[cvsuEmail] = otp;
+
   const hashedPassword = bcrypt.hashSync(password);
 
   const userSql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`) VALUES (?)";
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`) VALUES (?)";
   const userValues = [
     firstName,
     lastName,
@@ -89,6 +156,8 @@ app.post("/Register", (req, res) => {
     username,
     hashedPassword,
     studentNumber,
+    verificationToken,
+    true,
   ];
 
   db.query(userSql, [userValues], (err, data) => {
@@ -101,14 +170,59 @@ app.post("/Register", (req, res) => {
 
     const profileSql =
       "INSERT INTO user_profiles (`userID`, `alias`) VALUES (?, ?)";
-
     db.query(profileSql, [userID, alias], (err, profileData) => {
       if (err) {
         console.error("Error inserting profile data: ", err);
         return res.status(500).json({ error: "Error inserting profile data" });
       }
 
-      return res.status(201).json({ message: "User registered successfully" });
+      const mailOptions = {
+        from: "ndendi00@gmail.com",
+        to: cvsuEmail,
+        subject: "Your OTP Code",
+        text: `Your OTP code is: ${otp}`,
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error("Error sending email: ", err);
+          return res.status(500).json({ error: "Error sending email" });
+        }
+        console.log("Verification email sent: " + info.response);
+      });
+
+      return res.status(201).json({
+        message:
+          "User registered successfully. Please check your email to verify your account.",
+      });
+    });
+  });
+});
+
+app.get("/verify-email/:token", (req, res) => {
+  const { token } = req.params;
+
+  const verifySql = "SELECT * FROM user_table WHERE verificationToken = ?";
+  db.query(verifySql, [token], (err, result) => {
+    if (err) {
+      console.error("Error verifying email: ", err);
+      return res.status(500).json({ error: "Error verifying email" });
+    }
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "Invalid verification token" });
+    }
+
+    const user = result[0];
+    const updateSql =
+      "UPDATE user_table SET isVerified = 1, verificationToken = NULL WHERE userID = ?";
+    db.query(updateSql, [user.userID], (err, updateResult) => {
+      if (err) {
+        console.error("Error updating user verification status: ", err);
+        return res.status(500).json({ error: "Error verifying email" });
+      }
+
+      res.status(200).json({ message: "Email verified successfully" });
     });
   });
 });

@@ -67,6 +67,7 @@ const GetHelp = () => {
         }
       );
       alert(response.data.message);
+      window.location.reload();
     } catch (error) {
       console.error("Error submitting report:", error);
       alert("Error submitting report");

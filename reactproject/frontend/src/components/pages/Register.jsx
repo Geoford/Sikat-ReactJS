@@ -15,12 +15,15 @@ export default function Register() {
     username: "",
     password: "",
     confirmPassword: "",
+    OTP: "",
   });
 
   const navigate = useNavigate();
-  const [step, setStep] = useState(1); // Step to manage current form section
+  const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
-  const [showAlert, setShowAlert] = useState(false); // State for alert visibility
+  const [showAlert, setShowAlert] = useState(false);
+  const [otpSent, setOtpSent] = useState(false); // OTP sent status
+  const [otpError, setOtpError] = useState(""); // OTP error message
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -29,25 +32,72 @@ export default function Register() {
     }
   }, [navigate]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log("Form submitted, current step:", step);
+
     if (step === 3) {
+      console.log("Verifying OTP for email:", values.cvsuEmail);
+
+      try {
+        const response = await axios.post("http://localhost:8081/verify-otp", {
+          email: values.cvsuEmail,
+          otp: values.OTP,
+        });
+
+        console.log("OTP verification response:", response.data);
+
+        if (response.data.success) {
+          console.log("OTP verified successfully, registering user...");
+          try {
+            await axios.post("http://localhost:8081/Register", values);
+            alert("Email successfully verified.");
+            navigate("/");
+            window.location.reload();
+          } catch (err) {
+            console.error("Error during registration:", err);
+            setOtpError("Registration failed. Please try again.");
+            setShowAlert(true);
+          }
+        } else {
+          setOtpError("Incorrect OTP. Please try again."); // Set the error message
+          setShowAlert(true);
+        }
+      } catch (err) {
+        console.error("Error during OTP verification:", err);
+        setOtpError("Incorrect OTP. Please try again.");
+        setShowAlert(true);
+      }
+    } else if (step === 2) {
+      console.log("Step 2: Validating registration fields...");
       const validationErrors = RegisterValidation(values);
       setErrors(validationErrors);
 
       if (Object.keys(validationErrors).length === 0) {
-        axios
-          .post("http://localhost:8081/Register", values)
-          .then((res) => {
-            navigate("/");
-            window.location.reload();
-          })
-          .catch((err) => console.log(err));
+        console.log("Validation passed, sending OTP...");
+        sendOTP(values.cvsuEmail);
+        setStep(step + 1);
       } else {
-        setShowAlert(true); // Show alert if there are errors
+        console.log("Validation errors:", validationErrors);
+        setShowAlert(true);
       }
     } else {
       setStep(step + 1);
+    }
+  };
+
+  const sendOTP = async (email) => {
+    console.log("Sending OTP to:", email);
+    try {
+      const response = await axios.post("http://localhost:8081/send-otp", {
+        email,
+      });
+      console.log("OTP sent response:", response.data);
+      setOtpSent(true);
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setOtpError("Error sending OTP. Please try again later.");
+      setShowAlert(true);
     }
   };
 
@@ -58,7 +108,6 @@ export default function Register() {
     }));
   };
 
-  // Step-based progress percentage
   const progressPercent = step === 1 ? 0 : step === 2 ? 50 : 100;
 
   return (
@@ -274,34 +323,38 @@ export default function Register() {
 
             {/* Security Details - Step 3 */}
             {step === 3 && (
-              <div
-                className={`form-section active`}
-                style={{
-                  transform: `translateX(0)`,
-                  transition: "all 0.5s ease-in-out",
-                }}
-              >
+              <div className="form-section active">
                 <h5>Account Verification</h5>
-                <div>
-                  <p className="m-0">OPT sent to email@email.com</p>
-                  <div className="mb-3">
+                {otpSent ? (
+                  <div>
+                    <p className="m-0">
+                      An OTP has been sent to {values.cvsuEmail}
+                    </p>
                     <input
                       type="number"
                       name="OTP"
-                      placeholder="OTP eg. 000000"
-                      className="form-control rounded"
+                      placeholder="Enter OTP"
+                      className="form-control"
+                      onChange={handleInput}
+                      value={values.OTP}
                     />
+                    {otpError && <p style={{ color: "red" }}>{otpError}</p>}
+                    <div className="text-end">
+                      <button
+                        onClick={() => sendOTP(values.cvsuEmail)}
+                        className="btn btn-link"
+                      >
+                        Resend OTP
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-end px-2">
-                    <a className="m-0 text-end" href="">
-                      Resend otp
-                    </a>
-                  </div>
-                </div>
+                ) : (
+                  <p>Sending OTP...</p>
+                )}
               </div>
             )}
           </div>
-          {/* Navigation Buttons */}
+
           <div
             className="w-100 d-flex justify-content-between"
             style={{ bottom: "0", left: "0" }}
