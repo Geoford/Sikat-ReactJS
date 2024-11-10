@@ -46,9 +46,9 @@ const NavBar = () => {
   return (
     <nav
       className="navbar navbar-expand-lg p-0"
-      style={{ position: "sticky", top: "0" }}
+      style={{ position: "sticky", top: "0", height: "4rem" }}
     >
-      <div className="container-fluid py-2 px-3 shadow-sm">
+      <div className="container-fluid py-2 px-3 ">
         <div className="logo">
           <Link to={user && user.isAdmin ? "/Admin/Home" : "/Home"}>
             <img className="logoImage" src={Logo} alt="Logo" />

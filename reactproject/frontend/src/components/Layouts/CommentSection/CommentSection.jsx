@@ -435,7 +435,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         </Modal.Header>
         <Modal.Body
           className="d-flex flex-column justify-content-between"
-          style={{ height: "600px" }}
+          style={{ height: "33rem" }}
         >
           <div className="pe-2" style={{ overflowY: "scroll", height: "100%" }}>
             {loading && <p className="text-center">Loading comments...</p>}
