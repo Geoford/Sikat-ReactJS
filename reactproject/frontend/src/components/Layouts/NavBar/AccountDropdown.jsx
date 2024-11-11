@@ -163,6 +163,17 @@ const AccountDropdown = () => {
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link
             className="text-decoration-none text-dark"
+            to="/Admin/Statistics"
+          >
+            <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
+              Statictics
+              <i class="bx bx-chart"></i>
+            </button>
+          </Link>
+        </Dropdown.Item>
+        <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
+          <Link
+            className="text-decoration-none text-dark"
             to={`/Settings/${user.userID}`}
           >
             <button className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2">
