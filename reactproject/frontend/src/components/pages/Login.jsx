@@ -17,7 +17,7 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +63,6 @@ export default function Login() {
     }));
   };
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -112,10 +111,10 @@ export default function Login() {
               value={values.username}
               disabled={loading}
             />
-            {errors.username && (
-              <span className="text-danger"> {errors.username}</span>
-            )}
           </div>
+          {errors.username && (
+            <span className="text-danger"> {errors.username}</span>
+          )}
 
           {/* Password field */}
           <div className="input-group position-relative">
@@ -152,18 +151,16 @@ export default function Login() {
                 }}
               />
             </div>
-            {errors.password && (
-              <span className="text-danger"> {errors.password}</span>
-            )}
           </div>
+          {errors.password && (
+            <div className="text-danger"> {errors.password}</div>
+          )}
+
+          {serverError && <span className="text-danger">{serverError}</span>}
           <div className="text-end my-2">
             <ForgotPassword></ForgotPassword>
           </div>
 
-          {/* Server error message */}
-          {serverError && <span className="text-danger">{serverError}</span>}
-
-          {/* Submit button */}
           <button
             type="submit"
             className="orangeButton rounded w-100 py-2"

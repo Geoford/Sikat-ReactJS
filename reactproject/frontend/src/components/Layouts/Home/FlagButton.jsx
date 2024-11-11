@@ -32,15 +32,15 @@ function FlagButton({ userID, entryID }) {
     const reportData = {
       userID,
       entryID,
-      behaviors: selectedBehaviors.join(", "), // Convert behaviors array to a comma-separated string
+      behaviors: selectedBehaviors.join(", "),
       otherText: isOtherSelected ? otherText : null,
     };
 
-    console.log("Submitting report data:", reportData); // Log the data to check its format
+    console.log("Submitting report data:", reportData);
 
     try {
       const response = await axios.post(
-        "http://localhost:8081/flag",
+        "http://localhost:8081/flags",
         reportData
       );
 

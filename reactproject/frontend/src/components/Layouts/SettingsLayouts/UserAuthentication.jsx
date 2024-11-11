@@ -21,7 +21,8 @@ const UserAuthentication = ({ userID }) => {
       !verificationStatus ||
       verificationStatus !== "Password verified successfully!"
     ) {
-      navigate(`/Profile/${userID}`);
+      alert("Password Required!");
+      window.location.reload();
     }
     setShow(false);
     setPassword("");

@@ -11,6 +11,7 @@ const Pusher = require("pusher");
 const { profile } = require("console");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+require("dotenv").config();
 
 app.use(express.json());
 app.use(cors());
@@ -19,17 +20,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
   password: "",
-  database: "sikat-ediary",
+  database: process.env.DB_NAME,
 });
 
 const pusher = new Pusher({
-  appId: "1875705",
-  key: "4810211a14a19b86f640",
-  secret: "e3bd24cb43cd9520c5ca",
-  cluster: "ap1",
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
   useTLS: true,
 });
 
@@ -61,12 +62,12 @@ const upload = multer({ storage });
 const otpStore = {};
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: false,
   auth: {
-    user: "ndendi00@gmail.com",
-    pass: "kbhjlreosquqajjl",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -79,7 +80,7 @@ app.post("/send-otp", async (req, res) => {
 
   try {
     let info = await transporter.sendMail({
-      from: "ndendi00@gmail.com",
+      from: process.env.SMTP_USER,
       to: email,
       subject: "Your OTP for Registration",
       text: `Your OTP is: ${otp}`,
@@ -177,7 +178,7 @@ app.post("/Register", (req, res) => {
       }
 
       const mailOptions = {
-        from: "ndendi00@gmail.com",
+        from: process.env.SMTP_USER,
         to: cvsuEmail,
         subject: "Your OTP Code",
         text: `Your OTP code is: ${otp}`,
@@ -252,51 +253,18 @@ app.post("/Login", (req, res) => {
     }
 
     const user = data[0];
-
-    // Check if account is locked
-    if (user.is_locked) {
-      return res
-        .status(403)
-        .json({ error: "Account is locked. Please contact support." });
-    }
-
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
-      const updateAttemptsSql = `
-       UPDATE user_table 
-        SET login_attempts = login_attempts + 1, 
-            is_locked = CASE WHEN login_attempts + 1 > 3 THEN TRUE ELSE is_locked END 
-        WHERE userID = ?`;
-
-      db.query(updateAttemptsSql, [user.userID], (updateErr) => {
-        if (updateErr) {
-          console.error("Error updating login attempts: ", updateErr);
-          return res
-            .status(500)
-            .json({ error: "Error processing login attempt" });
-        }
-        return res.status(401).json({ error: "Invalid username or password" });
-      });
-    } else {
-      // Reset login attempts on successful login
-      const resetAttemptsSql = `UPDATE user_table SET login_attempts = 0 WHERE userID = ?`;
-      db.query(resetAttemptsSql, [user.userID], (resetErr) => {
-        if (resetErr) {
-          console.error("Error resetting login attempts: ", resetErr);
-          return res
-            .status(500)
-            .json({ error: "Error processing login attempt" });
-        }
-        // Send successful login response
-        return res.json({
-          userID: user.userID,
-          username: user.username,
-          isAdmin: user.isAdmin,
-          profile_image: user.profile_image,
-        });
-      });
+      return res.status(401).json({ error: "Invalid username or password" });
     }
+
+    return res.json({
+      userID: user.userID,
+      username: user.username,
+      isAdmin: user.isAdmin,
+      profile_image: user.profile_image,
+    });
   });
 });
 
@@ -749,7 +717,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const userID = req.params.id;
 
   const query = `
-    SELECT diary_entries.*, user_table.username, user_table.cvsuEmail, user_profiles.*
+    SELECT diary_entries.*, user_table.username, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
@@ -1401,28 +1369,29 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
-app.post("/flags", (req, res) => {
+app.post("/flag", async (req, res) => {
   const { userID, entryID, behaviors, otherText } = req.body;
 
+  // Validate input data
   if (!userID || !entryID || !behaviors) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  // Perform the database query without chaining .then() and .catch()
-  const query = db.query(
-    "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
-    [userID, entryID, behaviors, otherText || null],
-    (error, results) => {
-      if (error) {
-        console.error("Error saving report:", error);
-        res
-          .status(500)
-          .json({ message: "Error submitting report", error: error.message });
-      } else {
-        res.status(200).json({ message: "Report submitted successfully" });
-      }
-    }
-  );
+  try {
+    await db.query(
+      "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
+      [userID, entryID, behaviors, otherText || null]
+    );
+
+    // Send a success response
+    return res.status(200).json({ message: "Report submitted successfully" });
+  } catch (error) {
+    console.error("Error saving report:", error);
+    // Provide detailed error information
+    return res
+      .status(500)
+      .json({ message: "Error submitting report", error: error.message });
+  }
 });
 
 app.get("/flagged", (req, res) => {

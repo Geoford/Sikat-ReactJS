@@ -8,8 +8,6 @@ export default function LoginValidation(values) {
 
   if (!values.password) {
     errors.password = "Password should not be empty";
-  } else if (!passwordPattern.test(values.password)) {
-    errors.password = "Username or password is incorrect";
   }
 
   return errors;

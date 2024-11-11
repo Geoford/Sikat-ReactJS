@@ -288,7 +288,7 @@ const DiaryEntryLayout = ({
                 />
               </div>
               <div className="d-flex flex-column align-items-start">
-                {entry.isAdmin === 1 ? entry.username : entry.username}
+                {entry.isAdmin === 1 ? entry.username : entry.cvsuEmail}
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
                   {formatDate(entry.created_at)}
                 </p>
@@ -346,7 +346,7 @@ const DiaryEntryLayout = ({
           <>
             <h5>
               {entry.title}{" "}
-              <span className="text-secondary fs-6">{entry.subjects}</span>
+              <span className="text-secondary fs-6 ">{entry.subjects}</span>
             </h5>
             <p>{entry.description}</p>
           </>

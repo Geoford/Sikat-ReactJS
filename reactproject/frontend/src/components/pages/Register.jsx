@@ -24,6 +24,7 @@ export default function Register() {
   const [showAlert, setShowAlert] = useState(false);
   const [otpSent, setOtpSent] = useState(false); // OTP sent status
   const [otpError, setOtpError] = useState(""); // OTP error message
+  const [resendCountdown, setResendCountdown] = useState(60); // Resend countdown
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +32,41 @@ export default function Register() {
       navigate("/Home");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    let timer;
+    if (otpSent && resendCountdown > 0) {
+      timer = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [otpSent, resendCountdown]);
+
+  const validateEmail = async (email) => {
+    try {
+      const response = await axios.post("http://localhost:8081/check-email", {
+        email,
+      });
+      if (response.data.exists) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          cvsuEmail: "This email is already registered.",
+        }));
+        setShowAlert(true);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error("Error checking email:", error);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        cvsuEmail: "Error checking email. Please try again later.",
+      }));
+      setShowAlert(true);
+      return false;
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -60,7 +96,7 @@ export default function Register() {
             setShowAlert(true);
           }
         } else {
-          setOtpError("Incorrect OTP. Please try again."); // Set the error message
+          setOtpError("Incorrect OTP. Please try again.");
           setShowAlert(true);
         }
       } catch (err) {
@@ -239,7 +275,7 @@ export default function Register() {
                   <input
                     type="email"
                     name="cvsuEmail"
-                    placeholder="CvSU Email"
+                    placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
                     onChange={handleInput}
                     className="form-control rounded"
                     value={values.cvsuEmail}
@@ -249,10 +285,12 @@ export default function Register() {
                   <input
                     type="number"
                     name="studentNumber"
-                    placeholder="Student Number"
+                    placeholder="Student Number (ex. 202100000)"
                     onChange={handleInput}
                     className="form-control rounded"
                     value={values.studentNumber}
+                    min="100000000"
+                    max="999999999"
                   />
                 </div>
               </div>
@@ -321,7 +359,20 @@ export default function Register() {
               </div>
             )}
 
-            {/* Security Details - Step 3 */}
+            {showAlert && Object.keys(errors).length > 0 && (
+              <Alert
+                variant="danger"
+                onClose={() => setShowAlert(false)}
+                dismissible
+              >
+                <ul className="mb-0">
+                  {Object.entries(errors).map(([key, message]) => (
+                    <li key={key}>{message}</li>
+                  ))}
+                </ul>
+              </Alert>
+            )}
+
             {step === 3 && (
               <div className="form-section active">
                 <h5>Account Verification</h5>
@@ -341,10 +392,15 @@ export default function Register() {
                     {otpError && <p style={{ color: "red" }}>{otpError}</p>}
                     <div className="text-end">
                       <button
-                        onClick={() => sendOTP(values.cvsuEmail)}
+                        onClick={(e) => {
+                          e.preventDefault(); // Prevent form submission when clicking the resend OTP button
+                          sendOTP(values.cvsuEmail);
+                        }}
                         className="btn btn-link"
+                        disabled={resendCountdown > 0} // Disable if countdown is active
                       >
-                        Resend OTP
+                        Resend OTP{" "}
+                        {resendCountdown > 0 && `(${resendCountdown}s)`}
                       </button>
                     </div>
                   </div>
@@ -363,7 +419,7 @@ export default function Register() {
               type="button"
               className="w-25 btn btn-secondary"
               onClick={() => setStep(step - 1)}
-              disabled={step === 1} // Disable when on step 1
+              disabled={step === 1}
             >
               Back
             </button>
