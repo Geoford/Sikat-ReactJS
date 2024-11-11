@@ -36,6 +36,11 @@ const Center = () => {
 
   return (
     <div className="p-2">
+      <div>
+        <Link className="btn btn-danger" to="/Admin/GenderBasedIncidents">
+          <p className="m-0 text-end">Gender-Based Incidents Complaints 00</p>
+        </Link>
+      </div>
       <div className="rounded p-3 mb-2">
         <div className="d-flex justify-content-between border-bottom">
           <h4 className="text-secondary">Reported User/s</h4>

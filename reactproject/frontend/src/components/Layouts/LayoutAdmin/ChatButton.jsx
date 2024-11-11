@@ -275,13 +275,15 @@ const ChatButton = () => {
                             maxWidth: "300px",
                             width: "fit-content",
                             wordWrap: "break-word",
+                            whiteSpace: "pre-wrap",
                           }}
                         >
+                          <p className="m-0">{msg.message}</p>
                           <p
-                            className="m-0 text-wrap"
-                            style={{ width: "100%" }}
+                            className="m-0 text-end"
+                            style={{ fontSize: ".7rem" }}
                           >
-                            {msg.message}
+                            00 mins ago.
                           </p>
                         </div>
                       </div>

@@ -89,11 +89,11 @@ const GetHelp = () => {
       <PreLoader />
       <div className="d-flex justify-content-center py-3">
         <div
-          className="container-fluid container-lg rounded shadow p-3"
+          className=" rounded shadow p-3"
           style={{ backgroundColor: "#ffff" }}
         >
           <div className="border-bottom border-2">
-            <h4>Gender-Based Crime Reporting Form</h4>
+            <h4>Complaint Form for Gender-Based Incidents</h4>
           </div>
 
           <form
@@ -126,18 +126,19 @@ const GetHelp = () => {
                 />
               </div>
               <div className="col-md">
-                <select
-                  className="ps-2 rounded"
+                <Form.Select
+                  className="ps-3 rounded"
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
                   required
+                  aria-label="Default select example"
                 >
-                  <option value="">Select Gender</option>
+                  <option value="">Sex</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
+                </Form.Select>
               </div>
             </div>
 
@@ -158,11 +159,13 @@ const GetHelp = () => {
                 <SubjectSelection />
               </div>
             </div>
+
             <FloatingLabel
               controlId="floatingTextarea2"
               label="Description of the Incident"
             >
               <Form.Control
+                placeholder="Description of the Incident"
                 as="textarea"
                 style={{ height: "100px" }}
                 name="incidentDescription"

@@ -10,7 +10,7 @@ import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
     className="custom-scrollbar mt-2 pe-1"
-    style={{ height: "65vh", overflowY: "scroll" }}
+    style={{ height: "25vh", overflowY: "scroll" }}
   >
     {users.map((user) => (
       <div key={user.userID} className="pb-2 pe-2 mb-2">
@@ -163,7 +163,7 @@ const RightSide = () => {
         </p>
         <Link to={"/GetHelp/"}>
           <button className="secondaryButton text-decoration-underline">
-            Get Support Now
+            Report an Incident
           </button>
         </Link>
       </div>
@@ -179,6 +179,20 @@ const RightSide = () => {
           handleFollowToggle={handleFollowToggle}
           isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
         />
+      </div>
+      <div>
+        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2  mb-2">
+          <i class="bx bx-news bx-sm"></i>
+          <h4 className="m-0">Announcements/Events</h4>
+        </div>
+        <div className="linkText rounded">
+          <p className="m-0 mb-1 text-start">Post Title</p>
+          <img
+            src={SampleImage}
+            alt=""
+            style={{ width: "100%", borderRadius: ".3rem" }}
+          />
+        </div>
       </div>
 
       {/* <div className="p-3">

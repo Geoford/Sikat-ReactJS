@@ -177,7 +177,7 @@ const UserChatButton = () => {
 
             <Link to={"/GetHelp/"}>
               <button className="secondaryButton text-decoration-underline">
-                <p className="m-0 fs-6">Get Support Now</p>
+                <p className="m-0 fs-6">Report an Incident</p>
               </button>
             </Link>
           </Modal.Title>
@@ -236,7 +236,10 @@ const UserChatButton = () => {
                         whiteSpace: "pre-wrap",
                       }}
                     >
-                      <par className="m-0">{msg.message}</par>
+                      <p className="m-0">{msg.message}</p>
+                      <p className="m-0 text-end" style={{ fontSize: ".7rem" }}>
+                        00 mins ago.
+                      </p>
                     </div>
                   </div>
                 ))}

@@ -2,7 +2,7 @@
   --primary: #5c0099;
   --primary_hover: #4c0080;
   --primary_light: #f5e6ff;
-  --secondary: #ff9933;
+  --secondary: #ffb31a;
   --secondary_hover: #e65c00;
   --background: #d9d9d9;
   --background_light: #f2f2f2;
@@ -26,6 +26,29 @@
   z-index: 1;
   height: 3.5rem;
   /* position: static; */
+}
+.navIcons {
+  position: relative;
+  padding-top: 0.45rem;
+  width: 6rem;
+  height: 3.2rem;
+  border-radius: 0.5rem;
+  font-size: 1.7rem;
+  transition: 0.2s;
+}
+.navIcons:hover {
+  color: var(--secondary);
+  background-color: rgb(217, 217, 217, 0.25);
+}
+.navIcons:hover::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 0.4rem;
+  bottom: -0.3rem;
+  left: 0;
+  background-color: var(--secondary);
+  border-radius: 0.2rem;
 }
 .logo {
   height: 45px;
@@ -495,6 +518,29 @@ input.form-control:focus {
 }
 
 .MiniToolTip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.navToolTip {
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  width: max-content;
+  min-width: 6rem;
+  background-color: rgb(38, 38, 38, 0.7);
+  margin-top: 0.7rem;
+  color: #ffff;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  transition: 0.3s;
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.navIcons:hover .navToolTip {
   visibility: visible;
   opacity: 1;
 }

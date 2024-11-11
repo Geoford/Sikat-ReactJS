@@ -14,6 +14,7 @@ import Settings from "./components/pages/Settings";
 
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
+import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncidents";
 // import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
 // import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
 
@@ -53,6 +54,10 @@ function App() {
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />
+          <Route
+            path="/Admin/GenderBasedIncidents"
+            element={<GenderBasedIncidents />}
+          />
           {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
           <Route path="/Admin/DiaryEntry" element={<AdminDiaryEntry />} /> */}
         </Routes>
