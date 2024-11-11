@@ -16,10 +16,11 @@ import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDIaries";
 
 const Settings = () => {
   const { userID } = useParams();
+  const ActiveTab = "Settings";
 
   const navItemStyle = "shadow d-flex align-items-center gap-2";
   return (
-    <MainLayout>
+    <MainLayout ActiveTab={ActiveTab}>
       <div className="container-fluid container-md mt-5">
         <Tab.Container id="left-tabs-example" defaultActiveKey="profile">
           <Row>

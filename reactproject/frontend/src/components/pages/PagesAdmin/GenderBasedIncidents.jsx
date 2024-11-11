@@ -2,8 +2,9 @@ import HomeMainLayout from "../../Layouts/Home/HomeMainLayout";
 import MainLayout from "../../Layouts/MainLayout";
 
 export default function GenderBasedIncidents() {
+  const ActiveTab = "Complaints";
   return (
-    <MainLayout>
+    <MainLayout ActiveTab={ActiveTab}>
       <div className="mt-4">
         <h2 className="fw-bold m-0">Gender-Based Incidents Complaints</h2>
         <div className="container-fluid container-lg mb-2">

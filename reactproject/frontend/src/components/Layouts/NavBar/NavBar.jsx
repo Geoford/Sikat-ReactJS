@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NotificationButton from "./NotificationButton";
 import AccountDropdown from "./AccountDropdown";
 
-const NavBar = () => {
+const NavBar = ({ ActiveTab }) => {
   const [user, setUser] = useState(null);
   // const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -63,26 +63,51 @@ const NavBar = () => {
           </div>
         </div>
         <div className="d-flex text-light gap-1">
-          <div className="navIcons">
+          <Link
+            className={`navIcons text-light ${
+              ActiveTab === "Home" ? "active" : ""
+            }`}
+            to={user && user.isAdmin ? "/Admin/Home" : "/Home"}
+          >
             <i class="bx bx-home-alt"></i>
             <p className="navToolTip">Home</p>
-          </div>
-          <div className="navIcons">
+          </Link>
+          <Link
+            className={`navIcons text-light ${
+              ActiveTab === "Entries" ? "active" : ""
+            }`}
+            to="/DiaryEntries"
+          >
             <i class="bx bx-note"></i>
             <p className="navToolTip">Diary Entries</p>
-          </div>
-          <div className="navIcons">
+          </Link>
+          <Link
+            className={`navIcons text-light ${
+              ActiveTab === "Followers" ? "active" : ""
+            }`}
+            to="/Followers"
+          >
             <i class="bx bx-user-plus"></i>
             <p className="navToolTip">Followers</p>
-          </div>
-          <div className="navIcons">
+          </Link>
+          <Link
+            className={`navIcons text-light ${
+              ActiveTab === "Complaints" ? "active" : ""
+            }`}
+            to="/Admin/GenderBasedIncidents"
+          >
             <i class="bx bxs-report"></i>
             <p className="navToolTip">Complaints</p>
-          </div>
-          <div className="navIcons">
+          </Link>
+          <Link
+            className={`navIcons text-light ${
+              ActiveTab === "Settings" ? "active" : ""
+            }`}
+            to={`/Settings/${user.userID}`}
+          >
             <i class="bx bx-cog"></i>
             <p className="navToolTip">Settings</p>
-          </div>
+          </Link>
         </div>
         <div className="d-flex align-items-center gap-2">
           <div>

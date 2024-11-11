@@ -4,7 +4,7 @@ import Background from "./Background"; // Import the background component
 import NavBarAdmin from "./LayoutAdmin/NavBarAdmin"; // Import the admin-specific navigation bar
 import "boxicons/css/boxicons.min.css";
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, ActiveTab }) => {
   // State to store user data fetched from localStorage
   const [user, setUser] = useState(null);
 
@@ -25,7 +25,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar ActiveTab={ActiveTab} />
       <div>{children}</div>
 
       {/* Include the background component at the bottom of the layout */}

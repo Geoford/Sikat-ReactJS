@@ -40,7 +40,7 @@
   color: var(--secondary);
   background-color: rgb(217, 217, 217, 0.25);
 }
-.navIcons:hover::after {
+.navIcons.active::after {
   content: "";
   position: absolute;
   width: 100%;
@@ -108,7 +108,7 @@
 .profilePicture {
   height: 50px;
   width: 50px;
-  background-color: #e6ccff;
+  background-color: var(--background_light);
   border-radius: 50%;
   overflow: hidden;
   border: none;

@@ -18,6 +18,7 @@ export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // loading state for user data
   const navigate = useNavigate();
+  const ActiveTab = "Home";
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -32,7 +33,7 @@ export default function HomeMainLayout({ isAdminPage }) {
   if (isLoading) return <div>Loading...</div>; // simple loading indicator
 
   return (
-    <MainLayout>
+    <MainLayout ActiveTab={ActiveTab}>
       <div className="row mt-3 px-3">
         <div>{isAdminPage ? <AdminChatButton /> : <ChatButton />}</div>
         <div

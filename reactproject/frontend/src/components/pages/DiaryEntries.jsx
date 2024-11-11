@@ -5,6 +5,8 @@ import privateIcon from "../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
+import AdminLeftSide from "./PagesAdmin/HomeLayout/LeftSide";
+import LeftSide from "./PagesUser/HomeLayout/LeftSide";
 
 const DiaryEntries = () => {
   const [user, setUser] = useState(null);
@@ -12,6 +14,7 @@ const DiaryEntries = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const ActiveTab = "Entries";
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -27,7 +30,7 @@ const DiaryEntries = () => {
           return response.json();
         })
         .then((data) => {
-          setUser(data);
+          setUser(data); // Ensure that data includes isAdmin property
           setIsLoading(false);
         })
         .catch((err) => {
@@ -130,81 +133,91 @@ const DiaryEntries = () => {
   if (!user) return null;
 
   return (
-    <MainLayout>
-      <div>
-        <div className="container-fluid container-md mb-2 mt-5">
-          <div className="dateContainer shadow">
-            <div>
-              <select
-                className="dateSelector"
-                id="month"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-              >
-                {months.map((month, index) => (
-                  <option className="dateOption" key={index} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <select
-                className="dateSelector"
-                id="year"
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-              >
-                {years.map((year, index) => (
-                  <option className="dateOption" key={index} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+    <MainLayout ActiveTab={ActiveTab}>
+      <div className="row mt-3 px-3">
+        <div
+          className="col-lg-3 d-none d-lg-block"
+          style={{ position: "sticky", top: "75px", height: "100%" }}
+        >
+          {user.isAdmin ? <AdminLeftSide /> : <LeftSide />}
+        </div>
+        <div className="col-lg">
+          <div className="container-fluid container-md mb-2 mt-2">
+            <div className="dateContainer shadow">
+              <div>
+                <select
+                  className="dateSelector"
+                  id="month"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                >
+                  {months.map((month, index) => (
+                    <option className="dateOption" key={index} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <select
+                  className="dateSelector"
+                  id="year"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                >
+                  {years.map((year, index) => (
+                    <option className="dateOption" key={index} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="container-fluid container-md">
-          {daysInMonth.length > 0 && (
-            <div className="row">
-              {daysInMonth.map((day) => {
-                const entry = findEntryForDay(day);
-                return (
-                  <div className="col-4 col-md-3 col-lg-2 py-1" key={day}>
-                    <Link
-                      to={entry ? `/DiaryEntry/${entry.entryID}` : "#"}
-                      className="text-decoration-none"
-                    >
-                      <div
-                        className="days border rounded bg-light shadow-sm p-2"
-                        style={{ height: "80px" }}
+          <div className="container-fluid container-md">
+            {daysInMonth.length > 0 && (
+              <div className="row">
+                {daysInMonth.map((day) => {
+                  const entry = findEntryForDay(day);
+                  return (
+                    <div className="col-4 col-md-3 col-lg-2 py-1" key={day}>
+                      <Link
+                        to={entry ? `/DiaryEntry/${entry.entryID}` : "#"}
+                        className="text-decoration-none"
                       >
-                        <div className="d-flex align-items-center gap-1">
-                          <p className="m-0 text-start text-secondary">{day}</p>
-                          {entry && (
-                            <>
-                              <img
-                                src={
-                                  entry.privacy === "public"
-                                    ? publicIcon
-                                    : privateIcon
-                                }
-                                alt={entry.privacy}
-                                style={{ width: "15px", height: "15px" }}
-                              />
-                            </>
-                          )}
+                        <div
+                          className="days border rounded bg-light shadow-sm p-2"
+                          style={{ height: "80px" }}
+                        >
+                          <div className="d-flex align-items-center gap-1">
+                            <p className="m-0 text-start text-secondary">
+                              {day}
+                            </p>
+                            {entry && (
+                              <>
+                                <img
+                                  src={
+                                    entry.privacy === "public"
+                                      ? publicIcon
+                                      : privateIcon
+                                  }
+                                  alt={entry.privacy}
+                                  style={{ width: "15px", height: "15px" }}
+                                />
+                              </>
+                            )}
+                          </div>
+                          <h5 className="m-0 text-secondary">
+                            {entry ? "00 Entries" : "No Entry"}
+                          </h5>
                         </div>
-                        <h5 className="m-0 text-secondary">
-                          {entry ? entry.title : "No Entry"}
-                        </h5>
-                      </div>
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </MainLayout>

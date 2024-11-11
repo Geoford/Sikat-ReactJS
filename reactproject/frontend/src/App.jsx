@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import IndexPage from "./components/pages/IndexPage";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
+
 // USER
 import Home from "./components/pages/PagesUser/Home";
 // import UserProfile from "./components/pages/PagesUser/UserProfile";
@@ -11,6 +12,7 @@ import DiaryEntry from "./components/pages/DiaryEntry";
 import Profile from "./components/pages/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
 import Settings from "./components/pages/Settings";
+import Followers from "./components/pages/Followers";
 
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
@@ -51,6 +53,7 @@ function App() {
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
           <Route path="/GetHelp" element={<GetHelp />} />
           <Route path="/Settings/:userID" element={<Settings />} />
+          <Route path="/Followers" element={<Followers />} />
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />
