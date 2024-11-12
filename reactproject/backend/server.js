@@ -568,7 +568,6 @@ app.post(
       diary_image = `/uploads/${file.filename}`;
     }
 
-    // Insert diary entry into the database with containsAlarmingWords
     const query = `
       INSERT INTO diary_entries (title, description, userID, diary_image)
       VALUES (?, ?, ?, ?)
@@ -592,9 +591,8 @@ app.post(
 
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
-  const filters = req.query.filters; // Get filter parameters from the request
+  const filters = req.query.filters;
 
-  // Start building the query
   let query = `
     SELECT 
       diary_entries.*,
@@ -608,32 +606,25 @@ app.get("/entries", (req, res) => {
     OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
   `;
 
-  // Array to hold query parameters
   const queryParams = [userID];
 
-  // Ensure filters is an array and contains valid data
   if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map((filter) => {
-      return `LOWER(diary_entries.subjects) LIKE ?`; // Case-insensitive matching
+      return `LOWER(diary_entries.subjects) LIKE ?`;
     });
 
-    // Append the filtering conditions to the query
     query += ` AND (${filterConditions.join(" OR ")})`;
 
-    // Add the filter values to the query parameters, converting to lowercase
     queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
   }
 
-  // Append the ordering of entries by creation date
   query += ` ORDER BY diary_entries.created_at DESC`;
 
-  // Execute the query
   db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
     }
-    // Send the result back to the client
     res.status(200).json(results);
   });
 });
@@ -1040,7 +1031,7 @@ app.get("/followedUsers/:userID", async (req, res) => {
 
 const getFollowersFromDatabase = async (userID) => {
   const query = `
-    SELECT u.userID, u.username, up.profile_image
+    SELECT u.userID, u.username, u.isAdmin, up.profile_image
     FROM followers f
     JOIN user_table u ON f.userID = u.userID
     JOIN user_profiles up ON f.userID = up.userID
@@ -1401,6 +1392,20 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
+app.get("reports", (req, res) => {
+  const query = `
+  SELECT * FROM gender_based_crime_reports
+`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.post("/flags", (req, res) => {
   const { userID, entryID, behaviors, otherText } = req.body;
 
@@ -1560,6 +1565,81 @@ app.put("/editComment/:commentID", (req, res) => {
 
     return res.status(200).json({ message: "Comment updated successfully." });
   });
+});
+
+app.post("/flaggingOptions", (req, res) => {
+  const { option } = req.body;
+
+  db.query(
+    "INSERT INTO flagging_options (reason) VALUES (?)",
+    [option],
+    (err) => {
+      if (err) {
+        console.error(err); // Log error details for debugging
+        res.status(500).json({ error: "Failed to add option" });
+      } else {
+        res.status(201).json({ message: "Option added successfully" });
+      }
+    }
+  );
+});
+
+app.get("/flaggingOptions", (req, res) => {
+  db.query("SELECT * FROM flagging_options", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.put("/flaggingEdit/:flagID", (req, res) => {
+  const { flagID } = req.params;
+  const { reason } = req.body;
+
+  if (reason) {
+    db.query(
+      "UPDATE flagging_options SET reason = ? WHERE flagID = ?",
+      [reason, flagID],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: "Failed to update option" });
+        } else {
+          if (result.affectedRows > 0) {
+            res.json({ message: "Option updated successfully" });
+          } else {
+            res.status(404).json({ error: "Option not found" });
+          }
+        }
+      }
+    );
+  } else {
+    res.status(400).json({ error: "Reason is required" });
+  }
+});
+
+app.delete("/flaggingDelete/:flagID", (req, res) => {
+  const { flagID } = req.params;
+
+  db.query(
+    "DELETE FROM flagging_options WHERE flagID = ?",
+    [flagID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete option" });
+      } else {
+        if (result.affectedRows > 0) {
+          res.json({ message: "Option deleted successfully" });
+        } else {
+          res.status(404).json({ error: "Option not found" });
+        }
+      }
+    }
+  );
 });
 
 const PORT = process.env.PORT || 8081;

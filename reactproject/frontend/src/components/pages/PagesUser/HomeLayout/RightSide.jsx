@@ -36,12 +36,14 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                 />
               </div>
 
-              <p className="m-0 ms-2">{user.username}</p>
+              <p className="m-0 ms-2">
+                {user.isAdmin === 1 ? "Gender and Development" : user.username}
+              </p>
             </div>
           </Link>
           <button
             className="secondaryButton position-absolute"
-            onClick={() => handleFollowToggle(user.userID)}
+            onClick={() => handleFollowToggle(user.userID, user.username)}
             style={{ right: "55px" }}
           >
             {isFollowing(user.userID) ? "Unfollow" : "Follow"}
@@ -105,7 +107,7 @@ const RightSide = () => {
     }
   };
 
-  const handleFollowToggle = async (followUserId) => {
+  const handleFollowToggle = async (followUserId, targetUsername) => {
     if (!followUserId) {
       console.error("User ID to follow/unfollow is undefined");
       return;
@@ -121,7 +123,7 @@ const RightSide = () => {
     try {
       if (isFollowing) {
         const confirmed = window.confirm(
-          `Are you sure you want to unfollow ${user.username}?`
+          `Are you sure you want to unfollow ${targetUsername}?`
         );
 
         if (!confirmed) {
@@ -134,7 +136,7 @@ const RightSide = () => {
         setFollowedUsers((prev) =>
           prev.filter((u) => u.userID !== followUserId)
         );
-        alert(`You have unfollowed ${user.username}`);
+        alert(`You have unfollowed ${targetUsername}`);
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -145,7 +147,7 @@ const RightSide = () => {
         const followedUserData = response.data; // Expect the user data in the response
 
         setFollowedUsers((prev) => [...prev, followedUserData]);
-        alert(`You are now following ${user.username}`);
+        alert(`You are now following ${targetUsername}`);
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
