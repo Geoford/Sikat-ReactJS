@@ -99,8 +99,9 @@ function DiaryEntryButton({ onEntrySaved }) {
     formData.append("visibility", visibility);
     formData.append("anonimity", anonimity);
 
-    // Append selected subjects
-    formData.append("subjects", JSON.stringify(selectedSubjects));
+    if (selectedSubjects && selectedSubjects.trim() !== "") {
+      formData.append("subjects", selectedSubjects);
+    }
 
     if (file) {
       formData.append("file", file);

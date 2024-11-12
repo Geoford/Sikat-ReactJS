@@ -49,13 +49,19 @@ const SubjectSelection = ({ onSubjectsChange }) => {
 
     const selectedSubjectsText = [];
     filterSubjects.forEach((subject) => {
-      if (updatedItems[subject.name]) selectedSubjectsText.push(subject.name);
+      if (updatedItems[subject.subject])
+        selectedSubjectsText.push(subject.subject);
     });
 
     if (updatedItems.other && customReason)
       selectedSubjectsText.push(customReason);
 
-    onSubjectsChange(selectedSubjectsText.join(", "));
+    // If there are no subjects selected, pass null
+    if (selectedSubjectsText.length > 0) {
+      onSubjectsChange(selectedSubjectsText.join(", "));
+    } else {
+      onSubjectsChange(null); // Set to null if no subject is selected
+    }
   };
 
   const handleCustomReasonChange = (event) => {
@@ -72,7 +78,12 @@ const SubjectSelection = ({ onSubjectsChange }) => {
     if (selectedItems.other && customReason)
       selectedSubjectsText.push(customReason);
 
-    onSubjectsChange(selectedSubjectsText.join(", "));
+    // If there are no subjects selected, pass null
+    if (selectedSubjectsText.length > 0) {
+      onSubjectsChange(selectedSubjectsText.join(", "));
+    } else {
+      onSubjectsChange(null); // Set to null if no subject is selected
+    }
     setDropdownOpen(false);
   };
 
