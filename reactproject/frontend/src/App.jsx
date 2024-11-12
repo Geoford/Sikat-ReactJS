@@ -22,7 +22,7 @@ import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncid
 import GenerateReport from "./components/pages/PagesAdmin/Statictics";
 import CaseDetails from "./components/pages/PagesAdmin/CaseDetails";
 // import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
-// import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
+import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -68,8 +68,11 @@ function App() {
           />
           <Route path="/Admin/Statistics" element={<GenerateReport />} />
           <Route path="/Admin/CaseDetails" element={<CaseDetails />} />
-          {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
-          <Route path="/Admin/DiaryEntry" element={<AdminDiaryEntry />} /> */}
+          {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} /> */}
+          <Route
+            path="/Admin/DiaryEntry/:entryID"
+            element={<AdminDiaryEntry />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

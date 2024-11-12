@@ -91,7 +91,7 @@ const Center = () => {
               flaggedUsers.map((flaggedUser) => (
                 <Link
                   key={flaggedUser.userID}
-                  to="/Admin/DiaryEntry"
+                  to={`/Admin/DiaryEntry/${flaggedUser.entryID}`}
                   className="text-decoration-none"
                   style={{ cursor: "pointer" }}
                 >

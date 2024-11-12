@@ -11,7 +11,7 @@ import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
 
-const CommentSection = ({ userID, entryID, entry }) => {
+const CommentSection = ({ userID, entryID, entry, firstName }) => {
   const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
   const [comments, setComments] = useState([]);
@@ -277,7 +277,11 @@ const CommentSection = ({ userID, entryID, entry }) => {
                 <Dropdown.Menu className="p-2 ">
                   {!canManage && (
                     <Dropdown.Item className="p-0 btn btn-light">
-                      <ReportButton />
+                      <ReportButton
+                        commentID={comment.commentID}
+                        userID={userID}
+                        username={comment.username}
+                      />
                     </Dropdown.Item>
                   )}
 
@@ -431,7 +435,7 @@ const CommentSection = ({ userID, entryID, entry }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Comments on First name or Alias's Diary</Modal.Title>
+          <Modal.Title>Comments on {firstName}'s Diary</Modal.Title>
         </Modal.Header>
         <Modal.Body
           className="d-flex flex-column justify-content-between"

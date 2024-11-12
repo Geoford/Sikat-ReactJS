@@ -25,7 +25,7 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [anonimity, setAnonimity] = useState("private");
   const [file, setFile] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState("");
-  const [alarmingWordWarning, setAlarmingWordWarning] = useState(""); // Change from Error to Warning
+  const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);
@@ -99,8 +99,9 @@ function DiaryEntryButton({ onEntrySaved }) {
     formData.append("visibility", visibility);
     formData.append("anonimity", anonimity);
 
-    // Append selected subjects
-    formData.append("subjects", JSON.stringify(selectedSubjects));
+    if (selectedSubjects && selectedSubjects.trim() !== "") {
+      formData.append("subjects", selectedSubjects);
+    }
 
     if (file) {
       formData.append("file", file);

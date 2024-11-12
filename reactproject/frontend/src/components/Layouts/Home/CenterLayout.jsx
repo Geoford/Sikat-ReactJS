@@ -105,19 +105,12 @@ const CenterLayout = () => {
   const handleFilterChange = (selectedFiltersArray) => {
     const activeFilters = [];
 
-    if (selectedFiltersArray.includes("Sexual Harassment")) {
-      activeFilters.push("Sexual Harassment");
-    }
-
-    if (selectedFiltersArray.includes("Domestic Abuse")) {
-      activeFilters.push("Domestic Abuse");
-    }
-
-    if (selectedFiltersArray.includes("Gender Related")) {
-      activeFilters.push("Gender Related");
-    }
+    selectedFiltersArray.forEach((filter) => {
+      if (filter) activeFilters.push(filter);
+    });
 
     setFilters(activeFilters);
+    console.log("Active Filters:", activeFilters);
   };
 
   const handleGadify = (entryID) => {

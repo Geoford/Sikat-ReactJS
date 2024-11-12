@@ -1,54 +1,67 @@
+import { useState, useEffect } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
-import { useState } from "react";
+import axios from "axios";
 
 const SubjectSelection = ({ onSubjectsChange }) => {
-  const [selectedItems, setSelectedItems] = useState({
-    all: false,
-    sexualHarassment: false,
-    domesticAbuse: false,
-    genderRelated: false,
-    other: false, // State for "Other" checkbox
-  });
-
+  const [selectedItems, setSelectedItems] = useState({});
   const [customReason, setCustomReason] = useState(""); // State for custom input
   const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown open/close
+  const [filterSubjects, setFilterSubjects] = useState([]); // State for fetched filter subjects
+
+  // Fetch the filter subjects from the backend
+  useEffect(() => {
+    const fetchFilterSubjects = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/filters");
+        const subjects = response.data;
+
+        // Initialize the selectedItems state based on fetched subjects
+        const initialState = subjects.reduce((acc, subject) => {
+          acc[subject.subject] = false; // Set each subject to be unchecked initially
+          return acc;
+        }, {});
+        setSelectedItems(initialState);
+        setFilterSubjects(subjects);
+      } catch (error) {
+        console.error("Error fetching filter subjects:", error);
+      }
+    };
+
+    fetchFilterSubjects();
+  }, []);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
     let updatedItems;
     if (name === "all") {
-      updatedItems = {
-        all: checked,
-        sexualHarassment: checked,
-        domesticAbuse: checked,
-        genderRelated: checked,
-        other: checked,
-      };
+      updatedItems = filterSubjects.reduce((acc, subject) => {
+        acc[subject.subject] = checked;
+        return acc;
+      }, {});
+      updatedItems.all = checked;
     } else {
       updatedItems = { ...selectedItems, [name]: checked };
-      updatedItems.all =
-        updatedItems.sexualHarassment &&
-        updatedItems.domesticAbuse &&
-        updatedItems.genderRelated;
     }
 
     setSelectedItems(updatedItems);
 
-    // Convert the selected subjects to a text format
     const selectedSubjectsText = [];
-    if (updatedItems.sexualHarassment)
-      selectedSubjectsText.push("Sexual Harassment");
-    if (updatedItems.domesticAbuse) selectedSubjectsText.push("Domestic Abuse");
-    if (updatedItems.genderRelated) selectedSubjectsText.push("Gender Related");
+    filterSubjects.forEach((subject) => {
+      if (updatedItems[subject.subject])
+        selectedSubjectsText.push(subject.subject);
+    });
 
-    // Include the custom reason if provided
     if (updatedItems.other && customReason)
       selectedSubjectsText.push(customReason);
 
-    // Send the comma-separated string of selected subjects to the parent
-    onSubjectsChange(selectedSubjectsText.join(", "));
+    // If there are no subjects selected, pass null
+    if (selectedSubjectsText.length > 0) {
+      onSubjectsChange(selectedSubjectsText.join(", "));
+    } else {
+      onSubjectsChange(null); // Set to null if no subject is selected
+    }
   };
 
   const handleCustomReasonChange = (event) => {
@@ -56,23 +69,21 @@ const SubjectSelection = ({ onSubjectsChange }) => {
   };
 
   const handleSaveFilter = () => {
-    // Create the selected subjects string for saving
     const selectedSubjectsText = [];
-    if (selectedItems.sexualHarassment)
-      selectedSubjectsText.push("Sexual Harassment");
-    if (selectedItems.domesticAbuse)
-      selectedSubjectsText.push("Domestic Abuse");
-    if (selectedItems.genderRelated)
-      selectedSubjectsText.push("Gender Related");
+    filterSubjects.forEach((subject) => {
+      if (selectedItems[subject.subject])
+        selectedSubjectsText.push(subject.subject);
+    });
 
-    // Include the custom reason if provided
     if (selectedItems.other && customReason)
       selectedSubjectsText.push(customReason);
 
-    // Send the comma-separated string of selected subjects to the parent
-    onSubjectsChange(selectedSubjectsText.join(", "));
-
-    // Close the dropdown
+    // If there are no subjects selected, pass null
+    if (selectedSubjectsText.length > 0) {
+      onSubjectsChange(selectedSubjectsText.join(", "));
+    } else {
+      onSubjectsChange(null); // Set to null if no subject is selected
+    }
     setDropdownOpen(false);
   };
 
@@ -83,60 +94,51 @@ const SubjectSelection = ({ onSubjectsChange }) => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="px-2">
-        <Form.Check
-          type="checkbox"
-          id="all"
-          label="All"
-          name="all"
-          checked={selectedItems.all}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="sexualHarassment"
-          label="Sexual Harassment"
-          name="sexualHarassment"
-          checked={selectedItems.sexualHarassment}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="domesticAbuse"
-          label="Domestic Abuse"
-          name="domesticAbuse"
-          checked={selectedItems.domesticAbuse}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="genderRelated"
-          label="Gender Related"
-          name="genderRelated"
-          checked={selectedItems.genderRelated}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="other"
-          label="Other"
-          name="other"
-          checked={selectedItems.other}
-          onChange={handleCheckboxChange}
-        />
-        {selectedItems.other && ( // Show the input field only if "Other" is checked
-          <Form.Group className="mt-2">
-            <Form.Label>Other reasons:</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Type other reasons here..."
-              value={customReason}
-              onChange={handleCustomReasonChange}
+        {filterSubjects.length > 0 && (
+          <>
+            <Form.Check
+              type="checkbox"
+              id="all"
+              label="All"
+              name="all"
+              checked={selectedItems.all}
+              onChange={handleCheckboxChange}
             />
-          </Form.Group>
+            {filterSubjects.map((subject) => (
+              <Form.Check
+                key={subject.subjectID}
+                type="checkbox"
+                id={subject.subject}
+                label={subject.subject}
+                name={subject.subject}
+                checked={selectedItems[subject.subject] || false}
+                onChange={handleCheckboxChange}
+              />
+            ))}
+            <Form.Check
+              type="checkbox"
+              id="other"
+              label="Other"
+              name="other"
+              checked={selectedItems.other}
+              onChange={handleCheckboxChange}
+            />
+            {selectedItems.other && (
+              <Form.Group className="mt-2">
+                <Form.Label>Other reasons:</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Type other reasons here..."
+                  value={customReason}
+                  onChange={handleCustomReasonChange}
+                />
+              </Form.Group>
+            )}
+            <button className="orangeButton w-100" onClick={handleSaveFilter}>
+              Save Filter
+            </button>
+          </>
         )}
-        <button className="orangeButton w-100" onClick={handleSaveFilter}>
-          Save Filter
-        </button>
       </Dropdown.Menu>
     </Dropdown>
   );
