@@ -25,7 +25,7 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [anonimity, setAnonimity] = useState("private");
   const [file, setFile] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState("");
-  const [alarmingWordWarning, setAlarmingWordWarning] = useState(""); // Change from Error to Warning
+  const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);

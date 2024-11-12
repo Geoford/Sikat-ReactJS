@@ -1,42 +1,47 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios"; // Make sure you have axios installed for fetching data
 
 const FilterButton = ({ onFilterChange }) => {
-  const [selectedItems, setSelectedItems] = useState({
-    all: false,
-    sexualHarassment: false,
-    domesticAbuse: false,
-    genderRelated: false,
-  });
+  const [selectedItems, setSelectedItems] = useState({});
+  const [filterOptions, setFilterOptions] = useState([]);
+
+  // Fetch filter subjects from the backend on mount
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/filters"); // Fetch the filter subjects
+        const filters = response.data;
+
+        // Initialize the selectedItems state dynamically based on fetched filters
+        const initialItems = {};
+        filters.forEach((filter) => {
+          initialItems[filter.subject] = false; // Initialize each filter as unchecked
+        });
+
+        setSelectedItems(initialItems);
+        setFilterOptions(filters); // Store the fetched filter subjects
+      } catch (err) {
+        console.error("Error fetching filters:", err);
+      }
+    };
+
+    fetchFilters();
+  }, []);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-
-    let updatedItems;
-    if (name === "all") {
-      updatedItems = {
-        all: checked,
-        sexualHarassment: checked,
-        domesticAbuse: checked,
-        genderRelated: checked,
-      };
-    } else {
-      updatedItems = { ...selectedItems, [name]: checked };
-      updatedItems.all =
-        updatedItems.sexualHarassment &&
-        updatedItems.domesticAbuse &&
-        updatedItems.genderRelated;
-    }
+    const updatedItems = { ...selectedItems, [name]: checked };
 
     setSelectedItems(updatedItems);
 
     // Convert the selected items to a descriptive text format
     const selectedSubjectsText = [];
-    if (updatedItems.sexualHarassment)
-      selectedSubjectsText.push("Sexual Harassment");
-    if (updatedItems.domesticAbuse) selectedSubjectsText.push("Domestic Abuse");
-    if (updatedItems.genderRelated) selectedSubjectsText.push("Gender Related");
+    filterOptions.forEach((filter) => {
+      if (updatedItems[filter.subject])
+        selectedSubjectsText.push(filter.subject);
+    });
 
     // Send the descriptive text to the parent component
     onFilterChange(selectedSubjectsText);
@@ -44,14 +49,14 @@ const FilterButton = ({ onFilterChange }) => {
 
   const applyFilters = () => {
     const selectedFilters = [];
-    if (selectedItems.sexualHarassment)
-      selectedFilters.push("Sexual Harassment");
-    if (selectedItems.domesticAbuse) selectedFilters.push("Domestic Abuse");
-    if (selectedItems.genderRelated) selectedFilters.push("Gender Related");
+    filterOptions.forEach((filter) => {
+      if (selectedItems[filter.subject]) selectedFilters.push(filter.subject);
+    });
 
-    console.log("Selected Filters:", JSON.stringify(selectedFilters, null, 2));
+    console.log("Applied Filters:", JSON.stringify(selectedFilters, null, 2));
 
-    onFilterChange(selectedFilters); // This will now pass the array of selected filters
+    // Send the selected filters back to the parent component
+    onFilterChange(selectedFilters);
   };
 
   return (
@@ -61,40 +66,19 @@ const FilterButton = ({ onFilterChange }) => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="px-2">
-        <Form.Check
-          type="checkbox"
-          id="all"
-          label="All"
-          name="all"
-          checked={selectedItems.all}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="sexualHarassment"
-          label="Sexual Harassment"
-          name="sexualHarassment"
-          checked={selectedItems.sexualHarassment}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="domesticAbuse"
-          label="Domestic Abuse"
-          name="domesticAbuse"
-          checked={selectedItems.domesticAbuse}
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          type="checkbox"
-          id="genderRelated"
-          label="Gender Related"
-          name="genderRelated"
-          checked={selectedItems.genderRelated}
-          onChange={handleCheckboxChange}
-        />
+        {filterOptions.map((filter) => (
+          <Form.Check
+            key={filter.subject} // Use 'subject' for the key
+            type="checkbox"
+            id={filter.subject} // Use 'subject' for the id
+            label={filter.subject} // Use 'subject' for the label
+            name={filter.subject} // Use 'subject' for the name
+            checked={selectedItems[filter.subject] || false}
+            onChange={handleCheckboxChange}
+          />
+        ))}
         <button className="orangeButton w-100" onClick={applyFilters}>
-          Save Filter
+          Apply Filters
         </button>
       </Dropdown.Menu>
     </Dropdown>

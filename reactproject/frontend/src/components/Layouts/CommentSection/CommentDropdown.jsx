@@ -1,7 +1,7 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
 
-const CommentDropdown = () => {
+const CommentDropdown = ({ commentID, userID, username }) => {
   return (
     <Dropdown>
       <Dropdown.Toggle
@@ -14,7 +14,11 @@ const CommentDropdown = () => {
 
       <Dropdown.Menu className="p-2">
         <Dropdown.Item className="p-0 btn btn-light">
-          <ReportButton></ReportButton>
+          <ReportButton
+            commentID={commentID}
+            userID={userID}
+            username={comment.username}
+          />
         </Dropdown.Item>
         {/* <Dropdown.Item href="#/action-2"></Dropdown.Item>
         <Dropdown.Item href="#/action-3"> </Dropdown.Item> */}

@@ -398,6 +398,7 @@ const DiaryEntryLayout = ({
             userID={user.userID}
             entryID={entry.entryID}
             entry={entry.userID}
+            firstName={entry.firstName}
           />
         </div>
         <div className="col">

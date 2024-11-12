@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -8,6 +8,21 @@ function FlagButton({ userID, entryID }) {
   const [selectedBehaviors, setSelectedBehaviors] = useState([]);
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [flaggingOptions, setFlaggingOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchFlaggingOptions = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/flaggingOptions"
+        );
+        setFlaggingOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching flagging options:", error);
+      }
+    };
+    fetchFlaggingOptions();
+  }, []);
 
   const handleClose = () => {
     setShow(false);
@@ -20,7 +35,11 @@ function FlagButton({ userID, entryID }) {
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
-    if (value === "others") setIsOtherSelected(checked);
+
+    if (value === "others") {
+      setIsOtherSelected(checked);
+    }
+
     setSelectedBehaviors((prevSelected) =>
       checked
         ? [...prevSelected, value]
@@ -53,6 +72,7 @@ function FlagButton({ userID, entryID }) {
       }
     } catch (error) {
       console.error("Error submitting report:", error);
+      alert("There was an error submitting your report. Please try again.");
     }
   };
 
@@ -62,7 +82,7 @@ function FlagButton({ userID, entryID }) {
         className="InteractButton d-flex align-items-center justify-content-center gap-2"
         onClick={handleShow}
       >
-        <i class="bx bx-flag"></i>
+        <i className="bx bx-flag"></i>
         Flag
       </button>
 
@@ -79,39 +99,19 @@ function FlagButton({ userID, entryID }) {
               )}
             </label>
             <div className="d-flex flex-column gap-2">
-              <label className="border rounded p-2">
-                <input
-                  type="checkbox"
-                  id="bullying"
-                  value="bullying"
-                  onChange={handleCheckboxChange}
-                />
-                <label className="ms-1" htmlFor="bullying">
-                  Bullying
+              {flaggingOptions.map((option) => (
+                <label className="border rounded p-2" key={option.flagID}>
+                  <input
+                    type="checkbox"
+                    id={option.flagID}
+                    value={option.reason}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label className="ms-1" htmlFor={option.flagID}>
+                    {option.reason}
+                  </label>
                 </label>
-              </label>
-              <label className="border rounded p-2">
-                <input
-                  type="checkbox"
-                  id="harassment"
-                  value="harassment"
-                  onChange={handleCheckboxChange}
-                />
-                <label className="ms-1" htmlFor="harassment">
-                  Harassment
-                </label>
-              </label>
-              <label className="border rounded p-2">
-                <input
-                  type="checkbox"
-                  id="pretending"
-                  value="pretending"
-                  onChange={handleCheckboxChange}
-                />
-                <label className="ms-1" htmlFor="pretending">
-                  Pretending to be someone
-                </label>
-              </label>
+              ))}
               <label className="border rounded p-2">
                 <input
                   type="checkbox"
@@ -129,7 +129,7 @@ function FlagButton({ userID, entryID }) {
                   className="form-control mt-2"
                   placeholder="Please specify"
                   value={otherText}
-                  onChange={handleOtherTextChange}
+                  onChange={(e) => setOtherText(e.target.value)}
                 />
               )}
             </div>
