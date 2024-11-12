@@ -44,7 +44,7 @@ const IndexPage = () => {
       <div className="">
         <div className="vh-100 d-flex flex-column justify-content-center align-items-center gap-2">
           <div
-            className="p-3 rounded"
+            className="p-3 rounded shadow"
             style={{ backgroundColor: "var(--primary)" }}
           >
             <div className="position-relative">
