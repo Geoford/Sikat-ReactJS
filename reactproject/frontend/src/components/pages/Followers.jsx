@@ -34,7 +34,9 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                   }}
                 />
               </div>
-              <p className="m-0 ms-2">{user.username}</p>
+              <p className="m-0 ms-2">
+                {user.firstName} {user.lastName}
+              </p>
             </div>
           </Link>
           <button

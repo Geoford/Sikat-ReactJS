@@ -93,7 +93,6 @@ const DiaryEntryLayout = ({
     }
   };
 
-  // Delete entry handler
   const handleDeleteEntry = async (entryID) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this entry?"
@@ -102,6 +101,7 @@ const DiaryEntryLayout = ({
       try {
         await axios.delete(`http://localhost:8081/deleteEntry/${entryID}`);
         alert("Diary entry deleted successfully.");
+        window.location.reload();
         setEntries((prevEntries) =>
           prevEntries.filter((entry) => entry.entryID !== entryID)
         );
@@ -253,7 +253,11 @@ const DiaryEntryLayout = ({
           <div className="d-flex align-items-center gap-2">
             <div className="profilePicture">
               <img
-                src={entry.isAdmin === 1 ? TransparentLogo : anonymous}
+                src={
+                  entry.isAdmin === 1
+                    ? `http://localhost:8081${entry.profile_image}`
+                    : anonymous
+                }
                 alt="Profile"
                 style={{
                   width: "100%",
@@ -288,7 +292,11 @@ const DiaryEntryLayout = ({
                 />
               </div>
               <div className="d-flex flex-column align-items-start">
-                {entry.isAdmin === 1 ? entry.username : entry.cvsuEmail}
+                {entry.isAdmin === 1
+                  ? "Gender and Development"
+                  : entry.firstName && entry.lastName
+                  ? entry.firstName + " " + entry.lastName
+                  : user.firstName + " " + user.lastName}
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
                   {formatDate(entry.created_at)}
                 </p>

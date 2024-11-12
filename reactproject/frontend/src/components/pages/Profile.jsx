@@ -69,7 +69,7 @@ const Profile = () => {
       if (response.data.entries && Array.isArray(response.data.entries)) {
         setEntries(response.data.entries);
       } else {
-        setEntries([]); // Ensure entries is an empty array if no data found
+        setEntries([]);
       }
     } catch (error) {
       console.error("Error fetching entries:", error);

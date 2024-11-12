@@ -12,6 +12,8 @@ import SubjectSelection from "../LayoutUser/SubjectSelection";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import userDefaultProfile from "../../../assets/userDefaultProfile.png";
+
 function PostButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
@@ -82,6 +84,7 @@ function PostButton({ onEntrySaved }) {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("userID", user.userID);
+
     if (scheduledDate) {
       formData.append("scheduledDate", scheduledDate.toISOString());
     }
@@ -134,7 +137,21 @@ function PostButton({ onEntrySaved }) {
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="profilePicture"></div>
+            <div className="profilePicture">
+              <img
+                src={
+                  user?.profile_image
+                    ? `http://localhost:8081${user?.profile_image}`
+                    : userDefaultProfile
+                }
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
             <p className="m-0">{user?.username || "User"}</p>
             <div>
               <select
