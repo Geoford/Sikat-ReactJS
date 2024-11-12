@@ -402,7 +402,11 @@ const DiaryEntryLayout = ({
           />
         </div>
         <div className="col">
-          <FlagButton userID={user.userID} entryID={entry.entryID} />
+          <FlagButton
+            userID={user.userID}
+            entryID={entry.entryID}
+            entry={entry.userID}
+          />
         </div>
       </div>
     </div>

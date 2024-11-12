@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function FlagButton({ userID, entryID }) {
+function FlagButton({ userID, entryID, entry }) {
   const [show, setShow] = useState(false);
   const [selectedBehaviors, setSelectedBehaviors] = useState([]);
   const [otherText, setOtherText] = useState("");
@@ -49,7 +49,7 @@ function FlagButton({ userID, entryID }) {
 
   const handleSubmit = async () => {
     const reportData = {
-      userID,
+      userID: entry,
       entryID,
       behaviors: selectedBehaviors.join(", "),
       otherText: isOtherSelected ? otherText : null,

@@ -1581,6 +1581,7 @@ app.get("/flagged", (req, res) => {
     user_table.firstName,
     user_table.lastName,
     diary_entries.title
+    
   FROM flagged_reports
   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
