@@ -189,23 +189,25 @@ function NotificationButton() {
                   markAsReadAndNavigate(notification.notificationID)
                 }
               >
-                <div className="grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
-                  <div className="profilePicture">
-                    <img
-                      src={
-                        notification.actorProfileImage
-                          ? notification.actorProfileImage
-                          : DefaultProfile
-                      }
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
+                <div className="row grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
+                  <div className="col-1 p-0">
+                    <div className="profilePicture">
+                      <img
+                        src={
+                          notification.actorProfileImage
+                            ? notification.actorProfileImage
+                            : DefaultProfile
+                        }
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
                   </div>
-                  <p className="m-0">
+                  <p className="col m-0 ms-3">
                     {notification.actorUsername} {notification.message}
                     <span
                       className="text-secondary"

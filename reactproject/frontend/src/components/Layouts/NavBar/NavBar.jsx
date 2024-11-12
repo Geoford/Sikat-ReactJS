@@ -81,24 +81,34 @@ const NavBar = ({ ActiveTab }) => {
             <i class="bx bx-note"></i>
             <p className="navToolTip">Diary Entries</p>
           </Link>
-          <Link
-            className={`navIcons text-light ${
-              ActiveTab === "Followers" ? "active" : ""
-            }`}
-            to="/Followers"
-          >
-            <i class="bx bx-user-plus"></i>
-            <p className="navToolTip">Followers</p>
-          </Link>
-          <Link
-            className={`navIcons text-light ${
-              ActiveTab === "Complaints" ? "active" : ""
-            }`}
-            to="/Admin/GenderBasedIncidents"
-          >
-            <i class="bx bxs-report"></i>
-            <p className="navToolTip">Complaints</p>
-          </Link>
+          {user && user.isAdmin ? (
+            ""
+          ) : (
+            <Link
+              className={`navIcons text-light ${
+                ActiveTab === "Followers" ? "active" : ""
+              }`}
+              to="/Followers"
+            >
+              <i class="bx bx-user-plus"></i>
+              <p className="navToolTip">Followers</p>
+            </Link>
+          )}
+
+          {user && user.isAdmin ? (
+            <Link
+              className={`navIcons text-light ${
+                ActiveTab === "Complaints" ? "active" : ""
+              }`}
+              to="/Admin/GenderBasedIncidents"
+            >
+              <i class="bx bxs-report"></i>
+              <p className="navToolTip">Complaints</p>
+            </Link>
+          ) : (
+            ""
+          )}
+
           <Link
             className={`navIcons text-light ${
               ActiveTab === "Settings" ? "active" : ""

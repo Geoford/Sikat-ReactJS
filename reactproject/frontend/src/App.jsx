@@ -14,6 +14,8 @@ import GetHelp from "./components/pages/PagesUser/GetHelp";
 import Settings from "./components/pages/Settings";
 import Followers from "./components/pages/Followers";
 
+import LoginRegister from "./components/pages/LoginRegister";
+
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
 import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncidents";
@@ -31,6 +33,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<IndexPage />} />
+          <Route path="/Login" element={<LoginRegister />} />
           <Route
             path="/Login"
             element={
