@@ -44,7 +44,7 @@ const FlaggingDiaries = () => {
 
   const handleEditOption = (flagID, currentReason) => {
     setEditingOption(flagID);
-    setEditedReason(currentReason); // Set the current reason for editing
+    setEditedReason(currentReason);
   };
 
   const handleSaveEdit = async (flagID) => {

@@ -767,7 +767,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
   const entryID = req.params.entryID;
 
   // Assuming you're fetching data from a database
-  const query = `SELECT diary_entries.*, user_table.username, user_profiles.*
+  const query = `SELECT diary_entries.*, user_table.username, user_table.firstName, user_table.lastName, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
@@ -1000,7 +1000,7 @@ app.delete("/unfollow/:followUserId", (req, res) => {
 
 const getFollowedUsersFromDatabase = async (userID) => {
   const query = `
-    SELECT user_table.userID, user_table.username, user_profiles.profile_image
+    SELECT user_table.userID, user_table.username, user_table.firstName , user_table.lastName, user_profiles.profile_image
     FROM followers
     INNER JOIN user_table ON followers.followedUserID = user_table.userID
     INNER JOIN user_profiles ON followers.followedUserID = user_profiles.userID
@@ -1031,7 +1031,7 @@ app.get("/followedUsers/:userID", async (req, res) => {
 
 const getFollowersFromDatabase = async (userID) => {
   const query = `
-    SELECT u.userID, u.username, u.isAdmin, up.profile_image
+    SELECT u.userID, u.username, u.firstName, u.lastName, u.isAdmin, up.profile_image
     FROM followers f
     JOIN user_table u ON f.userID = u.userID
     JOIN user_profiles up ON f.userID = up.userID
@@ -1567,6 +1567,7 @@ app.put("/editComment/:commentID", (req, res) => {
   });
 });
 
+// settings
 app.post("/flaggingOptions", (req, res) => {
   const { option } = req.body;
 
@@ -1642,6 +1643,239 @@ app.delete("/flaggingDelete/:flagID", (req, res) => {
   );
 });
 
+app.post("/filters", (req, res) => {
+  const { subject } = req.body;
+
+  db.query(
+    "INSERT INTO filter_subjects (subject) VALUES (?)",
+    [subject],
+    (err, result) => {
+      if (err) {
+        console.error("Error adding filter:", err);
+        res.status(500).json({ error: "Failed to add filter" });
+      } else {
+        res.status(201).json({
+          message: "Filter added successfully",
+          filterID: result.insertId,
+        });
+      }
+    }
+  );
+});
+
+app.get("/filters", (req, res) => {
+  db.query("SELECT * FROM filter_subjects", (err, results) => {
+    if (err) {
+      console.error("Error fetching filters:", err);
+      res.status(500).json({ error: "Failed to retrieve filters" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.put("/filterEdit/:subjectID", (req, res) => {
+  const { subjectID } = req.params;
+  const { subject } = req.body;
+
+  if (subject) {
+    db.query(
+      "UPDATE filter_subjects SET subject = ? WHERE subjectID = ?",
+      [subject, subjectID],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: "Failed to update subject" });
+        } else {
+          if (result.affectedRows > 0) {
+            res.json({ message: "Subject updated successfully" });
+          } else {
+            res.status(404).json({ error: "Subject not found" });
+          }
+        }
+      }
+    );
+  } else {
+    res.status(400).json({ error: "Reason is required" });
+  }
+});
+
+app.delete("/filterDelete/:subjectID", (req, res) => {
+  const { subjectID } = req.params;
+
+  db.query(
+    "DELETE FROM filter_subjects WHERE subjectID = ?",
+    [subjectID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete subject" });
+      } else {
+        if (result.affectedRows > 0) {
+          res.json({ message: "Subject deleted successfully" });
+        } else {
+          res.status(404).json({ error: "Subject not found" });
+        }
+      }
+    }
+  );
+});
+
+app.post("/reportComments", (req, res) => {
+  const { reason } = req.body;
+
+  db.query(
+    "INSERT INTO report_comments (reason) VALUES (?)",
+    [reason],
+    (err, result) => {
+      if (err) {
+        console.error("Error adding filter:", err);
+        res.status(500).json({ error: "Failed to add filter" });
+      } else {
+        res.status(201).json({
+          message: "Filter added successfully",
+          reportCommentID: result.insertId,
+        });
+      }
+    }
+  );
+});
+
+app.get("/reportComments", (req, res) => {
+  db.query("SELECT * FROM report_comments", (err, results) => {
+    if (err) {
+      console.error("Error fetching filters:", err);
+      res.status(500).json({ error: "Failed to retrieve filters" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.put("/reportCommentEdit/:reportCommentID", (req, res) => {
+  const { reportCommentID } = req.params;
+  const { reason } = req.body;
+
+  if (reason) {
+    db.query(
+      "UPDATE report_comments SET reason = ? WHERE reportCommentID = ?",
+      [reason, reportCommentID],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: "Failed to update subject" });
+        } else {
+          if (result.affectedRows > 0) {
+            res.json({ message: "Subject updated successfully" });
+          } else {
+            res.status(404).json({ error: "Subject not found" });
+          }
+        }
+      }
+    );
+  } else {
+    res.status(400).json({ error: "Reason is required" });
+  }
+});
+
+app.delete("/reportCommentDelete/:reportCommentID", (req, res) => {
+  const { reportCommentID } = req.params;
+
+  db.query(
+    "DELETE FROM report_comments WHERE reportCommentID = ?",
+    [reportCommentID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete subject" });
+      } else {
+        if (result.affectedRows > 0) {
+          res.json({ message: "Subject deleted successfully" });
+        } else {
+          res.status(404).json({ error: "Subject not found" });
+        }
+      }
+    }
+  );
+});
+
+app.post("/reportUsers", (req, res) => {
+  const { reason } = req.body;
+
+  db.query(
+    "INSERT INTO reporting_users (reason) VALUES (?)",
+    [reason],
+    (err, result) => {
+      if (err) {
+        console.error("Error adding filter:", err);
+        res.status(500).json({ error: "Failed to add filter" });
+      } else {
+        res.status(201).json({
+          message: "Filter added successfully",
+          reportUserID: result.insertId,
+        });
+      }
+    }
+  );
+});
+
+app.get("/reportUsers", (req, res) => {
+  db.query("SELECT * FROM reporting_users", (err, results) => {
+    if (err) {
+      console.error("Error fetching filters:", err);
+      res.status(500).json({ error: "Failed to retrieve filters" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.put("/reportUsers/:reportingUserID", (req, res) => {
+  const { reportingUserID } = req.params;
+  const { reason } = req.body;
+
+  if (reason) {
+    db.query(
+      "UPDATE reporting_users SET reason = ? WHERE reportingUserID = ?",
+      [reason, reportingUserID],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: "Failed to update subject" });
+        } else {
+          if (result.affectedRows > 0) {
+            res.json({ message: "Subject updated successfully" });
+          } else {
+            res.status(404).json({ error: "Subject not found" });
+          }
+        }
+      }
+    );
+  } else {
+    res.status(400).json({ error: "Reason is required" });
+  }
+});
+
+app.delete("/reportUsers/:reportingUserID", (req, res) => {
+  const { reportingUserID } = req.params;
+
+  db.query(
+    "DELETE FROM reporting_users WHERE reportingUserID = ?",
+    [reportingUserID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete subject" });
+      } else {
+        if (result.affectedRows > 0) {
+          res.json({ message: "Subject deleted successfully" });
+        } else {
+          res.status(404).json({ error: "Subject not found" });
+        }
+      }
+    }
+  );
+});
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

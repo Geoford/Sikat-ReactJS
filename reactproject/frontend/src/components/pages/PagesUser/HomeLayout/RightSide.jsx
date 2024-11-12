@@ -37,7 +37,9 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
               </div>
 
               <p className="m-0 ms-2">
-                {user.isAdmin === 1 ? "Gender and Development" : user.username}
+                {user.isAdmin === 1
+                  ? "Gender and Development"
+                  : user.firstName + " " + user.lastName}
               </p>
             </div>
           </Link>

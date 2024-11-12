@@ -294,7 +294,9 @@ const DiaryEntryLayout = ({
               <div className="d-flex flex-column align-items-start">
                 {entry.isAdmin === 1
                   ? "Gender and Development"
-                  : entry.cvsuEmail}
+                  : entry.firstName && entry.lastName
+                  ? entry.firstName + " " + entry.lastName
+                  : user.firstName + " " + user.lastName}
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
                   {formatDate(entry.created_at)}
                 </p>

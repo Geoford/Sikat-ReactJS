@@ -45,6 +45,7 @@ function FlagButton({ userID, entryID }) {
       );
 
       if (response.status === 200) {
+        alert("Flagged successfully");
         console.log("Report submitted successfully");
         handleClose();
       } else {
