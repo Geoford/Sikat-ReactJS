@@ -18,6 +18,7 @@ import Followers from "./components/pages/Followers";
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
 import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncidents";
 import GenerateReport from "./components/pages/PagesAdmin/Statictics";
+import CaseDetails from "./components/pages/PagesAdmin/CaseDetails";
 // import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
 // import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
 
@@ -63,6 +64,7 @@ function App() {
             element={<GenderBasedIncidents />}
           />
           <Route path="/Admin/Statistics" element={<GenerateReport />} />
+          <Route path="/Admin/CaseDetails" element={<CaseDetails />} />
           {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} />
           <Route path="/Admin/DiaryEntry" element={<AdminDiaryEntry />} /> */}
         </Routes>

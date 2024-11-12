@@ -5,6 +5,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import SubjectSelection from "../../Layouts/LayoutUser/SubjectSelection";
 import axios from "axios";
+import MainLayout from "../../Layouts/MainLayout";
 
 const GetHelp = () => {
   const [formData, setFormData] = useState({
@@ -85,7 +86,7 @@ const GetHelp = () => {
   };
 
   return (
-    <UserPageMainLayout>
+    <MainLayout>
       <PreLoader />
       <div className="d-flex justify-content-center py-3">
         <div
@@ -279,7 +280,7 @@ const GetHelp = () => {
           </form>
         </div>
       </div>
-    </UserPageMainLayout>
+    </MainLayout>
   );
 };
 

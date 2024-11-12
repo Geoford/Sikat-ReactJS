@@ -1,10 +1,10 @@
 import HomeMainLayout from "../../Layouts/Home/HomeMainLayout";
+import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../../Layouts/MainLayout";
 
 export default function GenderBasedIncidents() {
-  const ActiveTab = "Complaints";
   return (
-    <MainLayout ActiveTab={ActiveTab}>
+    <MainLayout ActiveTab="Complaints">
       <div className="mt-4">
         <h2 className="fw-bold m-0">Gender-Based Incidents Complaints</h2>
         <div className="container-fluid container-lg mb-2">
@@ -43,7 +43,9 @@ export default function GenderBasedIncidents() {
                   <button className="btn btn-success text-light py-1">
                     Mark as Adressed
                   </button>
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
               <tr>
@@ -60,7 +62,9 @@ export default function GenderBasedIncidents() {
                   <button className="btn btn-success text-light py-1">
                     Mark as Adressed
                   </button>
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
               <tr>
@@ -77,7 +81,9 @@ export default function GenderBasedIncidents() {
                   <button className="btn btn-success text-light py-1">
                     Mark as Adressed
                   </button>
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
             </tbody>
@@ -108,7 +114,9 @@ export default function GenderBasedIncidents() {
                   <p className="m-0 mt-1">Male</p>
                 </td>
                 <td className="d-flex justify-content-center gap-2">
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
               <tr>
@@ -122,7 +130,9 @@ export default function GenderBasedIncidents() {
                   <p className="m-0 mt-1">Female</p>
                 </td>
                 <td className="d-flex justify-content-center gap-2">
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
               <tr>
@@ -136,7 +146,9 @@ export default function GenderBasedIncidents() {
                   <p className="m-0 mt-1">Male</p>
                 </td>
                 <td className="d-flex justify-content-center gap-2">
-                  <button className="primaryButton text-light">View</button>
+                  <Link to="/Admin/CaseDetails">
+                    <button className="primaryButton text-light">View</button>
+                  </Link>
                 </td>
               </tr>
             </tbody>
