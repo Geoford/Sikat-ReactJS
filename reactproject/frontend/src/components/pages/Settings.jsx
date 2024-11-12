@@ -15,11 +15,46 @@ import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDIaries";
 
 const Settings = () => {
   const { userID } = useParams();
-  const ActiveTab = "Settings";
+  const [user, setUser] = useState(null);
+  // const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const fetchUserData = async (userID) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/fetchUser/user/${userID}`
+      );
+
+      if (!response.ok) {
+        throw new Error("User not found");
+      }
+
+      const data = await response.json();
+      setUser(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      fetchUserData(parsedUser.userID);
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  if (!user) return null;
 
   const navItemStyle = "shadow d-flex align-items-center gap-2";
   return (
-    <MainLayout ActiveTab={ActiveTab}>
+    <MainLayout ActiveTab="Settings">
       <div className="container-fluid container-md mt-5">
         <Tab.Container id="left-tabs-example" defaultActiveKey="profile">
           <Row>
@@ -43,31 +78,37 @@ const Settings = () => {
                     <UserAuthentication userID={userID}></UserAuthentication>
                   </Nav.Link>
                 </Nav.Item>
-                <h5 className="m-0 text-start my-2">Managing Diaries</h5>
-                <Nav.Item>
-                  <Nav.Link className={navItemStyle} eventKey="filter">
-                    <i class="bx bx-filter-alt bx-sm"></i>
-                    <p className="m-0">Filtering and Subjects</p>
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className={navItemStyle} eventKey="flag">
-                    <i class="bx bx-flag bx-sm"></i>
-                    <p className="m-0">Flagging Diaries</p>
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className={navItemStyle} eventKey="repComment">
-                    <i class="bx bx-comment-x bx-sm"></i>
-                    <p className="m-0">Reporting Comments</p>
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className={navItemStyle} eventKey="repUser">
-                    <i class="bx bx-user-x bx-sm"></i>
-                    <p className="m-0">Reporting Users</p>
-                  </Nav.Link>
-                </Nav.Item>
+                {user && user.isAdmin ? (
+                  <>
+                    <h5 className="m-0 text-start my-2">Managing Diaries</h5>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="filter">
+                        <i class="bx bx-filter-alt bx-sm"></i>
+                        <p className="m-0">Filtering and Subjects</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="flag">
+                        <i class="bx bx-flag bx-sm"></i>
+                        <p className="m-0">Flagging Diaries</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="repComment">
+                        <i class="bx bx-comment-x bx-sm"></i>
+                        <p className="m-0">Reporting Comments</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="repUser">
+                        <i class="bx bx-user-x bx-sm"></i>
+                        <p className="m-0">Reporting Users</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                  </>
+                ) : (
+                  ""
+                )}
               </Nav>
             </Col>
             <Col sm={9}>

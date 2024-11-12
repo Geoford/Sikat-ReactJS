@@ -157,7 +157,10 @@ const DiaryEntry = () => {
 
   return (
     <MainLayout>
-      <div className="d-flex align-items-center flex-column">
+      <div
+        className="d-flex align-items-center justify-content-center pb-3"
+        style={{ minHeight: "70vh" }}
+      >
         {isLoading ? (
           <p>Loading...</p>
         ) : entries.length === 0 ? (
@@ -165,8 +168,8 @@ const DiaryEntry = () => {
         ) : (
           entries.map((entry) => (
             <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ width: "clamp(30rem, 60vw, 50rem)", height: "90vh" }}
+              className="d-flex justify-content-center align-items-center mt-3"
+              style={{ width: "clamp(30rem, 60vw, 50rem)" }}
             >
               <DiaryEntryLayout
                 className="w-100"
