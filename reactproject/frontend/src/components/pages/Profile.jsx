@@ -273,29 +273,28 @@ const Profile = () => {
 
       <div className="container mt-3">
         <div className="row">
-          <div className="col-lg-4 mb-2 p-0 px-md-2">
-            <div
-              className="position-sticky d-flex flex-column gap-2"
-              style={{ minHeight: "37vh", top: "70px" }}
-            >
-              <JournalEntries userID={userID} />
-            </div>
+          <div className="col-lg-4 mb-2 p-0 px-md-1">
+            <JournalEntries userID={userID} ownProfile={ownProfile} />
           </div>
 
-          <div className="col p-0 px-md-2">
-            <div style={{ minHeight: "60vh" }}>
-              {entries.map((entry) => (
+          <div className="col-md-8 mb-2 p-0 px-md-1">
+            {entries.length > 0 ? (
+              entries.map((entry) => (
                 <DiaryEntryLayout
                   key={entry.entryID}
                   entry={entry}
-                  user={user}
-                  followedUsers={followedUsers}
-                  handleClick={() => handleClick(entry.entryID)}
                   expandButtons={expandButtons}
                   formatDate={formatDate}
+                  followedUsers={followedUsers}
+                  handleClick={handleClick}
+                  setEntries={setEntries}
+                  setFollowedUsers={setFollowedUsers}
+                  user={user}
                 />
-              ))}
-            </div>
+              ))
+            ) : (
+              <p>No entries to display.</p>
+            )}
           </div>
         </div>
       </div>
