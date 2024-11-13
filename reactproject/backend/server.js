@@ -869,12 +869,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    if (result.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No entries found for this user" });
-    }
-
+    // Send an empty entries array if no results are found
     return res.status(200).json({ entries: result });
   });
 });
@@ -1581,7 +1576,6 @@ app.get("/flagged", (req, res) => {
     user_table.firstName,
     user_table.lastName,
     diary_entries.title
-    
   FROM flagged_reports
   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
