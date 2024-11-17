@@ -713,11 +713,13 @@ app.get("/entries", (req, res) => {
     SELECT 
       diary_entries.*,
       user_table.*,
+      comments.*,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+    JOIN comments ON diary_entries.entryID = comments.entryID
     WHERE (diary_entries.visibility = 'public' 
     OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
   `;
@@ -869,7 +871,6 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    // Send an empty entries array if no results are found
     return res.status(200).json({ entries: result });
   });
 });
@@ -1377,9 +1378,8 @@ app.get("/messages", (req, res) => {
   const { userID, withUserID, isAdmin } = req.query;
 
   if (isAdmin === "1") {
-    // Admin can view all messages
     const query = `
-      SELECT * FROM messages 
+      SELECT * FROM messages
       ORDER BY created_at ASC
     `;
 
@@ -1497,14 +1497,15 @@ app.post("/submit-report", (req, res) => {
       incidentDescription,
       location,
       date,
+      subjects,
     } = req.body;
 
-    const supportingDocuments = req.file ? req.file.filename : null; // Retrieve file info
+    const supportingDocuments = req.file ? req.file.filename : null;
 
     const query = `
       INSERT INTO gender_based_crime_reports 
-      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 
     `;
 
@@ -1518,7 +1519,8 @@ app.post("/submit-report", (req, res) => {
         incidentDescription,
         location,
         date,
-        supportingDocuments, // Store the file name in DB
+        supportingDocuments,
+        subjects,
       ],
       (err, result) => {
         if (err) {

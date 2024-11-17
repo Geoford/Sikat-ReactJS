@@ -8,6 +8,7 @@ import ChatIcon from "../../../assets/ChatIcon.png";
 import SendIcon from "../../../assets/SendIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import FrequentlyAskQuestion from "./FrequentlyAskQuestion";
+import axios from "axios";
 
 const UserChatButton = () => {
   const [show, setShow] = useState(false);
@@ -41,8 +42,8 @@ const UserChatButton = () => {
 
       const fetchAdmin = async () => {
         try {
-          const response = await fetch("http://localhost:8081/admin");
-          const data = await response.json();
+          const response = await axios.get("http://localhost:8081/admin");
+          const data = response.data;
           setAdmin(data);
           if (!parsedUser.isAdmin) {
             await fetchMessages(data.userID);
@@ -57,8 +58,8 @@ const UserChatButton = () => {
       if (parsedUser.isAdmin) {
         const fetchAllUsers = async () => {
           try {
-            const response = await fetch("http://localhost:8081/users");
-            const data = await response.json();
+            const response = await axios.get("http://localhost:8081/users");
+            const data = response.data;
             setAllUsers(data);
           } catch (error) {
             console.error("Error fetching all users:", error);
@@ -120,11 +121,13 @@ const UserChatButton = () => {
     if (!user) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:8081/messages?userID=${user.userID}&withUserID=${userID}`
-      );
-      const data = await response.json();
-      setMessages(data);
+      const response = await axios.get("http://localhost:8081/messages", {
+        params: {
+          userID: user.userID,
+          withUserID: userID,
+        },
+      });
+      setMessages(response.data);
       setSelectedUser(userID);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -150,6 +153,24 @@ const UserChatButton = () => {
     });
 
     setNewMessage(""); // Still keep clearing the input
+  };
+
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
   };
 
   return (
@@ -238,7 +259,7 @@ const UserChatButton = () => {
                     >
                       <p className="m-0">{msg.message}</p>
                       <p className="m-0 text-end" style={{ fontSize: ".7rem" }}>
-                        00 mins ago.
+                        {formatDate(msg.created_at)}
                       </p>
                     </div>
                   </div>
@@ -257,7 +278,7 @@ const UserChatButton = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault(); // Prevents the default "Enter" behavior (like creating a new line)
+                        e.preventDefault();
                         sendMessage();
                       }
                     }}

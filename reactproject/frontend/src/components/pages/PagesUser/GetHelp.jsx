@@ -8,6 +8,7 @@ import axios from "axios";
 import MainLayout from "../../Layouts/MainLayout";
 
 const GetHelp = () => {
+  const [selectedSubjects, setSelectedSubjects] = useState("");
   const [formData, setFormData] = useState({
     victimName: "",
     perpetratorName: "",
@@ -16,56 +17,62 @@ const GetHelp = () => {
     incidentDescription: "",
     location: "",
     date: "",
-    supportingDocuments: null,
+    selectedSubjects: "",
+    supportingDocuments: [null, null, null, null, null], // Initialized with 5 nulls for the 5 inputs
   });
 
-  const [step, setStep] = useState(1);
-  const [isNextDisabled, setIsNextDisabled] = useState(true);
-  const [imagePreview1, setImagePreview1] = useState(null);
-  const [imagePreview2, setImagePreview2] = useState(null);
-  const [imagePreview3, setImagePreview3] = useState(null);
-  const [imagePreview4, setImagePreview4] = useState(null);
-  const [imagePreview5, setImagePreview5] = useState(null);
+  const handleSubjectsChange = (subjectsText) => {
+    setSelectedSubjects(subjectsText);
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (files) {
       const file = files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const index = parseInt(name.replace("supportingDocuments", ""), 10) - 1;
-        setImagePreviews((prev) => {
-          const newPreviews = [...prev];
-          newPreviews[index] = reader.result;
-          return newPreviews;
-        });
-      };
-      reader.readAsDataURL(file);
-    }
+      const updatedDocuments = [...formData.supportingDocuments];
+      const index = parseInt(name.split("_")[1], 10); // Extracting index from input name
 
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
+      updatedDocuments[index] = {
+        file,
+        preview: URL.createObjectURL(file), // Create preview URL
+      };
+
+      setFormData({ ...formData, supportingDocuments: updatedDocuments });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    const updatedDocuments = [...formData.supportingDocuments];
+    updatedDocuments[index] = null; // Remove file from array
+    setFormData({ ...formData, supportingDocuments: updatedDocuments });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare form data for submission
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
-      if (formData[key]) data.append(key, formData[key]);
+      if (key === "supportingDocuments") {
+        formData.supportingDocuments.forEach((doc) => {
+          if (doc) data.append("supportingDocuments", doc.file);
+        });
+      } else {
+        data.append(key, formData[key]);
+      }
     });
+
+    if (formData.selectedSubjects && formData.selectedSubjects.trim() !== "") {
+      data.append("subjects", formData.selectedSubjects);
+    }
 
     try {
       const response = await axios.post(
         "http://localhost:8081/submit-report",
         data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       alert(response.data.message);
       window.location.reload();
@@ -73,16 +80,6 @@ const GetHelp = () => {
       console.error("Error submitting report:", error);
       alert("Error submitting report");
     }
-  };
-
-  const handleRemoveImage = (name) => {
-    const index = parseInt(name.replace("supportingDocuments", ""), 10) - 1;
-    setImagePreviews((prev) => {
-      const newPreviews = [...prev];
-      newPreviews[index] = null;
-      return newPreviews;
-    });
-    setFormData((prev) => ({ ...prev, [name]: null }));
   };
 
   return (
@@ -157,7 +154,10 @@ const GetHelp = () => {
                 />
               </div>
               <div className="col-md-2">
-                <SubjectSelection />
+                <SubjectSelection onSubjectsChange={handleSubjectsChange} />
+                {selectedSubjects && (
+                  <div className=""> {selectedSubjects} </div>
+                )}
               </div>
             </div>
 
@@ -211,63 +211,55 @@ const GetHelp = () => {
             <div className="d-flex flex-column justify-content-between">
               <div>
                 <h5 className="my-2">Upload Proof of Incident (optional)</h5>
-                {/* <p className="m-0">Photo Evidence</p> */}
                 {/* Supporting Document Uploads */}
                 <div className="d-flex flex-wrap gap-2">
-                  {[1, 2, 3, 4, 5].map((index) => {
-                    const docKey = `supportingDocuments${index}`;
-                    const previewKey = `imagePreview${index}`;
-                    const imagePreview = eval(previewKey); // Get the current image preview state
-                    return (
+                  {formData.supportingDocuments.map((doc, index) =>
+                    doc ? (
                       <div key={index} className="mb-1">
+                        <div className="position-relative">
+                          <img
+                            className="imagePreview"
+                            src={doc.preview}
+                            alt={`preview ${index}`}
+                            style={{ maxWidth: "100%", maxHeight: "100%" }}
+                          />
+                          <button
+                            type="button"
+                            className="position-absolute text-light rounded p-0"
+                            onClick={() => handleRemoveImage(index)}
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              lineHeight: "20px",
+                              textAlign: "center",
+                              fontSize: "12px",
+                            }}
+                          >
+                            x
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div key={index}>
                         <label
-                          htmlFor={docKey}
+                          htmlFor={`supportingDocuments_${index}`}
                           className="form-label supportImageContainer position-relative d-flex justify-content-center align-items-center"
                         >
-                          {/* Show image preview or icon when no image */}
-                          {imagePreview ? (
-                            <img
-                              className="imagePreview"
-                              src={imagePreview}
-                              alt={`preview ${index}`}
-                              style={{ maxWidth: "100%", maxHeight: "100%" }}
-                            />
-                          ) : (
-                            <i className="bx bx-image-add bx-md text-secondary"></i> // Display icon
-                          )}
-
-                          {/* Remove button when image is present */}
-                          {formData[docKey] && (
-                            <button
-                              type="button"
-                              className="position-absolute text-light rounded p-0"
-                              onClick={() => handleRemoveImage(docKey)}
-                              style={{
-                                width: "20px",
-                                height: "20px",
-                                lineHeight: "20px",
-                                textAlign: "center",
-                                fontSize: "12px",
-                              }}
-                            >
-                              x
-                            </button>
-                          )}
+                          <i className="bx bx-image-add bx-md text-secondary"></i>
                         </label>
 
-                        {/* Hidden input field for file upload */}
                         <input
                           hidden
-                          id={docKey} // Ensure ID matches the htmlFor in the label
+                          id={`supportingDocuments_${index}`}
                           type="file"
-                          name={docKey}
+                          name={`supportingDocuments_${index}`}
                           className="form-control"
                           onChange={handleChange}
                           accept="image/*"
                         />
                       </div>
-                    );
-                  })}
+                    )
+                  )}
                 </div>
               </div>
             </div>

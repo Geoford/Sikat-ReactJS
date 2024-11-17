@@ -21,6 +21,7 @@ const DiaryEntryLayout = ({
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]); // New state for comments
   const [filters, setFilters] = useState({
     sexualHarassment: false,
     domesticAbuse: false,
@@ -67,6 +68,23 @@ const DiaryEntryLayout = ({
       fetchEntries(user.userID, filters);
     }
   }, [user, filters]);
+
+  useEffect(() => {
+    if (entry.entryID) {
+      // Fetch comments for the entry
+      const fetchComments = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/fetchComments/${entry.entryID}`
+          );
+          setComments(response.data); // Set comments data
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        }
+      };
+      fetchComments();
+    }
+  }, [entry.entryID]);
 
   const fetchEntries = async (userID, filters) => {
     try {
@@ -393,6 +411,13 @@ const DiaryEntryLayout = ({
             <p className="m-0">Gadify</p>
           </button>
         </div>
+
+        {/* <div className="row pt-2">
+          <div className="col">
+            <i className="bx bx-comment"></i>
+            {comments.length}
+          </div> */}
+
         <div className="col">
           <CommentSection
             userID={user.userID}
@@ -401,6 +426,7 @@ const DiaryEntryLayout = ({
             firstName={entry.firstName}
           />
         </div>
+
         <div className="col">
           <FlagButton
             userID={user.userID}

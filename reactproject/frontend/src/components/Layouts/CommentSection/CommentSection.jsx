@@ -218,6 +218,24 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
   const Comment = React.memo(({ comment, depth = 0 }) => {
     const canManage = comment.userID === userID;
     const isAccordionOpen = openAccordions.includes(comment.commentID);
@@ -331,7 +349,7 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
               {comment.text}
             </p>
             <p className="m-0" style={{ fontSize: ".7rem", color: "gray" }}>
-              0 hrs ago
+              {formatDate(comment.created_at)}
             </p>
           </div>
 
@@ -423,8 +441,8 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
         className="InteractButton d-flex align-items-center justify-content-center gap-2"
         onClick={handleShow}
       >
-        <i class="bx bx-comment"></i>
-        Comments
+        <i className="bx bx-comment"></i>
+        {comments.length} Comments
       </button>
 
       <Modal

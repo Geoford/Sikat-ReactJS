@@ -208,7 +208,9 @@ const DiaryEntries = () => {
                             )}
                           </div>
                           <h5 className="m-0 text-secondary">
-                            {entry ? "00 Entries" : "No Entry"}
+                            {entries.length > 0
+                              ? `${entries.length} Entries`
+                              : "No Entry"}
                           </h5>
                         </div>
                       </Link>
