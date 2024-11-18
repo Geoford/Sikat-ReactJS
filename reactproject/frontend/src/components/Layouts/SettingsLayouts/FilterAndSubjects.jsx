@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from "react";
+import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import axios from "axios";
 import Button from "react-bootstrap/Button";
+import Pagination from "react-bootstrap/Pagination";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import axios from "axios";
 
 const FilterAndSubjects = () => {
   const [filters, setFilters] = useState([]);
+  const [filteredFilters, setFilteredFilters] = useState([]);
   const [newFilter, setNewFilter] = useState("");
   const [editingFilter, setEditingFilter] = useState(null);
   const [editedFilter, setEditedFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
         const response = await axios.get("http://localhost:8081/filters");
         setFilters(response.data);
+        setFilteredFilters(response.data);
       } catch (error) {
         console.error("Error fetching filters:", error);
       }
@@ -28,10 +33,10 @@ const FilterAndSubjects = () => {
     e.preventDefault();
     if (newFilter.trim()) {
       try {
-        await axios.post("http://localhost:8081/filters", {
-          subject: newFilter,
-        });
-        setFilters([...filters, { subject: newFilter, count: 0 }]);
+        const newFilterObj = { subject: newFilter, count: 0 };
+        await axios.post("http://localhost:8081/filters", newFilterObj);
+        setFilters([...filters, newFilterObj]);
+        setFilteredFilters([...filteredFilters, newFilterObj]);
         setNewFilter("");
       } catch (error) {
         console.error("Error adding filter:", error);
@@ -39,9 +44,9 @@ const FilterAndSubjects = () => {
     }
   };
 
-  const handleEditFilter = (subjectID, currrentSubject) => {
+  const handleEditFilter = (subjectID, currentSubject) => {
     setEditingFilter(subjectID);
-    setEditedFilter(currrentSubject);
+    setEditedFilter(currentSubject);
   };
 
   const handleSaveEdit = async (subjectID) => {
@@ -50,94 +55,95 @@ const FilterAndSubjects = () => {
         await axios.put(`http://localhost:8081/filterEdit/${subjectID}`, {
           subject: editedFilter,
         });
-        setFilters(
-          filters.map((filter) =>
-            filter.subjectID === subjectID
-              ? { ...filter, subject: editedFilter }
-              : filter
-          )
+        const updatedFilters = filters.map((filter) =>
+          filter.subjectID === subjectID
+            ? { ...filter, subject: editedFilter }
+            : filter
         );
+        setFilters(updatedFilters);
+        setFilteredFilters(updatedFilters);
         setEditingFilter(null);
         alert("Edited Successfully.");
       } catch (error) {
-        console.error("Error editing option:", error);
+        console.error("Error editing filter:", error);
       }
     }
   };
 
-  const handleDeleteFilter = (subjectID) => {
+  const handleDeleteFilter = async (subjectID) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this filter?"
     );
     if (confirmDelete) {
-      axios
-        .delete(`http://localhost:8081/filterDelete/${subjectID}`)
-        .then(() => {
-          setFilters(
-            filters.filter((filter) => filter.subjectID !== subjectID)
-          );
-          alert("Successfully deleted.");
-        })
-        .catch((error) => {
-          console.error("Error deleting filter:", error);
-        });
+      try {
+        await axios.delete(`http://localhost:8081/filterDelete/${subjectID}`);
+        const updatedFilters = filters.filter(
+          (filter) => filter.subjectID !== subjectID
+        );
+        setFilters(updatedFilters);
+        setFilteredFilters(updatedFilters);
+        alert("Successfully deleted.");
+      } catch (error) {
+        console.error("Error deleting filter:", error);
+      }
     }
   };
 
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = filters.filter((filter) =>
+      filter.subject.toLowerCase().includes(query)
+    );
+    setFilteredFilters(filtered);
+    setCurrentPage(1); // Reset to the first page
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredFilters.length / itemsPerPage);
+  const currentItems = filteredFilters.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div
-      className="p-3 rounded shadow-sm"
-      style={{
-        backgroundColor: "#ffff",
-        minHeight: "clamp(20rem, 80vh, 30rem)",
-      }}
-    >
+    <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
       <h4 className="border-bottom border-2 pb-2">Filter and Subjects</h4>
-      <div className="text-start mt-3 pe-2">
-        <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-          Filtering diaries allows users to control the content they see,
-          helping them focus only on what they want and avoiding potential
-          triggers.
-        </p>
-        <div
-          className="d-flex flex-column gap-2 pe-2 custom-scrollbar"
-          style={{
-            overflowY: "scroll",
-            height: "15rem",
-          }}
-        >
-          {filters.map((filter) => (
-            <div
-              key={filter.subjectID}
-              className="d-flex justify-content-between align-items-center border rounded p-3"
-            >
-              <div className="d-flex gap-2">
-                <h5 className="m-0">{filter.subject}</h5>
-                <div
-                  className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
-                  style={{
-                    backgroundColor: "var(--secondary)",
-                    width: "1.5rem",
-                    height: "1.5rem",
-                  }}
-                >
-                  <p className="m-0 text-light">{filter.count || 0}</p>
-                  <span
-                    className="tooltip-text p-2 rounded"
-                    style={{ fontSize: ".9rem" }}
-                  >
-                    Number of diaries with this filter
-                  </span>
-                </div>
-              </div>
-              <div className="d-flex gap-2">
+      <Form.Control
+        type="text"
+        placeholder="Search Filters..."
+        value={searchQuery}
+        onChange={handleSearch}
+        className="mb-3"
+      />
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr>
+            <th>Filter</th>
+            <th>Count</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentItems.map((filter) => (
+            <tr key={filter.subjectID}>
+              <td>
+                {editingFilter === filter.subjectID ? (
+                  <Form.Control
+                    type="text"
+                    value={editedFilter}
+                    onChange={(e) => setEditedFilter(e.target.value)}
+                  />
+                ) : (
+                  filter.subject
+                )}
+              </td>
+              <td>{filter.count || 0}</td>
+              <td>
                 {editingFilter === filter.subjectID ? (
                   <>
-                    <Form.Control
-                      type="text"
-                      value={editedFilter}
-                      onChange={(e) => setEditedFilter(e.target.value)}
-                    />
                     <Button
                       variant="primary"
                       onClick={() => handleSaveEdit(filter.subjectID)}
@@ -161,46 +167,46 @@ const FilterAndSubjects = () => {
                     >
                       Edit
                     </button>
-                    <button
-                      className="btn btn-danger"
+                    <Button
+                      variant="danger"
                       onClick={() => handleDeleteFilter(filter.subjectID)}
                     >
                       Remove
-                    </button>
+                    </Button>
                   </>
                 )}
-              </div>
-            </div>
+              </td>
+            </tr>
           ))}
-        </div>
-      </div>
-      <form onSubmit={handleAddFilter}>
-        <div className="row text-start mt-2">
-          <h5 className="m-0 mt-2">Add Filter</h5>
-          <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-            Adding filters gives users a variety of options to categorize or
-            group their diaries, helping them to organize more effectively and
-            find entries with ease.
-          </p>
-          <Row className="mt-1 pe-0 gap-2">
-            <Col md={12} className="pe-0">
-              <FloatingLabel controlId="floatingInputGrid" label="New Filter">
-                <Form.Control
-                  type="text"
-                  placeholder="New Filter"
-                  value={newFilter}
-                  onChange={(e) => setNewFilter(e.target.value)}
-                />
-              </FloatingLabel>
-            </Col>
-          </Row>
-        </div>
-        <div className="mt-4 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
-            Save
+        </tbody>
+      </Table>
+      <Pagination className="mt-3 justify-content-center">
+        {[...Array(totalPages).keys()].map((page) => (
+          <Pagination.Item
+            key={page + 1}
+            active={page + 1 === currentPage}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            {page + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+      <Form onSubmit={handleAddFilter} className="mt-4">
+        <h5>Add New Filter</h5>
+        <FloatingLabel controlId="newFilter" label="New Filter">
+          <Form.Control
+            type="text"
+            placeholder="Enter new filter"
+            value={newFilter}
+            onChange={(e) => setNewFilter(e.target.value)}
+          />
+        </FloatingLabel>
+        <div className="mt-3 text-end">
+          <button type="submit" className="primaryButton">
+            Add
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };

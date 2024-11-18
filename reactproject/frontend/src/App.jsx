@@ -32,7 +32,14 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<IndexPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <IndexPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/Login" element={<LoginRegister />} />
           <Route
             path="/Login"

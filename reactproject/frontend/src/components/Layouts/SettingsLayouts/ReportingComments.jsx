@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
+import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Col from "react-bootstrap/Col";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
-import Row from "react-bootstrap/Row";
-import axios from "axios";
 import Button from "react-bootstrap/Button";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Pagination from "react-bootstrap/Pagination";
+import axios from "axios";
 
 const ReportingComments = () => {
   const [reportComments, setReportComments] = useState([]);
+  const [filteredComments, setFilteredComments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newReportComments, setNewReportComments] = useState("");
   const [editingReportComments, setEditingReportComments] = useState(null);
   const [editedReportComments, setEditedReportComments] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchReportComments = async () => {
@@ -20,6 +23,7 @@ const ReportingComments = () => {
           "http://localhost:8081/reportComments"
         );
         setReportComments(response.data);
+        setFilteredComments(response.data);
       } catch (error) {
         console.error("Error fetching Comment reports:", error);
       }
@@ -34,13 +38,12 @@ const ReportingComments = () => {
         await axios.post("http://localhost:8081/reportComments", {
           reason: newReportComments,
         });
-        setReportComments([
-          ...reportComments,
-          { reason: newReportComments, count: 0 },
-        ]);
+        const newComment = { reason: newReportComments, count: 0 };
+        setReportComments([...reportComments, newComment]);
+        setFilteredComments([...reportComments, newComment]);
         setNewReportComments("");
       } catch (error) {
-        console.error("Error adding somment reports:", error);
+        console.error("Error adding comment report:", error);
       }
     }
   };
@@ -55,17 +58,15 @@ const ReportingComments = () => {
       try {
         await axios.put(
           `http://localhost:8081/reportCommentEdit/${reportCommentID}`,
-          {
-            reason: editedReportComments,
-          }
+          { reason: editedReportComments }
         );
-        setReportComments(
-          reportComments.map((reportComment) =>
-            reportComment.reportCommentID === reportCommentID
-              ? { ...reportComment, reason: editedReportComments }
-              : reportComment
-          )
+        const updatedComments = reportComments.map((comment) =>
+          comment.reportCommentID === reportCommentID
+            ? { ...comment, reason: editedReportComments }
+            : comment
         );
+        setReportComments(updatedComments);
+        setFilteredComments(updatedComments);
         setEditingReportComments(null);
         alert("Edited Successfully.");
       } catch (error) {
@@ -74,92 +75,99 @@ const ReportingComments = () => {
     }
   };
 
-  const handleDeleteReportComment = (reportCommentID) => {
+  const handleDeleteReportComment = async (reportCommentID) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this report comment?"
     );
     if (confirmDelete) {
-      axios
-        .delete(`http://localhost:8081/reportCommentDelete/${reportCommentID}`)
-        .then(() => {
-          setReportComments(
-            reportComments.filter(
-              (reportComment) =>
-                reportComment.reportCommentID !== reportCommentID
-            )
-          );
-          alert("Successfully deleted.");
-        })
-        .catch((error) => {
-          console.error("Error deleting report commment:", error);
-        });
+      try {
+        await axios.delete(
+          `http://localhost:8081/reportCommentDelete/${reportCommentID}`
+        );
+        const updatedComments = reportComments.filter(
+          (comment) => comment.reportCommentID !== reportCommentID
+        );
+        setReportComments(updatedComments);
+        setFilteredComments(updatedComments);
+        alert("Successfully deleted.");
+      } catch (error) {
+        console.error("Error deleting report comment:", error);
+      }
     }
   };
 
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    const filtered = reportComments.filter((comment) =>
+      comment.reason.toLowerCase().includes(term)
+    );
+    setFilteredComments(filtered);
+    setCurrentPage(1); // Reset to the first page when searching
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredComments.length / itemsPerPage);
+  const currentItems = filteredComments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
-    <div
-      className="p-3 rounded shadow-sm"
-      style={{
-        backgroundColor: "#ffff",
-        minHeight: "clamp(20rem, 80vh, 30rem)",
-      }}
-    >
-      <h4 className="border-bottom border-2 pb-2">Filter and Subjects</h4>
-      <div className="text-start mt-3 pe-2">
-        <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-          Filtering diaries allows users to control the content they see,
-          helping them focus only on what they want and avoiding potential
-          triggers.
-        </p>
-        <div
-          className="d-flex flex-column gap-2 pe-2 custom-scrollbar"
-          style={{
-            overflowY: "scroll",
-            height: "15rem",
-          }}
-        >
-          {reportComments.map((reportComment) => (
-            <div
-              key={reportComment.reportCommentID}
-              className="d-flex justify-content-between align-items-center border rounded p-3"
-            >
-              <div className="d-flex gap-2">
-                <h5 className="m-0">{reportComment.reason}</h5>
-                <div
-                  className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
-                  style={{
-                    backgroundColor: "var(--secondary)",
-                    width: "1.5rem",
-                    height: "1.5rem",
-                  }}
-                >
-                  <p className="m-0 text-light">{reportComment.count || 0}</p>
-                  <span
-                    className="tooltip-text p-2 rounded"
-                    style={{ fontSize: ".9rem" }}
-                  >
-                    Number of diaries with this filter
-                  </span>
-                </div>
-              </div>
-              <div className="d-flex gap-2">
-                {editingReportComments === reportComment.reportCommentID ? (
+    <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#ffff" }}>
+      <h4 className="border-bottom border-2 pb-2">Report Comments</h4>
+
+      {/* Search Input */}
+      <div className="mb-3">
+        <Form.Control
+          type="text"
+          placeholder="Search by reason..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+
+      {/* Table */}
+      <Table bordered hover responsive>
+        <thead>
+          <tr>
+            <th>Reason</th>
+            <th>Count</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentItems.map((comment) => (
+            <tr key={comment.reportCommentID}>
+              <td>
+                {editingReportComments === comment.reportCommentID ? (
+                  <Form.Control
+                    type="text"
+                    value={editedReportComments}
+                    onChange={(e) => setEditedReportComments(e.target.value)}
+                  />
+                ) : (
+                  comment.reason
+                )}
+              </td>
+              <td>{comment.count || 0}</td>
+              <td>
+                {editingReportComments === comment.reportCommentID ? (
                   <>
-                    <Form.Control
-                      type="text"
-                      value={editedReportComments}
-                      onChange={(e) => setEditedReportComments(e.target.value)}
-                    />
                     <Button
                       variant="primary"
-                      onClick={() =>
-                        handleSaveEdit(reportComment.reportCommentID)
-                      }
+                      size="sm"
+                      onClick={() => handleSaveEdit(comment.reportCommentID)}
                     >
                       Save
-                    </Button>
+                    </Button>{" "}
                     <Button
                       variant="secondary"
+                      size="sm"
                       onClick={() => setEditingReportComments(null)}
                     >
                       Cancel
@@ -169,54 +177,64 @@ const ReportingComments = () => {
                   <>
                     <button
                       className="primaryButton"
+                      size="sm"
                       onClick={() =>
                         handleEditReportComments(
-                          reportComment.reportCommentID,
-                          reportComment.reason
+                          comment.reportCommentID,
+                          comment.reason
                         )
                       }
                     >
                       Edit
-                    </button>
-                    <button
-                      className="btn btn-danger"
+                    </button>{" "}
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() =>
-                        handleDeleteReportComment(reportComment.reportCommentID)
+                        handleDeleteReportComment(comment.reportCommentID)
                       }
                     >
-                      Remove
-                    </button>
+                      Delete
+                    </Button>
                   </>
                 )}
-              </div>
-            </div>
+              </td>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </Table>
+
+      {/* Pagination */}
+      <Pagination className="mt-3 justify-content-center">
+        {[...Array(totalPages).keys()].map((page) => (
+          <Pagination.Item
+            key={page + 1}
+            active={page + 1 === currentPage}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            {page + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+
+      {/* Add New Comment */}
       <form onSubmit={handleAddReportComments}>
-        <div className="row text-start mt-2">
-          <h5 className="m-0 mt-2">Add Filter</h5>
-          <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-            Adding filters gives users a variety of options to categorize or
-            group their diaries, helping them to organize more effectively and
-            find entries with ease.
-          </p>
-          <Row className="mt-1 pe-0 gap-2">
-            <Col md={12} className="pe-0">
-              <FloatingLabel controlId="floatingInputGrid" label="New Filter">
-                <Form.Control
-                  type="text"
-                  placeholder="New Filter"
-                  value={newReportComments}
-                  onChange={(e) => setNewReportComments(e.target.value)}
-                />
-              </FloatingLabel>
-            </Col>
-          </Row>
+        <div className="mt-3">
+          <FloatingLabel
+            controlId="floatingInputGrid"
+            label="New Comment Report Reason"
+          >
+            <Form.Control
+              type="text"
+              placeholder="New Comment Report Reason"
+              value={newReportComments}
+              onChange={(e) => setNewReportComments(e.target.value)}
+            />
+          </FloatingLabel>
         </div>
-        <div className="mt-4 d-flex justify-content-end">
+        <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
-            Save
+            Add
           </button>
         </div>
       </form>

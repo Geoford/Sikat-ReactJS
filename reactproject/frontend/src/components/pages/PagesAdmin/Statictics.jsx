@@ -1,8 +1,39 @@
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import MainLayout from "../../Layouts/MainLayout";
+import axios from "axios";
+import React, { useState, useEffect, useRef } from "react";
 
 const Statictics = () => {
+  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUsers(parsedUser);
+    } else {
+      alert("You need to log in to access the chat.");
+      window.location.href = "/";
+    }
+
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/users`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   return (
     <MainLayout ActiveTab="Followers">
       <div
@@ -23,11 +54,11 @@ const Statictics = () => {
               className="custom-scrollbar overflow-y-scroll"
               style={{ height: "50vh" }}
             >
-              <table class="table rounded overflow-hidden">
+              <table className="table rounded overflow-hidden">
                 <thead>
                   <tr>
-                    <th scope="col">Student no.</th>
-                    <th scope="col">FullName</th>
+                    <th scope="col">Student No.</th>
+                    <th scope="col">Full Name</th>
                     <th scope="col">Sex</th>
                     <th scope="col">Course</th>
                     <th scope="col">Year</th>
@@ -35,86 +66,38 @@ const Statictics = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">
-                      <p className="m-0 mt-1">0000000000</p>
-                    </th>
-                    <td>
-                      <p className="m-0 mt-1">Mark Tahimik Lang</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">Male</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">BS Information Techology</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">1st</p>
-                    </td>{" "}
-                    <td>
-                      <p className="m-0 mt-1">marktahimik.lang@cvsu.edu.ph</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <p className="m-0 mt-1">0000000000</p>
-                    </th>
-                    <td>
-                      <p className="m-0 mt-1">Chrollo Lucilfer</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">Male</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">BS Computer Science</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">3rd</p>
-                    </td>{" "}
-                    <td>
-                      <p className="m-0 mt-1">chrollo.lucilfer@cvsu.edu.ph</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <p className="m-0 mt-1">0000000000</p>
-                    </th>
-                    <td>
-                      <p className="m-0 mt-1">Magie Rhee</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">Female</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">BS Industrial Technology</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">2nd</p>
-                    </td>{" "}
-                    <td>
-                      <p className="m-0 mt-1">magie.rhee@cvsu.edu.ph</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <p className="m-0 mt-1">0000000000</p>
-                    </th>
-                    <td>
-                      <p className="m-0 mt-1">Negan Smith</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">Male</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">BS Education</p>
-                    </td>
-                    <td>
-                      <p className="m-0 mt-1">4th</p>
-                    </td>{" "}
-                    <td>
-                      <p className="m-0 mt-1">negan.smith@cvsu.edu.ph</p>
-                    </td>
-                  </tr>
+                  {Array.isArray(users) && users.length > 0 ? (
+                    users.map((user) => (
+                      <tr key={user.userID}>
+                        <th scope="row">
+                          <p className="m-0 mt-1">{user.studentNumber}</p>
+                        </th>
+                        <td>
+                          <p className="m-0 mt-1">
+                            {user.firstName} {user.lastName}
+                          </p>
+                        </td>
+                        <td>
+                          <p className="m-0 mt-1">{user.gender}</p>
+                        </td>
+                        <td>
+                          <p className="m-0 mt-1">{user.program}</p>
+                        </td>
+                        <td>
+                          <p className="m-0 mt-1">{user.year}</p>
+                        </td>
+                        <td>
+                          <p className="m-0 mt-1">{user.cvsuEmail}</p>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center">
+                        No registered users available.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

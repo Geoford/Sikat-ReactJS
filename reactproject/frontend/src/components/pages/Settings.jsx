@@ -11,7 +11,7 @@ import ReportingComments from "../Layouts/SettingsLayouts/ReportingComments";
 import ReportingUsers from "../Layouts/SettingsLayouts/ReportingUsers";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDIaries";
+import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDiaries";
 
 const Settings = () => {
   const { userID } = useParams();

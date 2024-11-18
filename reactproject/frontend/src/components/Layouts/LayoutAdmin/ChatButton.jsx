@@ -40,7 +40,7 @@ const ChatButton = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`http://localhost:8081/users`);
+        const response = await fetch(`http://localhost:8081/users`);
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -157,6 +157,24 @@ const ChatButton = () => {
       .includes(searchQuery.toLowerCase())
   );
 
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
   return (
     <>
       <div className="ChatButton">
@@ -213,7 +231,11 @@ const ChatButton = () => {
                         <div className=" d-flex align-items-center gap-2">
                           <div className="profilePicture">
                             <img
-                              src={DefaultProfile}
+                              src={
+                                userItem.profile_image
+                                  ? `http://localhost:8081${userItem.profile_image}`
+                                  : DefaultProfile
+                              }
                               alt="Profile"
                               style={{
                                 width: "100%",
@@ -284,7 +306,7 @@ const ChatButton = () => {
                             className="m-0 text-end"
                             style={{ fontSize: ".7rem" }}
                           >
-                            00 mins ago.
+                            {formatDate(msg.created_at)}
                           </p>
                         </div>
                       </div>

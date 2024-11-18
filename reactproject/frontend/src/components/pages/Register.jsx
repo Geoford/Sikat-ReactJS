@@ -16,6 +16,9 @@ export default function Register() {
     password: "",
     confirmPassword: "",
     OTP: "",
+    sex: "",
+    course: "",
+    year: "",
   });
 
   const navigate = useNavigate();
@@ -43,14 +46,19 @@ export default function Register() {
     return () => clearInterval(timer);
   }, [otpSent, resendCountdown]);
 
-  const validateEmail = async (email) => {
+  const validateEmail = async (cvsuEmail, username) => {
     try {
-      const response = await axios.post("http://localhost:8081/check-email", {
-        email,
-      });
+      const response = await axios.post(
+        "http://localhost:8081/check-email-username",
+        {
+          username,
+          cvsuEmail,
+        }
+      );
       if (response.data.exists) {
         setErrors((prevErrors) => ({
           ...prevErrors,
+          username: "This username is already taken.",
           cvsuEmail: "This email is already registered.",
         }));
         setShowAlert(true);
@@ -61,6 +69,7 @@ export default function Register() {
       console.error("Error checking email:", error);
       setErrors((prevErrors) => ({
         ...prevErrors,
+        username: "Error checking username. Please try again later.",
         cvsuEmail: "Error checking email. Please try again later.",
       }));
       setShowAlert(true);
@@ -110,9 +119,16 @@ export default function Register() {
       setErrors(validationErrors);
 
       if (Object.keys(validationErrors).length === 0) {
-        console.log("Validation passed, sending OTP...");
-        sendOTP(values.cvsuEmail);
-        setStep(step + 1);
+        // Validate email here before proceeding
+        const isEmailValid = await validateEmail(values.cvsuEmail);
+        if (isEmailValid) {
+          console.log("Validation passed, sending OTP...");
+          sendOTP(values.cvsuEmail);
+          setStep(step + 1);
+        } else {
+          console.log("Email validation failed.");
+          setShowAlert(true);
+        }
       } else {
         console.log("Validation errors:", validationErrors);
         setShowAlert(true);
@@ -261,37 +277,111 @@ export default function Register() {
                     />
                   </div>
                 </div>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="alias"
-                    placeholder="Alias (for anonymity purposes)"
-                    onChange={handleInput}
-                    className="form-control rounded"
-                    value={values.alias}
-                  />
+
+                <div className="row">
+                  <div className="col mb-3">
+                    <input
+                      type="text"
+                      name="alias"
+                      placeholder="Alias (for anonymity purposes)"
+                      onChange={handleInput}
+                      className="form-control rounded"
+                      value={values.alias}
+                    />
+                  </div>
+                  <div class="col mb-3">
+                    <label class="visually-hidden" for="sex">
+                      Sex
+                    </label>
+                    <select
+                      class="form-select"
+                      id="sex"
+                      className="form-select"
+                      name="sex"
+                      onChange={handleInput}
+                      value={values.sex}
+                    >
+                      <option selected>Sex...</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Prefer not to say">
+                        Prefer not to say
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <input
-                    type="email"
-                    name="cvsuEmail"
-                    placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
-                    onChange={handleInput}
-                    className="form-control rounded"
-                    value={values.cvsuEmail}
-                  />
+
+                <div className="row">
+                  <div className="col mb-3">
+                    <label className="visually-hidden" htmlFor="course">
+                      Course
+                    </label>
+                    <select
+                      class="form-select"
+                      id="course"
+                      name="course"
+                      onChange={handleInput}
+                      value={values.course}
+                    >
+                      <option value="">Course...</option>
+                      <option value="BS Information Technology">
+                        BS Information Technology
+                      </option>
+                      <option value="BS Industrial Technology">
+                        BS Industrial Technology
+                      </option>
+                      <option value="BS Computer Science">
+                        BS Computer Science
+                      </option>
+                      <option value="BS Computer Engineering">
+                        BS Computer Engineering
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="col mb-3">
+                    <label className="visually-hidden" htmlFor="year">
+                      Year
+                    </label>
+                    <select
+                      class="form-select"
+                      id="year"
+                      name="year"
+                      onChange={handleInput}
+                      value={values.year}
+                    >
+                      <option value="">Year...</option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <input
-                    type="number"
-                    name="studentNumber"
-                    placeholder="Student Number (ex. 202100000)"
-                    onChange={handleInput}
-                    className="form-control rounded"
-                    value={values.studentNumber}
-                    min="100000000"
-                    max="999999999"
-                  />
+
+                <div className="row">
+                  <div className="col mb-3">
+                    <input
+                      type="email"
+                      name="cvsuEmail"
+                      placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
+                      onChange={handleInput}
+                      className="form-control rounded"
+                      value={values.cvsuEmail}
+                    />
+                  </div>
+                  <div className="col mb-3">
+                    <input
+                      type="number"
+                      name="studentNumber"
+                      placeholder="Student Number (ex. 202100000)"
+                      onChange={handleInput}
+                      className="form-control rounded"
+                      value={values.studentNumber}
+                      min="100000000"
+                      max="999999999"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -359,7 +449,7 @@ export default function Register() {
               </div>
             )}
 
-            {showAlert && Object.keys(errors).length > 0 && (
+            {/* {showAlert && Object.keys(errors).length > 0 && (
               <Alert
                 variant="danger"
                 onClose={() => setShowAlert(false)}
@@ -371,7 +461,7 @@ export default function Register() {
                   ))}
                 </ul>
               </Alert>
-            )}
+            )} */}
 
             {step === 3 && (
               <div className="form-section active">

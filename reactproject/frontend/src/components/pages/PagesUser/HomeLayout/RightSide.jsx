@@ -1,11 +1,9 @@
-import DiaryEntry from "../../../../assets/DiaryEntry.png";
-import SampleImage from "../../../../assets/Background.jpg";
-import AnonymousIcon from "../../../../assets/Anonymous.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
+import SampleImage from "../../../../assets/Background.jpg";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
@@ -61,6 +59,7 @@ const RightSide = () => {
   const [users, setUsers] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
+  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,6 +70,7 @@ const RightSide = () => {
       fetchFollowers(parsedUser.userID);
       fetchUsers();
       fetchFollowedUsers(parsedUser.userID);
+      fetchLatestAnnouncement(); // Fetch the latest announcement
     } else {
       navigate("/");
     }
@@ -101,11 +101,19 @@ const RightSide = () => {
       const response = await axios.get(
         `http://localhost:8081/followedUsers/${userID}`
       );
-      const followedUsersData = response.data; // Store full user data
-      setFollowedUsers(followedUsersData); // Set the full data to state
-      localStorage.setItem("followedUsers", JSON.stringify(followedUsersData));
+      setFollowedUsers(response.data);
+      localStorage.setItem("followedUsers", JSON.stringify(response.data));
     } catch (error) {
       console.error("Error fetching followed users:", error);
+    }
+  };
+
+  const fetchLatestAnnouncement = async () => {
+    try {
+      const response = await axios.get("http://localhost:8081/announcement");
+      setLatestAnnouncement(response.data);
+    } catch (error) {
+      console.error("Error fetching latest announcement:", error);
     }
   };
 
@@ -146,9 +154,7 @@ const RightSide = () => {
             followerId: user.userID,
           }
         );
-        const followedUserData = response.data; // Expect the user data in the response
-
-        setFollowedUsers((prev) => [...prev, followedUserData]);
+        setFollowedUsers((prev) => [...prev, response.data]);
         alert(`You are now following ${targetUsername}`);
       }
     } catch (error) {
@@ -172,9 +178,9 @@ const RightSide = () => {
         </Link>
       </div>
 
-      <div className="rounded mb-2 mt-3" style={{}}>
+      <div className="rounded mb-2 mt-3">
         <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
-          <i class="bx bx-group bx-sm"></i>
+          <i className="bx bx-group bx-sm"></i>
           <h4 className="m-0">Followers</h4>
         </div>
 
@@ -185,30 +191,29 @@ const RightSide = () => {
         />
       </div>
       <div>
-        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2  mb-2">
-          <i class="bx bx-news bx-sm"></i>
+        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2 mb-2">
+          <i className="bx bx-news bx-sm"></i>
           <h4 className="m-0">Announcements/Events</h4>
         </div>
-        <div className="linkText rounded">
-          <p className="m-0 mb-1 text-start">Post Title</p>
-          <img
-            src={SampleImage}
-            alt=""
-            style={{ width: "100%", borderRadius: ".3rem" }}
-          />
-        </div>
+        {latestAnnouncement ? (
+          <div className="linkText rounded">
+            <p className="m-0 mb-1 text-start">
+              {latestAnnouncement.title || "Untitled Announcement"}
+            </p>
+            <img
+              src={
+                latestAnnouncement.diary_image
+                  ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                  : SampleImage
+              }
+              alt="Announcement"
+              style={{ width: "100%", borderRadius: ".3rem" }}
+            />
+          </div>
+        ) : (
+          <p className="text-secondary">No announcements available.</p>
+        )}
       </div>
-
-      {/* <div className="p-3">
-        <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Following</h4>
-        </div>
-        <UserList
-          users={followedUsers}
-          handleFollowToggle={handleFollowToggle}
-          isFollowing={() => true}
-        />
-      </div> */}
     </div>
   );
 };
