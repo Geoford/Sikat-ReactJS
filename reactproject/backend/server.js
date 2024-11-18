@@ -261,7 +261,7 @@ app.post("/Register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password);
 
   const userSql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified` sex, course, year) VALUES (?)";
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`, sex, course, year) VALUES (?)";
   const userValues = [
     firstName,
     lastName,

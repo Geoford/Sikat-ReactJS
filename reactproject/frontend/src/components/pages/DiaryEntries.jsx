@@ -193,24 +193,20 @@ const DiaryEntries = () => {
                             <p className="m-0 text-start text-secondary">
                               {day}
                             </p>
-                            {entry && (
-                              <>
-                                <img
-                                  src={
-                                    entry.privacy === "public"
-                                      ? publicIcon
-                                      : privateIcon
-                                  }
-                                  alt={entry.privacy}
-                                  style={{ width: "15px", height: "15px" }}
-                                />
-                              </>
-                            )}
+                            {entry ? (
+                              <img
+                                src={
+                                  entry.privacy === "public"
+                                    ? publicIcon
+                                    : privateIcon
+                                }
+                                alt={entry.privacy}
+                                style={{ width: "15px", height: "15px" }}
+                              />
+                            ) : null}
                           </div>
                           <h5 className="m-0 text-secondary">
-                            {entries.length > 0
-                              ? `${entries.length} Entries`
-                              : "No Entry"}
+                            {entry ? `${entries.length} Entries` : "No Entry"}
                           </h5>
                         </div>
                       </Link>
