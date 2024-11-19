@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Pagination from "react-bootstrap/Pagination";
@@ -121,88 +122,92 @@ const ReportingComments = () => {
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#ffff" }}>
       <h4 className="border-bottom border-2 pb-2">Report Comments</h4>
 
-      {/* Search Input */}
-      <div className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Search by reason..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
+      {/* Search Filter */}
+      <div className="my-3">
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1">
+            <i class="bx bx-search"></i>
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search by reason..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </InputGroup>
       </div>
 
       {/* Table */}
-      <Table bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Reason</th>
-            <th>Count</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((comment) => (
-            <tr key={comment.reportCommentID}>
-              <td>
-                {editingReportComments === comment.reportCommentID ? (
-                  <Form.Control
-                    type="text"
-                    value={editedReportComments}
-                    onChange={(e) => setEditedReportComments(e.target.value)}
-                  />
-                ) : (
-                  comment.reason
-                )}
-              </td>
-              <td>{comment.count || 0}</td>
-              <td>
-                {editingReportComments === comment.reportCommentID ? (
-                  <>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleSaveEdit(comment.reportCommentID)}
-                    >
-                      Save
-                    </Button>{" "}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setEditingReportComments(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="primaryButton"
-                      size="sm"
-                      onClick={() =>
-                        handleEditReportComments(
-                          comment.reportCommentID,
-                          comment.reason
-                        )
-                      }
-                    >
-                      Edit
-                    </button>{" "}
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleDeleteReportComment(comment.reportCommentID)
-                      }
-                    >
-                      Delete
-                    </Button>
-                  </>
-                )}
-              </td>
+      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th className="w-25">Reason</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {currentItems.map((comment) => (
+              <tr key={comment.reportCommentID}>
+                <td>
+                  {editingReportComments === comment.reportCommentID ? (
+                    <Form.Control
+                      className="bg-transparent text-center border-0 border-bottom border-2"
+                      type="text"
+                      value={editedReportComments}
+                      onChange={(e) => setEditedReportComments(e.target.value)}
+                    />
+                  ) : (
+                    <p className="m-0 mt-2">{comment.reason}</p>
+                  )}
+                </td>
+                <td className="d-flex justify-content-center gap-1">
+                  {editingReportComments === comment.reportCommentID ? (
+                    <>
+                      <Button
+                        className="px-3"
+                        variant="primary"
+                        onClick={() => handleSaveEdit(comment.reportCommentID)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        className="px-3"
+                        variant="secondary"
+                        onClick={() => setEditingReportComments(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="primaryButton"
+                        onClick={() =>
+                          handleEditReportComments(
+                            comment.reportCommentID,
+                            comment.reason
+                          )
+                        }
+                      >
+                        Edit
+                      </button>{" "}
+                      <Button
+                        variant="danger"
+                        onClick={() =>
+                          handleDeleteReportComment(comment.reportCommentID)
+                        }
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
 
       {/* Pagination */}
       <Pagination className="mt-3 justify-content-center">
@@ -219,19 +224,19 @@ const ReportingComments = () => {
 
       {/* Add New Comment */}
       <form onSubmit={handleAddReportComments}>
-        <div className="mt-3">
-          <FloatingLabel
-            controlId="floatingInputGrid"
-            label="New Comment Report Reason"
-          >
-            <Form.Control
-              type="text"
-              placeholder="New Comment Report Reason"
-              value={newReportComments}
-              onChange={(e) => setNewReportComments(e.target.value)}
-            />
-          </FloatingLabel>
-        </div>
+        <h5 className="mt-4">Add Comment Violation</h5>
+
+        <FloatingLabel
+          controlId="floatingInputGrid"
+          label="New Comment Violation"
+        >
+          <Form.Control
+            type="text"
+            placeholder="New Comment Violation"
+            value={newReportComments}
+            onChange={(e) => setNewReportComments(e.target.value)}
+          />
+        </FloatingLabel>
         <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
             Add

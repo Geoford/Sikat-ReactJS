@@ -19,7 +19,7 @@ import LoginRegister from "./components/pages/LoginRegister";
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
 import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncidents";
-import GenerateReport from "./components/pages/PagesAdmin/Statictics";
+import Statistics from "./components/pages/PagesAdmin/Statistics";
 import CaseDetails from "./components/pages/PagesAdmin/CaseDetails";
 // import AdminProfile from "./components/pages/PagesAdmin/AdminProfile";
 import AdminDiaryEntry from "./components/pages/PagesAdmin/DiaryEntry";
@@ -73,7 +73,7 @@ function App() {
             path="/Admin/GenderBasedIncidents"
             element={<GenderBasedIncidents />}
           />
-          <Route path="/Admin/Statistics" element={<GenerateReport />} />
+          <Route path="/Admin/Statistics" element={<Statistics />} />
           <Route path="/Admin/CaseDetails" element={<CaseDetails />} />
           {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} /> */}
           <Route

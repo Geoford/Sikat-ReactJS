@@ -161,7 +161,7 @@ const ProfileInformation = () => {
             about yourself or your interests.
           </p>
           <Row className="mt-1 gap-2">
-            <Col md={12}>
+            {/* <Col md={12}>
               <FloatingLabel controlId="floatingInputGrid" label="Username">
                 <Form.Control
                   type="text"
@@ -171,7 +171,7 @@ const ProfileInformation = () => {
                   onChange={handleInput}
                 />
               </FloatingLabel>
-            </Col>
+            </Col> */}
             <Col>
               <FloatingLabel controlId="floatingTextarea2" label="Bio">
                 <Form.Control
@@ -185,14 +185,6 @@ const ProfileInformation = () => {
               </FloatingLabel>
             </Col>
           </Row>
-        </div>
-
-        <div className="mt-3">
-          <h5>Privacy and Security</h5>
-          <div className="mb-1 ">
-            <p className="m-0">Interact Anonimously or Not</p>
-            <AnonimityButton />
-          </div>
         </div>
 
         <div className="mt-4 d-flex justify-content-end">

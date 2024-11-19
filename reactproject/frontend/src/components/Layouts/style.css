@@ -547,7 +547,7 @@ input.form-control:focus {
 /* FOR FOLLOWERS TAB */
 .nav-tabs .nav-link {
   color: gray; /* Inactive tab color */
-  background-color: rgb(238, 238, 238); /* Inactive tab background */
+  background-color: rgb(218, 218, 218); /* Inactive tab background */
 }
 .nav-tabs .nav-link:hover {
   color: gray; /* Inactive tab color */
@@ -557,4 +557,15 @@ input.form-control:focus {
   color: black; /* Active tab color */
   background-color: white; /* Active tab background */
   border-color: #dee2e6 #dee2e6 #fff; /* Maintain a white bottom border for active tab */
+}
+/* FOR STATISTICS STYLES */
+.paginationItem {
+  background-color: lightgray !important;
+  color: black !important;
+  width: 100%;
+}
+
+.paginationItem.active {
+  background-color: var(--primary) !important;
+  color: rgb(0, 0, 0) !important;
 }

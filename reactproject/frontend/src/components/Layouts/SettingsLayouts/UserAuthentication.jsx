@@ -73,10 +73,26 @@ const UserAuthentication = ({ userID }) => {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Verification</Modal.Title>
+          <Modal.Title>Account Verification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p className="text-secondary" style={{ fontSize: ".9rem" }}>
+            An OTP has been sent to your CvSU email to verify your identity to
+            access your security details.
+          </p>
           <Form.Floating className="mb-3 mt-0 position-relative">
+            <Form.Control
+              id="newPasswordInput"
+              name="new-password-field"
+              type="text"
+              placeholder="eg. 000000"
+              autoComplete="new-password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            <label htmlFor="newPasswordInput">Enter the 6-digit OTP</label>
+          </Form.Floating>
+          {/* <Form.Floating className="mb-3 mt-0 position-relative">
             <Form.Control
               id="newPasswordInput"
               name="new-password-field"
@@ -101,7 +117,7 @@ const UserAuthentication = ({ userID }) => {
                 {showPassword ? "Hide" : "Show"}
               </p>
             </div>
-          </Form.Floating>
+          </Form.Floating> */}
           {verificationStatus && (
             <p className="mt-2 text-center">{verificationStatus}</p>
           )}

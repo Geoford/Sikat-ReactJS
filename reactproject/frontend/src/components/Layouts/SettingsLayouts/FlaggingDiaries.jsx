@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -127,81 +128,84 @@ const FlaggingDiaries = () => {
 
       {/* Search Filter */}
       <div className="my-3">
-        <Form.Control
-          type="text"
-          placeholder="Search flagging options..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1">
+            <i class="bx bx-search"></i>
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search flagging options..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </InputGroup>
       </div>
-
-      {/* Table */}
-      <Table bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Flagging Reason</th>
-            <th>Count</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((option) => (
-            <tr key={option.flagID}>
-              <td>
-                {editingOption === option.flagID ? (
-                  <Form.Control
-                    type="text"
-                    value={editedReason}
-                    onChange={(e) => setEditedReason(e.target.value)}
-                  />
-                ) : (
-                  option.reason
-                )}
-              </td>
-              <td>{option.count}</td>
-              <td>
-                {editingOption === option.flagID ? (
-                  <>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleSaveEdit(option.flagID)}
-                    >
-                      Save
-                    </Button>{" "}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setEditingOption(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="primaryButton"
-                      size="sm"
-                      onClick={() =>
-                        handleEditOption(option.flagID, option.reason)
-                      }
-                    >
-                      Edit
-                    </button>{" "}
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteOption(option.flagID)}
-                    >
-                      Remove
-                    </Button>
-                  </>
-                )}
-              </td>
+      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+        {/* Table */}
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th className="w-25">Flagging Option</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {currentItems.map((option) => (
+              <tr key={option.flagID}>
+                <td>
+                  {editingOption === option.flagID ? (
+                    <Form.Control
+                      className="bg-transparent text-center border-0 border-bottom border-2"
+                      type="text"
+                      value={editedReason}
+                      onChange={(e) => setEditedReason(e.target.value)}
+                    />
+                  ) : (
+                    <p className="m-0 mt-2">{option.reason}</p>
+                  )}
+                </td>
+                <td className="d-flex justify-content-center gap-1">
+                  {editingOption === option.flagID ? (
+                    <>
+                      <Button
+                        className="px-3"
+                        variant="primary"
+                        onClick={() => handleSaveEdit(option.flagID)}
+                      >
+                        Save
+                      </Button>{" "}
+                      <Button
+                        className="px-3"
+                        variant="secondary"
+                        onClick={() => setEditingOption(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="primaryButton"
+                        onClick={() =>
+                          handleEditOption(option.flagID, option.reason)
+                        }
+                      >
+                        Edit
+                      </button>{" "}
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteOption(option.flagID)}
+                      >
+                        Remove
+                      </Button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
 
       {/* Pagination */}
       <Pagination className="mt-3 justify-content-center">
@@ -219,7 +223,10 @@ const FlaggingDiaries = () => {
       {/* Add New Option */}
       <form onSubmit={handleAddOption}>
         <h5 className="mt-4">Add Flagging Option</h5>
-        <FloatingLabel controlId="floatingInputGrid" label="New Option">
+        <FloatingLabel
+          controlId="floatingInputGrid"
+          label="New Flagging Option"
+        >
           <Form.Control
             type="text"
             placeholder="New Flagging Option"

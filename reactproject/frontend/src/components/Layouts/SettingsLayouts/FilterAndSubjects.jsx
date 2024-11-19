@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -109,77 +110,96 @@ const FilterAndSubjects = () => {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
+    <div
+      className="p-3 rounded shadow-sm"
+      style={{
+        backgroundColor: "#ffff",
+        minHeight: "clamp(20rem, 80vh, 30rem)",
+      }}
+    >
       <h4 className="border-bottom border-2 pb-2">Filter and Subjects</h4>
-      <Form.Control
-        type="text"
-        placeholder="Search Filters..."
-        value={searchQuery}
-        onChange={handleSearch}
-        className="mb-3"
-      />
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Filter</th>
-            <th>Count</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((filter) => (
-            <tr key={filter.subjectID}>
-              <td>
-                {editingFilter === filter.subjectID ? (
-                  <Form.Control
-                    type="text"
-                    value={editedFilter}
-                    onChange={(e) => setEditedFilter(e.target.value)}
-                  />
-                ) : (
-                  filter.subject
-                )}
-              </td>
-              <td>{filter.count || 0}</td>
-              <td>
-                {editingFilter === filter.subjectID ? (
-                  <>
-                    <Button
-                      variant="primary"
-                      onClick={() => handleSaveEdit(filter.subjectID)}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setEditingFilter(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="primaryButton"
-                      onClick={() =>
-                        handleEditFilter(filter.subjectID, filter.subject)
-                      }
-                    >
-                      Edit
-                    </button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDeleteFilter(filter.subjectID)}
-                    >
-                      Remove
-                    </Button>
-                  </>
-                )}
-              </td>
+
+      {/* Search Filter */}
+      <div className="my-3">
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="basic-addon1">
+            <i class="bx bx-search"></i>
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search Filters..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </InputGroup>
+      </div>
+
+      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th className="w-25">Filter</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {currentItems.map((filter) => (
+              <tr key={filter.subjectID}>
+                <td className="">
+                  {editingFilter === filter.subjectID ? (
+                    <Form.Control
+                      className="bg-transparent text-center border-0 border-bottom border-2"
+                      type="text"
+                      value={editedFilter}
+                      onChange={(e) => setEditedFilter(e.target.value)}
+                    />
+                  ) : (
+                    <p className="m-0 mt-2">{filter.subject}</p>
+                  )}
+                </td>
+                <td className="d-flex justify-content-center gap-1">
+                  {editingFilter === filter.subjectID ? (
+                    <>
+                      <Button
+                        className="px-3"
+                        variant="primary"
+                        onClick={() => handleSaveEdit(filter.subjectID)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        className="px-3"
+                        variant="secondary"
+                        onClick={() => setEditingFilter(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="primaryButton"
+                        onClick={() =>
+                          handleEditFilter(filter.subjectID, filter.subject)
+                        }
+                      >
+                        Edit
+                      </button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteFilter(filter.subjectID)}
+                      >
+                        Remove
+                      </Button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
           <Pagination.Item
@@ -201,8 +221,8 @@ const FilterAndSubjects = () => {
             onChange={(e) => setNewFilter(e.target.value)}
           />
         </FloatingLabel>
-        <div className="mt-3 text-end">
-          <button type="submit" className="primaryButton">
+        <div className="mt-3 d-flex justify-content-end">
+          <button type="submit" className="primaryButton px-5 py-2">
             Add
           </button>
         </div>

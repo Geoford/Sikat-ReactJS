@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import axios from "axios";
@@ -113,77 +115,92 @@ const ReportingUsers = () => {
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
       <h4 className="border-bottom border-2 pb-2">Reporting Users</h4>
-      <Form.Control
-        type="text"
-        placeholder="Search Report Reasons..."
-        value={searchQuery}
-        onChange={handleSearch}
-        className="mb-3"
-      />
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Reason</th>
-            <th>Count</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((user) => (
-            <tr key={user.reportingUserID}>
-              <td>
-                {editingReportUsers === user.reportingUserID ? (
-                  <Form.Control
-                    type="text"
-                    value={editedReportUsers}
-                    onChange={(e) => setEditedReportUsers(e.target.value)}
-                  />
-                ) : (
-                  user.reason
-                )}
-              </td>
-              <td>{user.count || 0}</td>
-              <td>
-                {editingReportUsers === user.reportingUserID ? (
-                  <>
-                    <Button
-                      variant="success"
-                      onClick={() => handleSaveEdit(user.reportingUserID)}
-                    >
-                      Save
-                    </Button>{" "}
-                    <Button
-                      variant="secondary"
-                      onClick={() => setEditingReportUsers(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="primaryButton"
-                      onClick={() =>
-                        handleEditReportUsers(user.reportingUserID, user.reason)
-                      }
-                    >
-                      Edit
-                    </button>{" "}
-                    <Button
-                      variant="danger"
-                      onClick={() =>
-                        handleDeleteReportUser(user.reportingUserID)
-                      }
-                    >
-                      Remove
-                    </Button>
-                  </>
-                )}
-              </td>
+
+      {/* Search Filter */}
+      <InputGroup className="mb-3">
+        <InputGroup.Text id="basic-addon1">
+          <i class="bx bx-search"></i>
+        </InputGroup.Text>
+        <Form.Control
+          type="text"
+          placeholder="Search Report Reasons..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </InputGroup>
+
+      {/* Table */}
+      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th className="w-25">Reason</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {currentItems.map((user) => (
+              <tr key={user.reportingUserID}>
+                <td>
+                  {editingReportUsers === user.reportingUserID ? (
+                    <Form.Control
+                      className="bg-transparent text-center border-0 border-bottom border-2"
+                      type="text"
+                      value={editedReportUsers}
+                      onChange={(e) => setEditedReportUsers(e.target.value)}
+                    />
+                  ) : (
+                    <p className="m-0 mt-2">{user.reason}</p>
+                  )}
+                </td>
+                <td className="d-flex justify-content-center gap-1">
+                  {editingReportUsers === user.reportingUserID ? (
+                    <>
+                      <Button
+                        className="px-3"
+                        variant="success"
+                        onClick={() => handleSaveEdit(user.reportingUserID)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        className="px-3"
+                        variant="secondary"
+                        onClick={() => setEditingReportUsers(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="primaryButton"
+                        onClick={() =>
+                          handleEditReportUsers(
+                            user.reportingUserID,
+                            user.reason
+                          )
+                        }
+                      >
+                        Edit
+                      </button>{" "}
+                      <Button
+                        variant="danger"
+                        onClick={() =>
+                          handleDeleteReportUser(user.reportingUserID)
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
           <Pagination.Item
@@ -195,18 +212,26 @@ const ReportingUsers = () => {
           </Pagination.Item>
         ))}
       </Pagination>
-      <Form onSubmit={handleAddReportUsers} className="mt-4">
-        <h5>Add New Report Reason</h5>
-        <Form.Group controlId="newReportReason">
-          <Form.Control
-            type="text"
-            placeholder="Enter new report reason"
-            value={newReportUsers}
-            onChange={(e) => setNewReportUsers(e.target.value)}
-          />
-        </Form.Group>
-        <div className="mt-3 text-end">
-          <button type="submit" className="primaryButton">
+      <Form onSubmit={handleAddReportUsers}>
+        <h5 className="mt-4">Add New Report Reason</h5>
+
+        <div className="mt-3">
+          <FloatingLabel
+            controlId="newReportReason"
+            label="New Comment Violation"
+          >
+            <Form.Control
+              type="text"
+              placeholder="Enter new report reason"
+              value={newReportUsers}
+              onChange={(e) => setNewReportUsers(e.target.value)}
+            />
+          </FloatingLabel>
+        </div>
+        <h5></h5>
+
+        <div className="mt-3 d-flex justify-content-end">
+          <button type="submit" className="primaryButton px-5 py-2">
             Add
           </button>
         </div>
