@@ -65,7 +65,10 @@ const RecentJournalEntries = ({ userID }) => {
             <p>No entries available.</p>
           </div>
         ) : (
-          <div style={{ height: "35vh", overflowY: "scroll" }}>
+          <div
+            className="pe-2 pt-2"
+            style={{ height: "35vh", overflowY: "scroll" }}
+          >
             {entries.map((entry) => (
               <Link
                 to={`/DiaryEntry/${entry.entryID}`}
@@ -73,7 +76,7 @@ const RecentJournalEntries = ({ userID }) => {
                 className="rounded text-decoration-none  text-secondary"
                 style={{ cursor: "pointer" }}
               >
-                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 py-2">
+                <div className="journalEntries d-flex align-items-start flex-column rounded text-start ps-2  py-2">
                   <p className="m-0">
                     {entry.title} - {formatDate(entry.created_at)}
                   </p>

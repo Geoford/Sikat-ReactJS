@@ -306,7 +306,8 @@ const DiaryEntryLayout = ({
         )}
         {user &&
           user.userID !== entry.userID &&
-          entry.anonymity !== "private" && (
+          entry.anonymity !== "private" &&
+          entry.isAdmin !== 1 && (
             <div className="d-flex align-items-center gap-1">
               <p className="m-0 fs-3 text-secondary">·</p>
               <button
@@ -364,7 +365,7 @@ const DiaryEntryLayout = ({
               {entry.title}{" "}
               <span className="text-secondary fs-6">{entry.subjects}</span>
             </h5>
-            <p>{entry.description}</p>
+            <p style={{ whiteSpace: "pre-wrap" }}>{entry.description}</p>
           </>
         )}
 

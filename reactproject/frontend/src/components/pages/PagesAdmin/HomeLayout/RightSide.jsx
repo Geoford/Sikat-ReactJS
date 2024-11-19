@@ -92,22 +92,25 @@ const Center = () => {
                 <Link
                   key={flaggedUser.userID}
                   to={`/Admin/DiaryEntry/${flaggedUser.entryID}`}
-                  className="text-decoration-none"
+                  className="text-decoration-none rounded"
                   style={{ cursor: "pointer" }}
                 >
-                  <div className="linkText d-flex align-items-center gap-2 rounded mb-2">
-                    <div className="profilePicture">
-                      <img
-                        src={flaggedUser.profile_image || DefaultProfile}
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
+                  <div className="row linkText d-flex align-items-center gap-3 rounded mb-2">
+                    <div className="col-md-2 ">
+                      <div className="profilePicture">
+                        <img
+                          src={flaggedUser.profile_image || DefaultProfile}
+                          alt="Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="d-flex flex-column align-items-start">
+
+                    <div className="col-md d-flex flex-column align-items-start text-start">
                       <p className="text-secondary m-0">
                         {flaggedUser.firstName} {flaggedUser.lastName}
                       </p>

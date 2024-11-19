@@ -338,7 +338,7 @@ export default function Register() {
                     value={values.confirmPassword}
                   />
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <input
                     type="text"
                     name="securityQuestion"
@@ -355,11 +355,11 @@ export default function Register() {
                     className="form-control rounded"
                     autoComplete="new-answer"
                   />
-                </div>
+                </div> */}
               </div>
             )}
 
-            {showAlert && Object.keys(errors).length > 0 && (
+            {/* {showAlert && Object.keys(errors).length > 0 && (
               <Alert
                 variant="danger"
                 onClose={() => setShowAlert(false)}
@@ -371,7 +371,7 @@ export default function Register() {
                   ))}
                 </ul>
               </Alert>
-            )}
+            )} */}
 
             {step === 3 && (
               <div className="form-section active">
