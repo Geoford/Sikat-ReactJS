@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Col from "react-bootstrap/Col";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
-import Row from "react-bootstrap/Row";
-import axios from "axios";
+import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import axios from "axios";
+import Pagination from "react-bootstrap/Pagination";
 
 const FlaggingDiaries = () => {
   const [flaggingOptions, setFlaggingOptions] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newOption, setNewOption] = useState("");
   const [editingOption, setEditingOption] = useState(null);
-  const [editedReason, setEditedReason] = useState(""); // State for edited reason
+  const [editedReason, setEditedReason] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -20,12 +24,23 @@ const FlaggingDiaries = () => {
           "http://localhost:8081/flaggingOptions"
         );
         setFlaggingOptions(response.data);
+        setFilteredOptions(response.data);
       } catch (error) {
         console.error("Error fetching options:", error);
       }
     };
     fetchOptions();
   }, []);
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    const filtered = flaggingOptions.filter((option) =>
+      option.reason.toLowerCase().includes(term)
+    );
+    setFilteredOptions(filtered);
+    setCurrentPage(1); // Reset to the first page on a new search
+  };
 
   const handleAddOption = async (e) => {
     e.preventDefault();
@@ -34,7 +49,9 @@ const FlaggingDiaries = () => {
         await axios.post("http://localhost:8081/flaggingOptions", {
           option: newOption,
         });
-        setFlaggingOptions([...flaggingOptions, { reason: newOption }]);
+        const newFlag = { reason: newOption, flagID: Date.now(), count: 0 };
+        setFlaggingOptions([...flaggingOptions, newFlag]);
+        setFilteredOptions([...flaggingOptions, newFlag]);
         setNewOption("");
       } catch (error) {
         console.error("Error adding option:", error);
@@ -53,14 +70,14 @@ const FlaggingDiaries = () => {
         await axios.put(`http://localhost:8081/flaggingEdit/${flagID}`, {
           reason: editedReason,
         });
-        setFlaggingOptions(
-          flaggingOptions.map((option) =>
-            option.flagID === flagID
-              ? { ...option, reason: editedReason }
-              : option
-          )
+        const updatedOptions = flaggingOptions.map((option) =>
+          option.flagID === flagID
+            ? { ...option, reason: editedReason }
+            : option
         );
-        setEditingOption(null); // Reset the editing state after saving
+        setFlaggingOptions(updatedOptions);
+        setFilteredOptions(updatedOptions);
+        setEditingOption(null);
       } catch (error) {
         console.error("Error editing option:", error);
       }
@@ -75,14 +92,27 @@ const FlaggingDiaries = () => {
       axios
         .delete(`http://localhost:8081/flaggingDelete/${flagID}`)
         .then(() => {
-          setFlaggingOptions(
-            flaggingOptions.filter((option) => option.flagID !== flagID)
+          const updatedOptions = flaggingOptions.filter(
+            (option) => option.flagID !== flagID
           );
+          setFlaggingOptions(updatedOptions);
+          setFilteredOptions(updatedOptions);
         })
         .catch((error) => {
           console.error("Error deleting option:", error);
         });
     }
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredOptions.length / itemsPerPage);
+  const currentItems = filteredOptions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -94,56 +124,54 @@ const FlaggingDiaries = () => {
       }}
     >
       <h4 className="border-bottom border-2 pb-2">Flagging Diaries</h4>
-      <div className="text-start mt-3 pe-2">
-        <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-          Filtering diaries allows users to control the content they see,
-          helping them focus only on what they want and avoiding potential
-          triggers.
-        </p>
-        <div
-          className="d-flex flex-column gap-2 pe-2 custom-scrollbar"
-          style={{ overflowY: "scroll", height: "15rem" }}
-        >
-          {flaggingOptions.map((option) => (
-            <div
-              key={option.flagID}
-              className="d-flex justify-content-between align-items-center border rounded p-3"
-            >
-              <div className="d-flex gap-2">
-                <h5 className="m-0">{option.reason}</h5>
-                <div
-                  className="MiniToolTip rounded-circle d-flex justify-content-center position-relative"
-                  style={{
-                    backgroundColor: "var(--secondary)",
-                    width: "1.5rem",
-                    height: "1.5rem",
-                  }}
-                >
-                  <p className="m-0 text-light">0</p>
-                  <span
-                    className="tooltip-text p-2 rounded"
-                    style={{ fontSize: ".9rem" }}
-                  >
-                    Number of diaries flagged with this reason
-                  </span>
-                </div>
-              </div>
-              <div className="d-flex gap-2">
+
+      {/* Search Filter */}
+      <div className="my-3">
+        <Form.Control
+          type="text"
+          placeholder="Search flagging options..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+
+      {/* Table */}
+      <Table bordered hover responsive>
+        <thead>
+          <tr>
+            <th>Flagging Reason</th>
+            <th>Count</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentItems.map((option) => (
+            <tr key={option.flagID}>
+              <td>
+                {editingOption === option.flagID ? (
+                  <Form.Control
+                    type="text"
+                    value={editedReason}
+                    onChange={(e) => setEditedReason(e.target.value)}
+                  />
+                ) : (
+                  option.reason
+                )}
+              </td>
+              <td>{option.count}</td>
+              <td>
                 {editingOption === option.flagID ? (
                   <>
-                    <Form.Control
-                      type="text"
-                      value={editedReason}
-                      onChange={(e) => setEditedReason(e.target.value)}
-                    />
                     <Button
                       variant="primary"
+                      size="sm"
                       onClick={() => handleSaveEdit(option.flagID)}
                     >
                       Save
-                    </Button>
+                    </Button>{" "}
                     <Button
                       variant="secondary"
+                      size="sm"
                       onClick={() => setEditingOption(null)}
                     >
                       Cancel
@@ -153,49 +181,55 @@ const FlaggingDiaries = () => {
                   <>
                     <button
                       className="primaryButton"
+                      size="sm"
                       onClick={() =>
                         handleEditOption(option.flagID, option.reason)
                       }
                     >
                       Edit
-                    </button>
-                    <button
-                      className="btn btn-danger"
+                    </button>{" "}
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleDeleteOption(option.flagID)}
                     >
                       Remove
-                    </button>
+                    </Button>
                   </>
                 )}
-              </div>
-            </div>
+              </td>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </Table>
+
+      {/* Pagination */}
+      <Pagination className="mt-3 justify-content-center">
+        {[...Array(totalPages).keys()].map((page) => (
+          <Pagination.Item
+            key={page + 1}
+            active={page + 1 === currentPage}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            {page + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+
+      {/* Add New Option */}
       <form onSubmit={handleAddOption}>
-        <div className="row text-start mt-2">
-          <h5 className="m-0 mt-2">Add Flagging Option</h5>
-          <p className="text-secondary m-0 mb-1" style={{ fontSize: ".9rem" }}>
-            Adding filters gives users a variety of options to categorize or
-            group their diaries, helping them to organize more effectively and
-            find entries with ease.
-          </p>
-          <Row className="mt-1 pe-0 gap-2">
-            <Col md={12} className="pe-0">
-              <FloatingLabel controlId="floatingInputGrid" label="New Option">
-                <Form.Control
-                  type="text"
-                  placeholder="New Filter"
-                  value={newOption}
-                  onChange={(e) => setNewOption(e.target.value)}
-                />
-              </FloatingLabel>
-            </Col>
-          </Row>
-        </div>
-        <div className="mt-4 d-flex justify-content-end">
+        <h5 className="mt-4">Add Flagging Option</h5>
+        <FloatingLabel controlId="floatingInputGrid" label="New Option">
+          <Form.Control
+            type="text"
+            placeholder="New Flagging Option"
+            value={newOption}
+            onChange={(e) => setNewOption(e.target.value)}
+          />
+        </FloatingLabel>
+        <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
-            Save
+            Add
           </button>
         </div>
       </form>

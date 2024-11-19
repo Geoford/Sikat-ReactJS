@@ -214,7 +214,7 @@ const EditPersonalDetailButton = () => {
                   value={values.bio}
                   onChange={handleInput}
                 ></textarea>
-                <label htmlFor="bio">Enter your Bio</label>
+                <label htmlFor="bio">Enter your Biio</label>
               </div>
             </div>
             <div>

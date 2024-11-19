@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LoginValidation from "./LoginValidation";
-import usernameIcon from "../../assets/Username.png";
+import LoginValidation from "./LoginValidation"; // Make sure this validates email
+import usernameIcon from "../../assets/Username.png"; // You can keep the same icon or change it to one representing email
 import passwordIcon from "../../assets/Password.png";
 import showIcon from "../../assets/show.png";
 import hiddenIcon from "../../assets/hidden.png";
@@ -11,7 +11,7 @@ import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
   const [values, setValues] = useState({
-    username: "",
+    cvsuEmail: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
@@ -70,7 +70,7 @@ export default function Login() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
       <div
-        className=" rounded-5 shadow p-4"
+        className="rounded-5 shadow p-4"
         style={{
           width: "clamp(400px, 40vw, 400px)",
           backgroundColor: "var(--primary)",
@@ -93,27 +93,27 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Username field */}
+          {/* Email field */}
           <div className="input-group mb-2">
             <span className="input-group-text p-1 px-2">
               <img
-                src={usernameIcon}
+                src={usernameIcon} // Consider updating the icon to something email-related
                 alt=""
                 style={{ width: "20px", height: "20px" }}
               />
             </span>
             <input
-              type="text"
-              name="username"
-              placeholder="Username"
+              type="email"
+              name="cvsuEmail"
+              placeholder="CvSU Email"
               onChange={handleInput}
               className="form-control rounded-end"
-              value={values.username}
+              value={values.cvsuEmail}
               disabled={loading}
             />
           </div>
-          {errors.username && (
-            <span className="text-danger"> {errors.username}</span>
+          {errors.cvsuEmail && (
+            <span className="text-danger">{errors.cvsuEmail}</span>
           )}
 
           {/* Password field */}
@@ -153,7 +153,7 @@ export default function Login() {
             </div>
           </div>
           {errors.password && (
-            <div className="text-danger"> {errors.password}</div>
+            <div className="text-danger">{errors.password}</div>
           )}
 
           {serverError && <span className="text-danger">{serverError}</span>}

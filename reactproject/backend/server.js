@@ -188,6 +188,43 @@ app.post("/verify-otp", (req, res) => {
   }
 });
 
+app.post("/check-email-username", (req, res) => {
+  const { cvsuEmail, username } = req.body;
+
+  if (!cvsuEmail && !username) {
+    return res.status(400).json({ message: "Email or username is required" });
+  }
+
+  let query = "SELECT COUNT(*) AS count FROM user_table WHERE ";
+  let params = [];
+
+  if (cvsuEmail) {
+    query += "cvsuEmail = ?";
+    params.push(cvsuEmail);
+  }
+
+  if (username) {
+    if (cvsuEmail) query += " OR ";
+    query += "username = ?";
+    params.push(username);
+  }
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error("Error checking email or username:", err);
+      return res
+        .status(500)
+        .json({ message: "Error checking email or username" });
+    }
+
+    if (results[0].count > 0) {
+      return res.json({ exists: true });
+    } else {
+      return res.json({ exists: false });
+    }
+  });
+});
+
 app.post("/Register", (req, res) => {
   const {
     firstName,
@@ -197,6 +234,9 @@ app.post("/Register", (req, res) => {
     password,
     studentNumber,
     alias,
+    sex,
+    course,
+    year,
   } = req.body;
 
   if (
@@ -205,22 +245,23 @@ app.post("/Register", (req, res) => {
     !cvsuEmail ||
     !username ||
     !password ||
-    !studentNumber
+    !studentNumber ||
+    !sex ||
+    !course ||
+    !year
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // Generate verification token and OTP
   const verificationToken = crypto.randomBytes(20).toString("hex");
   const otp = Math.floor(100000 + Math.random() * 900000); // Example OTP
 
-  // Store OTP temporarily
   otpStore[cvsuEmail] = otp;
 
   const hashedPassword = bcrypt.hashSync(password);
 
   const userSql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`) VALUES (?)";
+    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`, sex, course, year) VALUES (?)";
   const userValues = [
     firstName,
     lastName,
@@ -230,6 +271,9 @@ app.post("/Register", (req, res) => {
     studentNumber,
     verificationToken,
     true,
+    sex,
+    course,
+    year,
   ];
 
   db.query(userSql, [userValues], (err, data) => {
@@ -300,75 +344,40 @@ app.get("/verify-email/:token", (req, res) => {
 });
 
 app.post("/Login", (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username and password are required" });
+  const { cvsuEmail, password } = req.body;
+  if (!cvsuEmail || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
   }
 
   const sql = `
     SELECT user_table.*, user_profiles.profile_image
     FROM user_table
     JOIN user_profiles ON user_table.userID = user_profiles.userID
-    WHERE user_table.username = ?
+    WHERE user_table.cvsuEmail = ?
   `;
 
-  db.query(sql, [username], (err, data) => {
+  db.query(sql, [cvsuEmail], (err, data) => {
     if (err) {
       console.error("Error retrieving data: ", err);
       return res.status(500).json({ error: "Error retrieving data" });
     }
     if (data.length === 0) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const user = data[0];
-
-    // Check if account is locked
-    if (user.is_locked) {
-      return res
-        .status(403)
-        .json({ error: "Account is locked. Please contact support." });
-    }
-
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
-      const updateAttemptsSql = `
-       UPDATE user_table 
-        SET login_attempts = login_attempts + 1, 
-            is_locked = CASE WHEN login_attempts + 1 > 3 THEN TRUE ELSE is_locked END 
-        WHERE userID = ?`;
-
-      db.query(updateAttemptsSql, [user.userID], (updateErr) => {
-        if (updateErr) {
-          console.error("Error updating login attempts: ", updateErr);
-          return res
-            .status(500)
-            .json({ error: "Error processing login attempt" });
-        }
-        return res.status(401).json({ error: "Invalid username or password" });
-      });
-    } else {
-      // Reset login attempts on successful login
-      const resetAttemptsSql = `UPDATE user_table SET login_attempts = 0 WHERE userID = ?`;
-      db.query(resetAttemptsSql, [user.userID], (resetErr) => {
-        if (resetErr) {
-          console.error("Error resetting login attempts: ", resetErr);
-          return res
-            .status(500)
-            .json({ error: "Error processing login attempt" });
-        }
-        // Send successful login response
-        return res.json({
-          userID: user.userID,
-          username: user.username,
-          isAdmin: user.isAdmin,
-          profile_image: user.profile_image,
-        });
-      });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
+    return res.json({
+      userID: user.userID,
+      cvsuEmail: user.cvsuEmail,
+      username: user.username,
+      isAdmin: user.isAdmin,
+      profile_image: user.profile_image,
+    });
   });
 });
 
@@ -745,6 +754,37 @@ app.get("/entries", (req, res) => {
   });
 });
 
+app.get("/announcement", async (req, res) => {
+  const query = `
+    SELECT 
+      diary_entries.*,
+      user_table.firstName, 
+      user_table.lastName 
+    FROM 
+      diary_entries
+    JOIN 
+      user_table 
+    ON 
+      diary_entries.userID = user_table.userID 
+    WHERE 
+      user_table.isAdmin = 1 
+    ORDER BY 
+      diary_entries.created_at DESC 
+    LIMIT 1
+  `;
+
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching announcement:", error);
+      res.status(500).send("Internal Server Error");
+    } else if (results.length === 0) {
+      res.status(404).send("No announcement found");
+    } else {
+      res.status(200).json(results[0]); // Send the latest announcement with user info
+    }
+  });
+});
+
 app.delete("/deleteEntry/:entryID", (req, res) => {
   const { entryID } = req.params;
 
@@ -869,7 +909,6 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    // Send an empty entries array if no results are found
     return res.status(200).json({ entries: result });
   });
 });
@@ -898,7 +937,19 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  const query = "SELECT * FROM user_table WHERE isAdmin = 0";
+  const query = `
+    SELECT 
+      user_table.*,
+      user_profiles.profile_image
+    FROM 
+      user_table 
+    JOIN 
+      user_profiles 
+    ON 
+      user_table.userID = user_profiles.userID 
+    WHERE 
+      user_table.isAdmin = 0
+  `;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -1188,9 +1239,6 @@ app.get("/fetchComments/:entryID", (req, res) => {
       return res.status(500).json({ error: "Failed to fetch comments" });
     }
 
-    // Log the results for debugging purposes
-    console.log("Fetched comments:", results);
-
     res.status(200).json(results);
   });
 });
@@ -1377,9 +1425,8 @@ app.get("/messages", (req, res) => {
   const { userID, withUserID, isAdmin } = req.query;
 
   if (isAdmin === "1") {
-    // Admin can view all messages
     const query = `
-      SELECT * FROM messages 
+      SELECT * FROM messages
       ORDER BY created_at ASC
     `;
 
@@ -1497,14 +1544,15 @@ app.post("/submit-report", (req, res) => {
       incidentDescription,
       location,
       date,
+      subjects,
     } = req.body;
 
-    const supportingDocuments = req.file ? req.file.filename : null; // Retrieve file info
+    const supportingDocuments = req.file ? req.file.filename : null;
 
     const query = `
       INSERT INTO gender_based_crime_reports 
-      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 
     `;
 
@@ -1518,7 +1566,8 @@ app.post("/submit-report", (req, res) => {
         incidentDescription,
         location,
         date,
-        supportingDocuments, // Store the file name in DB
+        supportingDocuments,
+        subjects,
       ],
       (err, result) => {
         if (err) {

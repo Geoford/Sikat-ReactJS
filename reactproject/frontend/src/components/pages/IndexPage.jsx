@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import IndexNavBar from "../Layouts/NavBar/NavBarIndex";
 import Background from "../Layouts/Background";
@@ -11,19 +11,38 @@ import TextLogo from "../../assets/TextLogo.png";
 import TransparentLogo from "../../assets/TransparentLogo.png";
 import sampleImage from "../../assets/Background.jpg";
 import { PreLoader } from "./PreLoader";
+import axios from "axios";
 
 const IndexPage = () => {
-  const [isLoginPage, setIsLoginPage] = useState(true); // state to track if the login page is active
-  const [fadeIn, setFadeIn] = useState(true); // state to track fade effect
+  const [isLoginPage, setIsLoginPage] = useState(true);
+  const [fadeIn, setFadeIn] = useState(true);
+  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
-  // Toggle between login and register with fade effect
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/announcement");
+
+        if (response.status === 200) {
+          setLatestAnnouncement(response.data);
+        } else {
+          console.error("No announcement found");
+        }
+      } catch (error) {
+        console.error("Error fetching announcement:", error);
+      }
+    };
+
+    fetchAnnouncement();
+  }, []);
+
   const handleLoginClick = () => {
     if (!isLoginPage) {
       setFadeIn(false);
       setTimeout(() => {
         setIsLoginPage(true);
         setFadeIn(true);
-      }, 200); // duration of the fade-out animation
+      }, 200);
     }
   };
 
@@ -110,11 +129,23 @@ const IndexPage = () => {
                 >
                   <h5 className="text-light">Latest Announcement</h5>
                 </div>
-                <img
-                  src={sampleImage}
-                  alt=""
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
+                {latestAnnouncement ? (
+                  <img
+                    src={
+                      latestAnnouncement.diary_image
+                        ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                        : sampleImage
+                    }
+                    alt=""
+                    style={{
+                      width: "80%",
+                      height: "100%",
+                      objectFit: "fill",
+                    }}
+                  />
+                ) : (
+                  <p className="text-secondary">No announcements available.</p>
+                )}
               </div>
             </div>
           </div>
