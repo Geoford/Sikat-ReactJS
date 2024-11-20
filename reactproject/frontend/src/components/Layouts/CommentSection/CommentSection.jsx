@@ -297,8 +297,9 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
                     <Dropdown.Item className="p-0 btn btn-light">
                       <ReportButton
                         commentID={comment.commentID}
-                        userID={userID}
+                        userID={comment.userID}
                         username={comment.username}
+                        entryID={entryID}
                       />
                     </Dropdown.Item>
                   )}

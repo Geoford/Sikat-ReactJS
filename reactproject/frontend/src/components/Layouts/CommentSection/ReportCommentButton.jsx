@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import axios from "axios"; // Ensure you have axios installed for making API calls
+import axios from "axios";
 
-function ReportCommentButton({ commentID, userID, username }) {
+function ReportCommentButton({ commentID, userID, username, entryID }) {
   const [show, setShow] = useState(false);
-  const [selectedBehavior, setSelectedBehavior] = useState(""); // State for selected behavior
-  const [otherText, setOtherText] = useState(""); // State to manage the text input for "Others"
-  const [isOtherSelected, setIsOtherSelected] = useState(false); // Track if "Others" option is selected
-  const [reportComments, setReportComments] = useState([]); // State for fetched report comments
+  const [selectedBehavior, setSelectedBehavior] = useState("");
+  const [otherText, setOtherText] = useState("");
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [reportComments, setReportComments] = useState([]);
 
   // Fetch report comments from the backend
   useEffect(() => {
@@ -17,7 +17,7 @@ function ReportCommentButton({ commentID, userID, username }) {
         const response = await axios.get(
           "http://localhost:8081/reportComments"
         );
-        setReportComments(response.data); // Store fetched data in state
+        setReportComments(response.data);
       } catch (err) {
         console.error("Error fetching report comments:", err);
       }
@@ -28,9 +28,9 @@ function ReportCommentButton({ commentID, userID, username }) {
 
   const handleClose = () => {
     setShow(false);
-    setSelectedBehavior(""); // Reset selected behavior when closing the modal
-    setOtherText(""); // Reset the "Others" text
-    setIsOtherSelected(false); // Reset the "Others" selection
+    setSelectedBehavior("");
+    setOtherText("");
+    setIsOtherSelected(false);
   };
 
   const handleShow = () => setShow(true);
@@ -42,7 +42,7 @@ function ReportCommentButton({ commentID, userID, username }) {
   };
 
   const handleOtherTextChange = (event) => {
-    setOtherText(event.target.value); // Update the text input for "Others"
+    setOtherText(event.target.value);
   };
 
   const handleSubmitReport = async () => {
@@ -52,6 +52,7 @@ function ReportCommentButton({ commentID, userID, username }) {
         {
           commentID,
           userID,
+          entryID,
           reason: selectedBehavior,
           otherText: isOtherSelected ? otherText : null,
         }

@@ -232,16 +232,36 @@ function DiaryEntryButton({ onEntrySaved }) {
             <div className="ps-1 pt-2">
               <label htmlFor="uploadPhoto">
                 <div style={{ cursor: "pointer" }}>
-                  <img className="miniIcon mb-1 me-1" src={uploadIcon} alt="" />
-                  Upload Photo
+                  <img
+                    className="miniIcon mb-1 me-1"
+                    src={uploadIcon}
+                    alt="Upload icon"
+                  />
+                  <span>Upload Photo (e.g., .jpg, .png)</span>
                 </div>
               </label>
               <input
                 type="file"
                 id="uploadPhoto"
                 hidden
+                accept="image/*" // Restricts file selection to images only
                 onChange={handleFileChange}
               />
+              {file && (
+                <div className="mt-2 d-flex align-items-center gap-2">
+                  <p className="text-success m-0">
+                    Selected file: <strong>{file.name}</strong>
+                  </p>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => setFile(null)} // Clears the file
+                    aria-label="Remove selected file"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </Modal.Body>

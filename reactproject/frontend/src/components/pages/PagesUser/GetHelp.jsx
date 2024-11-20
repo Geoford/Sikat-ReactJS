@@ -31,7 +31,7 @@ const GetHelp = () => {
     if (files) {
       const file = files[0];
       const updatedDocuments = [...formData.supportingDocuments];
-      const index = parseInt(name.split("_")[1], 10); // Extracting index from input name
+      const index = parseInt(name.split("_")[1], 10);
 
       updatedDocuments[index] = {
         file,
@@ -87,7 +87,7 @@ const GetHelp = () => {
       <PreLoader />
       <div className="d-flex justify-content-center py-3">
         <div
-          className=" rounded shadow p-3"
+          className=" rounded shadow p-3 w-75"
           style={{ backgroundColor: "#ffff" }}
         >
           <div className="border-bottom border-2">
@@ -212,54 +212,77 @@ const GetHelp = () => {
               <div>
                 <h5 className="my-2">Upload Proof of Incident (optional)</h5>
                 {/* Supporting Document Uploads */}
-                <div className="d-flex flex-wrap gap-2">
-                  {formData.supportingDocuments.map((doc, index) =>
-                    doc ? (
-                      <div key={index} className="mb-1">
-                        <div className="position-relative">
-                          <img
-                            className="imagePreview"
-                            src={doc.preview}
-                            alt={`preview ${index}`}
-                            style={{ maxWidth: "100%", maxHeight: "100%" }}
-                          />
-                          <button
-                            type="button"
-                            className="position-absolute text-light rounded p-0"
-                            onClick={() => handleRemoveImage(index)}
-                            style={{
-                              width: "20px",
-                              height: "20px",
-                              lineHeight: "20px",
-                              textAlign: "center",
-                              fontSize: "12px",
-                            }}
-                          >
-                            x
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div key={index}>
-                        <label
-                          htmlFor={`supportingDocuments_${index}`}
-                          className="form-label supportImageContainer position-relative d-flex justify-content-center align-items-center"
-                        >
-                          <i className="bx bx-image-add bx-md text-secondary"></i>
-                        </label>
+                <div className="d-flex flex-wrap gap-2 justify-content-center">
+                  {formData.supportingDocuments.map((doc, index) => {
+                    // Determine if the current file input should be displayed
+                    const shouldDisplayInput =
+                      index === 0 ||
+                      formData.supportingDocuments[index - 1] !== null;
 
-                        <input
-                          hidden
-                          id={`supportingDocuments_${index}`}
-                          type="file"
-                          name={`supportingDocuments_${index}`}
-                          className="form-control"
-                          onChange={handleChange}
-                          accept="image/*"
-                        />
-                      </div>
-                    )
-                  )}
+                    return (
+                      shouldDisplayInput && (
+                        <div key={index} className="mb-1">
+                          {doc ? (
+                            <div className="position-relative">
+                              <img
+                                className="imagePreview"
+                                src={doc.preview}
+                                alt={`preview ${index}`}
+                                style={{
+                                  maxWidth: "200px",
+                                  maxHeight: "200px",
+                                  objectFit: "cover",
+                                  border: "1px solid #ddd",
+                                  borderRadius: "4px",
+                                }}
+                              />
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                onClick={() => handleRemoveImage(index)}
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ) : (
+                            <label
+                              htmlFor={`supportingDocuments_${index}`}
+                              className="form-label d-flex flex-column justify-content-center align-items-center"
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                                border: "1px dashed #aaa",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <i className="bx bx-image-add bx-md text-secondary"></i>
+                              <span className="text-secondary small">
+                                Upload
+                              </span>
+                              <input
+                                hidden
+                                id={`supportingDocuments_${index}`}
+                                type="file"
+                                name={`supportingDocuments_${index}`}
+                                className="form-control"
+                                onChange={handleChange}
+                                accept="image/*"
+                              />
+                            </label>
+                          )}
+                        </div>
+                      )
+                    );
+                  })}
                 </div>
               </div>
             </div>

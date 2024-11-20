@@ -196,7 +196,10 @@ const RightSide = () => {
           <h4 className="m-0">Announcements/Events</h4>
         </div>
         {latestAnnouncement ? (
-          <div className="linkText rounded">
+          <Link
+            to={`/DiaryEntry/${latestAnnouncement.entryID}`}
+            className="linkText rounded p-0"
+          >
             <p className="m-0 mb-1 text-start">
               {latestAnnouncement.title || "Untitled Announcement"}
             </p>
@@ -209,7 +212,7 @@ const RightSide = () => {
               alt="Announcement"
               style={{ width: "100%", borderRadius: ".3rem" }}
             />
-          </div>
+          </Link>
         ) : (
           <p className="text-secondary">No announcements available.</p>
         )}

@@ -1271,7 +1271,7 @@ app.post("/comments", (req, res) => {
 });
 
 app.post("/reportuserComment", (req, res) => {
-  const { commentID, userID, reason, otherText } = req.body;
+  const { commentID, userID, entryID, reason, otherText } = req.body;
 
   if (!commentID || !userID || !reason) {
     return res
@@ -1280,13 +1280,13 @@ app.post("/reportuserComment", (req, res) => {
   }
 
   const query = `
-    INSERT INTO comment_reports (commentID, userID, reason, otherText)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO comment_reports (commentID, userID, entryID, reason, otherText)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     query,
-    [commentID, userID, reason, otherText || null],
+    [commentID, userID, entryID, reason, otherText || null],
     (err, result) => {
       if (err) {
         console.error("Error reporting comment:", err);
@@ -1296,6 +1296,32 @@ app.post("/reportuserComment", (req, res) => {
       res.status(200).json({ message: "Report submitted successfully" });
     }
   );
+});
+
+app.get("/getReportedComments", (req, res) => {
+  const query = `
+  SELECT
+    comment_reports.*,
+    user_table.firstName,
+    user_table.lastName,
+    user_profiles.profile_image,
+    diary_entries.*
+  FROM 
+    comment_reports
+  JOIN user_table ON comment_reports.userID = user_table.userID
+  JOIN user_profiles ON comment_reports.userID = user_profiles.userID
+  JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reported comments:", err.message);
+      return res
+        .status(500)
+        .json({ error: "Error fetching reported comments" });
+    }
+    res.status(200).json(results);
+  });
 });
 
 app.delete("/deleteComment/:commentID", (req, res) => {
@@ -1580,7 +1606,7 @@ app.post("/submit-report", (req, res) => {
   });
 });
 
-app.get("reports", (req, res) => {
+app.get("/reports", (req, res) => {
   const query = `
   SELECT * FROM gender_based_crime_reports
 `;
@@ -1624,9 +1650,11 @@ app.get("/flagged", (req, res) => {
     flagged_reports.*,
     user_table.firstName,
     user_table.lastName,
+    user_profiles.profile_image,
     diary_entries.title
   FROM flagged_reports
   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
 `;
 
