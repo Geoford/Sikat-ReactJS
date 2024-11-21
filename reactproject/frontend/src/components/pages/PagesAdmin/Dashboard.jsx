@@ -139,7 +139,7 @@ const Dashboard = () => {
             <div className="col-md ">
               <div
                 className="overflow-y-scroll custom-scrollbar pe-1 mb-2"
-                style={{ height: "20rem" }}
+                style={{ height: "18rem" }}
               >
                 <table className="table rounded">
                   <thead>

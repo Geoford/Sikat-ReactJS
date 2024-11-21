@@ -47,7 +47,7 @@ const NavBar = ({ ActiveTab }) => {
   return (
     <nav
       className="navbar navbar-expand-lg p-0"
-      style={{ position: "sticky", top: "0", height: "4rem" }}
+      style={{ position: "sticky", top: "0", minHeight: "4rem" }}
     >
       <div className="container-fluid py-2 px-3 ">
         <div className="d-flex align-items-center gap-2">
@@ -56,13 +56,13 @@ const NavBar = ({ ActiveTab }) => {
               <img className="logoImage" src={Logo} alt="Logo" />
             </Link>
           </div>
-          <div className="d-flex align-items-center">
+          <div className="TextLogo d-flex align-items-center">
             <Link to={user && user.isAdmin ? "/Admin/Home" : "/Home"}>
               <img src={TextLogo} alt="" style={{ height: "2.5rem" }} />
             </Link>
           </div>
         </div>
-        <div className="d-flex text-light gap-1">
+        <div className="d-flex text-light gap-1 pt-2 pt-md-0">
           <Link
             className={`navIcons text-light ${
               ActiveTab === "Home" ? "active" : ""
@@ -150,7 +150,7 @@ const NavBar = ({ ActiveTab }) => {
             <p className="navToolTip">Settings</p>
           </Link>
         </div>
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 navDropdown">
           <div>
             <NotificationButton userID={user.userID} />
           </div>

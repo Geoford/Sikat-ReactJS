@@ -24,7 +24,7 @@
   background-color: var(--primary);
   position: absolute;
   z-index: 1;
-  height: 3.5rem;
+  /* height: 3.5rem; */
   /* position: static; */
 }
 .navIcons {
@@ -568,4 +568,37 @@ input.form-control:focus {
 .paginationItem.active {
   background-color: var(--primary) !important;
   color: rgb(0, 0, 0) !important;
+}
+
+@media screen and (max-width: 900px) {
+  p {
+    font-size: 0.9rem;
+  }
+
+  /* FOR RESPONSIVE NAVBAR */
+  .navIcons {
+    padding-top: 0.7rem;
+    width: clamp(4.5rem, 13vw, 6rem);
+    height: 3rem;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+    transition: 0.2s;
+  }
+
+  .navIcons.active::after {
+    height: 0.25rem;
+    bottom: -0.3rem;
+  }
+  .navDropdown {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+  .logo {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  .TextLogo img {
+    height: 2rem !important;
+  }
 }
