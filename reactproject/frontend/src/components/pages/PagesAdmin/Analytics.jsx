@@ -9,6 +9,7 @@ import ReportedUsers from "./ReportedUsers";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
+  const [flags, setFlags] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("All");
   const [selectedYear, setSelectedYear] = useState("All");
@@ -33,6 +34,24 @@ const Analytics = () => {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const fetchFlags = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/flagged`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setFlags(data);
+        setFilteredUsers(data); // Initialize filtered users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchFlags();
+  }, []);
+
   return (
     <MainLayout ActiveTab="Analytics">
       <div
@@ -52,7 +71,7 @@ const Analytics = () => {
             <RegisteredUser users={users} />
           </Tab>
           <Tab eventKey="FlaggedDiaries" title="Flagged Diaries">
-            <FlaggedDiaries users={users} />
+            <FlaggedDiaries flags={flags} />
           </Tab>{" "}
           <Tab eventKey="ReportedUsers" title="Reported Users">
             <ReportedUsers users={users} />

@@ -1650,6 +1650,8 @@ app.get("/flagged", (req, res) => {
     flagged_reports.*,
     user_table.firstName,
     user_table.lastName,
+    user_table.studentNumber,
+    user_table.sex,
     user_profiles.profile_image,
     diary_entries.title
   FROM flagged_reports

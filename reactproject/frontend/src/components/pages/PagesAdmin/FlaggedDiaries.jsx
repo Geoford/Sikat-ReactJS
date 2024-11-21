@@ -2,31 +2,48 @@ import React, { useState, useEffect } from "react";
 import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import axios from "axios";
 
-const FlaggedDiaries = ({ users }) => {
+const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
-  const [selectedYear, setSelectedYear] = useState("All");
+  const [alarmingWords, setAlarmingWords] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSubject, setSelectedSubject] = useState("All");
   const usersPerPage = 10;
 
   useEffect(() => {
-    // Apply filters whenever users, selectedCourse, or selectedYear changes
-    let filtered = [...users];
+    const fetchAlarmingWords = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/flaggingOptions"
+        );
+        setAlarmingWords(response.data);
+      } catch (error) {
+        console.error("Error fetching alarming words:", error);
+      }
+    };
 
-    if (selectedCourse !== "All") {
-      filtered = filtered.filter((user) => user.course === selectedCourse);
-    }
+    fetchAlarmingWords();
+  }, []);
 
-    if (selectedYear !== "All") {
-      filtered = filtered.filter((user) => user.year === selectedYear);
-    }
+  useEffect(() => {
+    const applyFilter = () => {
+      if (selectedSubject === "All") {
+        setFilteredUsers([...flags]);
+      } else {
+        setFilteredUsers(
+          flags.filter((flag) =>
+            flag.behaviors.toLowerCase().includes(selectedSubject.toLowerCase())
+          )
+        );
+      }
+      setCurrentPage(1);
+    };
 
-    setFilteredUsers(filtered);
-    setCurrentPage(1); // Reset to the first page when filters change
-  }, [users, selectedCourse, selectedYear]);
+    applyFilter();
+  }, [flags, selectedSubject]);
 
-  // Calculate pagination
+  // Pagination calculations
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -51,7 +68,7 @@ const FlaggedDiaries = ({ users }) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "registered_users.json";
+    link.download = "filtered_flags.json";
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -65,7 +82,7 @@ const FlaggedDiaries = ({ users }) => {
         <div>
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">
-              <i class="bx bx-search"></i>
+              <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
               placeholder="Search name, course, year"
@@ -86,29 +103,23 @@ const FlaggedDiaries = ({ users }) => {
                 <th scope="col">Author</th>
                 <th scope="col">
                   <select
-                    value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
                     className="form-select border-0 p-0 fw-bold text-center"
                     style={{
                       maxWidth: "250px",
                     }}
+                    value={selectedSubject}
+                    onChange={(e) => setSelectedSubject(e.target.value)}
                   >
                     <option value="All">Subject/Alarming Word</option>
-                    <option
-                      className="text-break"
-                      value="BS Information Technology"
-                    >
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Industrial Technology">
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Computer Science">
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Computer Engineering">
-                      Gender-Based-Crimes
-                    </option>
+                    {alarmingWords.map((word, index) => (
+                      <option
+                        key={index}
+                        className="text-break"
+                        value={word.reason || word.title}
+                      >
+                        {word.reason || word.title}
+                      </option>
+                    ))}
                   </select>
                 </th>
                 <th scope="col">Flag Count</th>
@@ -119,13 +130,13 @@ const FlaggedDiaries = ({ users }) => {
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
-                currentUsers.map((user) => (
-                  <tr key={user.userID}>
-                    <th scope="row">{user.studentNumber}</th>
-                    <td>{`${user.firstName} ${user.lastName}`}</td>
-                    <td>Abuse,Rape etc.</td>
+                currentUsers.map((flag) => (
+                  <tr key={flag.userID}>
+                    <th scope="row">{flag.studentNumber}</th>
+                    <td>{`${flag.firstName} ${flag.lastName}`}</td>
+                    <td>{flag.behaviors}</td>
                     <td>0</td>
-                    <td>Sample Titles</td>
+                    <td>{flag.title}</td>
                     <td className="text-success">Pending</td>
                     <td>
                       <button className="secondaryButton">
