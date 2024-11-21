@@ -163,10 +163,10 @@ const AccountDropdown = () => {
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link
             className="text-decoration-none text-dark"
-            to="/Admin/Statistics"
+            to="/Admin/Analytics"
           >
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              Statictics
+              Analytics
               <i class="bx bx-chart"></i>
             </button>
           </Link>

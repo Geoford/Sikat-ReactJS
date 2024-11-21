@@ -7,7 +7,7 @@ import FlaggedDiaries from "./FlaggedDiaries";
 import RegisteredUser from "./RegisteredUser";
 import ReportedUsers from "./ReportedUsers";
 
-const Statictics = () => {
+const Analytics = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("All");
@@ -33,48 +33,8 @@ const Statictics = () => {
     fetchUsers();
   }, []);
 
-  //   const handleFilterChange = () => {
-  //     let filtered = [...users];
-
-  //     if (selectedCourse !== "All") {
-  //       filtered = filtered.filter((user) => user.course === selectedCourse);
-  //     }
-
-  //     if (selectedYear !== "All") {
-  //       filtered = filtered.filter((user) => user.year === selectedYear);
-  //     }
-
-  //     setFilteredUsers(filtered);
-  //   };
-
-  //   useEffect(() => {
-  //     handleFilterChange();
-  //   }, [selectedCourse, selectedYear]); // Re-run filter when either filter changes
-
-  //   const indexOfLastUser = currentPage * usersPerPage;
-  //   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  //   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  //   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
-  //   const handlePageChange = (pageNumber) => {
-  //     setCurrentPage(pageNumber);
-  //   };
-
-  //   const handlePrevClick = () => {
-  //     if (currentPage > 1) {
-  //       setCurrentPage(currentPage - 1);
-  //     }
-  //   };
-
-  //   const handleNextClick = () => {
-  //     if (currentPage < totalPages) {
-  //       setCurrentPage(currentPage + 1);
-  //     }
-  //   };
-
   return (
-    <MainLayout ActiveTab="Followers">
+    <MainLayout ActiveTab="Analytics">
       <div
         className="container mt-4 rounded p-3 shadow-sm mb-5"
         style={{
@@ -103,4 +63,4 @@ const Statictics = () => {
   );
 };
 
-export default Statictics;
+export default Analytics;

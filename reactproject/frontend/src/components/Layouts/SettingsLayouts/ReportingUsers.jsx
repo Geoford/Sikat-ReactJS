@@ -213,13 +213,10 @@ const ReportingUsers = () => {
         ))}
       </Pagination>
       <Form onSubmit={handleAddReportUsers}>
-        <h5 className="mt-4">Add New Report Reason</h5>
+        <h5 className="mt-4">Add User Violation</h5>
 
         <div className="mt-3">
-          <FloatingLabel
-            controlId="newReportReason"
-            label="New Comment Violation"
-          >
+          <FloatingLabel controlId="newReportReason" label="Add User Violation">
             <Form.Control
               type="text"
               placeholder="Enter new report reason"

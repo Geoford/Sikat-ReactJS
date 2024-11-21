@@ -72,6 +72,21 @@ const NavBar = ({ ActiveTab }) => {
             <i class="bx bx-home-alt"></i>
             <p className="navToolTip">Home</p>
           </Link>
+
+          {user && user.isAdmin ? (
+            <Link
+              className={`navIcons text-light ${
+                ActiveTab === "Dashboard" ? "active" : ""
+              }`}
+              to="/Admin/Dashboard"
+            >
+              <i class="bx bxs-dashboard"></i>
+              <p className="navToolTip">Dashboard</p>
+            </Link>
+          ) : (
+            ""
+          )}
+
           <Link
             className={`navIcons text-light ${
               ActiveTab === "Entries" ? "active" : ""
@@ -79,7 +94,9 @@ const NavBar = ({ ActiveTab }) => {
             to="/DiaryEntries"
           >
             <i class="bx bx-note"></i>
-            <p className="navToolTip">Diary Entries</p>
+            <p className="navToolTip">
+              {user && user.isAdmin ? "Post" : "Diary Entries"}
+            </p>
           </Link>
           {user && user.isAdmin ? (
             ""
@@ -93,6 +110,20 @@ const NavBar = ({ ActiveTab }) => {
               <i class="bx bx-user-plus"></i>
               <p className="navToolTip">Followers</p>
             </Link>
+          )}
+
+          {user && user.isAdmin ? (
+            <Link
+              className={`navIcons text-light ${
+                ActiveTab === "Analytics" ? "active" : ""
+              }`}
+              to="/Admin/Analytics"
+            >
+              <i class="bx bx-chart"></i>
+              <p className="navToolTip">User Analytics</p>
+            </Link>
+          ) : (
+            ""
           )}
 
           {user && user.isAdmin ? (
