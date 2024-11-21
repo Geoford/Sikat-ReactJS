@@ -68,11 +68,21 @@ const Dashboard = () => {
           backgroundColor: "#ffff",
         }}
       >
-        <h1>Dashboard</h1>
+        <h1 className="border-bottom">Dashboard</h1>
         <div>
-          <h5 className="text-start">Today</h5>
+          <div class="col-md mb-2">
+            <div class="form-floating">
+              <select class="form-select" id="floatingSelectGrid">
+                <option selected>Day</option>
+                <option value="1">Week</option>
+                <option value="2">Month</option>
+                <option value="3">Year</option>
+              </select>
+              <label for="floatingSelectGrid">Viewing Data By</label>
+            </div>
+          </div>
           <div className="row">
-            <div className="col-md-4 d-flex flex-column gap-2 p-0">
+            <div className="col-md-3 d-flex flex-column gap-2">
               <div
                 className="border rounded shadow-sm overflow-hidden"
                 style={{ height: "10rem" }}
@@ -127,41 +137,46 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="col-md ">
-              <h5>Today's Diary Entries</h5>
-              <table className="table rounded overflow-hidden">
-                <thead>
-                  <tr>
-                    <th scope="col">Author</th>
-                    <th scope="col">Diary Title</th>
-                    <th scope="col">Subject</th>
-                    <th scope="col">Engagements</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentUsers.length > 0 ? (
-                    currentUsers.map((user) => (
-                      <tr key={user.userID}>
-                        <th scope="row">Juan Dela Cruz</th>
-                        <td>Sample Title</td>
-                        <td>Abuse, Awareness,etc</td>
-                        <td>0</td>
-                        <td>
-                          <Link to={`/Profile/${user.userID}`}>
-                            <button className="primaryButton">Visit</button>
-                          </Link>
+              <div
+                className="overflow-y-scroll custom-scrollbar pe-1 mb-2"
+                style={{ height: "20rem" }}
+              >
+                <table className="table rounded">
+                  <thead>
+                    <tr>
+                      <th scope="col">Author</th>
+                      <th scope="col">Diary Title</th>
+                      <th scope="col">Subject</th>
+                      <th scope="col">Engagements</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUsers.length > 0 ? (
+                      currentUsers.map((user) => (
+                        <tr key={user.userID}>
+                          <th scope="row">Juan Dela Cruz</th>
+                          <td>Sample Title</td>
+                          <td>Abuse, Awareness,etc</td>
+                          <td>0</td>
+                          <td>
+                            <Link to={`/Profile/${user.userID}`}>
+                              <button className="primaryButton">Visit</button>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center">
+                          No registered users available.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="text-center">
-                        No registered users available.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
               <div className="d-flex justify-content-center">
                 <Pagination>
                   {Array.from({ length: totalPages }, (_, index) => (
@@ -179,28 +194,58 @@ const Dashboard = () => {
           </div>
           <div className="row gap-2">
             <div
-              className=" col-md border rounded shadow-sm"
-              style={{ height: "10rem" }}
+              className="col-md border rounded shadow-sm overflow-hidden p-0"
+              style={{
+                height: "7rem",
+                background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+              }}
             >
-              Flagged Diaries
+              <div
+                className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                style={{
+                  height: "100%",
+                }}
+              >
+                <h1 className="m-0">00</h1>
+
+                <p className="m-0">Flagged Diaries</p>
+              </div>
             </div>
             <div
-              className=" col-md border rounded shadow-sm"
-              style={{ height: "10rem" }}
+              className="col-md border rounded shadow-sm overflow-hidden p-0"
+              style={{
+                height: "7rem",
+                background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+              }}
             >
-              Reported Comments
-            </div>{" "}
-            <div
-              className=" col-md border rounded shadow-sm"
-              style={{ height: "10rem" }}
-            >
-              Reported Users
+              <div
+                className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                style={{
+                  height: "100%",
+                }}
+              >
+                <h1 className="m-0">00</h1>
+
+                <p className="m-0">Reported Comments</p>
+              </div>
             </div>
             <div
-              className=" col-md border rounded shadow-sm"
-              style={{ height: "10rem" }}
+              className="col-md border rounded shadow-sm overflow-hidden p-0"
+              style={{
+                height: "7rem",
+                background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+              }}
             >
-              Messages
+              <div
+                className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                style={{
+                  height: "100%",
+                }}
+              >
+                <h1 className="m-0">00</h1>
+
+                <p className="m-0">Reported Users</p>
+              </div>
             </div>
           </div>
         </div>
