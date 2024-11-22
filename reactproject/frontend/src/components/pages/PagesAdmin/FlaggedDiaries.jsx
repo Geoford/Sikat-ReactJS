@@ -9,6 +9,7 @@ const FlaggedDiaries = ({ flags }) => {
   const [alarmingWords, setAlarmingWords] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubject, setSelectedSubject] = useState("All");
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -28,20 +29,30 @@ const FlaggedDiaries = ({ flags }) => {
 
   useEffect(() => {
     const applyFilter = () => {
-      if (selectedSubject === "All") {
-        setFilteredUsers([...flags]);
-      } else {
-        setFilteredUsers(
-          flags.filter((flag) =>
-            flag.behaviors.toLowerCase().includes(selectedSubject.toLowerCase())
-          )
+      let filtered = [...flags];
+
+      // Apply subject filter
+      if (selectedSubject !== "All") {
+        filtered = filtered.filter((flag) =>
+          flag.behaviors.toLowerCase().includes(selectedSubject.toLowerCase())
         );
       }
+
+      // Apply search filter
+      if (searchTerm) {
+        filtered = filtered.filter((flag) =>
+          `${flag.firstName} ${flag.lastName} ${flag.studentNumber} ${flag.behaviors} ${flag.title}`
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+        );
+      }
+
+      setFilteredUsers(filtered);
       setCurrentPage(1);
     };
 
     applyFilter();
-  }, [flags, selectedSubject]);
+  }, [flags, selectedSubject, searchTerm]); // Include searchTerm in dependencies
 
   // Pagination calculations
   const indexOfLastUser = currentPage * usersPerPage;
@@ -85,9 +96,11 @@ const FlaggedDiaries = ({ flags }) => {
               <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search name, course, year"
+              placeholder="Search by name, student number, behaviors, or title"
               aria-label="Search"
               aria-describedby="basic-addon1"
+              value={searchTerm} // Bind to state
+              onChange={(e) => setSearchTerm(e.target.value)} // Update state on input
             />
           </InputGroup>
         </div>
@@ -149,7 +162,7 @@ const FlaggedDiaries = ({ flags }) => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    No registered users available.
+                    No flagged diary available.
                   </td>
                 </tr>
               )}

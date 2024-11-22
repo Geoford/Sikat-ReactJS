@@ -2,29 +2,67 @@ import React, { useState, useEffect } from "react";
 import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import axios from "axios";
 
-const ReportedUsers = ({ users }) => {
+const ReportedUsers = ({ reportedComments }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
-  const [selectedYear, setSelectedYear] = useState("All");
+  const [option, setOption] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
   useEffect(() => {
-    // Apply filters whenever users, selectedCourse, or selectedYear changes
-    let filtered = [...users];
+    const fetchReportComments = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/reportComments"
+        );
+        setOption(response.data);
+      } catch (error) {
+        console.error("Error fetching alarming words:", error);
+      }
+    };
 
-    if (selectedCourse !== "All") {
-      filtered = filtered.filter((user) => user.course === selectedCourse);
-    }
+    fetchReportComments();
+  }, []);
 
-    if (selectedYear !== "All") {
-      filtered = filtered.filter((user) => user.year === selectedYear);
-    }
+  useEffect(() => {
+    const applyFilter = () => {
+      let filtered = reportedComments;
 
-    setFilteredUsers(filtered);
-    setCurrentPage(1); // Reset to the first page when filters change
-  }, [users, selectedCourse, selectedYear]);
+      if (selectedSubject !== "All") {
+        filtered = filtered.filter((reportedComment) =>
+          reportedComment.reason
+            .toLowerCase()
+            .includes(selectedSubject.toLowerCase())
+        );
+      }
+
+      if (searchQuery.trim() !== "") {
+        filtered = filtered.filter(
+          (reportedComment) =>
+            reportedComment.firstName
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            reportedComment.lastName
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            reportedComment.text
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            reportedComment.reason
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+        );
+      }
+
+      setFilteredUsers(filtered);
+      setCurrentPage(1);
+    };
+
+    applyFilter();
+  }, [reportedComments, selectedSubject, searchQuery]);
 
   // Calculate pagination
   const indexOfLastUser = currentPage * usersPerPage;
@@ -51,7 +89,7 @@ const ReportedUsers = ({ users }) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "registered_users.json";
+    link.download = "filtered_reported_users.json";
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -65,12 +103,14 @@ const ReportedUsers = ({ users }) => {
         <div>
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">
-              <i class="bx bx-search"></i>
+              <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search name, course, year"
+              placeholder="Search name, student number"
               aria-label="Search"
               aria-describedby="basic-addon1"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </InputGroup>
         </div>
@@ -86,29 +126,23 @@ const ReportedUsers = ({ users }) => {
                 <th scope="col">Name</th>
                 <th scope="col">
                   <select
-                    value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    value={selectedSubject}
+                    onChange={(e) => setSelectedSubject(e.target.value)}
                     className="form-select border-0 p-0 fw-bold text-center"
                     style={{
                       maxWidth: "250px",
                     }}
                   >
                     <option value="All">Violation</option>
-                    <option
-                      className="text-break"
-                      value="BS Information Technology"
-                    >
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Industrial Technology">
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Computer Science">
-                      Gender-Based-Crimes
-                    </option>
-                    <option value="BS Computer Engineering">
-                      Gender-Based-Crimes
-                    </option>
+                    {option.map((word, index) => (
+                      <option
+                        key={index}
+                        className="text-break"
+                        value={word.reason || word.title}
+                      >
+                        {word.reason || word.title}
+                      </option>
+                    ))}
                   </select>
                 </th>
                 <th scope="col">Report Count</th>
@@ -119,13 +153,13 @@ const ReportedUsers = ({ users }) => {
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
-                currentUsers.map((user) => (
-                  <tr key={user.userID}>
-                    <th scope="row">{user.studentNumber}</th>
-                    <td>{`${user.firstName} ${user.lastName}`}</td>
-                    <td>Bullying, Harrassment etc.</td>
+                currentUsers.map((reportedComment) => (
+                  <tr key={reportedComment.userID}>
+                    <th scope="row">{reportedComment.studentNumber}</th>
+                    <td>{`${reportedComment.firstName} ${reportedComment.lastName}`}</td>
+                    <td>{reportedComment.reason}</td>
                     <td>0</td>
-                    <td>Sample Alarming Comment</td>
+                    <td>{reportedComment.text}</td>
                     <td className="text-success">Pending</td>
                     <td>
                       <button className="secondaryButton">
@@ -138,7 +172,7 @@ const ReportedUsers = ({ users }) => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    No registered users available.
+                    No reported comments available.
                   </td>
                 </tr>
               )}
@@ -173,7 +207,7 @@ const ReportedUsers = ({ users }) => {
                 active={index + 1 === currentPage}
                 onClick={() => handlePageChange(index + 1)}
               >
-                <span className="paginationItem">{index + 1}</span>
+                {index + 1}
               </Pagination.Item>
             ))}
             <Pagination.Next

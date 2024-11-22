@@ -10,10 +10,11 @@ import ReportedUsers from "./ReportedUsers";
 const Analytics = () => {
   const [users, setUsers] = useState([]);
   const [flags, setFlags] = useState([]);
+  const [reportedComments, setreportedComments] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
-  const [selectedYear, setSelectedYear] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [selectedCourse, setSelectedCourse] = useState("All");
+  // const [selectedYear, setSelectedYear] = useState("All");
+  // const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 4;
 
   useEffect(() => {
@@ -52,6 +53,26 @@ const Analytics = () => {
     fetchFlags();
   }, []);
 
+  useEffect(() => {
+    const fetchReportedComments = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8081/getReportedComments`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setreportedComments(data);
+        setFilteredUsers(data); // Initialize filtered users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchReportedComments();
+  }, []);
+
   return (
     <MainLayout ActiveTab="Analytics">
       <div
@@ -74,7 +95,7 @@ const Analytics = () => {
             <FlaggedDiaries flags={flags} />
           </Tab>{" "}
           <Tab eventKey="ReportedUsers" title="Reported Users">
-            <ReportedUsers users={users} />
+            <ReportedUsers reportedComments={reportedComments} />
           </Tab>
         </Tabs>
       </div>

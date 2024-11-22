@@ -1302,13 +1302,16 @@ app.get("/getReportedComments", (req, res) => {
   const query = `
   SELECT
     comment_reports.*,
+    comments.*,
     user_table.firstName,
     user_table.lastName,
+    user_table.studentNumber,
     user_profiles.profile_image,
     diary_entries.*
   FROM 
     comment_reports
   JOIN user_table ON comment_reports.userID = user_table.userID
+  JOIN comments ON comment_reports.commentID = comments.commentID
   JOIN user_profiles ON comment_reports.userID = user_profiles.userID
   JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
   `;
