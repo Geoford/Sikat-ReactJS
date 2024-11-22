@@ -263,7 +263,7 @@ const CenterAdmin = () => {
   if (!user) return null;
 
   return (
-    <div className="p-2">
+    <div className="overflow-hidden p-2">
       <div
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}

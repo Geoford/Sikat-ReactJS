@@ -24,9 +24,9 @@ const MainLayout = ({ children, ActiveTab }) => {
   }, []); // Empty dependency array ensures this effect runs only once
 
   return (
-    <div>
-      <NavBar ActiveTab={ActiveTab} />
-      <div>{children}</div>
+    <div className="position-relative overflow-x-hidden" style={{ width: "" }}>
+      <NavBar ActiveTab={ActiveTab} style={{ position: "sticky", top: "0" }} />
+      <div className="mt-5 pt-5 pt-lg-3">{children}</div>
 
       {/* Include the background component at the bottom of the layout */}
       <Background />

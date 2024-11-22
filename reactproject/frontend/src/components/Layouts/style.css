@@ -529,7 +529,7 @@ input.form-control:focus {
   width: max-content;
   min-width: 6rem;
   background-color: rgb(38, 38, 38, 0.7);
-  margin-top: 0.7rem;
+  margin-top: 0.8rem;
   color: #ffff;
   border-radius: 0.3rem;
   font-size: 1rem;
@@ -538,6 +538,7 @@ input.form-control:focus {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   left: 50%;
+  z-index: 1;
   transform: translateX(-50%);
 }
 .navIcons:hover .navToolTip {
@@ -570,9 +571,9 @@ input.form-control:focus {
   color: rgb(0, 0, 0) !important;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1080px) {
   p {
-    font-size: 0.9rem;
+    font-size: clamp(0.7rem, 1dvw, 0.9rem);
   }
 
   /* FOR RESPONSIVE NAVBAR */
@@ -591,7 +592,7 @@ input.form-control:focus {
   }
   .navDropdown {
     position: absolute;
-    right: 0.5rem;
+    right: 0.8rem;
     top: 0.5rem;
   }
   .logo {

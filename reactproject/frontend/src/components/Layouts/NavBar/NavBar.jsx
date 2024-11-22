@@ -47,7 +47,7 @@ const NavBar = ({ ActiveTab }) => {
   return (
     <nav
       className="navbar navbar-expand-lg p-0"
-      style={{ position: "sticky", top: "0", minHeight: "4rem" }}
+      style={{ position: "fixed", top: "0", minHeight: "4rem", width: "100%" }}
     >
       <div className="container-fluid py-2 px-3 ">
         <div className="d-flex align-items-center gap-2">
@@ -62,7 +62,7 @@ const NavBar = ({ ActiveTab }) => {
             </Link>
           </div>
         </div>
-        <div className="d-flex text-light gap-1 pt-2 pt-md-0">
+        <div className="w-100 d-flex justify-content-center text-light gap-1 pt-2 pt-md-0 ">
           <Link
             className={`navIcons text-light ${
               ActiveTab === "Home" ? "active" : ""
