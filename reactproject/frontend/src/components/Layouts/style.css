@@ -299,7 +299,50 @@
   opacity: 1;
   right: 110%;
 }
+/* ANIMATIONS */
+.fade-right {
+  opacity: 0; /* Initially hidden */
+  animation: faderight 1s ease-out forwards; /* Animation properties */
+}
+@keyframes faderight {
+  0% {
+    opacity: 0;
+    transform: translateX(90px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Move to the original position */
+  }
+}
+.fade-left {
+  opacity: 0; /* Initially hidden */
+  animation: fadeleft 1s ease-out forwards; /* Animation properties */
+}
+@keyframes fadeleft {
+  0% {
+    opacity: 0;
+    transform: translateX(-90px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Move to the original position */
+  }
+}
 
+.fade-up {
+  opacity: 0; /* Initially hidden */
+  animation: fadeup 0.5s ease-out forwards; /* Animation properties */
+}
+@keyframes fadeup {
+  0% {
+    opacity: 0;
+    transform: translateY(90px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Move to the original position */
+  }
+}
 /* For LOGIN and REGISTER PAGE transition */
 .fade-container {
   transition: opacity 0.3s ease-in-out;
@@ -447,10 +490,11 @@ input.form-control:focus {
 }
 
 .preloader img {
-  width: 150px;
+  width: clamp(6rem, 10dvw, 15rem);
 }
 
 .text-container {
+  /* font-size: clamp(0.5rem, 2dvw, .5rem) !important; */
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
@@ -573,7 +617,10 @@ input.form-control:focus {
 
 @media screen and (max-width: 1080px) {
   p {
-    font-size: clamp(0.7rem, 1dvw, 0.9rem);
+    font-size: clamp(0.7rem, 2dvw, 0.9rem);
+  }
+  h5 {
+    font-size: clamp(1rem, 2dvw, 2rem) !important;
   }
 
   /* FOR RESPONSIVE NAVBAR */

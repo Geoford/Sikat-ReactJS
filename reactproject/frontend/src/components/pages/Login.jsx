@@ -68,9 +68,9 @@ export default function Login() {
   };
 
   return (
-    <div className="vh-100 d-flex justify-content-center align-items-center">
+    <div className="vh-100 d-flex justify-content-center align-items-center px-2">
       <div
-        className="rounded-5 shadow p-4"
+        className="rounded-5 shadow p-4 fade-up"
         style={{
           width: "clamp(400px, 40vw, 400px)",
           backgroundColor: "var(--primary)",

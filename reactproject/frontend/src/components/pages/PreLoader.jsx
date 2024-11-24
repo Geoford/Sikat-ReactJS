@@ -11,10 +11,16 @@ export const PreLoader = () => {
       <div>
         <img src={logo} alt="" />
       </div>
-      <div className="text-container">
-        <span>Equality, </span>
-        <span>Empowerment, </span>
-        <span>Inclusivity</span>
+      <div className="text-container w-100 flex-wrap justify-content-center">
+        <span>
+          <h5>Equality, </h5>
+        </span>
+        <span>
+          <h5>Empowerment, </h5>
+        </span>
+        <span>
+          <h5>Inclusivity</h5>
+        </span>
       </div>
     </div>
   );
