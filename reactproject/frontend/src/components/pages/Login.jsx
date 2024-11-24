@@ -96,11 +96,10 @@ export default function Login() {
           {/* Email field */}
           <div className="input-group mb-2">
             <span className="input-group-text p-1 px-2">
-              <img
-                src={usernameIcon} // Consider updating the icon to something email-related
-                alt=""
-                style={{ width: "20px", height: "20px" }}
-              />
+              <i
+                class="bx bxs-user-circle bx-sm my-1"
+                style={{ color: "var(--primary_hover)" }}
+              ></i>
             </span>
             <input
               type="email"
@@ -119,11 +118,10 @@ export default function Login() {
           {/* Password field */}
           <div className="input-group position-relative">
             <span className="input-group-text p-1 px-2">
-              <img
-                src={passwordIcon}
-                alt=""
-                style={{ width: "20px", height: "20px" }}
-              />
+              <i
+                class="bx bxs-lock bx-sm my-1"
+                style={{ color: "var(--primary_hover)" }}
+              ></i>
             </span>
             <input
               type={showPassword ? "text" : "password"} // Toggle input type
@@ -136,12 +134,15 @@ export default function Login() {
             />
             <div
               onClick={togglePasswordVisibility} // Toggle password visibility
-              style={{ cursor: "pointer", zIndex: "5" }}
+              style={{
+                cursor: "pointer",
+                zIndex: 5,
+                position: "relative",
+                color: "var(--primary_hover)",
+              }}
             >
-              <img
-                className="position-absolute"
-                src={showPassword ? showIcon : hiddenIcon} // Switch icon
-                alt="Toggle visibility"
+              <div
+                className="position-absolute d-flex justify-content-center align-items-center"
                 style={{
                   width: "15px",
                   height: "15px",
@@ -149,7 +150,13 @@ export default function Login() {
                   transform: "translateY(-50%)",
                   right: "15px",
                 }}
-              />
+              >
+                <i
+                  className={`${
+                    showPassword ? "bx bx-show-alt" : "bx bx-hide"
+                  } bx-sm`}
+                ></i>
+              </div>
             </div>
           </div>
           {errors.password && (

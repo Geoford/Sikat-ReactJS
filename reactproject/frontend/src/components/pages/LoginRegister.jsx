@@ -80,7 +80,7 @@ const LoginRegister = () => {
                 style={{
                   left: "0",
                   top: "0px",
-                  width: "clamp(50rem, 90vw, 90rem)",
+                  width: "clamp(45rem, 90vw, 90rem)",
                 }}
               />
             </div>
@@ -92,7 +92,7 @@ const LoginRegister = () => {
                 style={{
                   right: "0",
                   bottom: "0px",
-                  width: "clamp(50rem, 90vw, 90rem)",
+                  width: "clamp(45rem, 90vw, 90rem)",
                 }}
               />
             </div>
