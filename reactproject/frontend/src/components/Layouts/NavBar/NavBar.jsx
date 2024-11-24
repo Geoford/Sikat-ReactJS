@@ -46,7 +46,7 @@ const NavBar = ({ ActiveTab }) => {
 
   return (
     <nav
-      className="navbar navbar-expand-lg p-0"
+      className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
       style={{ position: "fixed", top: "0", minHeight: "4rem", width: "100%" }}
     >
       <div className="container-fluid py-2 px-3 ">

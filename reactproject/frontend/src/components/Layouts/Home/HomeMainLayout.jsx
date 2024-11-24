@@ -52,7 +52,7 @@ export default function HomeMainLayout({ isAdminPage }) {
 
           {/* Center Layout - Adjust the margin to prevent overlap */}
           <div
-            className="col-lg-6 mx-auto"
+            className="col-lg-6 mx-auto p-0 px-lg-2 mt-2 mt-lg-0"
             style={{ marginLeft: "20%", marginRight: "20%" }}
           >
             <CenterLayout />
