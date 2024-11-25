@@ -50,10 +50,11 @@ const Center = () => {
           }
         });
 
+        // Convert the object to an array of unique user-reason combinations
         setReportedUsers(Object.values(reportCount));
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching reported users:", error);
     }
   };
 
@@ -64,7 +65,7 @@ const Center = () => {
         const flagCount = {};
 
         response.data.forEach((flag) => {
-          const key = `${flag.userID} - ${flag.reason}`;
+          const key = `${flag.userID}-${flag.reason}`;
           if (flagCount[key]) {
             flagCount[key].count += 1;
           } else {
@@ -74,7 +75,7 @@ const Center = () => {
 
         setFlaggedUsers(Object.values(flagCount));
       } else {
-        console.warn("No flagged reports found in response data.");
+        console.warn("No flagged diaries found in response data.");
       }
     } catch (error) {
       console.error("Error fetching flagged users:", error);
@@ -104,9 +105,9 @@ const Center = () => {
           >
             {/* WHEN CLICKED IT SHOULD DISPLAY THE COMMENT OF THE REPORTED USER */}
             {reportedUsers.length > 0 ? (
-              reportedUsers.map((reportedUser) => (
+              reportedUsers.map((reportedUser, index) => (
                 <Link
-                  key={reportedUser.userID}
+                  key={`${reportedUser.userID}-${reportedUser.reason}-${index}`}
                   to={`/Admin/DiaryEntry/${reportedUser.entryID}`}
                   className="text-decoration-none"
                   style={{ cursor: "pointer" }}
@@ -142,7 +143,7 @@ const Center = () => {
                 </Link>
               ))
             ) : (
-              <p className="text-secondary">No flagged diaries found.</p>
+              <p className="text-secondary">No reported users found.</p>
             )}
           </div>
         </div>
@@ -158,15 +159,15 @@ const Center = () => {
             style={{ height: "40vh", overflowY: "scroll" }}
           >
             {flaggedUsers.length > 0 ? (
-              flaggedUsers.map((flaggedUser) => (
+              flaggedUsers.map((flaggedUser, index) => (
                 <Link
-                  key={flaggedUser.userID}
+                  key={`${flaggedUser.userID}-${flaggedUser.reason}-${index}`}
                   to={`/Admin/DiaryEntry/${flaggedUser.entryID}`}
                   className="text-decoration-none rounded"
                   style={{ cursor: "pointer" }}
                 >
                   <div className="row linkText d-flex align-items-center gap-3 rounded mb-2">
-                    <div className="col-md-2 ">
+                    <div className="col-md-2">
                       <div className="profilePicture">
                         <img
                           src={
@@ -183,14 +184,16 @@ const Center = () => {
                         />
                       </div>
                     </div>
-
                     <div className="col-md d-flex flex-column align-items-start text-start">
                       <p className="text-secondary m-0">
                         {flaggedUser.firstName} {flaggedUser.lastName}
                       </p>
                       <h5 className="text-secondary m-0">
                         Title: {flaggedUser.title}
-                      </h5>{" "}
+                      </h5>
+                      <p className="text-danger m-0">
+                        Reason: {flaggedUser.reason}
+                      </p>
                       <p className="text-danger m-0">
                         Flagged {flaggedUser.count} times
                       </p>
