@@ -72,16 +72,90 @@ const FlaggedDiaries = ({ flags }) => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const downloadData = () => {
-    const dataStr = JSON.stringify(filteredUsers, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
+  const downloadData = (format) => {
+    if (format === "html") {
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Flagged Diaries</title>
+          <style>
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            th {
+              background-color: #f4f4f4;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Flagged Diaries</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Student No.</th>
+                <th>Full Name</th>
+                <th>Behavior</th>
+                <th>Title</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${currentUsers
+                .map(
+                  (flag) => `
+                <tr>
+                  <td>${flag.studentNumber}</td>
+                  <td>${flag.firstName} ${flag.lastName}</td>
+                  <td>${flag.behaviors}</td>
+                  <td>${flag.title}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "filtered_flags.json";
-    link.click();
-    URL.revokeObjectURL(url);
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "flagged_diaries.html";
+      link.click();
+      URL.revokeObjectURL(url);
+    } else if (format === "excel") {
+      const header = ["Student No.", "Author", "Behavior", "Title"];
+      const rows = currentUsers.map((flag) => [
+        flag.studentNumber,
+        `${flag.firstName} ${flag.lastName}`,
+        flag.behaviors,
+        flag.title,
+      ]);
+
+      const csvContent = [header, ...rows]
+        .map((row) => row.join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "flagged_diaries.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -162,7 +236,7 @@ const FlaggedDiaries = ({ flags }) => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    No flagged diary available.
+                    No flagged diaries available.
                   </td>
                 </tr>
               )}
@@ -210,9 +284,17 @@ const FlaggedDiaries = ({ flags }) => {
       </div>
 
       {/* Download Button */}
-      <button className="primaryButton w-100 py-2 mt-4" onClick={downloadData}>
-        Download Data
-      </button>
+      <div className="d-flex  mt-4">
+        <button
+          className="primaryButton me-2"
+          onClick={() => downloadData("html")}
+        >
+          Download as HTML
+        </button>
+        <button className="primaryButton" onClick={() => downloadData("excel")}>
+          Download as Excel
+        </button>
+      </div>
     </div>
   );
 };

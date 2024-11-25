@@ -198,7 +198,7 @@ const ReportingComments = () => {
                           handleDeleteReportComment(comment.reportCommentID)
                         }
                       >
-                        Delete
+                        Remove
                       </Button>
                     </>
                   )}

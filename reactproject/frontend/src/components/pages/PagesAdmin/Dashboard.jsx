@@ -1,53 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
 import Pagination from "react-bootstrap/Pagination";
 import MainLayout from "../../Layouts/MainLayout";
-import FlaggedDiaries from "./FlaggedDiaries";
-import RegisteredUser from "./RegisteredUser";
-import ReportedUsers from "./ReportedUsers";
+import axios from "axios";
 import DashboardData from "./Dashboard";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
-  const [selectedYear, setSelectedYear] = useState("All");
+  const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const usersPerPage = 4;
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/users`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
+  const fetchEntries = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get("http://localhost:8081/analytics");
+      setEntries(response.data);
+    } catch (error) {
+      console.error("Error fetching diary entries:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchUsers();
+  useEffect(() => {
+    fetchEntries();
   }, []);
 
-  // Filtering logic
-  useEffect(() => {
-    const filtered = users.filter((user) => {
-      const courseMatch =
-        selectedCourse === "All" || user.course === selectedCourse;
-      const yearMatch = selectedYear === "All" || user.year === selectedYear;
-      return courseMatch && yearMatch;
-    });
-    setFilteredUsers(filtered);
-  }, [selectedCourse, selectedYear, users]);
+  const recentEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.created_at);
+    const now = new Date();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
-  // Pagination logic
+    // Check if the entry is within the last week
+    if (now - entryDate <= oneWeek) {
+      // Format the date to the local time zone
+      const formattedDate = entryDate.toLocaleString("en-US", {
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Automatically use the local time zone
+        hour12: true, // Use 12-hour format (optional)
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      entry.formattedDate = formattedDate; // Add the formatted date to the entry object
+      return true; // Include the entry in the filtered results
+    }
+    return false; // Exclude the entry if it's older than one week
+  });
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -102,7 +108,7 @@ const Dashboard = () => {
                   className="d-flex align-items-center justify-content-center gap-2"
                   style={{ height: "5rem" }}
                 >
-                  <h1 className="m-0">00</h1>
+                  <h1 className="m-0">{recentEntries.length}</h1>
                   <div className="d-flex align-items-center text-danger">
                     <h5 className="m-0 mt-2">-69%</h5>
                     <i class="mt-2 bx bx-chevrons-down bx-sm"></i>
@@ -152,15 +158,17 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentUsers.length > 0 ? (
-                      currentUsers.map((user) => (
-                        <tr key={user.userID}>
-                          <th scope="row">Juan Dela Cruz</th>
-                          <td>Sample Title</td>
-                          <td>Abuse, Awareness,etc</td>
+                    {entries.length > 0 ? (
+                      entries.map((entry, index) => (
+                        <tr key={`${entry.userID}-${index}`}>
+                          <th scope="row">
+                            {entry.firstName} {entry.lastName}
+                          </th>
+                          <td>{entry.title}</td>
+                          <td>{entry.subjects}</td>
                           <td>0</td>
                           <td>
-                            <Link to={`/Profile/${user.userID}`}>
+                            <Link to={`/DiaryEntry/${entry.entryID}`}>
                               <button className="primaryButton">Visit</button>
                             </Link>
                           </td>
@@ -169,7 +177,7 @@ const Dashboard = () => {
                     ) : (
                       <tr>
                         <td colSpan="7" className="text-center">
-                          No registered users available.
+                          No diary entry available.
                         </td>
                       </tr>
                     )}

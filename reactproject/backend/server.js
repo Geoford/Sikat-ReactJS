@@ -551,11 +551,9 @@ app.post(
       diary_image = `/uploads/${file.filename}`;
     }
 
-    // Check for alarming words in title or description
     const hasAlarmingWords =
       containsAlarmingWords(title) || containsAlarmingWords(description);
 
-    // Insert diary entry into the database with containsAlarmingWords
     const query = `
       INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects, containsAlarmingWords)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -565,10 +563,10 @@ app.post(
       description,
       userID,
       visibility,
-      anonimity, // Ensure this value is passed correctly
+      anonimity,
       diary_image,
-      subjects, // Store subjects as plain text
-      hasAlarmingWords ? 1 : 0, // Add the flag here (1 = true, 0 = false)
+      subjects,
+      hasAlarmingWords ? 1 : 0,
     ];
 
     db.query(query, values, (err, result) => {
@@ -579,11 +577,9 @@ app.post(
           .send({ message: "Failed to save diary entry. Please try again." });
       }
 
-      // Notify admins if alarming words are found
       if (hasAlarmingWords) {
         const notificationMessage = `A diary entry containing alarming words has been posted by user ${userID}`;
 
-        // Query for all users where isAdmin = 1
         const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
 
         db.query(adminQuery, (adminError, adminResults) => {
@@ -721,7 +717,8 @@ app.get("/entries", (req, res) => {
   let query = `
     SELECT 
       diary_entries.*,
-      user_table.*,
+      user_table.firstName,
+      user_table.lastName,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -746,6 +743,29 @@ app.get("/entries", (req, res) => {
   query += ` ORDER BY diary_entries.created_at DESC`;
 
   db.query(query, queryParams, (err, results) => {
+    if (err) {
+      console.error("Error fetching diary entries:", err.message);
+      return res.status(500).json({ error: "Error fetching diary entries" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/analytics", (req, res) => {
+  let query = `
+    SELECT 
+      diary_entries.*,
+      user_table.*,
+      user_profiles.profile_image,
+      user_profiles.alias
+    FROM diary_entries
+    JOIN user_table ON diary_entries.userID = user_table.userID
+    JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+    WHERE diary_entries.visibility = 'public' AND user_table.isAdmin = 0
+    ORDER BY diary_entries.created_at DESC
+  `;
+
+  db.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
