@@ -277,7 +277,7 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
                   />
                 </div>
                 <div className="d-flex justify-content-start flex-column">
-                  <h6 className="m-0 text-start">{comment.username}</h6>
+                  <h5 className="m-0 text-start">{comment.username}</h5>
                 </div>
               </div>
             </Link>
@@ -443,7 +443,8 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
         onClick={handleShow}
       >
         <i className="bx bx-comment"></i>
-        {comments.length} Comments
+        <span>{comments.length}</span>
+        <p className="m-0 d-none d-md-block">Comments</p>
       </button>
 
       <Modal

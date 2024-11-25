@@ -177,13 +177,9 @@ const ChatButton = () => {
 
   return (
     <>
-      <div className="ChatButton">
-        <button className="shadow" onClick={handleShow}>
-          <img
-            src={ChatIcon}
-            alt=""
-            style={{ width: "35px", height: "35px", marginRight: "1px" }}
-          />
+      <div className="ChatButton d-flex align-items-center justify-content-center">
+        <button className="shadow p-2" onClick={handleShow}>
+          <img src={ChatIcon} alt="" />
           <span className="tooltiptext" style={{ zIndex: "-2" }}>
             Messagessd
           </span>

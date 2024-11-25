@@ -175,9 +175,9 @@ const UserChatButton = () => {
 
   return (
     <>
-      <div className="ChatButton">
+      <div className="ChatButton d-flex align-items-center justify-content-center">
         <button className="shadow" onClick={handleShow}>
-          <img src={ChatIcon} alt="Message" />
+          <img className="" src={ChatIcon} alt="Message" />
           <span className="tooltiptext">
             Message {user?.isAdmin ? "Users" : "Admin"}
           </span>

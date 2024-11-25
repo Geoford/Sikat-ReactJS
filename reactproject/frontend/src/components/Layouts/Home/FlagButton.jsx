@@ -83,7 +83,8 @@ function FlagButton({ userID, entryID, entry }) {
         onClick={handleShow}
       >
         <i className="bx bx-flag"></i>
-        Flag
+        <span>0</span>
+        <p className="m-0 d-none d-md-block">Flag</p>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>
