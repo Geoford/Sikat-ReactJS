@@ -310,11 +310,39 @@ const DiaryEntryLayout = ({
                 />
               </div>
               <div className="d-flex flex-column align-items-start">
-                {entry.isAdmin === 1
-                  ? "Gender and Development"
-                  : entry.firstName && entry.lastName
-                  ? entry.firstName + " " + entry.lastName
-                  : user.firstName + " " + user.lastName}
+                <div className="d-flex align-items-center justify-content-center gap-1">
+                  <h5 className="m-0">
+                    {entry.isAdmin === 1
+                      ? "Gender and Development"
+                      : entry.firstName && entry.lastName
+                      ? entry.firstName + " " + entry.lastName
+                      : user.firstName + " " + user.lastName}
+                  </h5>
+                  {user &&
+                    user.userID !== entry.userID &&
+                    entry.anonymity !== "private" &&
+                    entry.isAdmin !== 1 && (
+                      <div className="d-flex align-items-center gap-1">
+                        <h3
+                          className="m-0 text-secondary d-flex align-items-center"
+                          style={{ height: ".9rem" }}
+                        >
+                          ·
+                        </h3>
+                        <button
+                          className="secondaryButton p-0 m-0"
+                          onClick={() => handleFollowToggle(entry.userID)}
+                          style={{ height: "" }}
+                        >
+                          <h5 className="m-0">
+                            {followedUsers.includes(entry.userID)
+                              ? "Following"
+                              : "Follow"}
+                          </h5>{" "}
+                        </button>
+                      </div>
+                    )}
+                </div>
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
                   {formatDate(entry.created_at)}
                 </p>
@@ -322,21 +350,7 @@ const DiaryEntryLayout = ({
             </div>
           </Link>
         )}
-        {user &&
-          user.userID !== entry.userID &&
-          entry.anonymity !== "private" &&
-          entry.isAdmin !== 1 && (
-            <div className="d-flex align-items-center gap-1">
-              <p className="m-0 fs-3 text-secondary">·</p>
-              <button
-                className="secondaryButton p-0 m-0"
-                onClick={() => handleFollowToggle(entry.userID)}
-                style={{ height: "1.5rem" }}
-              >
-                {followedUsers.includes(entry.userID) ? "Following" : "Follow"}
-              </button>
-            </div>
-          )}
+
         <div>
           {ownDiary ? (
             <Dropdown>
@@ -366,7 +380,7 @@ const DiaryEntryLayout = ({
       </div>
 
       <div
-        className="text-start border-bottom p-2"
+        className="text-start border-bottom py-2"
         style={{ minHeight: "5rem" }}
       >
         {entry.containsAlarmingWords === 1 ? (
@@ -395,8 +409,8 @@ const DiaryEntryLayout = ({
           />
         )}
       </div>
-      <div className="row pt-2">
-        <div className="col">
+      <div className="row px-2 pt-2 gap-1">
+        <div className="col p-0">
           <button
             className={`InteractButton d-flex align-items-center justify-content-center gap-1 ${
               entry.isGadified ? "active" : ""
@@ -409,7 +423,7 @@ const DiaryEntryLayout = ({
               <i className="bx bx-heart"></i>
             )}
             <span>{entry.gadifyCount}</span>
-            <p className="m-0">Gadify</p>
+            <p className="m-0 d-none d-md-block">Gadify</p>
           </button>
         </div>
 
@@ -419,7 +433,7 @@ const DiaryEntryLayout = ({
             {comments.length}
           </div> */}
 
-        <div className="col">
+        <div className="col p-0">
           <CommentSection
             userID={user.userID}
             entryID={entry.entryID}
@@ -428,7 +442,7 @@ const DiaryEntryLayout = ({
           />
         </div>
 
-        <div className="col">
+        <div className="col p-0">
           <FlagButton
             userID={user.userID}
             entryID={entry.entryID}

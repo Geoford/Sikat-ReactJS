@@ -7,7 +7,10 @@
   --background: #d9d9d9;
   --background_light: #f2f2f2;
 }
-
+p {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 .background {
   position: fixed;
   width: 100vw;
@@ -106,8 +109,8 @@
 }
 
 .profilePicture {
-  height: 50px;
-  width: 50px;
+  height: clamp(2.5rem, 5vw, 4rem);
+  width: clamp(2.5rem, 5vw, 4rem);
   background-color: var(--background_light);
   border-radius: 50%;
   overflow: hidden;
@@ -273,8 +276,8 @@
   transform: scale(105%);
 }
 .ChatButton button img {
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   object-fit: cover;
 }
 
@@ -617,10 +620,10 @@ input.form-control:focus {
 
 @media screen and (max-width: 1080px) {
   p {
-    font-size: clamp(0.7rem, 2dvw, 0.9rem);
+    font-size: clamp(0.8rem, 2dvw, 0.9rem);
   }
   h5 {
-    font-size: clamp(1rem, 2dvw, 2rem) !important;
+    font-size: clamp(0.9rem, 1.5dvw, 2rem) !important;
   }
 
   /* FOR RESPONSIVE NAVBAR */
@@ -642,9 +645,14 @@ input.form-control:focus {
     right: 0.8rem;
     top: 0.9rem;
   }
+  .ChatButton button {
+    width: clamp(3rem, 10dvw, 3rem);
+    height: clamp(3rem, 10dvw, 3rem);
+    /* padding: 0.5rem; */
+  }
   .logo {
-    height: 2.5rem;
-    width: 2.5rem;
+    height: clamp(1.5rem, 10dvw, 2.3rem);
+    width: clamp(1.5rem, 10dvw, 2.3rem);
   }
   .TextLogo img {
     height: 2rem !important;
