@@ -5,7 +5,7 @@ import Modal from "react-bootstrap/Modal";
 
 function FlagButton({ userID, entryID, entry }) {
   const [show, setShow] = useState(false);
-  const [selectedBehaviors, setSelectedBehaviors] = useState([]);
+  const [selectedReasons, setSelectedReasons] = useState([]);
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
@@ -26,7 +26,7 @@ function FlagButton({ userID, entryID, entry }) {
 
   const handleClose = () => {
     setShow(false);
-    setSelectedBehaviors([]);
+    setSelectedReasons([]);
     setOtherText("");
     setIsOtherSelected(false);
   };
@@ -40,10 +40,10 @@ function FlagButton({ userID, entryID, entry }) {
       setIsOtherSelected(checked);
     }
 
-    setSelectedBehaviors((prevSelected) =>
+    setSelectedReasons((prevSelected) =>
       checked
         ? [...prevSelected, value]
-        : prevSelected.filter((behavior) => behavior !== value)
+        : prevSelected.filter((reason) => reason !== value)
     );
   };
 
@@ -51,7 +51,7 @@ function FlagButton({ userID, entryID, entry }) {
     const reportData = {
       userID: entry,
       entryID,
-      behaviors: selectedBehaviors.join(", "),
+      reasons: selectedReasons.join(", "),
       otherText: isOtherSelected ? otherText : null,
     };
 
@@ -95,8 +95,8 @@ function FlagButton({ userID, entryID, entry }) {
           <div>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
-              {selectedBehaviors.length > 0 && (
-                <h5 className="m-0">{selectedBehaviors.join(", ")}</h5>
+              {selectedReasons.length > 0 && (
+                <h5 className="m-0">{selectedReasons.join(", ")}</h5>
               )}
             </label>
             <div className="d-flex flex-column gap-2">

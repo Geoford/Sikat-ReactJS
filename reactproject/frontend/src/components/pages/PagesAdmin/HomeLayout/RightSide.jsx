@@ -37,7 +37,21 @@ const Center = () => {
       const response = await axios.get(
         "http://localhost:8081/getReportedComments"
       );
-      setReportedUsers(response.data);
+
+      if (response.data.length > 0) {
+        const reportCount = {};
+
+        response.data.forEach((report) => {
+          const key = `${report.userID}-${report.reason}`;
+          if (reportCount[key]) {
+            reportCount[key].count += 1;
+          } else {
+            reportCount[key] = { ...report, count: 1 };
+          }
+        });
+
+        setReportedUsers(Object.values(reportCount));
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -47,7 +61,18 @@ const Center = () => {
     try {
       const response = await axios.get("http://localhost:8081/flagged");
       if (response.data.length > 0) {
-        setFlaggedUsers(response.data);
+        const flagCount = {};
+
+        response.data.forEach((flag) => {
+          const key = `${flag.userID} - ${flag.reason}`;
+          if (flagCount[key]) {
+            flagCount[key].count += 1;
+          } else {
+            flagCount[key] = { ...flag, count: 1 };
+          }
+        });
+
+        setFlaggedUsers(Object.values(flagCount));
       } else {
         console.warn("No flagged reports found in response data.");
       }
@@ -109,6 +134,9 @@ const Center = () => {
                       <h5 className="text-danger m-0">
                         Reason: {reportedUser.reason}
                       </h5>
+                      <p className="text-danger m-0">
+                        Reported {reportedUser.count} times
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -163,7 +191,9 @@ const Center = () => {
                       <h5 className="text-secondary m-0">
                         Title: {flaggedUser.title}
                       </h5>{" "}
-                      {/* Assuming journalTitle is available */}
+                      <p className="text-danger m-0">
+                        Flagged {flaggedUser.count} times
+                      </p>
                     </div>
                   </div>
                 </Link>

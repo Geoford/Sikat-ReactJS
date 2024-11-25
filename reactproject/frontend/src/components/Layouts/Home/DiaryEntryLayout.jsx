@@ -39,29 +39,29 @@ const DiaryEntryLayout = ({
     setCurrentUser(storedUser);
   }, [navigate]);
 
-  useEffect(() => {
-    if (!userID || !currentUser) return;
+  // useEffect(() => {
+  //   if (!userID || !currentUser) return;
 
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8081/fetchUser/user/${userID}`
-        );
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://localhost:8081/fetchUser/user/${userID}`
+  //       );
 
-        if (!response.ok) {
-          throw new Error("User not found");
-        }
-        const data = await response.json();
-        setEntries(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       if (!response.ok) {
+  //         throw new Error("User not found");
+  //       }
+  //       const data = await response.json();
+  //       setEntries(data);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, [userID, currentUser]);
+  //   fetchUserData();
+  // }, [userID, currentUser]);
 
   useEffect(() => {
     if (user) {
@@ -77,7 +77,7 @@ const DiaryEntryLayout = ({
           const response = await axios.get(
             `http://localhost:8081/fetchComments/${entry.entryID}`
           );
-          setComments(response.data); // Set comments data
+          setComments(response.data);
         } catch (error) {
           console.error("Error fetching comments:", error);
         }

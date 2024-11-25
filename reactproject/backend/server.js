@@ -577,6 +577,27 @@ app.post(
           .send({ message: "Failed to save diary entry. Please try again." });
       }
 
+      // Increment the count for each subject in filter_subjects
+      const subjectArray = subjects.split(",").map((subject) => subject.trim());
+
+      subjectArray.forEach((subject) => {
+        const updateQuery = `
+          UPDATE filter_subjects
+          SET count = count + 1
+          WHERE subject = ?
+        `;
+
+        db.query(updateQuery, [subject], (updateError) => {
+          if (updateError) {
+            console.error(
+              `Error updating count for subject '${subject}':`,
+              updateError
+            );
+          }
+        });
+      });
+
+      // Notify admins if alarming words are present
       if (hasAlarmingWords) {
         const notificationMessage = `A diary entry containing alarming words has been posted by user ${userID}`;
 
@@ -719,6 +740,7 @@ app.get("/entries", (req, res) => {
       diary_entries.*,
       user_table.firstName,
       user_table.lastName,
+      user_table.isAdmin,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -1294,26 +1316,43 @@ app.post("/reportuserComment", (req, res) => {
   const { commentID, userID, entryID, reason, otherText } = req.body;
 
   if (!commentID || !userID || !reason) {
-    return res
-      .status(400)
-      .json({ error: "Comment ID, User ID, and Reason are required" });
+    return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const query = `
-    INSERT INTO comment_reports (commentID, userID, entryID, reason, otherText)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-
+  // Insert the report into the comment_reports table
   db.query(
-    query,
+    "INSERT INTO comment_reports (commentID, userID, entryID, reason, otherText) VALUES (?, ?, ?, ?, ?)",
     [commentID, userID, entryID, reason, otherText || null],
-    (err, result) => {
-      if (err) {
-        console.error("Error reporting comment:", err);
-        return res.status(500).json({ error: "Failed to report comment" });
+    (error, results) => {
+      if (error) {
+        console.error("Error saving report:", error);
+        return res
+          .status(500)
+          .json({ message: "Error submitting report", error: error.message });
       }
 
-      res.status(200).json({ message: "Report submitted successfully" });
+      const reasonArray = reason.split(", ").map((r) => r.trim());
+
+      // Update the count for each reason
+      reasonArray.forEach((reasonItem) => {
+        db.query(
+          "UPDATE report_comments SET count = count + 1 WHERE reason = ?",
+          [reasonItem],
+          (updateError) => {
+            if (updateError) {
+              console.error(
+                `Error updating count for reason: ${reasonItem}`,
+                updateError
+              );
+            }
+          }
+        );
+      });
+
+      // Send response once the main report is saved
+      res
+        .status(200)
+        .json({ message: "Report submitted and counts updated successfully" });
     }
   );
 });
@@ -1644,25 +1683,43 @@ app.get("/reports", (req, res) => {
 });
 
 app.post("/flags", (req, res) => {
-  const { userID, entryID, behaviors, otherText } = req.body;
+  const { userID, entryID, reasons, otherText } = req.body;
 
-  if (!userID || !entryID || !behaviors) {
+  if (!userID || !entryID || !reasons) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  // Perform the database query without chaining .then() and .catch()
-  const query = db.query(
-    "INSERT INTO flagged_reports (userID, entryID, behaviors, other_text) VALUES (?, ?, ?, ?)",
-    [userID, entryID, behaviors, otherText || null],
+  db.query(
+    "INSERT INTO flagged_reports (userID, entryID, reasons, other_text) VALUES (?, ?, ?, ?)",
+    [userID, entryID, reasons, otherText || null],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
-        res
+        return res
           .status(500)
           .json({ message: "Error submitting report", error: error.message });
-      } else {
-        res.status(200).json({ message: "Report submitted successfully" });
       }
+
+      const behaviorArray = reasons.split(", ").map((b) => b.trim());
+
+      behaviorArray.forEach((reason) => {
+        db.query(
+          "UPDATE flagging_options SET count = count + 1 WHERE reason = ?",
+          [reason],
+          (updateError) => {
+            if (updateError) {
+              console.error(
+                `Error updating count for reason: ${reason}`,
+                updateError
+              );
+            }
+          }
+        );
+      });
+
+      res
+        .status(200)
+        .json({ message: "Report submitted and counts updated successfully" });
     }
   );
 });

@@ -26,7 +26,7 @@ const Analytics = () => {
         }
         const data = await response.json();
         setUsers(data);
-        setFilteredUsers(data); // Initialize filtered users
+        setFilteredUsers(data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -64,7 +64,7 @@ const Analytics = () => {
         }
         const data = await response.json();
         setreportedComments(data);
-        setFilteredUsers(data); // Initialize filtered users
+        setFilteredUsers(data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
