@@ -10,7 +10,7 @@ const RegisteredUsers = ({ users }) => {
   const [selectedYear, setSelectedYear] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
+  const usersPerPage = 5;
 
   useEffect(() => {
     let filtered = [...users];
@@ -289,7 +289,7 @@ const RegisteredUsers = ({ users }) => {
                 active={index + 1 === currentPage}
                 onClick={() => handlePageChange(index + 1)}
               >
-                <span className="paginationItem">{index + 1}</span>
+                <span>{index + 1}</span>
               </Pagination.Item>
             ))}
             <Pagination.Next
@@ -302,7 +302,7 @@ const RegisteredUsers = ({ users }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex justify-content-between mt-4">
+      <div className="d-flex  mt-4">
         <button
           className="primaryButton me-2"
           onClick={() => downloadData("html")}

@@ -82,16 +82,90 @@ const ReportedUsers = ({ reportedComments }) => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const downloadData = () => {
-    const dataStr = JSON.stringify(filteredUsers, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
+  const downloadData = (format) => {
+    if (format === "html") {
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title> Reported User </title>
+          <style>
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            th {
+              background-color: #f4f4f4;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Reported User</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Student No.</th>
+                <th>Full Name</th>
+                <th>Reason</th>
+                <th>Comment</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${currentUsers
+                .map(
+                  (reportedComment) => `
+                <tr>
+                  <td>${reportedComment.studentNumber}</td>
+                  <td>${reportedComment.firstName} ${reportedComment.lastName}</td>
+                  <td>${reportedComment.reason}</td>
+                  <td>${reportedComment.text}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "filtered_reported_users.json";
-    link.click();
-    URL.revokeObjectURL(url);
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "reported_users.html";
+      link.click();
+      URL.revokeObjectURL(url);
+    } else if (format === "excel") {
+      const header = ["Student No.", "Full Name", "Reason", "Comment"];
+      const rows = currentUsers.map((reportedComment) => [
+        reportedComment.studentNumber,
+        `${reportedComment.firstName} ${reportedComment.lastName}`,
+        reportedComment.reason,
+        reportedComment.text,
+      ]);
+
+      const csvContent = [header, ...rows]
+        .map((row) => row.join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "reported_user.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -220,9 +294,17 @@ const ReportedUsers = ({ reportedComments }) => {
       </div>
 
       {/* Download Button */}
-      <button className="primaryButton w-100 py-2 mt-4" onClick={downloadData}>
-        Download Data
-      </button>
+      <div className="d-flex  mt-4">
+        <button
+          className="primaryButton me-2"
+          onClick={() => downloadData("html")}
+        >
+          Download as HTML
+        </button>
+        <button className="primaryButton" onClick={() => downloadData("excel")}>
+          Download as Excel
+        </button>
+      </div>
     </div>
   );
 };
