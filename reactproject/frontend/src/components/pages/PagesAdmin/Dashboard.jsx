@@ -7,12 +7,18 @@ import DashboardData from "./Dashboard";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
+  const [flags, setFlags] = useState([]);
+  const [reportedComments, setreportedComments] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const usersPerPage = 4;
+
+  useEffect(() => {
+    fetchEntries();
+  }, [entries, flags, reportedComments]);
 
   const fetchEntries = async () => {
     try {
@@ -27,7 +33,59 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchEntries();
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/users`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+        setFilteredUsers(data); // Initialize filtered users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchFlags = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/flagged`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setFlags(data);
+        setFilteredUsers(data); // Initialize filtered users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchFlags();
+  }, []);
+
+  useEffect(() => {
+    const fetchReportedComments = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8081/getReportedComments`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setreportedComments(data);
+        setFilteredUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchReportedComments();
   }, []);
 
   const recentEntries = entries.filter((entry) => {
@@ -214,7 +272,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <h1 className="m-0">00</h1>
+                <h1 className="m-0">{flags.length}</h1>
 
                 <p className="m-0">Flagged Diaries</p>
               </div>
@@ -232,7 +290,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <h1 className="m-0">00</h1>
+                <h1 className="m-0">{reportedComments.length}</h1>
 
                 <p className="m-0">Reported Comments</p>
               </div>
