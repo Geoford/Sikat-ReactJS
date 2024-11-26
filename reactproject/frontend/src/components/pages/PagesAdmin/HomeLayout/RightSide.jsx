@@ -50,7 +50,6 @@ const Center = () => {
           }
         });
 
-        // Convert the object to an array of unique user-reason combinations
         setReportedUsers(Object.values(reportCount));
       }
     } catch (error) {
@@ -192,7 +191,7 @@ const Center = () => {
                         Title: {flaggedUser.title}
                       </h5>
                       <p className="text-danger m-0">
-                        Reason: {flaggedUser.reason}
+                        Reason: {flaggedUser.reasons}
                       </p>
                       <p className="text-danger m-0">
                         Flagged {flaggedUser.count} times

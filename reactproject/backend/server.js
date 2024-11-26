@@ -1635,13 +1635,15 @@ app.post("/submit-report", (req, res) => {
       subjects,
     } = req.body;
 
-    const supportingDocuments = req.file ? req.file.filename : null;
+    let supportingDocuments = null; // Default to null if no file is uploaded
+    if (req.file) {
+      supportingDocuments = `/uploads/${req.file.filename}`; // Use the file's upload destination
+    }
 
     const query = `
       INSERT INTO gender_based_crime_reports 
       (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-
     `;
 
     db.query(
@@ -1679,6 +1681,26 @@ app.get("/reports", (req, res) => {
       return res.status(500).json({ error: "Error fetching flagged reports" });
     }
     res.status(200).json(results);
+  });
+});
+
+app.get("/reports/:reportID", (req, res) => {
+  const { reportID } = req.params; // Get reportID from the URL parameters
+  const query = `
+    SELECT * FROM gender_based_crime_reports
+    WHERE reportID = ?`;
+
+  db.query(query, [reportID], (err, results) => {
+    if (err) {
+      console.error("Error fetching report:", err.message);
+      return res.status(500).json({ error: "Error fetching the report" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Report not found" });
+    }
+
+    res.status(200).json(results[0]);
   });
 });
 
