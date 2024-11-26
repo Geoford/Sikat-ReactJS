@@ -242,12 +242,12 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
     return (
       <div
         className="position-relative"
-        style={{ marginLeft: depth * 1, marginTop: "10px" }}
+        style={{ marginLeft: depth * 20, marginTop: "10px" }}
         ref={comment.commentID === replyTo ? newReplyRef : null}
       >
         <div
-          className="position-absolute border-start rounded-5 border-2 mt-2"
-          style={{ height: "85%", width: "5%", left: "28px", zIndex: "1" }}
+          className="position-absolute border-start rounded-5 border-2"
+          style={{ height: "85%", width: "3%", left: "25px", zIndex: "1" }}
         ></div>
 
         {/* Profile */}
@@ -277,7 +277,7 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
                   />
                 </div>
                 <div className="d-flex justify-content-start flex-column">
-                  <p className="m-0 text-start">{comment.username}</p>
+                  <h5 className="m-0 text-start">{comment.username}</h5>
                 </div>
               </div>
             </Link>
@@ -349,12 +349,9 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
             >
               {comment.text}
             </p>
-            <h6
-              className="m-0"
-              style={{ fontSize: "clamp(.5rem, 9dvw, .7rem)", color: "gray" }}
-            >
+            <p className="m-0" style={{ fontSize: ".7rem", color: "gray" }}>
               {formatDate(comment.created_at)}
-            </h6>
+            </p>
           </div>
 
           <div className="ps-5 d-flex align-items-center gap-2">
@@ -421,9 +418,9 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
           >
             <Accordion.Item eventKey={`reply-${comment.commentID}`}>
               <Accordion.Header>
-                <p className="m-0">View Replies ({comment.replies.length})</p>
+                View Replies ({comment.replies.length})
               </Accordion.Header>
-              <Accordion.Body className="pt-0">
+              <Accordion.Body>
                 {comment.replies.map((reply) => (
                   <Comment
                     key={reply.commentID}
@@ -459,21 +456,21 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5>Comments on {firstName}'s Diary</h5>
+            <h5 className="m-0">
+              Comments on {firstName}'s
+              {user.isAdmin ? " Post" : " Diary"}
+            </h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body
           className="d-flex flex-column justify-content-between"
-          style={{ height: "clamp(32rem ,40dvw ,35rem)" }}
+          style={{ height: "33rem" }}
         >
-          <div
-            className="pe-2 custom-scrollbar"
-            style={{ overflowY: "scroll", height: "100%" }}
-          >
+          <div className="pe-2" style={{ overflowY: "scroll", height: "100%" }}>
             {loading && <p className="text-center">Loading comments...</p>}
             {error && <p className="text-danger">{error}</p>}
             {!loading && comments.length === 0 && (
-              <p className="text-center text-secondary">
+              <p className="text-center">
                 No comments yet. Be the first to share your thoughts.
               </p>
             )}
@@ -522,12 +519,12 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
             <FloatingLabel
               controlId="newCommentTextarea"
               label="Comment"
-              className="commentInput mt-3 position-relative"
+              className="mt-3 position-relative"
             >
               <Form.Control
                 as="textarea"
                 placeholder="Leave a comment here"
-                style={{ height: "clamp(4rem, 10dvw, 6rem)" }}
+                style={{ height: "100px" }}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={(e) => {
@@ -549,10 +546,9 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
                     right: "10px",
                     bottom: "10px",
                     color: "var(--primary)",
-                    fontSize: "clamp(1.2rem, 5dvw, 1.5rem)",
                   }}
                 >
-                  <i className="bx bxs-send"></i>
+                  <i className="bx bxs-send bx-sm"></i>
                 </button>
               </div>
             </FloatingLabel>

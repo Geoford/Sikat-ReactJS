@@ -13,6 +13,7 @@ import MainLayout from "../MainLayout";
 import ChatButton from "../LayoutUser/ChatButton";
 import AdminChatButton from "../LayoutAdmin/ChatButton";
 import CenterLayout from "./CenterLayout";
+import LeftSideLayout from "./LeftSideLayout";
 
 export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
@@ -47,7 +48,7 @@ export default function HomeMainLayout({ isAdminPage }) {
               width: "25%",
             }}
           >
-            {isAdminPage ? <AdminLeftSide /> : <LeftSide />}
+            <LeftSideLayout></LeftSideLayout>
           </div>
 
           {/* Center Layout - Adjust the margin to prevent overlap */}
@@ -66,7 +67,8 @@ export default function HomeMainLayout({ isAdminPage }) {
                     width: "33%",
                   }}
                 >
-                  {isAdminPage ? <AdminLeftSide /> : <LeftSide />}
+                  {/* {isAdminPage ? <AdminLeftSide /> : <LeftSide />} */}
+                  <LeftSideLayout></LeftSideLayout>
                 </div>
               </div>
               <div className="col">

@@ -181,7 +181,7 @@ const ChatButton = () => {
         <button className="shadow p-2" onClick={handleShow}>
           <img src={ChatIcon} alt="" />
           <span className="tooltiptext" style={{ zIndex: "-2" }}>
-            Messagessd
+            Messages
           </span>
         </button>
       </div>
@@ -198,7 +198,7 @@ const ChatButton = () => {
                 style={{ height: "clamp(400px, 30vh, 500px)" }}
               >
                 <div className="d-flex justify-content-between px-3 py-2 mb-2 border-bottom">
-                  <h5 className="m-0 mt-1">Users</h5>
+                  <h5 className="m-0 mt-2">Users</h5>
                   <InputGroup className="m-0 w-50">
                     <InputGroup.Text id="basic-addon1">
                       <i class="bx bx-search-alt-2"></i>
@@ -214,7 +214,7 @@ const ChatButton = () => {
                 </div>
                 <div style={{ height: "85%" }}>
                   <div
-                    className="mb-4 pe-2 d-flex flex-column gap-2 overflow-y-scroll"
+                    className="mb-4 pe-2 d-flex flex-column gap-2 overflow-y-scroll custom-scrollbar"
                     style={{ height: "100%" }}
                   >
                     {filteredUsers.map((userItem, index) => (

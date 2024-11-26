@@ -133,7 +133,9 @@ function PostButton({ onEntrySaved }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Post</Modal.Title>
+          <Modal.Title>
+            <h5 className="m-0">Create New Post</h5>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
@@ -230,7 +232,7 @@ function PostButton({ onEntrySaved }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={loading}>
-            Close
+            <p className="m-0">Close</p>
           </Button>
           <button
             className="orangeButton py-2 px-3"
@@ -239,20 +241,22 @@ function PostButton({ onEntrySaved }) {
             disabled={loading}
             aria-label="Save diary entry"
           >
-            {loading ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />{" "}
-                Creating Post...
-              </>
-            ) : (
-              "Publish"
-            )}
+            <p className="m-0">
+              {loading ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />{" "}
+                  Creating Post...
+                </>
+              ) : (
+                "Publish"
+              )}
+            </p>
           </button>
         </Modal.Footer>
       </Modal>

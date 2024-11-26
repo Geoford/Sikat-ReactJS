@@ -154,17 +154,20 @@ function NotificationButton() {
           style={{
             backgroundColor: "red",
             top: "0",
-            left: "-10px",
-            height: "20px",
-            width: "20px",
+            left: "clamp(-7px, 2.5dvw, -10px)",
+            height: "clamp(.95rem, 2.5dvw, 1.2rem)",
+            width: "clamp(.95rem, 2.5dvw, 1.2rem)",
             borderRadius: "50%",
             color: "#ffff",
             border: "2px solid var(--primary)",
           }}
         >
-          <p className="m-0" style={{ fontSize: "10px" }}>
+          <h6
+            className="m-0 p-0 fw-lighter d-none d-lg-block"
+            style={{ fontSize: "clamp(.5rem, 1.5dvw, .8rem)" }}
+          >
             {unreadCount}
-          </p>
+          </h6>
         </div>
       </button>
 

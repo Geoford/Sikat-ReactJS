@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -9,6 +9,7 @@ function FlagButton({ userID, entryID, entry }) {
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
+  const otherInputRef = useRef(null); // Reference for the "Others" input field
 
   useEffect(() => {
     const fetchFlaggingOptions = async () => {
@@ -38,6 +39,12 @@ function FlagButton({ userID, entryID, entry }) {
 
     if (value === "others") {
       setIsOtherSelected(checked);
+      if (checked) {
+        // Focus on the "Others" input field when selected
+        setTimeout(() => {
+          otherInputRef.current?.focus();
+        }, 0);
+      }
     }
 
     setSelectedReasons((prevSelected) =>
@@ -89,17 +96,22 @@ function FlagButton({ userID, entryID, entry }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Flag UserName's Diary</Modal.Title>
+          <Modal.Title>
+            <h5 className="m-0">Flag UserName's Diary</h5>
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ minHeight: "15rem" }}>
-          <div>
+        <Modal.Body>
+          <div style={{ height: "clamp(27rem ,39dvw ,30rem)" }}>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
               {selectedReasons.length > 0 && (
                 <h5 className="m-0">{selectedReasons.join(", ")}</h5>
               )}
             </label>
-            <div className="d-flex flex-column gap-2">
+            <div
+              className="d-flex flex-column gap-2 custom-scrollbar pe-2"
+              style={{ overflowY: "scroll", height: "90%" }}
+            >
               {flaggingOptions.map((option) => (
                 <label className="border rounded p-2" key={option.flagID}>
                   <input
@@ -109,7 +121,7 @@ function FlagButton({ userID, entryID, entry }) {
                     onChange={handleCheckboxChange}
                   />
                   <label className="ms-1" htmlFor={option.flagID}>
-                    {option.reason}
+                    <p className="m-0">{option.reason}</p>
                   </label>
                 </label>
               ))}
@@ -121,16 +133,17 @@ function FlagButton({ userID, entryID, entry }) {
                   onChange={handleCheckboxChange}
                 />
                 <label className="ms-1" htmlFor="others">
-                  Others:
+                  <p className="m-0"> Others:</p>
                 </label>
               </label>
               {isOtherSelected && (
                 <input
                   type="text"
-                  className="form-control mt-2"
+                  className="form-control mt-1"
                   placeholder="Please specify"
                   value={otherText}
                   onChange={(e) => setOtherText(e.target.value)}
+                  ref={otherInputRef} // Attach the ref to the input field
                 />
               )}
             </div>
@@ -138,10 +151,10 @@ function FlagButton({ userID, entryID, entry }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Cancel
+            <p className="m-0"> Cancel</p>
           </Button>
           <button className="primaryButton py-2 rounded" onClick={handleSubmit}>
-            Save Changes
+            <p className="m-0">Submit</p>
           </button>
         </Modal.Footer>
       </Modal>

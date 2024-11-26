@@ -109,8 +109,8 @@ p {
 }
 
 .profilePicture {
-  height: clamp(2.5rem, 5vw, 4rem);
-  width: clamp(2.5rem, 5vw, 4rem);
+  height: clamp(2.5rem, 5vw, 3rem);
+  width: clamp(2.5rem, 5vw, 3rem);
   background-color: var(--background_light);
   border-radius: 50%;
   overflow: hidden;
@@ -619,14 +619,19 @@ input.form-control:focus {
 }
 
 @media screen and (max-width: 1080px) {
-  p {
-    font-size: clamp(0.8rem, 2dvw, 0.9rem);
+  p,
+  label,
+  input::placeholder {
+    font-size: clamp(0.8rem, 2dvw, 0.9rem) !important;
   }
   h4 {
     font-size: clamp(1.2rem, 1.7dvw, 2rem) !important;
   }
   h5 {
     font-size: clamp(1rem, 1.5dvw, 2rem) !important;
+  }
+  h6 {
+    font-size: !important;
   }
 
   /* FOR RESPONSIVE NAVBAR */

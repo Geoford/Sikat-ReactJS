@@ -87,8 +87,8 @@ const Center = () => {
   return (
     <div className="p-2">
       <div>
-        <Link className="btn btn-danger" to="/Admin/GenderBasedIncidents">
-          <p className="m-0 text-end">
+        <Link className="btn btn-danger w-100" to="/Admin/GenderBasedIncidents">
+          <p className="m-0 text-center">
             Gender-Based Incidents Complaints:{" "}
             {reports.length > 0 ? reports.length : 0}
           </p>
