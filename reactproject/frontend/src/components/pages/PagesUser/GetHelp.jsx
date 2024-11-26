@@ -18,7 +18,7 @@ const GetHelp = () => {
     location: "",
     date: "",
     selectedSubjects: "",
-    supportingDocuments: [null, null, null, null, null], // Initialized with 5 nulls for the 5 inputs
+    supportingDocuments: [null, null, null, null, null],
   });
 
   const handleSubjectsChange = (subjectsText) => {
@@ -35,7 +35,7 @@ const GetHelp = () => {
 
       updatedDocuments[index] = {
         file,
-        preview: URL.createObjectURL(file), // Create preview URL
+        preview: URL.createObjectURL(file),
       };
 
       setFormData({ ...formData, supportingDocuments: updatedDocuments });
@@ -46,7 +46,7 @@ const GetHelp = () => {
 
   const handleRemoveImage = (index) => {
     const updatedDocuments = [...formData.supportingDocuments];
-    updatedDocuments[index] = null; // Remove file from array
+    updatedDocuments[index] = null;
     setFormData({ ...formData, supportingDocuments: updatedDocuments });
   };
 
@@ -64,10 +64,9 @@ const GetHelp = () => {
       }
     });
 
-    if (formData.selectedSubjects && formData.selectedSubjects.trim() !== "") {
-      data.append("subjects", formData.selectedSubjects);
+    if (selectedSubjects && selectedSubjects.trim() !== "") {
+      data.append("subjects", selectedSubjects);
     }
-
     try {
       const response = await axios.post(
         "http://localhost:8081/submit-report",
@@ -99,7 +98,6 @@ const GetHelp = () => {
             className="text-start"
             style={{ minHeight: "20rem" }}
           >
-            {/* Report Details */}
             <h5 className="mt-2">Report Details</h5>
             <div className="input-group mb-1">
               <input
@@ -133,8 +131,8 @@ const GetHelp = () => {
                   aria-label="Default select example"
                 >
                   <option value="">Sex</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Memale">Female</option>
                   <option value="prefer-not-to-say">Prefer not to say</option>
                 </Form.Select>
               </div>
@@ -185,6 +183,7 @@ const GetHelp = () => {
                   type="text"
                   className="form-control w-100"
                   name="location"
+                  placeholder="Enter the location of the incident (e.g., Casa Amaya, Tanza, Cavite)"
                   value={formData.location}
                   onChange={handleChange}
                   style={{ borderRadius: "0.43rem" }}
@@ -210,11 +209,11 @@ const GetHelp = () => {
 
             <div className="d-flex flex-column justify-content-between">
               <div>
-                <h5 className="my-2">Upload Proof of Incident (optional)</h5>
-                {/* Supporting Document Uploads */}
+                <h5 className="my-2">
+                  Upload Proof of Incident (Optional, Up to 5 Photos){" "}
+                </h5>
                 <div className="d-flex flex-wrap gap-2 justify-content-center">
                   {formData.supportingDocuments.map((doc, index) => {
-                    // Determine if the current file input should be displayed
                     const shouldDisplayInput =
                       index === 0 ||
                       formData.supportingDocuments[index - 1] !== null;

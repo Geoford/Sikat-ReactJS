@@ -76,7 +76,10 @@ function App() {
           />
           <Route path="/Admin/Dashboard" element={<Dashboard />} />
           <Route path="/Admin/Analytics" element={<Analytics />} />
-          <Route path="/Admin/CaseDetails" element={<CaseDetails />} />
+          <Route
+            path="/Admin/CaseDetails/:reportID"
+            element={<CaseDetails />}
+          />
           {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} /> */}
           <Route
             path="/Admin/DiaryEntry/:entryID"
