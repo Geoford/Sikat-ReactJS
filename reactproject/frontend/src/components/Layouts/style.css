@@ -622,8 +622,11 @@ input.form-control:focus {
   p {
     font-size: clamp(0.8rem, 2dvw, 0.9rem);
   }
+  h4 {
+    font-size: clamp(1.2rem, 1.7dvw, 2rem) !important;
+  }
   h5 {
-    font-size: clamp(0.9rem, 1.5dvw, 2rem) !important;
+    font-size: clamp(1rem, 1.5dvw, 2rem) !important;
   }
 
   /* FOR RESPONSIVE NAVBAR */

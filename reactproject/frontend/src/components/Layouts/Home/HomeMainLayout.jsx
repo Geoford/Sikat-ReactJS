@@ -39,7 +39,7 @@ export default function HomeMainLayout({ isAdminPage }) {
 
           {/* Left Side Component */}
           <div
-            className="position-fixed col-lg d-none d-lg-block"
+            className="position-fixed col-md d-none d-lg-block"
             style={{
               top: "5.5rem",
               height: "calc(100dvh - 5.5rem)",
@@ -55,7 +55,24 @@ export default function HomeMainLayout({ isAdminPage }) {
             className="col-lg-6 mx-auto p-0 px-lg-2 mt-2 mt-lg-0"
             style={{ marginLeft: "20%", marginRight: "20%" }}
           >
-            <CenterLayout />
+            <div className="row">
+              <div className="col-4 d-block d-none d-md-block d-lg-none">
+                <div
+                  className="position-fixed ps-1"
+                  style={{
+                    top: "7.8rem",
+                    height: "calc(100dvh - 5.5rem)",
+                    left: "0",
+                    width: "33%",
+                  }}
+                >
+                  {isAdminPage ? <AdminLeftSide /> : <LeftSide />}
+                </div>
+              </div>
+              <div className="col">
+                <CenterLayout />
+              </div>
+            </div>
           </div>
 
           {/* Right Side Component */}

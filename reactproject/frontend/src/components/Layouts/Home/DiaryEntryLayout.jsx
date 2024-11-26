@@ -266,7 +266,7 @@ const DiaryEntryLayout = ({
       className="position-relative rounded shadow-sm p-3 mb-2"
       style={{ backgroundColor: "white", width: "100%" }}
     >
-      <div className="d-flex align-items-start border-bottom pb-2">
+      <div className="d-flex align-items-start justify-content-between border-bottom pb-2">
         {entry.anonimity === "private" ? (
           <div className="d-flex align-items-center gap-2">
             <div className="profilePicture">
@@ -311,7 +311,7 @@ const DiaryEntryLayout = ({
               </div>
               <div className="d-flex flex-column align-items-start">
                 <div className="d-flex align-items-center justify-content-center gap-1">
-                  <h5 className="m-0">
+                  <h5 className="m-0 text-start">
                     {entry.isAdmin === 1
                       ? "Gender and Development"
                       : entry.firstName && entry.lastName

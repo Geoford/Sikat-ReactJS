@@ -82,7 +82,7 @@ const LeftSideAdmin = () => {
         className="text-decoration-none text-dark"
         to={`/Profile/${user.userID}`}
       >
-        <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-3">
+        <div className="mainProfilePicture d-flex align-items-center flex-column rounded gap-2 shadow py-4">
           <div>
             <div className="d-flex justify-content-center align-items-center">
               <div
@@ -91,8 +91,8 @@ const LeftSideAdmin = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  width: "21vh",
-                  height: "21vh",
+                  width: "clamp(7rem, 10vw,15rem)",
+                  height: "clamp(7rem, 10vw,15rem)",
                   borderRadius: "50%",
                   overflow: "hidden",
                 }}
@@ -113,23 +113,23 @@ const LeftSideAdmin = () => {
               </div>
             </div>
           </div>
-          <p className="m-0 mt-1 text-light fs-5">{user.firstName}</p>
+          <h5 className="m-0 mt-1 text-light">{user.firstName}</h5>
         </div>
       </Link>
 
       <div className=" mt-3">
-        <div className="d-flex justify-content-between border-bottom border-secondary-subtle">
+        <div className="d-flex align-items-center justify-content-between border-bottom border-secondary-subtle">
           <div className="d-flex align-items-center text-secondary gap-1">
             <i class="bx bx-edit bx-sm"></i>
-            <h4 className="m-0 ">Latest Post</h4>
+            <h5 className="m-0 ">Latest Post</h5>
           </div>
           <div>
             <Link
               to="/DiaryEntries"
-              className="linkText rounded"
+              className="linkText rounded p-0"
               style={{ cursor: "pointer" }}
             >
-              View All
+              <p className="m-0">View All</p>
             </Link>
           </div>
         </div>
@@ -149,10 +149,10 @@ const LeftSideAdmin = () => {
                 className="rounded text-decoration-none"
                 style={{ cursor: "pointer" }}
               >
-                <div className="journalEntries d-flex align-items-start flex-column rounded ps-2 mt-1">
-                  <h6 className="m-0 p-2 text-start text-secondary">
+                <div className="journalEntries d-flex align-items-start flex-column rounded ps-0 mt-1">
+                  <p className="m-0 p-1 text-start text-secondary">
                     {entry.title} - {formatDate(entry.created_at)}
-                  </h6>
+                  </p>
                 </div>
               </Link>
             ))
