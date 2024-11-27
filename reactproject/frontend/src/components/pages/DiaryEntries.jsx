@@ -7,6 +7,8 @@ import axios from "axios";
 import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
 import AdminLeftSide from "./PagesAdmin/HomeLayout/LeftSide";
 import LeftSide from "./PagesUser/HomeLayout/LeftSide";
+import LeftSideLayout from "../Layouts/Home/LeftSideLayout";
+
 
 const DiaryEntries = () => {
   const [user, setUser] = useState(null);
@@ -139,14 +141,18 @@ const DiaryEntries = () => {
           className="col-lg-3 d-none d-lg-block"
           style={{ position: "sticky", top: "75px", height: "100%" }}
         >
-          {user.isAdmin ? <AdminLeftSide /> : <LeftSide />}
-        </div>
+          {/* {user.isAdmin ? <AdminLeftSide /> : <LeftSide />} */}
+          <LeftSideLayout></LeftSideLayout>
+          </div>
         <div className="col-lg">
-          <div className="container-fluid container-md mb-2 mt-2">
-            <div className="dateContainer shadow">
+          <div className="container-fluid container-md mb-2 mt-2 px-0">
+            <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1 mt-3 mt-md-4 mt-lg-0">
+              <div className="ps-1">
+                <h4 className="m-0 text-light fw-bolder">Diary Entires for</h4>
+              </div>
               <div>
                 <select
-                  className="dateSelector"
+                  className="dateSelector px-0"
                   id="month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
@@ -157,8 +163,6 @@ const DiaryEntries = () => {
                     </option>
                   ))}
                 </select>
-              </div>
-              <div>
                 <select
                   className="dateSelector"
                   id="year"
@@ -180,7 +184,7 @@ const DiaryEntries = () => {
                 {daysInMonth.map((day) => {
                   const entry = findEntryForDay(day);
                   return (
-                    <div className="col-4 col-md-3 col-lg-2 py-1" key={day}>
+                    <div className="col-4 col-md-3 col-lg-2 p-1" key={day}>
                       <Link
                         to={entry ? `/DiaryEntry/${entry.entryID}` : "#"}
                         className="text-decoration-none"
@@ -193,7 +197,7 @@ const DiaryEntries = () => {
                             <p className="m-0 text-start text-secondary">
                               {day}
                             </p>
-                            {entry ? (
+                            {/* {entry ? (
                               <img
                                 src={
                                   entry.privacy === "public"
@@ -203,9 +207,9 @@ const DiaryEntries = () => {
                                 alt={entry.privacy}
                                 style={{ width: "15px", height: "15px" }}
                               />
-                            ) : null}
+                            ) : null} */}
                           </div>
-                          <h5 className="m-0 text-secondary">
+                          <h5 className="m-0 mt-2 mt-md-0 text-secondary">
                             {entry ? `${entries.length} Entries` : "No Entry"}
                           </h5>
                         </div>

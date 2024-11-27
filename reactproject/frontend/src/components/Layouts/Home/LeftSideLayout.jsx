@@ -104,7 +104,7 @@ const LeftSideAdmin = () => {
         <div className="d-flex align-items-center justify-content-between border-bottom border-secondary-subtle pb-2">
           <div className="d-flex align-items-center text-secondary gap-1">
             <i className="bx bx-edit bx-sm"></i>
-            <h5 className="m-0">
+            <h5 className="m-0 text-start">
               {user.isAdmin ? "Latest Post" : "My Diary Entries"}
             </h5>
           </div>
