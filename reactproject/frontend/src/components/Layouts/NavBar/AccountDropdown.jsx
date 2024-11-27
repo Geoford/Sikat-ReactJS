@@ -101,8 +101,8 @@ const AccountDropdown = () => {
           <div
             className="position-absolute rounded-circle d-flex justify-content-center align-items-center p-0"
             style={{
-              width: "20px",
-              height: "20px",
+              width: "clamp(.95rem, 2.5dvw, 1.2rem)",
+              height: "clamp(.95rem, 2.5dvw, 1.2rem)",
               backgroundColor: "white",
               right: "-3px",
               bottom: "-1px",
@@ -155,8 +155,9 @@ const AccountDropdown = () => {
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link className="text-decoration-none text-dark" to="/DiaryEntries">
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              Diary Entries
-              <i class="bx bx-edit"></i>
+<p className="m-0">
+Diary Entries
+</p>              <i class="bx bx-edit"></i>
             </button>
           </Link>
         </Dropdown.Item>

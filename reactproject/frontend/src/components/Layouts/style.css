@@ -7,10 +7,10 @@
   --background: #d9d9d9;
   --background_light: #f2f2f2;
 }
-p {
+/* p {
   white-space: pre-wrap;
   word-wrap: break-word;
-}
+} */
 select.form-select:focus {
   box-shadow: none;
   outline: gray;
@@ -623,24 +623,23 @@ input.form-control:focus {
 }
 @media screen and (max-width: ) {
 }
-@media screen and (max-width: 1080px) {
+@media screen and (max-width: 1150px) {
   p,
   h6,
   label,
   input::placeholder,
-  #visibility,
   .form-select {
     font-size: clamp(0.8rem, 2dvw, 0.9rem) !important;
   }
-  h4 {
+  h4,select  {
     font-size: clamp(1.2rem, 1.7dvw, 2rem) !important;
   }
   h5 {
     font-size: clamp(1rem, 1.5dvw, 2rem) !important;
   }
-  /* h6 {
-    font-size: !important;
-  } */
+  h6 {
+    font-size: clamp(0.6rem, .9dvw, 0.7rem) !important;
+    }
   .followerName {
     /* display: none; */
     padding-left: 0.5rem;
