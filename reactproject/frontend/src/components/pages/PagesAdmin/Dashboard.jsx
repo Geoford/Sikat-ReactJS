@@ -93,11 +93,9 @@ const Dashboard = () => {
     const now = new Date();
     const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
-    // Check if the entry is within the last week
     if (now - entryDate <= oneWeek) {
-      // Format the date to the local time zone
       const formattedDate = entryDate.toLocaleString("en-US", {
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Automatically use the local time zone
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         hour12: true, // Use 12-hour format (optional)
         year: "numeric",
         month: "short",
@@ -106,10 +104,10 @@ const Dashboard = () => {
         minute: "2-digit",
         second: "2-digit",
       });
-      entry.formattedDate = formattedDate; // Add the formatted date to the entry object
-      return true; // Include the entry in the filtered results
+      entry.formattedDate = formattedDate;
+      return true;
     }
-    return false; // Exclude the entry if it's older than one week
+    return false;
   });
 
   const indexOfLastUser = currentPage * usersPerPage;

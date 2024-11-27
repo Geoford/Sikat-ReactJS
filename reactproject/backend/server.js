@@ -83,78 +83,78 @@ app.post("/send-otp", async (req, res) => {
       to: email,
       subject: "Your OTP for Registration",
       text: `Your OTP is: ${otp}`,
-      // html: `
-      // <html>
-      //   <head>
-      //     <meta charset="utf-8">
-      //     <style>
-      //       body {
-      //         font-family: Arial, sans-serif;
-      //         background-color: #f7f7f7;
-      //         color: #333;
-      //         margin: 0;
-      //         padding: 0;
-      //       }
-      //       table {
-      //         width: 100%;
-      //         max-width: 600px;
-      //         margin: 0 auto;
-      //         background-color: #fff;
-      //         border-radius: 8px;
-      //         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      //       }
-      //       .header {
-      //         text-align: center;
-      //         padding: 20px;
-      //         background-color: #4CAF50;
-      //         color: white;
-      //         border-radius: 8px 8px 0 0;
-      //       }
-      //       .content {
-      //         padding: 20px;
-      //         text-align: center;
-      //       }
-      //       .footer {
-      //         text-align: center;
-      //         padding: 10px;
-      //         background-color: #f1f1f1;
-      //         color: #777;
-      //         font-size: 12px;
-      //         border-radius: 0 0 8px 8px;
-      //       }
-      //       img {
-      //         max-width: 100%;
-      //         height: auto;
-      //         border-radius: 5px;
-      //       }
-      //     </style>
-      //   </head>
-      //   <body>
-      //     <table>
-      //       <tr>
-      //         <td class="header">
-      //           <h2>Your OTP for Registration</h2>
-      //         </td>
-      //       </tr>
-      //       <tr>
-      //         <td class="content">
-      //           <p>Hello,</p>
-      //           <p>Thank you for registering. Your One-Time Password (OTP) is:</p>
-      //           <h3 style="font-size: 36px; color: #4CAF50;">${otp}</h3>
-      //           <p>This OTP is valid for a short time. Please use it to complete your registration.</p>
-      //           <p>Check out the animation below:</p>
-      //           <img src="https://cldup.com/D72zpdwI-i.gif" alt="Animated GIF" />
-      //           <p>Enjoy the visual content!</p>
-      //         </td>
-      //       </tr>
-      //       <tr>
-      //         <td class="footer">
-      //           <p>If you have trouble viewing this email, please check your email client settings.</p>
-      //         </td>
-      //       </tr>
-      //     </table>
-      //   </body>
-      // </html>`,
+      html: `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f7f7f7;
+              color: #333;
+              margin: 0;
+              padding: 0;
+            }
+            table {
+              width: 100%;
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #fff;
+              border-radius: 8px;
+              box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+              text-align: center;
+              padding: 20px;
+              background-color: #4CAF50;
+              color: white;
+              border-radius: 8px 8px 0 0;
+            }
+            .content {
+              padding: 20px;
+              text-align: center;
+            }
+            .footer {
+              text-align: center;
+              padding: 10px;
+              background-color: #f1f1f1;
+              color: #777;
+              font-size: 12px;
+              border-radius: 0 0 8px 8px;
+            }
+            img {
+              max-width: 100%;
+              height: auto;
+              border-radius: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td class="header">
+                <h2>Your OTP for Registration</h2>
+              </td>
+            </tr>
+            <tr>
+              <td class="content">
+                <p>Hello,</p>
+                <p>Thank you for registering. Your One-Time Password (OTP) is:</p>
+                <h3 style="font-size: 36px; color: #4CAF50;">${otp}</h3>
+                <p>This OTP is valid for a short time. Please use it to complete your registration.</p>
+                <p>Check out the animation below:</p>
+                <img src="https://cldup.com/D72zpdwI-i.gif" alt="Animated GIF" />
+                <p>Enjoy the visual content!</p>
+              </td>
+            </tr>
+            <tr>
+              <td class="footer">
+                <p>If you have trouble viewing this email, please check your email client settings.</p>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>`,
     });
 
     res.status(200).json({ success: true, message: "OTP sent successfully" });
@@ -577,8 +577,10 @@ app.post(
           .send({ message: "Failed to save diary entry. Please try again." });
       }
 
-      // Increment the count for each subject in filter_subjects
-      const subjectArray = subjects.split(",").map((subject) => subject.trim());
+      const subjectArray =
+        subjects && subjects.trim() !== ""
+          ? subjects.split(",").map((subject) => subject.trim())
+          : [];
 
       subjectArray.forEach((subject) => {
         const updateQuery = `
@@ -1633,6 +1635,7 @@ app.post("/submit-report", (req, res) => {
       location,
       date,
       subjects,
+      isAddress,
     } = req.body;
 
     let supportingDocuments = null; // Default to null if no file is uploaded
@@ -1642,8 +1645,8 @@ app.post("/submit-report", (req, res) => {
 
     const query = `
       INSERT INTO gender_based_crime_reports 
-      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects, isAddress) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
@@ -1658,6 +1661,7 @@ app.post("/submit-report", (req, res) => {
         date,
         supportingDocuments,
         subjects,
+        true,
       ],
       (err, result) => {
         if (err) {
@@ -1667,6 +1671,26 @@ app.post("/submit-report", (req, res) => {
         res.status(200).json({ message: "Report submitted successfully" });
       }
     );
+  });
+});
+
+app.put("/reports/:id", (req, res) => {
+  const reportID = req.params.id;
+
+  const query = `
+    UPDATE gender_based_crime_reports
+    SET isAddress = true
+    WHERE reportID = ?
+  `;
+
+  db.query(query, [reportID], (err, result) => {
+    if (err) {
+      console.error("Error updating report status:", err.message);
+      return res.status(500).json({ error: "Failed to update report" });
+    }
+    res
+      .status(200)
+      .json({ message: "Report marked as addressed successfully" });
   });
 });
 

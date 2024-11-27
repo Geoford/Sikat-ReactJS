@@ -34,14 +34,14 @@ const FlaggedDiaries = ({ flags }) => {
       // Apply subject filter
       if (selectedSubject !== "All") {
         filtered = filtered.filter((flag) =>
-          flag.behaviors.toLowerCase().includes(selectedSubject.toLowerCase())
+          flag.reasons.toLowerCase().includes(selectedSubject.toLowerCase())
         );
       }
 
       // Apply search filter
       if (searchTerm) {
         filtered = filtered.filter((flag) =>
-          `${flag.firstName} ${flag.lastName} ${flag.studentNumber} ${flag.behaviors} ${flag.title}`
+          `${flag.firstName} ${flag.lastName} ${flag.studentNumber} ${flag.reasons} ${flag.title}`
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
         );
@@ -114,7 +114,7 @@ const FlaggedDiaries = ({ flags }) => {
                 <tr>
                   <td>${flag.studentNumber}</td>
                   <td>${flag.firstName} ${flag.lastName}</td>
-                  <td>${flag.behaviors}</td>
+                  <td>${flag.reasons}</td>
                   <td>${flag.title}</td>
                 </tr>
               `
@@ -139,7 +139,7 @@ const FlaggedDiaries = ({ flags }) => {
       const rows = currentUsers.map((flag) => [
         flag.studentNumber,
         `${flag.firstName} ${flag.lastName}`,
-        flag.behaviors,
+        flag.reasons,
         flag.title,
       ]);
 
@@ -173,8 +173,8 @@ const FlaggedDiaries = ({ flags }) => {
               placeholder="Search by name, student number, behaviors, or title"
               aria-label="Search"
               aria-describedby="basic-addon1"
-              value={searchTerm} // Bind to state
-              onChange={(e) => setSearchTerm(e.target.value)} // Update state on input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </InputGroup>
         </div>
@@ -221,8 +221,8 @@ const FlaggedDiaries = ({ flags }) => {
                   <tr key={flag.userID}>
                     <th scope="row">{flag.studentNumber}</th>
                     <td>{`${flag.firstName} ${flag.lastName}`}</td>
-                    <td>{flag.behaviors}</td>
-                    <td>0</td>
+                    <td>{flag.reasons}</td>
+                    <td>{flag.flag_count}</td>
                     <td>{flag.title}</td>
                     <td className="text-success">Pending</td>
                     <td>

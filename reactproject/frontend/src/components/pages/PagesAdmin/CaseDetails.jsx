@@ -79,7 +79,11 @@ const CaseDetails = () => {
             </Link>
 
             <h4 className="m-0">Case Details</h4>
-            <h4 className="m-0 text-danger">{caseDetails.status}</h4>
+            {caseDetails.isAddress === 0 ? (
+              <h4 className="m-0 text-danger">(Pending)</h4>
+            ) : (
+              <h4 className="m-0 text-success">(Addressed)</h4>
+            )}
           </div>
 
           <form className="text-start" style={{ minHeight: "20rem" }}>
@@ -102,7 +106,7 @@ const CaseDetails = () => {
               <div>
                 <h6 className="m-0">Contact Number</h6>
                 <p className="m-0 ps-2 border-bottom">
-                  {caseDetails.victimContact}
+                  {caseDetails.contactInfo}
                 </p>
               </div>
             </div>
@@ -115,12 +119,6 @@ const CaseDetails = () => {
                   <h6 className="m-0">Perpetrator's Name</h6>
                   <p className="m-0 ps-2 border-bottom">
                     {caseDetails.perpetratorName}
-                  </p>
-                </div>
-                <div className="col-md">
-                  <h6 className="m-0">Sex</h6>
-                  <p className="m-0 ps-2 border-bottom">
-                    {caseDetails.perpetratorSex}
                   </p>
                 </div>
               </div>
@@ -146,7 +144,6 @@ const CaseDetails = () => {
               </div>
             </div>
 
-            {/* Proof of Incident */}
             <div className="d-flex flex-column justify-content-between">
               <div>
                 <h5 className="mt-3">Proof of Incident</h5>
@@ -179,7 +176,6 @@ const CaseDetails = () => {
           </form>
         </div>
 
-        {/* Modal for Image */}
         <Modal show={showModal} onHide={handleCloseModal} centered>
           <Modal.Body className="p-0 d-flex justify-content-center">
             {selectedImage && (
