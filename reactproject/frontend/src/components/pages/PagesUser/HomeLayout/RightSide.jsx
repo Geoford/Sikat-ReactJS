@@ -17,28 +17,33 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
             to={`/Profile/${user.userID}`}
             className="linkText position-relative rounded d-flex w-100 p-2"
           >
-            <div className="d-flex align-items-center">
-              <div className="profilePicture">
-                <img
-                  src={
-                    user.profile_image
-                      ? `http://localhost:8081${user.profile_image}`
-                      : DefaultProfile
-                  }
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+            <div className="row d-flex align-items-center">
+              <div className="col-3">
+                <div className="profilePicture">
+                  <img
+                    src={
+                      user.profile_image
+                        ? `http://localhost:8081${user.profile_image}`
+                        : DefaultProfile
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
               </div>
-
-              <p className="m-0 ms-2 d-none d-lg-block">
-                {user.isAdmin === 1
-                  ? "Gender and Development"
-                  : user.firstName + " " + user.lastName}
-              </p>
+              <div className="col ps-2">
+                <div className="overflow-hidden followerName" style={{}}>
+                  <p className="m-0 ms-2 text-start text-nowrap">
+                    {user.isAdmin === 1
+                      ? "Gender and Development"
+                      : user.firstName}
+                  </p>
+                </div>
+              </div>
             </div>
           </Link>
           <button

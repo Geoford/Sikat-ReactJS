@@ -621,7 +621,8 @@ input.form-control:focus {
   background-color: var(--primary) !important;
   color: rgb(0, 0, 0) !important;
 }
-
+@media screen and (max-width: ) {
+}
 @media screen and (max-width: 1080px) {
   p,
   h6,
@@ -640,7 +641,11 @@ input.form-control:focus {
   /* h6 {
     font-size: !important;
   } */
-
+  .followerName {
+    /* display: none; */
+    padding-left: 0.5rem;
+    width: 7.5vw;
+  }
   /* FOR RESPONSIVE NAVBAR */
   .navIcons {
     padding-top: 0.7rem;
