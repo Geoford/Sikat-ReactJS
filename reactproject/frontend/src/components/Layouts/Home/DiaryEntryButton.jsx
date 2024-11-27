@@ -147,46 +147,54 @@ function DiaryEntryButton({ onEntrySaved }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Diary</Modal.Title>
+          <Modal.Title>
+            <h5 className="m-0">Create New Diary</h5>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="profilePicture">
-              <img
-                src={
-                  user?.profile_image
-                    ? `http://localhost:8081${user?.profile_image}`
-                    : userDefaultProfile
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
+            <div className="d-flex align-items-center gap-2">
+              <div className="profilePicture">
+                <img
+                  src={
+                    user?.profile_image
+                      ? `http://localhost:8081${user?.profile_image}`
+                      : userDefaultProfile
+                  }
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+              <p className="m-0">{user?.username || "User"}</p>
             </div>
-            <p className="m-0">{user?.username || "User"}</p>
-            <div>
-              <select
-                id="visibility"
-                value={visibility}
-                onChange={handleChangeVisibility}
-              >
-                <option value="private">Private</option>
-                <option value="public">Public</option>
-              </select>
-            </div>
-            <div>
-              <select
-                id="anonimity"
-                value={anonimity}
-                onChange={handleChangeAnonimity}
-                disabled={visibility === "private"}
-              >
-                <option value="private">Anonymous</option>
-                <option value="public">Not Anonymous</option>
-              </select>
+            <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
+              <div class="col input-group p-0">
+                <select
+                  class="form-select"
+                  id="visibility"
+                  value={visibility}
+                  onChange={handleChangeVisibility}
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </div>
+              <div class="col input-group p-0">
+                <select
+                  class="form-select"
+                  id="anonimity"
+                  value={anonimity}
+                  onChange={handleChangeAnonimity}
+                  disabled={visibility === "private"}
+                >
+                  <option value="private">Anonymous</option>
+                  <option value="public">Not Anonymous</option>
+                </select>
+              </div>
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
@@ -195,7 +203,11 @@ function DiaryEntryButton({ onEntrySaved }) {
           )}
           <div className="d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
-            {selectedSubjects && <div className=""> {selectedSubjects} </div>}
+            {selectedSubjects && (
+              <div className="">
+                <p className="m-0">{selectedSubjects}</p>
+              </div>
+            )}
           </div>
           <div className="">
             <InputGroup className="mb-1">
@@ -267,7 +279,7 @@ function DiaryEntryButton({ onEntrySaved }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={loading}>
-            Close
+            <p className="m-0">Close</p>
           </Button>
           <button
             className="orangeButton py-2"
@@ -276,20 +288,22 @@ function DiaryEntryButton({ onEntrySaved }) {
             disabled={loading}
             aria-label="Save diary entry"
           >
-            {loading ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />{" "}
-                Saving Changes...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+            <p className="m-0">
+              {loading ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />{" "}
+                  Saving Changes...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </p>
           </button>
         </Modal.Footer>
       </Modal>

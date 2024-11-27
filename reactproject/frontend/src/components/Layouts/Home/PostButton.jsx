@@ -139,49 +139,61 @@ function PostButton({ onEntrySaved }) {
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="profilePicture">
-              <img
-                src={
-                  user?.profile_image
-                    ? `http://localhost:8081${user?.profile_image}`
-                    : userDefaultProfile
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
-            <p className="m-0">{user?.username || "User"}</p>
-            <div>
-              <select
-                className="py-1"
-                id="visibility"
-                value={visibility}
-                onChange={handleChangeVisibility}
-              >
-                <option value="now">Post Now</option>
-                <option value="later">Post Later</option>
-              </select>
-            </div>
-            {visibility === "later" && (
-              <div className="">
-                <DatePicker
-                  selected={scheduledDate}
-                  onChange={(date) => setScheduledDate(date)}
-                  showTimeSelect
-                  dateFormat="Pp"
-                  className="form-control"
-                  isInvalid={!!formErrors.scheduledDate}
-                  placeholderText="Select Date and Time"
+            <div className="d-flex align-items-center gap-2">
+              <div className="profilePicture">
+                <img
+                  src={
+                    user?.profile_image
+                      ? `http://localhost:8081${user?.profile_image}`
+                      : userDefaultProfile
+                  }
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                 />
-                {formErrors.scheduledDate && (
-                  <div className="text-danger">{formErrors.scheduledDate}</div>
-                )}
               </div>
-            )}
+              <p className="m-0">{user?.username || "User"}</p>
+            </div>
+
+            <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
+              <div class=" col input-group p-0">
+                <select
+                  class="form-select"
+                  id="visibility"
+                  value={visibility}
+                  onChange={handleChangeVisibility}
+                  style={{ fonSize: "clamp(0.8rem, 2dvw, 0.9rem)" }}
+                >
+                  <option value="now">
+                    <p className="m-0">Post Now</p>
+                  </option>
+                  <option value="later">
+                    <p className="m-0">Post Later</p>
+                  </option>
+                </select>
+              </div>
+              {visibility === "later" && (
+                <div className="col p-0">
+                  <DatePicker
+                    selected={scheduledDate}
+                    onChange={(date) => setScheduledDate(date)}
+                    showTimeSelect
+                    dateFormat="Pp"
+                    className="form-control"
+                    isInvalid={!!formErrors.scheduledDate}
+                    placeholderText="Select Date and Time"
+                  />
+                  {formErrors.scheduledDate && (
+                    <div className="text-danger">
+                      {formErrors.scheduledDate}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
 

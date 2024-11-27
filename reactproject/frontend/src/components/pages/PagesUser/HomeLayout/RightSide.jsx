@@ -7,15 +7,15 @@ import SampleImage from "../../../../assets/Background.jpg";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
-    className="custom-scrollbar mt-2 pe-1"
+    className="custom-scrollbar mt-2"
     style={{ height: "25vh", overflowY: "scroll" }}
   >
     {users.map((user) => (
-      <div key={user.userID} className="pb-2 pe-2 mb-2">
+      <div key={user.userID} className="pb-2 pe-1 mb-2">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
           <Link
             to={`/Profile/${user.userID}`}
-            className="linkText position-relative rounded d-flex justify-content-between w-100 p-2"
+            className="linkText position-relative rounded d-flex w-100 p-2"
           >
             <div className="d-flex align-items-center">
               <div className="profilePicture">
@@ -34,7 +34,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                 />
               </div>
 
-              <p className="m-0 ms-2">
+              <p className="m-0 ms-2 d-none d-lg-block">
                 {user.isAdmin === 1
                   ? "Gender and Development"
                   : user.firstName + " " + user.lastName}
@@ -44,9 +44,11 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
           <button
             className="secondaryButton position-absolute"
             onClick={() => handleFollowToggle(user.userID, user.username)}
-            style={{ right: "55px" }}
+            style={{ right: "2.5rem" }}
           >
-            {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+            <p className="m-0">
+              {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+            </p>
           </button>
         </div>
       </div>

@@ -89,8 +89,12 @@ const SubjectSelection = ({ onSubjectsChange }) => {
 
   return (
     <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
-      <Dropdown.Toggle className="border-0" variant="" id="dropdown-basic">
-        Subject
+      <Dropdown.Toggle
+        className="border-0 d-flex align-items-center ps-0"
+        variant=""
+        id="dropdown-basic"
+      >
+        <h6 className="m-0">Subject</h6>
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="px-2">
@@ -115,25 +119,7 @@ const SubjectSelection = ({ onSubjectsChange }) => {
                 onChange={handleCheckboxChange}
               />
             ))}
-            <Form.Check
-              type="checkbox"
-              id="other"
-              label="Other"
-              name="other"
-              checked={selectedItems.other}
-              onChange={handleCheckboxChange}
-            />
-            {selectedItems.other && (
-              <Form.Group className="mt-2">
-                <Form.Label>Other reasons:</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Type other reasons here..."
-                  value={customReason}
-                  onChange={handleCustomReasonChange}
-                />
-              </Form.Group>
-            )}
+
             <button className="orangeButton w-100" onClick={handleSaveFilter}>
               Save Filter
             </button>

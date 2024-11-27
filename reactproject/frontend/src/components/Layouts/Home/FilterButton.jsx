@@ -61,11 +61,15 @@ const FilterButton = ({ onFilterChange }) => {
 
   return (
     <Dropdown>
-      <Dropdown.Toggle className="border-0" variant="" id="dropdown-basic">
-        Filter
+      <Dropdown.Toggle
+        className="border-0 d-flex align-items-center ps-0"
+        variant=""
+        id="dropdown-basic"
+      >
+        <h6 className="m-0">Filter</h6>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="px-2">
+      <Dropdown.Menu className="px-2 z-1">
         {filterOptions.map((filter) => (
           <Form.Check
             key={filter.subject} // Use 'subject' for the key

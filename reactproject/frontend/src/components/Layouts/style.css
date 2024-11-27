@@ -11,6 +11,10 @@ p {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+select.form-select:focus {
+  box-shadow: none;
+  outline: gray;
+}
 .background {
   position: fixed;
   width: 100vw;
@@ -620,8 +624,11 @@ input.form-control:focus {
 
 @media screen and (max-width: 1080px) {
   p,
+  h6,
   label,
-  input::placeholder {
+  input::placeholder,
+  #visibility,
+  .form-select {
     font-size: clamp(0.8rem, 2dvw, 0.9rem) !important;
   }
   h4 {
@@ -630,9 +637,9 @@ input.form-control:focus {
   h5 {
     font-size: clamp(1rem, 1.5dvw, 2rem) !important;
   }
-  h6 {
+  /* h6 {
     font-size: !important;
-  }
+  } */
 
   /* FOR RESPONSIVE NAVBAR */
   .navIcons {
