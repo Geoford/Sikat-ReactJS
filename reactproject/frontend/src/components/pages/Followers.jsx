@@ -150,7 +150,7 @@ const Followers = () => {
         className="container mt-5 mt-lg-4 rounded p-3 shadow-sm"
         style={{
           width: "clamp(19rem, 65dvw, 40rem)",
-          height: "clamp(30rem, 65dvw, 40rem)",
+          height: "clamp(30rem, 65dvw, 39rem)",
           backgroundColor: "#ffff",
         }}
       >

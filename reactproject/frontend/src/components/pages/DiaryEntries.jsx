@@ -189,45 +189,82 @@ const DiaryEntries = () => {
                         className="days  border rounded bg-light shadow-sm p-2"
                         style={{ height: "80px" }}
                       >
-                        <div className="d-flex align-items-center gap-1">
+                        <div
+                          className="d-flex align-items-center gap-1"
+                          style={{}}
+                        >
                           <p className="m-0 text-start text-secondary">{day}</p>
-                          {/* {entry ? (
-                              <img
-                                src={
-                                  entry.privacy === "public"
-                                    ? publicIcon
-                                    : privateIcon
-                                }
-                                alt={entry.privacy}
-                                style={{ width: "15px", height: "15px" }}
-                              />
-                            ) : null} */}
                         </div>
                         {entry ? (
-                          <Dropdown className="position-relative primaryButton mx-2 p-0 d-flex align-items-center justify-content-center">
+                          <Dropdown className="position-relative primaryButton mx-2 mt-2 mt-lg-0 p-0 d-flex align-items-center justify-content-center">
                             <Dropdown.Toggle
-                              className="d-flex align-items-center justify-content-center text-light border-0"
+                              className="w-100 d-flex align-items-center justify-content-center text-light border-0 p-0"
                               variant="transparent"
+                              bsPrefix
                             >
-                              <h5 className="m-0">{entries.length} Entries</h5>
+                              <p className="m-0 my-1 mx-1 text-wrap">
+                                {entries.length} Entries
+                              </p>
+                              <i class="bx bx-chevron-down d-none d-md-block  "></i>
                             </Dropdown.Toggle>
                             <Dropdown.Menu
-                              className="position-absolute"
-                              style={{ left: "50%" }}
+                              className="text-center"
+                              style={{ left: "" }}
                             >
-                              <Dropdown.Item href="#">Action</Dropdown.Item>
-                              <Dropdown.Item href="#">
-                                Another action
+                              <Dropdown.Item className="btn btn-light" href="#">
+                                <p className="m-0">
+                                  Diary Title{" "}
+                                  {entry ? (
+                                    <img
+                                      src={
+                                        entry.privacy === "public"
+                                          ? publicIcon
+                                          : privateIcon
+                                      }
+                                      alt={entry.privacy}
+                                      style={{ width: "13px", height: "13px" }}
+                                    />
+                                  ) : null}
+                                </p>
                               </Dropdown.Item>
-                              <Dropdown.Item href="#">
-                                Something else here
+                              <Dropdown.Item className="btn btn-light" href="#">
+                                <p className="m-0">
+                                  Diary Title{" "}
+                                  {entry ? (
+                                    <img
+                                      src={
+                                        entry.privacy === "public"
+                                          ? publicIcon
+                                          : privateIcon
+                                      }
+                                      alt={entry.privacy}
+                                      style={{ width: "13px", height: "13px" }}
+                                    />
+                                  ) : null}
+                                </p>
+                              </Dropdown.Item>
+                              <Dropdown.Item className="btn btn-light" href="#">
+                                <p className="m-0">
+                                  Diary Title{" "}
+                                  {entry ? (
+                                    <img
+                                      src={
+                                        entry.privacy === "public"
+                                          ? publicIcon
+                                          : privateIcon
+                                      }
+                                      alt={entry.privacy}
+                                      style={{ width: "13px", height: "13px" }}
+                                    />
+                                  ) : null}
+                                </p>
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
                         ) : (
-                          <h5 className="m-0 mt-2 mt-md-0 text-secondary fw-normal">
+                          <p className="m-0 mt-2 mt-md-0 text-secondary fw-normal">
                             No Entry
-                          </h5>
+                          </p>
                         )}
                       </div>
                     </div>

@@ -258,14 +258,16 @@ const Profile = () => {
               className="w-100 position-relative rounded border-bottom p-4"
               style={{ height: "80%" }}
             >
-              <h3 className="m-0">
+              <h4 className="m-0">
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
-              </h3>
+              </h4>
               <p className="m-0 mt-1 text-secondary">
                 {user.followersCount} Followers - {user.followingCount}{" "}
                 Following
               </p>
-              <p className="mt-3">{user.bio || "No bio available."}</p>
+              <p className="mt-3 text-secondary">
+                {user.bio || "No bio available."}{" "}
+              </p>
             </div>
             <div>
               {ownProfile ? <ProfileDropdown /> : <OthersProfileDropdown />}

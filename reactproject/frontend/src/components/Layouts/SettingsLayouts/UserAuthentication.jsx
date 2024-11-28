@@ -67,16 +67,20 @@ const UserAuthentication = ({ userID }) => {
         style={{ cursor: "pointer" }}
         onClick={handleShow}
       >
-        <i className="bx bx-check-shield bx-sm"></i>
+        <h5 className="m-0">
+          <i className="bx bx-check-shield"></i>
+        </h5>
         <p className="m-0">Password and Security</p>
       </div>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Account Verification</Modal.Title>
+          <Modal.Title>
+            <h5>Account Verification</h5>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="text-secondary" style={{ fontSize: ".9rem" }}>
+          <p className="text-secondary" style={{}}>
             An OTP has been sent to your CvSU email to verify your identity to
             access your security details.
           </p>
@@ -124,7 +128,7 @@ const UserAuthentication = ({ userID }) => {
         </Modal.Body>
         <Modal.Footer>
           <button className="primaryButton px-4 py-2" onClick={handleVerify}>
-            Verify
+            <p className="m-0">Verify</p>
           </button>
         </Modal.Footer>
       </Modal>

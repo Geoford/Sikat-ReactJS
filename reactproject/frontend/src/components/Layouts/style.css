@@ -16,15 +16,17 @@ h6,
 label,
 .nav-link,
 input::placeholder,
-.form-select {
-  font-size: clamp(0.8rem, 2dvw, 0.9rem) !important;
+.form-select,
+.input-group-text,
+.form-control {
+  font-size: clamp(0.7rem, 2dvw, 0.9rem) !important;
 }
 h4,
 select {
   font-size: clamp(1.2rem, 1.7dvw, 1.4rem) !important;
 }
 h5 {
-  font-size: clamp(1rem, 1.5dvw, 1.1rem) !important;
+  font-size: clamp(0.9rem, 1.5dvw, 1.1rem) !important;
 }
 h6 {
   font-size: clamp(0.75rem, 1.5dvw, 0.9rem) !important;

@@ -14,12 +14,12 @@ const PasswordAndSecurity = () => {
       className="p-3 rounded shadow-sm"
       style={{
         backgroundColor: "#ffff",
-        minHeight: "clamp(20rem, 80vh, 35rem)",
+        minHeight: "clamp(20rem, 20vh, 30rem)",
       }}
     >
-      <h4 className="border-bottom border-2 pb-2">Password and Security</h4>
+      <h5 className="border-bottom border-2 pb-2">Password and Security</h5>
       <form action="" autoComplete="off">
-        <Row className="g-2 pt-2 text-start ">
+        {/* <Row className="g-2 pt-2 text-start ">
           <h5 className="m-0">Change Security Question</h5>
           <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
             Security questions are used as an additional layer of authentication
@@ -55,7 +55,7 @@ const PasswordAndSecurity = () => {
               <label htmlFor="securityAnswer">Answer</label>
             </Form.Floating>
           </Col>
-        </Row>
+        </Row> */}
         <Row className="g-2 pt-2 text-start ">
           <h5 className="m-0">Change Password</h5>
           <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
@@ -115,7 +115,9 @@ const PasswordAndSecurity = () => {
           </Col>
         </Row>
         <div className="mt-4 d-flex justify-content-end">
-          <button className="primaryButton px-5 py-2">Save</button>
+          <button type="submit" className="primaryButton px-5 py-2">
+            <p className="m-0">Save</p>
+          </button>{" "}
         </div>
       </form>
     </div>

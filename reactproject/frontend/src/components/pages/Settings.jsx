@@ -55,10 +55,10 @@ const Settings = () => {
   const navItemStyle = "shadow d-flex align-items-center gap-2";
   return (
     <MainLayout ActiveTab="Settings">
-      <div className="container-fluid container-md mt-5">
+      <div className="container-fluid container-md mt-4 pt-2 mb-5">
         <Tab.Container id="left-tabs-example" defaultActiveKey="profile">
           <Row>
-            <Col sm={3}>
+            <Col lg={3}>
               <Nav
                 variant="pills"
                 className="flex-column gap-2 custom-nav mb-3 text-start"
@@ -66,7 +66,9 @@ const Settings = () => {
                 <h5 className="m-0 text-start mb-2">Account Settings</h5>
                 <Nav.Item>
                   <Nav.Link className={navItemStyle} eventKey="profile">
-                    <i class="bx bxs-user-detail bx-sm"></i>
+                    <h5 className="m-0">
+                      <i class="bx bxs-user-detail"></i>
+                    </h5>
                     <p className="m-0">Profile Information</p>
                   </Nav.Link>
                 </Nav.Item>
@@ -83,25 +85,33 @@ const Settings = () => {
                     <h5 className="m-0 text-start my-2">Managing Diaries</h5>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="filter">
-                        <i class="bx bx-filter-alt bx-sm"></i>
+                        <h5 className="m-0">
+                          <i class="bx bx-filter-alt"></i>
+                        </h5>
                         <p className="m-0">Filtering and Subjects</p>
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="flag">
-                        <i class="bx bx-flag bx-sm"></i>
+                        <h5 className="m-0">
+                          <i class="bx bx-flag"></i>
+                        </h5>
                         <p className="m-0">Flagging Diaries</p>
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="repComment">
-                        <i class="bx bx-comment-x bx-sm"></i>
+                        <h5 className="m-0">
+                          <i class="bx bx-comment-x"></i>
+                        </h5>
                         <p className="m-0">Reporting Comments</p>
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="repUser">
-                        <i class="bx bx-user-x bx-sm"></i>
+                        <h5 className="m-0">
+                          <i class="bx bx-user-x"></i>
+                        </h5>
                         <p className="m-0">Reporting Users</p>
                       </Nav.Link>
                     </Nav.Item>
@@ -111,7 +121,7 @@ const Settings = () => {
                 )}
               </Nav>
             </Col>
-            <Col sm={9}>
+            <Col lg={9}>
               <Tab.Content>
                 <Tab.Pane eventKey="profile">
                   <ProfileInformation></ProfileInformation>

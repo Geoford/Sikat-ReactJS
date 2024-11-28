@@ -105,7 +105,7 @@ const ProfileInformation = () => {
       className="p-3 rounded shadow-sm mb-3"
       style={{
         backgroundColor: "#ffff",
-        minHeight: "clamp(20rem, 80vh, 30rem)",
+        minHeight: "clamp(22rem, 20vh, 30rem)",
       }}
     >
       <h4 className="border-bottom border-2 pb-2">Profile Information</h4>
@@ -117,8 +117,8 @@ const ProfileInformation = () => {
             individual to risks. An alias, however, offers privacy and safety,
             allowing for open sharing without fear of judgment or backlash.
           </p>
-          <Row className="mt-1">
-            <Col md={9}>
+          <div className=" row mt-1 pe-0 gy-1">
+            <div className="col-md-9 pe-0">
               <InputGroup>
                 <InputGroup.Text className="py-3">
                   First and Last name
@@ -138,8 +138,8 @@ const ProfileInformation = () => {
                   onChange={handleInput}
                 />
               </InputGroup>
-            </Col>
-            <Col>
+            </div>
+            <div className="col pe-0">
               <FloatingLabel controlId="floatingInputGrid" label="Alias">
                 <Form.Control
                   type="text"
@@ -149,8 +149,8 @@ const ProfileInformation = () => {
                   onChange={handleInput}
                 />
               </FloatingLabel>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </div>
 
         <div className="row text-start mt-2">
@@ -160,7 +160,7 @@ const ProfileInformation = () => {
             platform. The Bio is a short description where you can share details
             about yourself or your interests.
           </p>
-          <Row className="mt-1 gap-2">
+          <div className="mt-1 gap-2">
             {/* <Col md={12}>
               <FloatingLabel controlId="floatingInputGrid" label="Username">
                 <Form.Control
@@ -172,7 +172,7 @@ const ProfileInformation = () => {
                 />
               </FloatingLabel>
             </Col> */}
-            <Col>
+            <div>
               <FloatingLabel controlId="floatingTextarea2" label="Bio">
                 <Form.Control
                   as="textarea"
@@ -183,13 +183,13 @@ const ProfileInformation = () => {
                   onChange={handleInput}
                 />
               </FloatingLabel>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </div>
 
         <div className="mt-4 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
-            Save
+            <p className="m-0">Save</p>
           </button>
         </div>
       </form>
