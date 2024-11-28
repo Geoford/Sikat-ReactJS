@@ -387,6 +387,8 @@ app.post("/Login", (req, res) => {
       userID: user.userID,
       cvsuEmail: user.cvsuEmail,
       username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       isAdmin: user.isAdmin,
       profile_image: user.profile_image,
     });
@@ -611,79 +613,103 @@ app.post(
         });
       });
 
-      // Notify admins if alarming words are present
-      if (hasAlarmingWords) {
-        const notificationMessage = `A diary entry containing alarming words has been posted by user ${userID}`;
+      // Fetch the user's firstName to include in the notification message
+      const userQuery = `
+      SELECT u.firstName, up.profile_image 
+      FROM user_table u
+      JOIN user_profiles up ON u.userID = up.userID
+      WHERE u.userID = ?
+    `;
+      db.query(userQuery, [userID], (userError, userResults) => {
+        if (userError) {
+          console.error(
+            "Error fetching user firstName and profile_image:",
+            userError
+          );
+          return res
+            .status(500)
+            .send({ message: "Failed to fetch user details." });
+        }
 
-        const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
+        const userFirstName = userResults[0]?.firstName || "User";
+        const userProfileImage =
+          userResults[0]?.profile_image || "/default-profile.png";
 
-        db.query(adminQuery, (adminError, adminResults) => {
-          if (adminError) {
-            console.error("Error fetching admin users:", adminError);
-            return res
-              .status(500)
-              .send({ message: "Failed to notify admins." });
-          }
+        if (hasAlarmingWords) {
+          const notificationMessage = `A diary entry containing alarming words has been posted by user ${userFirstName}`;
 
-          if (adminResults.length > 0) {
-            adminResults.forEach((admin) => {
-              const notificationQuery = `
-                INSERT INTO notifications (userID, actorID, message, entryID, type)
-                VALUES (?, ?, ?, ?, ?)
+          const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
+
+          db.query(adminQuery, (adminError, adminResults) => {
+            if (adminError) {
+              console.error("Error fetching admin users:", adminError);
+              return res
+                .status(500)
+                .send({ message: "Failed to notify admins." });
+            }
+
+            if (adminResults.length > 0) {
+              adminResults.forEach((admin) => {
+                const notificationQuery = `
+                INSERT INTO notifications (userID, actorID, message, entryID, type, profile_image)
+                VALUES (?, ?, ?, ?, ?, ?)
               `;
-              db.query(
-                notificationQuery,
-                [
-                  admin.userID,
-                  userID,
-                  notificationMessage,
-                  result.insertId,
-                  "alarming_entry",
-                ],
-                (notificationError) => {
-                  if (notificationError) {
-                    console.error(
-                      "Error inserting admin notification:",
-                      notificationError
-                    );
-                    return res
-                      .status(500)
-                      .send({ message: "Failed to save admin notification." });
-                  }
-
-                  pusher
-                    .trigger(
-                      `notifications-${admin.userID}`,
-                      "new-notification",
-                      {
-                        actorID: userID,
-                        message: notificationMessage,
-                        entryID: result.insertId,
-                        type: "alarming_entry",
-                        timestamp: new Date().toISOString(),
-                      }
-                    )
-                    .then(() => {
-                      console.log(
-                        `Admin ${admin.userID} notified of alarming diary entry.`
-                      );
-                    })
-                    .catch((err) => {
+                db.query(
+                  notificationQuery,
+                  [
+                    admin.userID,
+                    userID,
+                    notificationMessage,
+                    result.insertId,
+                    "alarming_entry",
+                    userProfileImage, // Include profile image in the notification
+                  ],
+                  (notificationError) => {
+                    if (notificationError) {
                       console.error(
-                        "Error sending admin Pusher notification:",
-                        err
+                        "Error inserting admin notification:",
+                        notificationError
                       );
-                    });
-                }
-              );
-            });
-          }
-        });
-      }
+                      return res.status(500).send({
+                        message: "Failed to save admin notification.",
+                      });
+                    }
 
-      res.status(200).send({
-        message: "Entry added successfully!",
-        containsAlarmingWords: hasAlarmingWords,
+                    pusher
+                      .trigger(
+                        `notifications-${admin.userID}`,
+                        "new-notification",
+                        {
+                          actorID: userID,
+                          message: notificationMessage,
+                          entryID: result.insertId,
+                          type: "alarming_entry",
+                          profile_image: userProfileImage, // Include profile image in the notification
+                          timestamp: new Date().toISOString(),
+                        }
+                      )
+                      .then(() => {
+                        console.log(
+                          `Admin ${admin.userID} notified of alarming diary entry.`
+                        );
+                      })
+                      .catch((err) => {
+                        console.error(
+                          "Error sending admin Pusher notification:",
+                          err
+                        );
+                      });
+                  }
+                );
+              });
+            }
+          });
+        }
+
+        res.status(200).send({
+          message: "Entry added successfully!",
+          containsAlarmingWords: hasAlarmingWords,
+        });
       });
     });
   }
@@ -1883,7 +1909,6 @@ app.get("/getnotifications/:userID", (req, res) => {
       notifications.profile_image AS actorProfileImage
     FROM
       notifications
-    
     WHERE
       notifications.userID = ?
     ORDER BY

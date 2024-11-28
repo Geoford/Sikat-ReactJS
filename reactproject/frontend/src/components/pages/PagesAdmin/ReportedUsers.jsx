@@ -3,6 +3,7 @@ import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const ReportedUsers = ({ reportedComments }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -219,7 +220,6 @@ const ReportedUsers = ({ reportedComments }) => {
                     ))}
                   </select>
                 </th>
-                <th scope="col">Report Count</th>
                 <th scope="col">Reported Comment</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -232,14 +232,15 @@ const ReportedUsers = ({ reportedComments }) => {
                     <th scope="row">{reportedComment.studentNumber}</th>
                     <td>{`${reportedComment.firstName} ${reportedComment.lastName}`}</td>
                     <td>{reportedComment.reason}</td>
-                    <td>0</td>
                     <td>{reportedComment.text}</td>
                     <td className="text-success">Pending</td>
                     <td>
                       <button className="secondaryButton">
                         Mark as Reviewed
                       </button>
-                      <button className="primaryButton">Check</button>
+                      <Link to={`/DiaryEntry/${reportedComment.entryID}`}>
+                        <button className="primaryButton">Check</button>
+                      </Link>
                     </td>
                   </tr>
                 ))

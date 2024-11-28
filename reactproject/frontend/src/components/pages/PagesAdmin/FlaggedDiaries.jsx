@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+
+import { Link } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -52,9 +54,8 @@ const FlaggedDiaries = ({ flags }) => {
     };
 
     applyFilter();
-  }, [flags, selectedSubject, searchTerm]); // Include searchTerm in dependencies
+  }, [flags, selectedSubject, searchTerm]);
 
-  // Pagination calculations
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -209,7 +210,6 @@ const FlaggedDiaries = ({ flags }) => {
                     ))}
                   </select>
                 </th>
-                <th scope="col">Flag Count</th>
                 <th scope="col">Diary Title</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -222,14 +222,15 @@ const FlaggedDiaries = ({ flags }) => {
                     <th scope="row">{flag.studentNumber}</th>
                     <td>{`${flag.firstName} ${flag.lastName}`}</td>
                     <td>{flag.reasons}</td>
-                    <td>{flag.flag_count}</td>
                     <td>{flag.title}</td>
                     <td className="text-success">Pending</td>
                     <td>
                       <button className="secondaryButton">
                         Mark as Reviewed
                       </button>
-                      <button className="primaryButton">Check</button>
+                      <Link to={`/DiaryEntry/${flag.entryID}`}>
+                        <button className="primaryButton">Check</button>
+                      </Link>
                     </td>
                   </tr>
                 ))

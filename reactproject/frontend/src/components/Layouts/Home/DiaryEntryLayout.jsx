@@ -383,9 +383,9 @@ const DiaryEntryLayout = ({
         className="text-start border-bottom py-2"
         style={{ minHeight: "5rem" }}
       >
-        {entry.containsAlarmingWords === 1 ? (
+        {entry.containsAlarmingWords === 1 && user.isAdmin === 1 ? (
           <>
-            <h5>
+            <h5 className="text-danger">
               {entry.title}{" "}
               <span className="text-secondary fs-6 ">{entry.subjects}</span>
             </h5>

@@ -183,7 +183,9 @@ function DiaryEntryButton({ onEntrySaved }) {
                   }}
                 />
               </div>
-              <p className="m-0">{user?.username || "User"}</p>
+              <p className="m-0">
+                {user?.firstName} {user?.lastName || "User"}
+              </p>
             </div>
             <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
               <div class="col input-group p-0">
@@ -240,7 +242,7 @@ function DiaryEntryButton({ onEntrySaved }) {
             </InputGroup>
             <FloatingLabel
               controlId="floatingTextarea2"
-              label={`Describe your day, ${user?.username || "User"}!`}
+              label={`Describe your day, ${user?.firstName || "User"}!`}
             >
               <Form.Control
                 as="textarea"

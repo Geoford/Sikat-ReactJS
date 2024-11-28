@@ -79,10 +79,17 @@ const Profile = () => {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
     if (selectedFile) {
-      uploadProfile(selectedFile);
+      if (selectedFile.size > maxSize) {
+        alert("File size exceeds the 2MB limit. Please select a smaller file.");
+        setFile(null);
+      } else {
+        setFile(selectedFile);
+
+        uploadProfile(selectedFile);
+      }
     }
   };
 
@@ -96,6 +103,7 @@ const Profile = () => {
       .then((res) => {
         console.log("Profile uploaded successfully", res.data);
         alert("Profile uploaded successfully");
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error uploading profile:", error);
@@ -253,6 +261,7 @@ const Profile = () => {
               )}
             </div>
           </div>
+
           <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-lg-start">
             <div
               className="w-100 position-relative rounded border-bottom p-4"
