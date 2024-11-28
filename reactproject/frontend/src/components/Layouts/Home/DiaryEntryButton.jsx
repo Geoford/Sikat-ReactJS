@@ -26,6 +26,7 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [file, setFile] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState("");
   const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
+  const [fileError, setFileError] = useState("");
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);
@@ -42,7 +43,20 @@ function DiaryEntryButton({ onEntrySaved }) {
   };
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+    if (selectedFile) {
+      if (selectedFile.size > maxSize) {
+        setFileError(
+          "File size exceeds the 2MB limit. Please select a smaller file."
+        );
+        setFile(null); // Clear the invalid file
+      } else {
+        setFileError(""); // Clear any previous errors
+        setFile(selectedFile); // Set the valid file
+      }
+    }
   };
 
   useEffect(() => {
@@ -274,6 +288,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                   </Button>
                 </div>
               )}
+              {fileError && <p className="text-danger mt-2">{fileError}</p>}
             </div>
           </div>
         </Modal.Body>

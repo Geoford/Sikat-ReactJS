@@ -188,7 +188,7 @@ const RightSide = () => {
       <div className="rounded mb-2 mt-3">
         <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
           <i className="bx bx-group bx-sm"></i>
-          <h4 className="m-0">Followers</h4>
+          <h5 className="m-0">Followers</h5>
         </div>
 
         <UserList
@@ -200,7 +200,7 @@ const RightSide = () => {
       <div>
         <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2 mb-2">
           <i className="bx bx-news bx-sm"></i>
-          <h4 className="m-0">Announcements/Events</h4>
+          <h5 className="m-0">Announcements/Events</h5>
         </div>
         {latestAnnouncement ? (
           <Link

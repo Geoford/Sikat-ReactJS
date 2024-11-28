@@ -96,7 +96,7 @@ const Dashboard = () => {
     if (now - entryDate <= oneWeek) {
       const formattedDate = entryDate.toLocaleString("en-US", {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        hour12: true, // Use 12-hour format (optional)
+        hour12: true,
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -220,7 +220,11 @@ const Dashboard = () => {
                           <th scope="row">
                             {entry.firstName} {entry.lastName}
                           </th>
-                          <td>{entry.title}</td>
+                          <td>
+                            {entry.title.length > 15
+                              ? entry.title.substring(0, 15) + "…"
+                              : entry.title}
+                          </td>
                           <td>{entry.subjects}</td>
                           <td>0</td>
                           <td>

@@ -13,7 +13,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   >
     {users.map((user) => (
       <div key={user.userID} className="pb-2 pe-2 mb-2">
-        <div className="position-relative w-100 d-flex align-items-center justify-content-between gap-2">
+        <div className="position-relative d-flex align-items-center justify-content-between gap-2">
           <Link
             to={`/Profile/${user.userID}`}
             className="linkText rounded d-flex justify-content-between w-100 p-2"
@@ -147,8 +147,12 @@ const Followers = () => {
   return (
     <MainLayout ActiveTab="Followers">
       <div
-        className="container mt-4 rounded p-3 shadow-sm"
-        style={{ width: "40rem", backgroundColor: "#ffff" }}
+        className="container mt-5 mt-lg-4 rounded p-3 shadow-sm"
+        style={{
+          width: "clamp(19rem, 65dvw, 40rem)",
+          height: "clamp(30rem, 65dvw, 40rem)",
+          backgroundColor: "#ffff",
+        }}
       >
         <Tabs
           defaultActiveKey="Followers"

@@ -56,7 +56,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("INVALID_FILE_TYPE");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
 
 const otpStore = {};
 

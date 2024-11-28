@@ -15,7 +15,7 @@ const crypto = require("crypto");
 app.use(express.json());
 
 const allowedOrigins = [
-  "http://192.168.5.45:5173", // Mobile access
+  "http://192.168.116.238:5173", // Mobile access
   "http://localhost:5173", // Desktop access
 ];
 

@@ -8,7 +8,7 @@ import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
 import AdminLeftSide from "./PagesAdmin/HomeLayout/LeftSide";
 import LeftSide from "./PagesUser/HomeLayout/LeftSide";
 import LeftSideLayout from "../Layouts/Home/LeftSideLayout";
-
+import Dropdown from "react-bootstrap/Dropdown";
 
 const DiaryEntries = () => {
   const [user, setUser] = useState(null);
@@ -143,7 +143,7 @@ const DiaryEntries = () => {
         >
           {/* {user.isAdmin ? <AdminLeftSide /> : <LeftSide />} */}
           <LeftSideLayout></LeftSideLayout>
-          </div>
+        </div>
         <div className="col-lg">
           <div className="container-fluid container-md mb-2 mt-2 px-0">
             <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1 mt-3 mt-md-4 mt-lg-0">
@@ -185,19 +185,13 @@ const DiaryEntries = () => {
                   const entry = findEntryForDay(day);
                   return (
                     <div className="col-4 col-md-3 col-lg-2 p-1" key={day}>
-                      <Link
-                        to={entry ? `/DiaryEntry/${entry.entryID}` : "#"}
-                        className="text-decoration-none"
+                      <div
+                        className="days  border rounded bg-light shadow-sm p-2"
+                        style={{ height: "80px" }}
                       >
-                        <div
-                          className="days border rounded bg-light shadow-sm p-2"
-                          style={{ height: "80px" }}
-                        >
-                          <div className="d-flex align-items-center gap-1">
-                            <p className="m-0 text-start text-secondary">
-                              {day}
-                            </p>
-                            {/* {entry ? (
+                        <div className="d-flex align-items-center gap-1">
+                          <p className="m-0 text-start text-secondary">{day}</p>
+                          {/* {entry ? (
                               <img
                                 src={
                                   entry.privacy === "public"
@@ -208,12 +202,34 @@ const DiaryEntries = () => {
                                 style={{ width: "15px", height: "15px" }}
                               />
                             ) : null} */}
-                          </div>
-                          <h5 className="m-0 mt-2 mt-md-0 text-secondary">
-                            {entry ? `${entries.length} Entries` : "No Entry"}
-                          </h5>
                         </div>
-                      </Link>
+                        {entry ? (
+                          <Dropdown className="position-relative primaryButton mx-2 p-0 d-flex align-items-center justify-content-center">
+                            <Dropdown.Toggle
+                              className="d-flex align-items-center justify-content-center text-light border-0"
+                              variant="transparent"
+                            >
+                              <h5 className="m-0">{entries.length} Entries</h5>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu
+                              className="position-absolute"
+                              style={{ left: "50%" }}
+                            >
+                              <Dropdown.Item href="#">Action</Dropdown.Item>
+                              <Dropdown.Item href="#">
+                                Another action
+                              </Dropdown.Item>
+                              <Dropdown.Item href="#">
+                                Something else here
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        ) : (
+                          <h5 className="m-0 mt-2 mt-md-0 text-secondary fw-normal">
+                            No Entry
+                          </h5>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

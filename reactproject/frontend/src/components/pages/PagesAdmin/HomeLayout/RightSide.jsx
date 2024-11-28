@@ -131,9 +131,9 @@ const Center = () => {
                       <p className="text-secondary m-0">
                         {reportedUser.firstName} {reportedUser.lastName}
                       </p>
-                      <h5 className="text-danger m-0">
+                      <p className="text-danger m-0">
                         Reason: {reportedUser.reason}
-                      </h5>
+                      </p>
                       <p className="text-danger m-0">
                         Reported {reportedUser.count} times
                       </p>

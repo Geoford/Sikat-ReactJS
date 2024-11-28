@@ -198,8 +198,8 @@ const Profile = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "250px",
-                height: "250px",
+                width: "clamp(13rem, 17dvw, 20rem)",
+                height: "clamp(13rem, 17dvw, 20rem)",
                 borderRadius: "50%",
               }}
             >
@@ -228,16 +228,19 @@ const Profile = () => {
                     style={{
                       position: "absolute",
                       borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
+                      width: "clamp(2.5rem, 10dvw, 3rem)",
+                      height: "clamp(2.5rem, 10dvw, 3rem)",
                       border: "3px solid #ffff",
-                      right: "15px",
+                      right: "clamp(.3rem, 5dvw, -0rem)",
                       bottom: "15px",
                     }}
                   >
                     <i
                       className={isHovered ? "bx bxs-camera" : "bx bx-camera"}
-                      style={{ color: "var(--primary)", fontSize: "2rem" }}
+                      style={{
+                        color: "var(--primary)",
+                        fontSize: "clamp(1.5rem, 5dvw, 1.8rem)",
+                      }}
                     ></i>
                     <input
                       type="file"
@@ -250,7 +253,7 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-md-start">
+          <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-lg-start">
             <div
               className="w-100 position-relative rounded border-bottom p-4"
               style={{ height: "80%" }}
@@ -258,7 +261,7 @@ const Profile = () => {
               <h3 className="m-0">
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
               </h3>
-              <p className="m-0 text-secondary">
+              <p className="m-0 mt-1 text-secondary">
                 {user.followersCount} Followers - {user.followingCount}{" "}
                 Following
               </p>
