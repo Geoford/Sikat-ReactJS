@@ -736,7 +736,7 @@ app.post(
     });
   },
   (req, res) => {
-    const { title, description, userID } = req.body;
+    const { title, description, userID, anonimity = "public" } = req.body;
     const file = req.file;
 
     if (!title || !description || !userID) {
@@ -751,10 +751,10 @@ app.post(
     }
 
     const query = `
-      INSERT INTO diary_entries (title, description, userID, diary_image)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO diary_entries (title, description, userID, diary_image, anonimity)
+      VALUES (?, ?, ?, ?, ?)
     `;
-    const values = [title, description, userID, diary_image];
+    const values = [title, description, userID, diary_image, anonimity];
 
     db.query(query, values, (err, result) => {
       if (err) {
