@@ -183,7 +183,7 @@ const AlarmingWords = () => {
                   </td>
                   <td>
                     {editingWordID === word.wordID ? (
-                      <div className="d-flex justify-content-evenly">
+                      <div className="d-flex justify-content-evenly ">
                         <Button
                           variant="success"
                           onClick={() => handleSaveEdit(word.wordID)}
@@ -198,8 +198,8 @@ const AlarmingWords = () => {
                         </Button>
                       </div>
                     ) : (
-                      <div className="d-flex justify-content-center">
-                        <Button
+                      <div className="d-flex justify-content-center gap-1">
+                        <button
                           className="primaryButton"
                           onClick={() =>
                             handleEditAlarmingWord(
@@ -209,7 +209,7 @@ const AlarmingWords = () => {
                           }
                         >
                           Edit
-                        </Button>
+                        </button>
                         <Button
                           variant="danger"
                           onClick={() => handleDeleteAlarmingWord(word.wordID)}

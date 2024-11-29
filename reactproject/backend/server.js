@@ -468,66 +468,66 @@ app.put("/EditProfile/:userID", (req, res) => {
   }
 });
 
-const alarmingWords = [
-  "abuse",
-  "violence",
-  "harassment",
-  "threat",
-  "danger",
-  "bullying",
-  "assault",
-  "self-harm",
-  "suicide",
-  "exploitation",
-  "kidnapping",
-  "rape",
-  "murder",
-  "terrorism",
-  "corruption",
-  "abduction",
-  "stalking",
-  "drugs",
-  "addiction",
-  "mental illness",
-  "torture",
-  "domestic violence",
-  "rape culture",
-  "weapon",
-  "hostage",
-  "hate crime",
-  "extortion",
-  "fraud",
-  "trafficking",
-  "radicalization",
-  "criminal activity",
-  "harassment",
-  "discrimination",
-  "sexual assault",
-  "bribery",
-  "defamation",
-  "violence against women",
-  "pedophilia",
-  "domestic abuse",
-  "bullying at school",
-  "cyberbullying",
-  "illegal trafficking",
-  "hate speech",
-  "radical hate",
-  "vigilantism",
-  "trolling",
-  "disappearance",
-  "anxiety",
-  "depression",
-  "addiction to substances",
-  "terroristic threat",
-  "child abuse",
-  "intimidation",
-  "exploitation of minors",
-];
+// const alarmingWords = [
+//   "abuse",
+//   "violence",
+//   "harassment",
+//   "threat",
+//   "danger",
+//   "bullying",
+//   "assault",
+//   "self-harm",
+//   "suicide",
+//   "exploitation",
+//   "kidnapping",
+//   "rape",
+//   "murder",
+//   "terrorism",
+//   "corruption",
+//   "abduction",
+//   "stalking",
+//   "drugs",
+//   "addiction",
+//   "mental illness",
+//   "torture",
+//   "domestic violence",
+//   "rape culture",
+//   "weapon",
+//   "hostage",
+//   "hate crime",
+//   "extortion",
+//   "fraud",
+//   "trafficking",
+//   "radicalization",
+//   "criminal activity",
+//   "harassment",
+//   "discrimination",
+//   "sexual assault",
+//   "bribery",
+//   "defamation",
+//   "violence against women",
+//   "pedophilia",
+//   "domestic abuse",
+//   "bullying at school",
+//   "cyberbullying",
+//   "illegal trafficking",
+//   "hate speech",
+//   "radical hate",
+//   "vigilantism",
+//   "trolling",
+//   "disappearance",
+//   "anxiety",
+//   "depression",
+//   "addiction to substances",
+//   "terroristic threat",
+//   "child abuse",
+//   "intimidation",
+//   "exploitation of minors",
+// ];
 
-const containsAlarmingWords = (text) => {
-  return alarmingWords.some((word) => text.toLowerCase().includes(word));
-};
+// const containsAlarmingWords = (text) => {
+//   return alarmingWords.some((word) => text.toLowerCase().includes(word));
+// };
 
 app.post(
   "/entry",
@@ -565,150 +565,162 @@ app.post(
       diary_image = `/uploads/${file.filename}`;
     }
 
-    const hasAlarmingWords =
-      containsAlarmingWords(title) || containsAlarmingWords(description);
-
-    const query = `
-      INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects, containsAlarmingWords)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [
-      title,
-      description,
-      userID,
-      visibility,
-      anonimity,
-      diary_image,
-      subjects,
-      hasAlarmingWords ? 1 : 0,
-    ];
-
-    db.query(query, values, (err, result) => {
+    db.query("SELECT alarmingWord FROM alarming_words", (err, rows) => {
       if (err) {
-        console.error("Error inserting diary entry:", err);
+        console.error("Error fetching alarming words:", err);
         return res
           .status(500)
-          .send({ message: "Failed to save diary entry. Please try again." });
+          .send({ message: "Error fetching alarming words." });
       }
 
-      const subjectArray =
-        subjects && subjects.trim() !== ""
-          ? subjects.split(",").map((subject) => subject.trim())
-          : [];
+      const alarmingWords = rows.map((row) => row.alarmingWord.toLowerCase());
+      const containsAlarmingWords = (text) => {
+        return alarmingWords.some((word) => text.toLowerCase().includes(word));
+      };
 
-      subjectArray.forEach((subject) => {
-        const updateQuery = `
-          UPDATE filter_subjects
-          SET count = count + 1
-          WHERE subject = ?
-        `;
+      const hasAlarmingWords =
+        containsAlarmingWords(title) || containsAlarmingWords(description);
 
-        db.query(updateQuery, [subject], (updateError) => {
-          if (updateError) {
-            console.error(
-              `Error updating count for subject '${subject}':`,
-              updateError
-            );
-          }
-        });
-      });
+      const query = `
+        INSERT INTO diary_entries (title, description, userID, visibility, anonimity, diary_image, subjects, containsAlarmingWords)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      const values = [
+        title,
+        description,
+        userID,
+        visibility,
+        anonimity,
+        diary_image,
+        subjects,
+        hasAlarmingWords ? 1 : 0,
+      ];
 
-      // Fetch the user's firstName to include in the notification message
-      const userQuery = `
-      SELECT u.firstName, up.profile_image 
-      FROM user_table u
-      JOIN user_profiles up ON u.userID = up.userID
-      WHERE u.userID = ?
-    `;
-      db.query(userQuery, [userID], (userError, userResults) => {
-        if (userError) {
-          console.error(
-            "Error fetching user firstName and profile_image:",
-            userError
-          );
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Error inserting diary entry:", err);
           return res
             .status(500)
-            .send({ message: "Failed to fetch user details." });
+            .send({ message: "Failed to save diary entry. Please try again." });
         }
 
-        const userFirstName = userResults[0]?.firstName || "User";
-        const userProfileImage =
-          userResults[0]?.profile_image || "/default-profile.png";
+        const subjectArray =
+          subjects && subjects.trim() !== ""
+            ? subjects.split(",").map((subject) => subject.trim())
+            : [];
 
-        if (hasAlarmingWords) {
-          const notificationMessage = `A diary entry containing alarming words has been posted by user ${userFirstName}`;
-
-          const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
-
-          db.query(adminQuery, (adminError, adminResults) => {
-            if (adminError) {
-              console.error("Error fetching admin users:", adminError);
-              return res
-                .status(500)
-                .send({ message: "Failed to notify admins." });
-            }
-
-            if (adminResults.length > 0) {
-              adminResults.forEach((admin) => {
-                const notificationQuery = `
-                INSERT INTO notifications (userID, actorID, message, entryID, type, profile_image)
-                VALUES (?, ?, ?, ?, ?, ?)
-              `;
-                db.query(
-                  notificationQuery,
-                  [
-                    admin.userID,
-                    userID,
-                    notificationMessage,
-                    result.insertId,
-                    "alarming_entry",
-                    userProfileImage, // Include profile image in the notification
-                  ],
-                  (notificationError) => {
-                    if (notificationError) {
-                      console.error(
-                        "Error inserting admin notification:",
-                        notificationError
-                      );
-                      return res.status(500).send({
-                        message: "Failed to save admin notification.",
-                      });
-                    }
-
-                    pusher
-                      .trigger(
-                        `notifications-${admin.userID}`,
-                        "new-notification",
-                        {
-                          actorID: userID,
-                          message: notificationMessage,
-                          entryID: result.insertId,
-                          type: "alarming_entry",
-                          profile_image: userProfileImage, // Include profile image in the notification
-                          timestamp: new Date().toISOString(),
-                        }
-                      )
-                      .then(() => {
-                        console.log(
-                          `Admin ${admin.userID} notified of alarming diary entry.`
-                        );
-                      })
-                      .catch((err) => {
-                        console.error(
-                          "Error sending admin Pusher notification:",
-                          err
-                        );
-                      });
-                  }
-                );
-              });
+        subjectArray.forEach((subject) => {
+          const updateQuery = `
+            UPDATE filter_subjects
+            SET count = count + 1
+            WHERE subject = ?
+          `;
+          db.query(updateQuery, [subject], (updateError) => {
+            if (updateError) {
+              console.error(
+                `Error updating count for subject '${subject}':`,
+                updateError
+              );
             }
           });
-        }
+        });
 
-        res.status(200).send({
-          message: "Entry added successfully!",
-          containsAlarmingWords: hasAlarmingWords,
+        const userQuery = `
+        SELECT u.firstName, up.profile_image 
+        FROM user_table u
+        JOIN user_profiles up ON u.userID = up.userID
+        WHERE u.userID = ?
+      `;
+        db.query(userQuery, [userID], (userError, userResults) => {
+          if (userError) {
+            console.error(
+              "Error fetching user firstName and profile_image:",
+              userError
+            );
+            return res
+              .status(500)
+              .send({ message: "Failed to fetch user details." });
+          }
+
+          const userFirstName = userResults[0]?.firstName || "User";
+          const userProfileImage =
+            userResults[0]?.profile_image || "/default-profile.png";
+
+          if (hasAlarmingWords) {
+            const notificationMessage = `A diary entry containing alarming words has been posted by user ${userFirstName}`;
+
+            const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
+
+            db.query(adminQuery, (adminError, adminResults) => {
+              if (adminError) {
+                console.error("Error fetching admin users:", adminError);
+                return res
+                  .status(500)
+                  .send({ message: "Failed to notify admins." });
+              }
+
+              if (adminResults.length > 0) {
+                adminResults.forEach((admin) => {
+                  const notificationQuery = `
+                  INSERT INTO notifications (userID, actorID, message, entryID, type, profile_image)
+                  VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                  db.query(
+                    notificationQuery,
+                    [
+                      admin.userID,
+                      userID,
+                      notificationMessage,
+                      result.insertId,
+                      "alarming_entry",
+                      userProfileImage, // Include profile image in the notification
+                    ],
+                    (notificationError) => {
+                      if (notificationError) {
+                        console.error(
+                          "Error inserting admin notification:",
+                          notificationError
+                        );
+                        return res.status(500).send({
+                          message: "Failed to save admin notification.",
+                        });
+                      }
+
+                      pusher
+                        .trigger(
+                          `notifications-${admin.userID}`,
+                          "new-notification",
+                          {
+                            actorID: userID,
+                            message: notificationMessage,
+                            entryID: result.insertId,
+                            type: "alarming_entry",
+                            profile_image: userProfileImage, // Include profile image in the notification
+                            timestamp: new Date().toISOString(),
+                          }
+                        )
+                        .then(() => {
+                          console.log(
+                            `Admin ${admin.userID} notified of alarming diary entry.`
+                          );
+                        })
+                        .catch((err) => {
+                          console.error(
+                            "Error sending admin Pusher notification:",
+                            err
+                          );
+                        });
+                    }
+                  );
+                });
+              }
+            });
+          }
+
+          res.status(200).send({
+            message: "Entry added successfully!",
+            containsAlarmingWords: hasAlarmingWords,
+          });
         });
       });
     });
@@ -2258,7 +2270,6 @@ app.delete("/reportUsers/:reportingUserID", (req, res) => {
   );
 });
 
-// Fetch all alarming words
 app.get("/alarmingWords", (req, res) => {
   db.query("SELECT * FROM alarming_words", (error, rows) => {
     if (error) {
@@ -2270,7 +2281,6 @@ app.get("/alarmingWords", (req, res) => {
   });
 });
 
-// Add a new alarming word
 app.post("/alarmingWords", (req, res) => {
   const { alarmingWord } = req.body;
   if (alarmingWord) {
@@ -2291,7 +2301,6 @@ app.post("/alarmingWords", (req, res) => {
   }
 });
 
-// Edit an alarming word
 app.put("/alarmingWordEdit/:wordID", (req, res) => {
   const { wordID } = req.params;
   const { alarmingWord } = req.body;
@@ -2313,7 +2322,6 @@ app.put("/alarmingWordEdit/:wordID", (req, res) => {
   }
 });
 
-// Delete an alarming word
 app.delete("/alarmingWordDelete/:wordID", (req, res) => {
   const { wordID } = req.params;
   if (wordID) {

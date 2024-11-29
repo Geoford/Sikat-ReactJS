@@ -219,18 +219,17 @@ const FAQ = () => {
                       </>
                     ) : (
                       <>
-                        <Button
-                          className="px-3"
-                          variant="outline-success"
+                        <button
+                          className="px-3 primaryButton"
                           onClick={() =>
                             handleEditFaq(faq.faqID, faq.question, faq.answer)
                           }
                         >
                           <p className="m-0">Edit</p>
-                        </Button>
+                        </button>
                         <Button
                           className="px-3"
-                          variant="outline-danger"
+                          variant="danger"
                           onClick={() => handleDeleteFaq(faq.faqID)}
                         >
                           <p className="m-0">Delete</p>
