@@ -5,8 +5,6 @@ import privateIcon from "../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
-import AdminLeftSide from "./PagesAdmin/HomeLayout/LeftSide";
-import LeftSide from "./PagesUser/HomeLayout/LeftSide";
 import LeftSideLayout from "../Layouts/Home/LeftSideLayout";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -110,9 +108,8 @@ const DiaryEntries = () => {
     }
   }, [selectedMonth, selectedYear]);
 
-  const findEntryForDay = (day) => {
-    return entries.find((entry) => {
-      // Extract the date part from created_at (YYYY-MM-DD)
+  const findEntriesForDay = (day) => {
+    return entries.filter((entry) => {
       const entryDateParts = entry.created_at.split(" ")[0]; // Get the date part
       const entryDate = new Date(entryDateParts); // Create a Date object from the date part
 
@@ -141,14 +138,13 @@ const DiaryEntries = () => {
           className="col-lg-3 d-none d-lg-block"
           style={{ position: "sticky", top: "75px", height: "100%" }}
         >
-          {/* {user.isAdmin ? <AdminLeftSide /> : <LeftSide />} */}
           <LeftSideLayout></LeftSideLayout>
         </div>
         <div className="col-lg">
           <div className="container-fluid container-md mb-2 mt-2 px-0">
             <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1 mt-3 mt-md-4 mt-lg-0">
               <div className="ps-1">
-                <h4 className="m-0 text-light fw-bolder">Diary Entires for</h4>
+                <h4 className="m-0 text-light fw-bolder">Diary Entries for</h4>
               </div>
               <div>
                 <select
@@ -182,20 +178,17 @@ const DiaryEntries = () => {
             {daysInMonth.length > 0 && (
               <div className="row">
                 {daysInMonth.map((day) => {
-                  const entry = findEntryForDay(day);
+                  const entriesForDay = findEntriesForDay(day);
                   return (
                     <div className="col-4 col-md-3 col-lg-2 p-1" key={day}>
                       <div
-                        className="days  border rounded bg-light shadow-sm p-2"
+                        className="days border rounded bg-light shadow-sm p-2"
                         style={{ height: "80px" }}
                       >
-                        <div
-                          className="d-flex align-items-center gap-1"
-                          style={{}}
-                        >
+                        <div className="d-flex align-items-center gap-1">
                           <p className="m-0 text-start text-secondary">{day}</p>
                         </div>
-                        {entry ? (
+                        {entriesForDay.length > 0 ? (
                           <Dropdown className="position-relative primaryButton mx-2 mt-2 mt-lg-0 p-0 d-flex align-items-center justify-content-center">
                             <Dropdown.Toggle
                               className="w-100 d-flex align-items-center justify-content-center text-light border-0 p-0"
@@ -203,18 +196,22 @@ const DiaryEntries = () => {
                               bsPrefix
                             >
                               <p className="m-0 my-1 mx-1 text-wrap">
-                                {entries.length} Entries
+                                {entriesForDay.length}{" "}
+                                {entriesForDay.length > 1 ? "Entries" : "Entry"}
                               </p>
-                              <i class="bx bx-chevron-down d-none d-md-block  "></i>
+
+                              <i className="bx bx-chevron-down d-none d-md-block"></i>
                             </Dropdown.Toggle>
-                            <Dropdown.Menu
-                              className="text-center"
-                              style={{ left: "" }}
-                            >
-                              <Dropdown.Item className="btn btn-light" href="#">
-                                <p className="m-0">
-                                  Diary Title{" "}
-                                  {entry ? (
+                            <Dropdown.Menu className="text-center">
+                              {entriesForDay.map((entry) => (
+                                <Dropdown.Item
+                                  as={Link}
+                                  to={`/Admin/DiaryEntry/${entry.entryID}`}
+                                  key={entry.entryID}
+                                  className="btn btn-light text-decoration-none"
+                                >
+                                  <p className="m-0">
+                                    {entry.title}{" "}
                                     <img
                                       src={
                                         entry.privacy === "public"
@@ -224,41 +221,9 @@ const DiaryEntries = () => {
                                       alt={entry.privacy}
                                       style={{ width: "13px", height: "13px" }}
                                     />
-                                  ) : null}
-                                </p>
-                              </Dropdown.Item>
-                              <Dropdown.Item className="btn btn-light" href="#">
-                                <p className="m-0">
-                                  Diary Title{" "}
-                                  {entry ? (
-                                    <img
-                                      src={
-                                        entry.privacy === "public"
-                                          ? publicIcon
-                                          : privateIcon
-                                      }
-                                      alt={entry.privacy}
-                                      style={{ width: "13px", height: "13px" }}
-                                    />
-                                  ) : null}
-                                </p>
-                              </Dropdown.Item>
-                              <Dropdown.Item className="btn btn-light" href="#">
-                                <p className="m-0">
-                                  Diary Title{" "}
-                                  {entry ? (
-                                    <img
-                                      src={
-                                        entry.privacy === "public"
-                                          ? publicIcon
-                                          : privateIcon
-                                      }
-                                      alt={entry.privacy}
-                                      style={{ width: "13px", height: "13px" }}
-                                    />
-                                  ) : null}
-                                </p>
-                              </Dropdown.Item>
+                                  </p>
+                                </Dropdown.Item>
+                              ))}
                             </Dropdown.Menu>
                           </Dropdown>
                         ) : (
