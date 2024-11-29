@@ -117,9 +117,17 @@ const FAQ = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <h4 className="border-bottom border-2 pb-2">
-        Frequently Ask Question(FAQ)
-      </h4>
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+        <h4 className="border-2 m-0"> Frequently Ask Questions (FAQs)</h4>
+        <div className="informationToolTip">
+          <i class="bx bx-info-circle"></i>
+          <p className="infToolTip rounded p-2 m-0">
+            Frequently Asked Questions (FAQs) provide users with quick answers
+            to common inquiries, helping them navigate the platform and resolve
+            issues efficiently.
+          </p>
+        </div>
+      </div>
 
       {/* Search Filter */}
       <div className="my-3">

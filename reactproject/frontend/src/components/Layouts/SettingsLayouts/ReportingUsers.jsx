@@ -114,7 +114,17 @@ const ReportingUsers = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
-      <h4 className="border-bottom border-2 pb-2">Reporting Users</h4>
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+        <h4 className="border-2 m-0">Reporting Users</h4>
+        <div className="informationToolTip">
+          <i class="bx bx-info-circle"></i>
+          <p className="infToolTip rounded p-2 m-0">
+            Reporting users allows individuals to notify admins about
+            inappropriate or harmful behavior, ensuring a safer and more
+            respectful environment for everyone.
+          </p>
+        </div>
+      </div>
 
       {/* Search Filter */}
       <InputGroup className="mb-3">

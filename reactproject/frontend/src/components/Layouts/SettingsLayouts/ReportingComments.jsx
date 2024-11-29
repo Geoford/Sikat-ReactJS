@@ -120,7 +120,17 @@ const ReportingComments = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#ffff" }}>
-      <h4 className="border-bottom border-2 pb-2">Report Comments</h4>
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+        <h4 className="border-2 m-0">Report Comments</h4>
+        <div className="informationToolTip">
+          <i class="bx bx-info-circle"></i>
+          <p className="infToolTip rounded p-2 m-0">
+            Reporting comments allows users to alert admins about hurtful or
+            disturbing comments, helping to protect victims and address
+            inappropriate behavior from the reported user.
+          </p>
+        </div>
+      </div>
 
       {/* Search Filter */}
       <div className="my-3">

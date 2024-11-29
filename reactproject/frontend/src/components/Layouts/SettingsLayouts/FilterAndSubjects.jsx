@@ -122,12 +122,9 @@ const FilterAndSubjects = () => {
         <div className="informationToolTip">
           <i class="bx bx-info-circle"></i>
           <p className="infToolTip rounded p-2 m-0">
-            Filters and subjects are used for organizing diary entries
-            effectively. They help categorize entries, ensuring they are
-            well-structured and easy to navigate. Additionally, these feature
-            can help users avoid encountering potentially triggering content by
-            allowing them to filter out specific topics that might be sensitive
-            to them.
+            Filters and subjects help organize diary entries, making them easy
+            to navigate and allowing users to avoid potentially sensitive or
+            triggering topics.
           </p>
         </div>
       </div>
