@@ -1,28 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
+import axios from "axios";
 
 const FrequentlyAskQuestion = () => {
+  const [faqs, setFaqs] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/faqs")
+      .then((response) => {
+        setFaqs(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching FAQs:", error);
+      });
+  }, []); // Empty dependency array means this effect runs once when the component mounts
+
   return (
     <div>
       <Accordion>
-        <Accordion.Item eventKey="0">
-          <Accordion.Header>Question 1</Accordion.Header>
-          <Accordion.Body>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="1">
-          <Accordion.Header>Question 2</Accordion.Header>
-          <Accordion.Body>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat
-          </Accordion.Body>
-        </Accordion.Item>
+        {faqs.map((faq, index) => (
+          <Accordion.Item key={faq.faqID} eventKey={String(index)}>
+            <Accordion.Header>{faq.question}</Accordion.Header>
+            <Accordion.Body>{faq.answer}</Accordion.Body>
+          </Accordion.Item>
+        ))}
       </Accordion>
     </div>
   );
