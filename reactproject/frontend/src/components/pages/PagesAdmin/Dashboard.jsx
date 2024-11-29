@@ -123,14 +123,14 @@ const Dashboard = () => {
   return (
     <MainLayout ActiveTab="Dashboard">
       <div
-        className="container mt-4 rounded p-3 px-5 shadow-sm mb-5"
+        className="container mt-4 rounded p-3 shadow-sm mb-5"
         style={{
-          width: "clamp(30rem, 90vw, 90rem)",
+          width: "clamp(20rem, 90vw, 90rem)",
           minHeight: "65vh",
           backgroundColor: "#ffff",
         }}
       >
-        <h1 className="border-bottom">Dashboard</h1>
+        <h2 className="border-bottom border-2 pb-2">Dashboard</h2>
         <div>
           <div class="col-md mb-2">
             <div class="form-floating">
@@ -143,57 +143,63 @@ const Dashboard = () => {
               <label for="floatingSelectGrid">Viewing Data By</label>
             </div>
           </div>
-          <div className="row">
-            <div className="col-md-3 d-flex flex-column gap-2">
-              <div
-                className="border rounded shadow-sm overflow-hidden"
-                style={{ height: "10rem" }}
-              >
+          <div className="row gy-2">
+            <div className="col-lg-3 d-flex flex-column gap-2">
+              <div className="row gap-2 px-2">
                 <div
-                  className="text-light d-flex justify-content-center align-items-center gap-2"
-                  style={{
-                    background:
-                      "linear-gradient(to right, var(--primary_light), var(--primary))",
-                    height: "4rem",
-                  }}
+                  className="col-md col-lg-12 border rounded shadow-sm overflow-hidden px-0"
+                  style={{ height: "10rem" }}
                 >
-                  <i class="bx bx-edit bx-md"></i>
-                  <p className="m-0">New Diary Entries</p>
-                </div>
-                <div
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  style={{ height: "5rem" }}
-                >
-                  <h1 className="m-0">{recentEntries.length}</h1>
-                  <div className="d-flex align-items-center text-danger">
-                    <h5 className="m-0 mt-2">-69%</h5>
-                    <i class="mt-2 bx bx-chevrons-down bx-sm"></i>
+                  <div
+                    className="text-light d-flex justify-content-center align-items-center gap-2"
+                    style={{
+                      background:
+                        "linear-gradient(to right, var(--primary_light), var(--primary))",
+                      height: "4rem",
+                    }}
+                  >
+                    <h2 className="m-0">
+                      <i class="bx bx-edit"></i>
+                    </h2>
+                    <p className="m-0">New Diary Entries</p>
+                  </div>
+                  <div
+                    className="d-flex align-items-center justify-content-center gap-2"
+                    style={{ height: "5rem" }}
+                  >
+                    <h1 className="m-0">{recentEntries.length}</h1>
+                    <div className="d-flex align-items-center text-danger">
+                      <h5 className="m-0 mt-2">-69%</h5>
+                      <i class="mt-2 bx bx-chevrons-down bx-sm"></i>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div
-                className="border rounded shadow-sm overflow-hidden"
-                style={{ height: "10rem" }}
-              >
                 <div
-                  className="text-light d-flex justify-content-center align-items-center gap-2"
-                  style={{
-                    background:
-                      "linear-gradient(to right, var(--secondary), var(--secondary_hover))",
-                    height: "4rem",
-                  }}
+                  className="col border rounded shadow-sm overflow-hidden px-0"
+                  style={{ height: "10rem" }}
                 >
-                  <i class="bx bx-user-plus bx-md"></i>
-                  <p className="m-0">New Users</p>
-                </div>
-                <div
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  style={{ height: "5rem" }}
-                >
-                  <h1 className="m-0">00</h1>
-                  <div className="d-flex align-items-center text-success ">
-                    <h5 className="m-0 mt-2">+69%</h5>
-                    <i class="bx bx-chevrons-up mt-2 bx-sm"></i>
+                  <div
+                    className="text-light d-flex justify-content-center align-items-center gap-2"
+                    style={{
+                      background:
+                        "linear-gradient(to right, var(--secondary), var(--secondary_hover))",
+                      height: "4rem",
+                    }}
+                  >
+                    <h2 className="m-0">
+                      <i class="bx bx-user-plus"></i>
+                    </h2>
+                    <p className="m-0">New Users</p>
+                  </div>
+                  <div
+                    className="d-flex align-items-center justify-content-center gap-2"
+                    style={{ height: "5rem" }}
+                  >
+                    <h1 className="m-0">00</h1>
+                    <div className="d-flex align-items-center text-success ">
+                      <h5 className="m-0 mt-2">+69%</h5>
+                      <i class="bx bx-chevrons-up mt-2 bx-sm"></i>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -206,37 +212,57 @@ const Dashboard = () => {
                 <table className="table rounded">
                   <thead>
                     <tr>
-                      <th scope="col">Author</th>
-                      <th scope="col">Diary Title</th>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Engagements</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">
+                        <h5 className="m-0">Author</h5>
+                      </th>
+                      <th scope="col">
+                        <h5 className="m-0">Diary Title</h5>
+                      </th>
+                      <th scope="col">
+                        <h5 className="m-0">Subject</h5>
+                      </th>
+                      <th scope="col">
+                        <h5 className="m-0">Engagements</h5>
+                      </th>
+                      <th scope="col">
+                        <h5 className="m-0">Action</h5>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {entries.length > 0 ? (
                       entries.map((entry, index) => (
                         <tr key={`${entry.userID}-${index}`}>
-                          <th scope="row">
-                            {entry.firstName} {entry.lastName}
+                          <th className="text-center align-middle" scope="row">
+                            <p className="m-0">
+                              {entry.firstName} {entry.lastName}
+                            </p>
                           </th>
-                          <td>
-                            {entry.title.length > 15
-                              ? entry.title.substring(0, 15) + "…"
-                              : entry.title}
+                          <td className="text-center align-middle">
+                            <p className="m-0">
+                              {entry.title.length > 15
+                                ? entry.title.substring(0, 15) + "…"
+                                : entry.title}
+                            </p>
                           </td>
-                          <td>{entry.subjects}</td>
-                          <td>0</td>
-                          <td>
+                          <td className="text-center align-middle">
+                            <p className="m-0">{entry.subjects}</p>
+                          </td>
+                          <td className="text-center align-middle">
+                            <p className="m-0">0</p>
+                          </td>
+                          <td className="text-center align-middle">
                             <Link to={`/DiaryEntry/${entry.entryID}`}>
-                              <button className="primaryButton">Visit</button>
+                              <button className="primaryButton">
+                                <p className="m-0">Visit</p>
+                              </button>
                             </Link>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="7" className="text-center">
+                        <td colSpan="7" className="text-center text-secondary">
                           No diary entry available.
                         </td>
                       </tr>
@@ -253,14 +279,14 @@ const Dashboard = () => {
                       active={index + 1 === currentPage}
                       onClick={() => handlePageChange(index + 1)}
                     >
-                      {index + 1}
+                      <p className="m-0">{index + 1}</p>
                     </Pagination.Item>
                   ))}
                 </Pagination>
               </div>
             </div>
           </div>
-          <div className="row gap-2">
+          <div className="row gap-2 px-2">
             <div
               className="col-md border rounded shadow-sm overflow-hidden p-0"
               style={{
@@ -274,7 +300,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <h1 className="m-0">{flags.length}</h1>
+                <h2 className="m-0">{flags.length}</h2>
 
                 <p className="m-0">Flagged Diaries</p>
               </div>
@@ -292,7 +318,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <h1 className="m-0">{reportedComments.length}</h1>
+                <h2 className="m-0">{reportedComments.length}</h2>
 
                 <p className="m-0">Reported Comments</p>
               </div>
@@ -310,7 +336,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <h1 className="m-0">00</h1>
+                <h2 className="m-0">00</h2>
 
                 <p className="m-0">Reported Users</p>
               </div>

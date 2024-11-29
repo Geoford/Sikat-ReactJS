@@ -21,6 +21,9 @@ input::placeholder,
 .form-control {
   font-size: clamp(0.7rem, 2dvw, 0.9rem) !important;
 }
+h2 {
+  font-size: clamp(1.5rem, 2.5dvw, 2rem) !important;
+}
 h4,
 select {
   font-size: clamp(1.2rem, 1.7dvw, 1.4rem) !important;
@@ -613,6 +616,31 @@ input.form-control:focus {
   transform: translateX(-50%);
 }
 .navIcons:hover .navToolTip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.informationToolTip {
+  color: gray;
+  transition: 0.2s;
+}
+.informationToolTip:hover {
+  color: black;
+}
+.infToolTip {
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  color: #ffff;
+  background-color: rgb(38, 38, 38, 0.75);
+  width: clamp(17rem, 50dvw, 50rem);
+  left: 50%;
+  top: 2rem;
+  transform: translateX(-50%);
+  transition: 0.2s;
+}
+.informationToolTip:hover .infToolTip {
   visibility: visible;
   opacity: 1;
 }

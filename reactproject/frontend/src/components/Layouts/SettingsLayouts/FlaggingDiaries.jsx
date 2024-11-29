@@ -124,7 +124,20 @@ const FlaggingDiaries = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <h4 className="border-bottom border-2 pb-2">Flagging Diaries</h4>
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+        <h4 className="border-2 m-0">Flagging Diaries</h4>
+        <div className="informationToolTip">
+          <i class="bx bx-info-circle"></i>
+          <p className="infToolTip rounded p-2 m-0">
+            Filters and subjects are used for organizing diary entries
+            effectively. They help categorize entries, ensuring they are
+            well-structured and easy to navigate. Additionally, these feature
+            can help users avoid encountering potentially triggering content by
+            allowing them to filter out specific topics that might be sensitive
+            to them.
+          </p>
+        </div>
+      </div>
 
       {/* Search Filter */}
       <div className="my-3">
@@ -145,8 +158,12 @@ const FlaggingDiaries = () => {
         <Table striped bordered hover responsive>
           <thead>
             <tr>
-              <th className="w-25">Flagging Option</th>
-              <th>Actions</th>
+              <th className="w-50">
+                <h5 className="m-0">Flagging Option</h5>
+              </th>
+              <th className="">
+                <h5 className="m-0 mb-2 mb-md-0">Actions</h5>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -172,14 +189,14 @@ const FlaggingDiaries = () => {
                         variant="primary"
                         onClick={() => handleSaveEdit(option.flagID)}
                       >
-                        Save
-                      </Button>{" "}
+                        <p className="m-0">Save</p>
+                      </Button>
                       <Button
                         className="px-3"
                         variant="secondary"
                         onClick={() => setEditingOption(null)}
                       >
-                        Cancel
+                        <p className="m-0">Cancel</p>
                       </Button>
                     </>
                   ) : (
@@ -190,13 +207,13 @@ const FlaggingDiaries = () => {
                           handleEditOption(option.flagID, option.reason)
                         }
                       >
-                        Edit
-                      </button>{" "}
+                        <p className="m-0">Edit</p>
+                      </button>
                       <Button
                         variant="danger"
                         onClick={() => handleDeleteOption(option.flagID)}
                       >
-                        Remove
+                        <p className="m-0">Remove</p>
                       </Button>
                     </>
                   )}
@@ -215,7 +232,7 @@ const FlaggingDiaries = () => {
             active={page + 1 === currentPage}
             onClick={() => handlePageChange(page + 1)}
           >
-            {page + 1}
+            <p className="m-0">{page + 1}</p>
           </Pagination.Item>
         ))}
       </Pagination>
@@ -236,7 +253,7 @@ const FlaggingDiaries = () => {
         </FloatingLabel>
         <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
-            Add
+            <p className="m-0">Add</p>
           </button>
         </div>
       </form>

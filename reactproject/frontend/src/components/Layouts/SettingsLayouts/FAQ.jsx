@@ -7,7 +7,7 @@ import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 
-const FilterAndSubjects = () => {
+const FAQ = () => {
   const [filters, setFilters] = useState([]);
   const [filteredFilters, setFilteredFilters] = useState([]);
   const [newFilter, setNewFilter] = useState("");
@@ -117,20 +117,10 @@ const FilterAndSubjects = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
-        <h4 className="border-2 m-0">Filter and Subjects</h4>
-        <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
-          <p className="infToolTip rounded p-2 m-0">
-            Filters and subjects are used for organizing diary entries
-            effectively. They help categorize entries, ensuring they are
-            well-structured and easy to navigate. Additionally, these feature
-            can help users avoid encountering potentially triggering content by
-            allowing them to filter out specific topics that might be sensitive
-            to them.
-          </p>
-        </div>
-      </div>
+      <h4 className="border-bottom border-2 pb-2">
+        Frequently Ask Question(FAQ)
+      </h4>
+
       {/* Search Filter */}
       <div className="my-3">
         <InputGroup className="mb-3">
@@ -150,8 +140,11 @@ const FilterAndSubjects = () => {
         <Table striped bordered hover responsive>
           <thead>
             <tr>
+              <th className="w-25">
+                <h5 className="m-0">Question</h5>
+              </th>
               <th className="w-50">
-                <h5 className="m-0">Filter</h5>
+                <h5 className="m-0">Answer</h5>
               </th>
               <th>
                 <h5 className="m-0">Actions</h5>
@@ -161,6 +154,18 @@ const FilterAndSubjects = () => {
           <tbody>
             {currentItems.map((filter) => (
               <tr key={filter.subjectID}>
+                <td className="">
+                  {editingFilter === filter.subjectID ? (
+                    <Form.Control
+                      className="bg-transparent text-center border-0 border-bottom border-2"
+                      type="text"
+                      value={editedFilter}
+                      onChange={(e) => setEditedFilter(e.target.value)}
+                    />
+                  ) : (
+                    <p className="m-0 mt-2">{filter.subject}</p>
+                  )}
+                </td>
                 <td className="">
                   {editingFilter === filter.subjectID ? (
                     <Form.Control
@@ -228,15 +233,30 @@ const FilterAndSubjects = () => {
         ))}
       </Pagination>
       <Form onSubmit={handleAddFilter} className="mt-4">
-        <h5>Add New Filter</h5>
-        <FloatingLabel controlId="newFilter" label="New Filter">
-          <Form.Control
-            type="text"
-            placeholder="Enter new filter"
-            value={newFilter}
-            onChange={(e) => setNewFilter(e.target.value)}
-          />
-        </FloatingLabel>
+        <h5>Add New Question and Answer</h5>
+        <div className="row gap-1 px-3">
+          <div className="col-md p-0">
+            <FloatingLabel controlId="newQuestion" label="Question">
+              <Form.Control
+                type="text"
+                placeholder=""
+                value={newFilter}
+                onChange={(e) => setNewFilter(e.target.value)}
+              />
+            </FloatingLabel>
+          </div>
+          <div className="col-md p-0">
+            <FloatingLabel controlId="newAnswer" label="Answer">
+              <Form.Control
+                type="text"
+                placeholder=""
+                value={newFilter}
+                onChange={(e) => setNewFilter(e.target.value)}
+              />
+            </FloatingLabel>
+          </div>
+        </div>
+
         <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
             <p className="m-0">Add</p>
@@ -247,4 +267,4 @@ const FilterAndSubjects = () => {
   );
 };
 
-export default FilterAndSubjects;
+export default FAQ;

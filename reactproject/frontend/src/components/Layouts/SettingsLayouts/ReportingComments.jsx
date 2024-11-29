@@ -142,8 +142,12 @@ const ReportingComments = () => {
         <Table striped bordered hover responsive>
           <thead>
             <tr>
-              <th className="w-25">Reason</th>
-              <th>Actions</th>
+              <th className="w-50">
+                <h5 className="m-0">Reason</h5>
+              </th>
+              <th>
+                <h5 className="m-0">Actions</h5>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -169,14 +173,14 @@ const ReportingComments = () => {
                         variant="primary"
                         onClick={() => handleSaveEdit(comment.reportCommentID)}
                       >
-                        Save
+                        <p className="m-0">Save</p>
                       </Button>
                       <Button
                         className="px-3"
                         variant="secondary"
                         onClick={() => setEditingReportComments(null)}
                       >
-                        Cancel
+                        <p className="m-0">Cancel</p>
                       </Button>
                     </>
                   ) : (
@@ -190,15 +194,15 @@ const ReportingComments = () => {
                           )
                         }
                       >
-                        Edit
-                      </button>{" "}
+                        <p className="m-0">Edit</p>
+                      </button>
                       <Button
                         variant="danger"
                         onClick={() =>
                           handleDeleteReportComment(comment.reportCommentID)
                         }
                       >
-                        Remove
+                        <p className="m-0">Remove</p>
                       </Button>
                     </>
                   )}
@@ -217,7 +221,7 @@ const ReportingComments = () => {
             active={page + 1 === currentPage}
             onClick={() => handlePageChange(page + 1)}
           >
-            {page + 1}
+            <p className="m-0">{page + 1}</p>
           </Pagination.Item>
         ))}
       </Pagination>
@@ -239,7 +243,7 @@ const ReportingComments = () => {
         </FloatingLabel>
         <div className="mt-3 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
-            Add
+            <p className="m-0">Add</p>
           </button>
         </div>
       </form>

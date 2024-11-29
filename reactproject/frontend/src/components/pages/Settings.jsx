@@ -12,6 +12,8 @@ import ReportingUsers from "../Layouts/SettingsLayouts/ReportingUsers";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDiaries";
+import AlarmingWords from "../Layouts/SettingsLayouts/AlarmingWords";
+import FAQ from "../Layouts/SettingsLayouts/FAQ";
 
 const Settings = () => {
   const { userID } = useParams();
@@ -82,7 +84,7 @@ const Settings = () => {
                 </Nav.Item>
                 {user && user.isAdmin ? (
                   <>
-                    <h5 className="m-0 text-start my-2">Managing Diaries</h5>
+                    <h5 className="m-0 text-start my-2">Manage System</h5>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="filter">
                         <h5 className="m-0">
@@ -115,6 +117,25 @@ const Settings = () => {
                         <p className="m-0">Reporting Users</p>
                       </Nav.Link>
                     </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link
+                        className={navItemStyle}
+                        eventKey="alarmingWords"
+                      >
+                        <h5 className="m-0">
+                          <i class="bx bx-error"></i>
+                        </h5>
+                        <p className="m-0">Alarming Words</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="FAQ">
+                        <h5 className="m-0">
+                          <i class="bx bx-question-mark"></i>
+                        </h5>
+                        <p className="m-0">Frequently Ask Questions(FAQ)</p>
+                      </Nav.Link>
+                    </Nav.Item>
                   </>
                 ) : (
                   ""
@@ -140,6 +161,12 @@ const Settings = () => {
                 </Tab.Pane>
                 <Tab.Pane eventKey="repUser">
                   <ReportingUsers></ReportingUsers>
+                </Tab.Pane>
+                <Tab.Pane eventKey="alarmingWords">
+                  <AlarmingWords></AlarmingWords>
+                </Tab.Pane>
+                <Tab.Pane eventKey="FAQ">
+                  <FAQ></FAQ>
                 </Tab.Pane>
               </Tab.Content>
             </Col>

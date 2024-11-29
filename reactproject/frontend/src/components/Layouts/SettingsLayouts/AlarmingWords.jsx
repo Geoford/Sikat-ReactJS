@@ -7,7 +7,7 @@ import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 
-const FilterAndSubjects = () => {
+const AlarmingWords = () => {
   const [filters, setFilters] = useState([]);
   const [filteredFilters, setFilteredFilters] = useState([]);
   const [newFilter, setNewFilter] = useState("");
@@ -117,20 +117,8 @@ const FilterAndSubjects = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
-        <h4 className="border-2 m-0">Filter and Subjects</h4>
-        <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
-          <p className="infToolTip rounded p-2 m-0">
-            Filters and subjects are used for organizing diary entries
-            effectively. They help categorize entries, ensuring they are
-            well-structured and easy to navigate. Additionally, these feature
-            can help users avoid encountering potentially triggering content by
-            allowing them to filter out specific topics that might be sensitive
-            to them.
-          </p>
-        </div>
-      </div>
+      <h4 className="border-bottom border-2 pb-2">Alarming Words</h4>
+
       {/* Search Filter */}
       <div className="my-3">
         <InputGroup className="mb-3">
@@ -151,7 +139,7 @@ const FilterAndSubjects = () => {
           <thead>
             <tr>
               <th className="w-50">
-                <h5 className="m-0">Filter</h5>
+                <h5 className="m-0">Words</h5>
               </th>
               <th>
                 <h5 className="m-0">Actions</h5>
@@ -228,11 +216,11 @@ const FilterAndSubjects = () => {
         ))}
       </Pagination>
       <Form onSubmit={handleAddFilter} className="mt-4">
-        <h5>Add New Filter</h5>
-        <FloatingLabel controlId="newFilter" label="New Filter">
+        <h5>Add New Word</h5>
+        <FloatingLabel controlId="newWord" label="New Word">
           <Form.Control
             type="text"
-            placeholder="Enter new filter"
+            placeholder=""
             value={newFilter}
             onChange={(e) => setNewFilter(e.target.value)}
           />
@@ -247,4 +235,4 @@ const FilterAndSubjects = () => {
   );
 };
 
-export default FilterAndSubjects;
+export default AlarmingWords;
