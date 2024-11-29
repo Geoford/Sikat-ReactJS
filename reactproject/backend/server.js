@@ -2257,6 +2257,157 @@ app.delete("/reportUsers/:reportingUserID", (req, res) => {
     }
   );
 });
+
+// Fetch all alarming words
+app.get("/alarmingWords", (req, res) => {
+  db.query("SELECT * FROM alarming_words", (error, rows) => {
+    if (error) {
+      console.error("Error fetching alarming words:", error);
+      res.status(500).send("Error fetching alarming words");
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+// Add a new alarming word
+app.post("/alarmingWords", (req, res) => {
+  const { alarmingWord } = req.body;
+  if (alarmingWord) {
+    db.query(
+      "INSERT INTO alarming_words (alarmingWord) VALUES (?)",
+      [alarmingWord],
+      (error, result) => {
+        if (error) {
+          console.error("Error adding alarming word:", error);
+          res.status(500).send("Error adding alarming word");
+        } else {
+          res.json({ wordID: result.insertId, alarmingWord, count: 0 });
+        }
+      }
+    );
+  } else {
+    res.status(400).send("Alarming word is required");
+  }
+});
+
+// Edit an alarming word
+app.put("/alarmingWordEdit/:wordID", (req, res) => {
+  const { wordID } = req.params;
+  const { alarmingWord } = req.body;
+  if (alarmingWord) {
+    db.query(
+      "UPDATE alarming_words SET alarmingWord = ? WHERE wordID = ?",
+      [alarmingWord, wordID],
+      (error) => {
+        if (error) {
+          console.error("Error updating alarming word:", error);
+          res.status(500).send("Error updating alarming word");
+        } else {
+          res.send("Alarming word updated successfully");
+        }
+      }
+    );
+  } else {
+    res.status(400).send("Alarming word is required");
+  }
+});
+
+// Delete an alarming word
+app.delete("/alarmingWordDelete/:wordID", (req, res) => {
+  const { wordID } = req.params;
+  if (wordID) {
+    db.query(
+      "DELETE FROM alarming_words WHERE wordID = ?",
+      [wordID],
+      (error) => {
+        if (error) {
+          console.error("Error deleting alarming word:", error);
+          res.status(500).send("Error deleting alarming word");
+        } else {
+          res.send("Alarming word deleted successfully");
+        }
+      }
+    );
+  } else {
+    res.status(400).send("Word ID is required");
+  }
+});
+
+app.get("/faqs", (req, res) => {
+  const query = "SELECT * FROM faq ORDER BY faqID DESC";
+  db.query(query, (err, results) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Failed to fetch FAQs", error: err });
+    }
+    res.json(results);
+  });
+});
+
+app.post("/faqs", (req, res) => {
+  const { question, answer } = req.body;
+
+  if (!question || !answer) {
+    return res
+      .status(400)
+      .json({ message: "Question and answer are required" });
+  }
+
+  const query = "INSERT INTO faq (question, answer) VALUES (?, ?)";
+  db.query(query, [question, answer], (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to add FAQ", error: err });
+    }
+    res
+      .status(201)
+      .json({ message: "FAQ added successfully", faqID: result.insertId });
+  });
+});
+
+app.put("/faqedit/:faqID", (req, res) => {
+  const faqID = req.params.faqID;
+  const { question, answer } = req.body;
+
+  if (!question || !answer) {
+    return res
+      .status(400)
+      .json({ message: "Question and answer are required" });
+  }
+
+  const query = "UPDATE faq SET question = ?, answer = ? WHERE faqID = ?";
+  db.query(query, [question, answer, faqID], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Failed to update FAQ", error: err });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "FAQ not found" });
+    }
+    res.json({ message: "FAQ updated successfully" });
+  });
+});
+
+// 4. Delete an FAQ
+app.delete("/faq/:faqID", (req, res) => {
+  const faqID = req.params.faqID;
+
+  const query = "DELETE FROM faq WHERE faqID = ?";
+  db.query(query, [faqID], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Failed to delete FAQ", error: err });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "FAQ not found" });
+    }
+    res.json({ message: "FAQ deleted successfully" });
+  });
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

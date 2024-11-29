@@ -8,84 +8,94 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 
 const FAQ = () => {
-  const [filters, setFilters] = useState([]);
-  const [filteredFilters, setFilteredFilters] = useState([]);
-  const [newFilter, setNewFilter] = useState("");
-  const [editingFilter, setEditingFilter] = useState(null);
-  const [editedFilter, setEditedFilter] = useState("");
+  const [faqs, setFaqs] = useState([]); // Rename filters to faqs
+  const [filteredFaqs, setFilteredFaqs] = useState([]); // Rename filteredFilters to filteredFaqs
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
+  const [editingFaq, setEditingFaq] = useState(null); // Rename editingFilter to editingFaq
+  const [editedQuestion, setEditedQuestion] = useState("");
+  const [editedAnswer, setEditedAnswer] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   useEffect(() => {
-    const fetchFilters = async () => {
+    const fetchFaqs = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/filters");
-        setFilters(response.data);
-        setFilteredFilters(response.data);
+        const response = await axios.get("http://localhost:8081/faqs"); // Rename filters endpoint to faqs
+        setFaqs(response.data);
+        setFilteredFaqs(response.data); // Rename setFilteredFilters to setFilteredFaqs
       } catch (error) {
-        console.error("Error fetching filters:", error);
+        console.error("Error fetching faqs:", error); // Rename filters to faqs
       }
     };
-    fetchFilters();
+    fetchFaqs();
   }, []);
 
-  const handleAddFilter = async (e) => {
+  const handleAddFaq = async (e) => {
+    // Rename handleAddFilter to handleAddFaq
     e.preventDefault();
-    if (newFilter.trim()) {
+    if (newQuestion.trim() && newAnswer.trim()) {
       try {
-        const newFilterObj = { subject: newFilter, count: 0 };
-        await axios.post("http://localhost:8081/filters", newFilterObj);
-        setFilters([...filters, newFilterObj]);
-        setFilteredFilters([...filteredFilters, newFilterObj]);
-        setNewFilter("");
+        const newFaqObj = {
+          // Rename filterObj to faqObj
+          question: newQuestion,
+          answer: newAnswer,
+          count: 0,
+        };
+        await axios.post("http://localhost:8081/faqs", newFaqObj); // Change endpoint to /faqs
+        setFaqs([...faqs, newFaqObj]); // Rename filters to faqs
+        setFilteredFaqs([...filteredFaqs, newFaqObj]); // Rename filteredFilters to filteredFaqs
+        setNewQuestion("");
+        setNewAnswer("");
       } catch (error) {
-        console.error("Error adding filter:", error);
+        console.error("Error adding faq:", error); // Rename filter to faq
       }
     }
   };
 
-  const handleEditFilter = (subjectID, currentSubject) => {
-    setEditingFilter(subjectID);
-    setEditedFilter(currentSubject);
+  const handleEditFaq = (faqID, currentQuestion, currentAnswer) => {
+    // Rename handleEditFilter to handleEditFaq
+    setEditingFaq(faqID); // Rename editingFilter to editingFaq
+    setEditedQuestion(currentQuestion);
+    setEditedAnswer(currentAnswer);
   };
 
-  const handleSaveEdit = async (subjectID) => {
-    if (editedFilter.trim()) {
+  const handleSaveEdit = async (faqID) => {
+    if (editedQuestion.trim() && editedAnswer.trim()) {
       try {
-        await axios.put(`http://localhost:8081/filterEdit/${subjectID}`, {
-          subject: editedFilter,
+        await axios.put(`http://localhost:8081/faqEdit/${faqID}`, {
+          question: editedQuestion,
+          answer: editedAnswer,
         });
-        const updatedFilters = filters.map((filter) =>
-          filter.subjectID === subjectID
-            ? { ...filter, subject: editedFilter }
-            : filter
+        const updatedFaqs = faqs.map((faq) =>
+          faq.faqID === faqID
+            ? { ...faq, question: editedQuestion, answer: editedAnswer }
+            : faq
         );
-        setFilters(updatedFilters);
-        setFilteredFilters(updatedFilters);
-        setEditingFilter(null);
+        setFaqs(updatedFaqs);
+        setFilteredFaqs(updatedFaqs);
+        setEditingFaq(null);
         alert("Edited Successfully.");
       } catch (error) {
-        console.error("Error editing filter:", error);
+        console.error("Error editing faq:", error);
       }
     }
   };
 
-  const handleDeleteFilter = async (subjectID) => {
+  const handleDeleteFaq = async (faqID) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this filter?"
+      "Are you sure you want to delete this FAQ?"
     );
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:8081/filterDelete/${subjectID}`);
-        const updatedFilters = filters.filter(
-          (filter) => filter.subjectID !== subjectID
-        );
-        setFilters(updatedFilters);
-        setFilteredFilters(updatedFilters);
+        await axios.delete(`http://localhost:8081/faqDelete/${faqID}`);
+        const updatedFaqs = faqs.filter((faq) => faq.faqID !== faqID);
+        setFaqs(updatedFaqs);
+        setFilteredFaqs(updatedFaqs);
         alert("Successfully deleted.");
       } catch (error) {
-        console.error("Error deleting filter:", error);
+        console.error("Error deleting faq:", error);
       }
     }
   };
@@ -93,16 +103,18 @@ const FAQ = () => {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    const filtered = filters.filter((filter) =>
-      filter.subject.toLowerCase().includes(query)
+    const filtered = faqs.filter(
+      (faq) =>
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query)
     );
-    setFilteredFilters(filtered);
-    setCurrentPage(1); // Reset to the first page
+    setFilteredFaqs(filtered);
+    setCurrentPage(1);
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredFilters.length / itemsPerPage);
-  const currentItems = filteredFilters.slice(
+  const totalPages = Math.ceil(filteredFaqs.length / itemsPerPage);
+  const currentItems = filteredFaqs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -118,9 +130,9 @@ const FAQ = () => {
       }}
     >
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
-        <h4 className="border-2 m-0"> Frequently Ask Questions (FAQs)</h4>
+        <h4 className="border-2 m-0">Frequently Asked Questions (FAQs)</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <i className="bx bx-info-circle"></i>
           <p className="infToolTip rounded p-2 m-0">
             Frequently Asked Questions (FAQs) provide users with quick answers
             to common inquiries, helping them navigate the platform and resolve
@@ -128,22 +140,20 @@ const FAQ = () => {
           </p>
         </div>
       </div>
-
-      {/* Search Filter */}
+      {/* Search FAQ */} {/* Rename searchFilters to searchFaq */}
       <div className="my-3">
         <InputGroup className="mb-3">
           <InputGroup.Text id="basic-addon1">
-            <i class="bx bx-search"></i>
+            <i className="bx bx-search"></i>
           </InputGroup.Text>
           <Form.Control
             type="text"
-            placeholder="Search Filters..."
+            placeholder="Search FAQs..." // Change Filters to FAQs
             value={searchQuery}
             onChange={handleSearch}
           />
         </InputGroup>
       </div>
-
       <div className="overflow-y-scroll" style={{ height: "30vh" }}>
         <Table striped bordered hover responsive>
           <thead>
@@ -160,117 +170,132 @@ const FAQ = () => {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((filter) => (
-              <tr key={filter.subjectID}>
-                <td className="">
-                  {editingFilter === filter.subjectID ? (
-                    <Form.Control
-                      className="bg-transparent text-center border-0 border-bottom border-2"
-                      type="text"
-                      value={editedFilter}
-                      onChange={(e) => setEditedFilter(e.target.value)}
-                    />
-                  ) : (
-                    <p className="m-0 mt-2">{filter.subject}</p>
-                  )}
-                </td>
-                <td className="">
-                  {editingFilter === filter.subjectID ? (
-                    <Form.Control
-                      className="bg-transparent text-center border-0 border-bottom border-2"
-                      type="text"
-                      value={editedFilter}
-                      onChange={(e) => setEditedFilter(e.target.value)}
-                    />
-                  ) : (
-                    <p className="m-0 mt-2">{filter.subject}</p>
-                  )}
-                </td>
-                <td className="d-flex justify-content-center gap-1">
-                  {editingFilter === filter.subjectID ? (
-                    <>
-                      <Button
-                        className="px-3"
-                        variant="primary"
-                        onClick={() => handleSaveEdit(filter.subjectID)}
-                      >
-                        <p className="m-0">Save</p>
-                      </Button>
-                      <Button
-                        className="px-3"
-                        variant="secondary"
-                        onClick={() => setEditingFilter(null)}
-                      >
-                        <p className="m-0">Cancel</p>
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="primaryButton"
-                        onClick={() =>
-                          handleEditFilter(filter.subjectID, filter.subject)
-                        }
-                      >
-                        <p className="m-0">Edit</p>
-                      </button>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleDeleteFilter(filter.subjectID)}
-                      >
-                        <p className="m-0">Remove</p>
-                      </Button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {currentItems.map(
+              (
+                faq // Rename filter to faq
+              ) => (
+                <tr key={faq.faqID}>
+                  <td className="">
+                    {editingFaq === faq.faqID ? ( // Rename editingFilter to editingFaq
+                      <Form.Control
+                        className="bg-transparent text-center border-0 border-bottom border-2"
+                        type="text"
+                        value={editedQuestion}
+                        onChange={(e) => setEditedQuestion(e.target.value)}
+                      />
+                    ) : (
+                      <p className="m-0 mt-2">{faq.question}</p> // Rename filter to faq
+                    )}
+                  </td>
+                  <td className="">
+                    {editingFaq === faq.faqID ? ( // Rename editingFilter to editingFaq
+                      <Form.Control
+                        className="bg-transparent text-center border-0 border-bottom border-2"
+                        type="text"
+                        value={editedAnswer}
+                        onChange={(e) => setEditedAnswer(e.target.value)}
+                      />
+                    ) : (
+                      <p className="m-0 mt-2">{faq.answer}</p> // Rename filter to faq
+                    )}
+                  </td>
+                  <td className="d-flex justify-content-center gap-1">
+                    {editingFaq === faq.faqID ? (
+                      <>
+                        <Button
+                          className="px-3"
+                          variant="primary"
+                          onClick={() => handleSaveEdit(faq.faqID)}
+                        >
+                          <p className="m-0">Save</p>
+                        </Button>
+                        <Button
+                          className="px-3"
+                          variant="secondary"
+                          onClick={() => setEditingFaq(null)}
+                        >
+                          <p className="m-0">Cancel</p>
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          className="px-3"
+                          variant="outline-success"
+                          onClick={() =>
+                            handleEditFaq(faq.faqID, faq.question, faq.answer)
+                          }
+                        >
+                          <p className="m-0">Edit</p>
+                        </Button>
+                        <Button
+                          className="px-3"
+                          variant="outline-danger"
+                          onClick={() => handleDeleteFaq(faq.faqID)}
+                        >
+                          <p className="m-0">Delete</p>
+                        </Button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </Table>
       </div>
-
-      <Pagination className="mt-3 justify-content-center">
-        {[...Array(totalPages).keys()].map((page) => (
-          <Pagination.Item
-            key={page + 1}
-            active={page + 1 === currentPage}
-            onClick={() => handlePageChange(page + 1)}
+      <div className="d-flex justify-content-between align-items-center gap-2">
+        <div className="d-flex gap-2">
+          <FloatingLabel
+            controlId="floatingInput"
+            label="Question"
+            className="mb-3"
           >
-            <p className="m-0">{page + 1}</p>
-          </Pagination.Item>
-        ))}
-      </Pagination>
-      <Form onSubmit={handleAddFilter} className="mt-4">
-        <h5>Add New Question and Answer</h5>
-        <div className="row gap-1 px-3">
-          <div className="col-md p-0">
-            <FloatingLabel controlId="newQuestion" label="Question">
-              <Form.Control
-                type="text"
-                placeholder=""
-                value={newFilter}
-                onChange={(e) => setNewFilter(e.target.value)}
-              />
-            </FloatingLabel>
-          </div>
-          <div className="col-md p-0">
-            <FloatingLabel controlId="newAnswer" label="Answer">
-              <Form.Control
-                type="text"
-                placeholder=""
-                value={newFilter}
-                onChange={(e) => setNewFilter(e.target.value)}
-              />
-            </FloatingLabel>
-          </div>
+            <Form.Control
+              type="text"
+              placeholder="Enter question"
+              value={newQuestion}
+              onChange={(e) => setNewQuestion(e.target.value)}
+            />
+          </FloatingLabel>
+
+          <FloatingLabel
+            controlId="floatingPassword"
+            label="Answer"
+            className="mb-3"
+          >
+            <Form.Control
+              as="textarea"
+              placeholder="Answer to the question"
+              value={newAnswer}
+              onChange={(e) => setNewAnswer(e.target.value)}
+            />
+          </FloatingLabel>
         </div>
 
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
-            <p className="m-0">Add</p>
-          </button>
+        <div className="d-flex justify-content-end">
+          <Button
+            className="px-4 w-auto"
+            variant="success"
+            onClick={handleAddFaq} // Rename handleAddFilter to handleAddFaq
+          >
+            <p className="m-0">Add FAQ</p>
+          </Button>
         </div>
-      </Form>
+      </div>
+      <div className="mt-3">
+        <Pagination className="justify-content-center">
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
     </div>
   );
 };

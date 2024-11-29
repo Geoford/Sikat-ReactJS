@@ -87,7 +87,6 @@ const CaseDetails = () => {
           </div>
 
           <form className="text-start" style={{ minHeight: "20rem" }}>
-            {/* Victim Details */}
             <h5 className="mt-3">Victim Details</h5>
             <div className="px-2 d-flex flex-column gap-2">
               <div className="row">

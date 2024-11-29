@@ -278,7 +278,7 @@ const CenterLayout = () => {
       </div>
       <div className="d-flex justify-content-end">
         {user.isAdmin ? (
-          <p></p>
+          <FilterButton onFilterChange={handleFilterChange} />
         ) : (
           <FilterButton onFilterChange={handleFilterChange} />
         )}
