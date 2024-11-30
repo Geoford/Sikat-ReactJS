@@ -14,7 +14,7 @@ const FrequentlyAskQuestion = () => {
       .catch((error) => {
         console.error("Error fetching FAQs:", error);
       });
-  }, []); // Empty dependency array means this effect runs once when the component mounts
+  }, []);
 
   return (
     <div>
