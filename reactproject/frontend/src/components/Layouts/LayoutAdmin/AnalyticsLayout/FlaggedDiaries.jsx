@@ -160,10 +160,7 @@ const FlaggedDiaries = ({ flags }) => {
   };
 
   return (
-    <div
-      className="d-flex flex-column justify-content-between"
-      style={{ height: "70vh" }}
-    >
+    <div className="d-flex flex-column">
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -181,15 +178,29 @@ const FlaggedDiaries = ({ flags }) => {
         </div>
         {/* Users Table */}
         <div
-          className="custom-scrollbar overflow-y-scroll"
-          style={{ height: "40vh" }}
+          className="custom-scrollbar"
+          style={{
+            height: "40vh",
+            overflowY: "auto",
+          }}
         >
-          <table className="table rounded overflow-hidden">
-            <thead>
+          <table className="table rounded">
+            <thead
+              style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#f8f9fa",
+                zIndex: 2,
+              }}
+            >
               <tr>
-                <th scope="col">Student No.</th>
-                <th scope="col">Author</th>
-                <th scope="col">
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Student No.</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Author</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
                   <select
                     className="form-select border-0 p-0 fw-bold text-center"
                     style={{
@@ -198,7 +209,7 @@ const FlaggedDiaries = ({ flags }) => {
                     value={selectedSubject}
                     onChange={(e) => setSelectedSubject(e.target.value)}
                   >
-                    <option value="All">Subject/Alarming Word</option>
+                    <option value="All">Reason</option>
                     {alarmingWords.map((word, index) => (
                       <option
                         key={index}
@@ -210,26 +221,44 @@ const FlaggedDiaries = ({ flags }) => {
                     ))}
                   </select>
                 </th>
-                <th scope="col">Diary Title</th>
-                <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Diary Title</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Status</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Action</h5>
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
                 currentUsers.map((flag) => (
                   <tr key={flag.userID}>
-                    <th scope="row">{flag.studentNumber}</th>
-                    <td>{`${flag.firstName} ${flag.lastName}`}</td>
-                    <td>{flag.reasons}</td>
-                    <td>{flag.title}</td>
-                    <td className="text-success">Pending</td>
-                    <td>
+                    <th scope="row" className="text-center align-middle">
+                      <p className="m-0">{flag.studentNumber}</p>
+                    </th>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{`${flag.firstName} ${flag.lastName}`}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{flag.reasons}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{flag.title}</p>
+                    </td>
+                    <td className="text-success text-center align-middle">
+                      <p className="m-0">Pending</p>
+                    </td>
+                    <td className="text-center align-middle">
                       <button className="secondaryButton">
-                        Mark as Reviewed
+                        <p className="m-0">Mark as Reviewed</p>
                       </button>
                       <Link to={`/DiaryEntry/${flag.entryID}`}>
-                        <button className="primaryButton">Check</button>
+                        <button className="primaryButton">
+                          <p className="m-0">Check</p>
+                        </button>
                       </Link>
                     </td>
                   </tr>
@@ -260,7 +289,7 @@ const FlaggedDiaries = ({ flags }) => {
             </div>
           </div>
           {/* Pagination */}
-          <Pagination className="d-flex justify-content-center mt-4">
+          <Pagination className="d-flex justify-content-center align-items-center mt-4">
             <Pagination.First onClick={() => handlePageChange(1)} />
             <Pagination.Prev
               onClick={handlePrevClick}
@@ -272,7 +301,7 @@ const FlaggedDiaries = ({ flags }) => {
                 active={index + 1 === currentPage}
                 onClick={() => handlePageChange(index + 1)}
               >
-                {index + 1}
+                <p className="m-0">{index + 1}</p>
               </Pagination.Item>
             ))}
             <Pagination.Next
@@ -285,15 +314,18 @@ const FlaggedDiaries = ({ flags }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex  mt-4">
+      <div className="d-flex gap-1 mt-2">
         <button
-          className="primaryButton me-2"
+          className="primaryButton py-1 py-md-2 px-3 "
           onClick={() => downloadData("html")}
         >
-          Download as HTML
+          <p className="m-0">Download as HTML</p>
         </button>
-        <button className="primaryButton" onClick={() => downloadData("excel")}>
-          Download as Excel
+        <button
+          className="primaryButton py-1 py-md-2 px-3 "
+          onClick={() => downloadData("excel")}
+        >
+          <p className="m-0">Download as Excel</p>
         </button>
       </div>
     </div>

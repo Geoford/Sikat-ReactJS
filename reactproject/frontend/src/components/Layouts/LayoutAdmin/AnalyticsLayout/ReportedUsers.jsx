@@ -170,10 +170,7 @@ const ReportedUsers = ({ reportedComments }) => {
   };
 
   return (
-    <div
-      className="d-flex flex-column justify-content-between"
-      style={{ height: "70vh" }}
-    >
+    <div className="d-flex flex-column">
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -191,15 +188,29 @@ const ReportedUsers = ({ reportedComments }) => {
         </div>
         {/* Users Table */}
         <div
-          className="custom-scrollbar overflow-y-scroll"
-          style={{ height: "40vh" }}
+          className="custom-scrollbar"
+          style={{
+            height: "40vh",
+            overflowY: "auto",
+          }}
         >
-          <table className="table rounded overflow-hidden">
-            <thead>
+          <table className="table rounded">
+            <thead
+              style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#f8f9fa",
+                zIndex: 2,
+              }}
+            >
               <tr>
-                <th scope="col">Student No.</th>
-                <th scope="col">Name</th>
-                <th scope="col">
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Student No.</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Name</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
                   <select
                     value={selectedSubject}
                     onChange={(e) => setSelectedSubject(e.target.value)}
@@ -220,26 +231,44 @@ const ReportedUsers = ({ reportedComments }) => {
                     ))}
                   </select>
                 </th>
-                <th scope="col">Reported Comment</th>
-                <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Reported Comment</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Status</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Action</h5>
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
                 currentUsers.map((reportedComment) => (
                   <tr key={reportedComment.userID}>
-                    <th scope="row">{reportedComment.studentNumber}</th>
-                    <td>{`${reportedComment.firstName} ${reportedComment.lastName}`}</td>
-                    <td>{reportedComment.reason}</td>
-                    <td>{reportedComment.text}</td>
-                    <td className="text-success">Pending</td>
-                    <td>
+                    <th scope="row" className="text-center align-middle">
+                      <p className="m-0">{reportedComment.studentNumber}</p>
+                    </th>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{`${reportedComment.firstName} ${reportedComment.lastName}`}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{reportedComment.reason}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{reportedComment.text}</p>
+                    </td>
+                    <td className="text-success text-center align-middle">
+                      <p className="m-0">Pending</p>
+                    </td>
+                    <td className="text-center align-middle">
                       <button className="secondaryButton">
-                        Mark as Reviewed
+                        <p className="m-0">Mark as Reviewed</p>
                       </button>
                       <Link to={`/DiaryEntry/${reportedComment.entryID}`}>
-                        <button className="primaryButton">Check</button>
+                        <button className="primaryButton">
+                          <p className="m-0">Check</p>
+                        </button>
                       </Link>
                     </td>
                   </tr>
@@ -270,7 +299,7 @@ const ReportedUsers = ({ reportedComments }) => {
             </div>
           </div>
           {/* Pagination */}
-          <Pagination className="d-flex justify-content-center mt-4">
+          <Pagination className="d-flex justify-content-center align-items-center mt-4">
             <Pagination.First onClick={() => handlePageChange(1)} />
             <Pagination.Prev
               onClick={handlePrevClick}
@@ -282,7 +311,7 @@ const ReportedUsers = ({ reportedComments }) => {
                 active={index + 1 === currentPage}
                 onClick={() => handlePageChange(index + 1)}
               >
-                {index + 1}
+                <p className="m-0">{index + 1}</p>
               </Pagination.Item>
             ))}
             <Pagination.Next
@@ -295,15 +324,18 @@ const ReportedUsers = ({ reportedComments }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex  mt-4">
+      <div className="d-flex gap-1 mt-2">
         <button
-          className="primaryButton me-2"
+          className="primaryButton py-1 py-md-2 px-3 "
           onClick={() => downloadData("html")}
         >
-          Download as HTML
+          <p className="m-0">Download as HTML</p>
         </button>
-        <button className="primaryButton" onClick={() => downloadData("excel")}>
-          Download as Excel
+        <button
+          className="primaryButton py-1 py-md-2 px-3 "
+          onClick={() => downloadData("excel")}
+        >
+          <p className="m-0">Download as Excel</p>
         </button>
       </div>
     </div>

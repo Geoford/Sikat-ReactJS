@@ -573,6 +573,10 @@ input.form-control:focus {
   color: #ffffff !important; /* Color for selected items */
   background-color: var(--primary) !important;
 }
+.custom-nav .nav-link.active p {
+  transition: 0.3s !important;
+  display: block !important;
+}
 /* FOR MINI TOOLTIPS */
 .MiniToolTip {
   cursor: pointer;

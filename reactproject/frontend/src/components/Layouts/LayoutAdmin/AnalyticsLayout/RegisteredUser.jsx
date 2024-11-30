@@ -175,7 +175,7 @@ const RegisteredUsers = ({ users }) => {
         </div>
         {/* Users Table */}
         <div
-          className="custom-scrollbar overflow-y-scroll"
+          className="custom-scrollbar"
           style={{
             height: "40vh",
             overflowY: "auto",
@@ -343,13 +343,13 @@ const RegisteredUsers = ({ users }) => {
       {/* Download Button */}
       <div className="d-flex gap-1 mt-2">
         <button
-          className="primaryButton py-2"
+          className="primaryButton py-1 py-md-2 px-3 "
           onClick={() => downloadData("html")}
         >
           <p className="m-0">Download as HTML</p>
         </button>
         <button
-          className="primaryButton py-1"
+          className="primaryButton py-1 py-md-2 px-3 "
           onClick={() => downloadData("excel")}
         >
           <p className="m-0">Download as Excel</p>
