@@ -1,21 +1,17 @@
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import MainLayout from "../../Layouts/MainLayout";
 import React, { useState, useEffect } from "react";
-import Pagination from "react-bootstrap/Pagination";
-import FlaggedDiaries from "./FlaggedDiaries";
-import RegisteredUser from "./RegisteredUser";
-import ReportedUsers from "./ReportedUsers";
+import Col from "react-bootstrap/Col";
+import Nav from "react-bootstrap/Nav";
+import Row from "react-bootstrap/Row";
+import Tab from "react-bootstrap/Tab";
+import MainLayout from "../../Layouts/MainLayout";
+import RegisteredUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/RegisteredUser";
+import FlaggedDiaries from "../../Layouts/LayoutAdmin/AnalyticsLayout/FlaggedDiaries";
+import ReportedUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedUsers";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
   const [flags, setFlags] = useState([]);
-  const [reportedComments, setreportedComments] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  // const [selectedCourse, setSelectedCourse] = useState("All");
-  // const [selectedYear, setSelectedYear] = useState("All");
-  // const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 4;
+  const [reportedComments, setReportedComments] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -26,7 +22,6 @@ const Analytics = () => {
         }
         const data = await response.json();
         setUsers(data);
-        setFilteredUsers(data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -40,13 +35,12 @@ const Analytics = () => {
       try {
         const response = await fetch(`http://localhost:8081/flagged`);
         if (!response.ok) {
-          throw new Error("Failed to fetch users");
+          throw new Error("Failed to fetch flags");
         }
         const data = await response.json();
         setFlags(data);
-        setFilteredUsers(data); // Initialize filtered users
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching flags:", error);
       }
     };
 
@@ -60,13 +54,12 @@ const Analytics = () => {
           `http://localhost:8081/getReportedComments`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch users");
+          throw new Error("Failed to fetch reported comments");
         }
         const data = await response.json();
-        setreportedComments(data);
-        setFilteredUsers(data);
+        setReportedComments(data);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching reported comments:", error);
       }
     };
 
@@ -78,26 +71,63 @@ const Analytics = () => {
       <div
         className="container mt-4 rounded p-3 shadow-sm mb-5"
         style={{
-          width: "clamp(30rem, 90vw, 90rem)",
-          minHeight: "65vh",
-          backgroundColor: "#ffff",
+          width: "clamp(19rem, 90vw, 90rem)",
+          height: "max-content",
+          backgroundColor: "#fff",
         }}
       >
-        <Tabs
-          defaultActiveKey="RegisteredUser"
-          id="uncontrolled-tab-example"
-          className="mb-3"
-        >
-          <Tab eventKey="RegisteredUser" title="Registered Users">
-            <RegisteredUser users={users} />
-          </Tab>
-          <Tab eventKey="FlaggedDiaries" title="Flagged Diaries">
-            <FlaggedDiaries flags={flags} />
-          </Tab>{" "}
-          <Tab eventKey="ReportedUsers" title="Reported Users">
-            <ReportedUsers reportedComments={reportedComments} />
-          </Tab>
-        </Tabs>
+        <Tab.Container id="left-tabs-example" defaultActiveKey="RegisteredUser">
+          <div className="mb-2">
+            <Nav variant="pills" className="d-flex custom-nav ">
+              <Nav.Item>
+                <Nav.Link
+                  className=" d-flex align-items-center gap-2"
+                  eventKey="RegisteredUser"
+                >
+                  <h5 className="m-0">
+                    <i class="bx bxs-user-detail mt-1"></i>
+                  </h5>
+                  <p className="m-0 d-none d-md-block">Registered Users</p>
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  className=" d-flex align-items-center gap-2"
+                  eventKey="FlaggedDiaries"
+                >
+                  <h5 className="m-0">
+                    <i class="bx bx-message-alt-error mt-1"></i>
+                  </h5>
+                  <p className="m-0 d-none d-md-block">Flagged Diaries</p>
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  className=" d-flex align-items-center gap-2"
+                  eventKey="ReportedUsers"
+                >
+                  <h5 className="m-0">
+                    <i class="bx bx-user-pin mt-1"></i>
+                  </h5>
+                  <p className="m-0 d-none d-md-block">Reported Users</p>
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </div>
+          <div>
+            <Tab.Content>
+              <Tab.Pane eventKey="RegisteredUser">
+                <RegisteredUsers users={users} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="FlaggedDiaries">
+                <FlaggedDiaries flags={flags} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="ReportedUsers">
+                <ReportedUsers reportedComments={reportedComments} />
+              </Tab.Pane>
+            </Tab.Content>
+          </div>
+        </Tab.Container>
       </div>
     </MainLayout>
   );

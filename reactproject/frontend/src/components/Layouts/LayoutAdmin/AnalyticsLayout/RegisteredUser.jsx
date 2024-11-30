@@ -157,10 +157,7 @@ const RegisteredUsers = ({ users }) => {
   };
 
   return (
-    <div
-      className="d-flex flex-column justify-content-between"
-      style={{ height: "70vh" }}
-    >
+    <div className="d-flex flex-column justify-content" style={{ height: "" }}>
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -179,19 +176,39 @@ const RegisteredUsers = ({ users }) => {
         {/* Users Table */}
         <div
           className="custom-scrollbar overflow-y-scroll"
-          style={{ height: "40vh" }}
+          style={{
+            height: "40vh",
+            overflowY: "auto",
+          }}
         >
-          <table className="table rounded overflow-hidden">
-            <thead>
+          <table className="table rounded overfh">
+            <thead
+              style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#f8f9fa",
+                zIndex: 2,
+              }}
+            >
               <tr>
-                <th scope="col">Student No.</th>
-                <th scope="col">Full Name</th>
-                <th scope="col">Sex</th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Student No.</h5>
+                </th>
                 <th scope="col">
+                  <h5 className="m-0 text-center align-middle">Full Name</h5>
+                </th>
+                <th scope="col">
+                  <h5 className="m-0 text-center align-middle">Sex</h5>
+                </th>
+                <th
+                  scope="col"
+                  className="text-center align-middle"
+                  style={{ minWidth: "clamp(9rem, 50dvw, 15dvw)" }}
+                >
                   <select
                     value={selectedCourse}
                     onChange={(e) => setSelectedCourse(e.target.value)}
-                    className="form-select border-0 p-0 ps-3 fw-bold"
+                    className="form-select border-0 p-0 ps-3 fw-bold text-center"
                     style={{
                       maxWidth: "250px",
                     }}
@@ -214,11 +231,15 @@ const RegisteredUsers = ({ users }) => {
                     </option>
                   </select>
                 </th>
-                <th scope="col">
+                <th
+                  scope="col"
+                  className="text-center align-middle"
+                  style={{ minWidth: "clamp(6.5rem, 50dvw, 7dvw)" }}
+                >
                   <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    className="form-select border-0 p-0 px-3 fw-bold"
+                    className="form-select border-0 p-0 px-3 fw-bold text-center"
                     style={{
                       maxWidth: "300px",
                     }}
@@ -230,23 +251,41 @@ const RegisteredUsers = ({ users }) => {
                     <option value="4th">4th</option>
                   </select>
                 </th>
-                <th scope="col">CvSU Email</th>
-                <th scope="col">Profile</th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">CvSU Email</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Profile</h5>
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
                 currentUsers.map((user) => (
                   <tr key={user.userID}>
-                    <th scope="row">{user.studentNumber}</th>
-                    <td>{`${user.firstName} ${user.lastName}`}</td>
-                    <td>{user.sex}</td>
-                    <td>{user.course}</td>
-                    <td>{user.year}</td>
-                    <td>{user.cvsuEmail}</td>
-                    <td>
+                    <th scope="row" className="text-center align-middle">
+                      <p className="m-0">{user.studentNumber}</p>
+                    </th>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{`${user.firstName} ${user.lastName}`}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{user.sex}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{user.course}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{user.year}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">{user.cvsuEmail}</p>
+                    </td>
+                    <td className="text-center align-middle">
                       <Link to={`/Profile/${user.userID}`}>
-                        <button className="primaryButton">Visit</button>
+                        <button className="primaryButton">
+                          <p className="m-0">Visit</p>
+                        </button>
                       </Link>
                     </td>
                   </tr>
@@ -264,7 +303,7 @@ const RegisteredUsers = ({ users }) => {
         <div className="d-flex justify-content-between">
           {/* Statistics */}
           <div className="row mt-2 w-50">
-            <div className="col-lg-2 d-flex flex-column align-items-start">
+            <div className="col-lg-3 d-flex flex-column align-items-start">
               <h5 className="m-0">Total: {filteredUsers.length}</h5>
               <p className="m-0 text-secondary">
                 Female:{" "}
@@ -277,7 +316,7 @@ const RegisteredUsers = ({ users }) => {
             </div>
           </div>
           {/* Pagination */}
-          <Pagination className="d-flex justify-content-center mt-4">
+          <Pagination className="d-flex justify-content-center align-items-center mt-4">
             <Pagination.First onClick={() => handlePageChange(1)} />
             <Pagination.Prev
               onClick={handlePrevClick}
@@ -289,7 +328,7 @@ const RegisteredUsers = ({ users }) => {
                 active={index + 1 === currentPage}
                 onClick={() => handlePageChange(index + 1)}
               >
-                <span>{index + 1}</span>
+                <p className="m-0">{index + 1}</p>
               </Pagination.Item>
             ))}
             <Pagination.Next
@@ -302,15 +341,18 @@ const RegisteredUsers = ({ users }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex  mt-4">
+      <div className="d-flex gap-1 mt-2">
         <button
-          className="primaryButton me-2"
+          className="primaryButton py-2"
           onClick={() => downloadData("html")}
         >
-          Download as HTML
+          <p className="m-0">Download as HTML</p>
         </button>
-        <button className="primaryButton" onClick={() => downloadData("excel")}>
-          Download as Excel
+        <button
+          className="primaryButton py-1"
+          onClick={() => downloadData("excel")}
+        >
+          <p className="m-0">Download as Excel</p>
         </button>
       </div>
     </div>
