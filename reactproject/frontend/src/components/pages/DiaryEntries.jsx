@@ -189,7 +189,7 @@ const DiaryEntries = () => {
                           <p className="m-0 text-start text-secondary">{day}</p>
                         </div>
                         {entriesForDay.length > 0 ? (
-                          <Dropdown className="position-relative primaryButton mx-2 mt-2 mt-lg-0 p-0 d-flex align-items-center justify-content-center">
+                          <Dropdown className="position-relative primaryButton mx-2 mt-2 mt-lg-0 p-0 m-0 d-flex align-items-center justify-content-center">
                             <Dropdown.Toggle
                               className="w-100 d-flex align-items-center justify-content-center text-light border-0 p-0"
                               variant="transparent"

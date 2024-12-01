@@ -194,62 +194,61 @@ const RegisteredUsers = ({ users }) => {
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Student No.</h5>
                 </th>
-                <th scope="col">
+                <th scope="col" className="text-center align-middle">
                   <h5 className="m-0 text-center align-middle">Full Name</h5>
                 </th>
-                <th scope="col">
+                <th scope="col" className="text-center align-middle">
                   <h5 className="m-0 text-center align-middle">Sex</h5>
                 </th>
                 <th
                   scope="col"
-                  className="text-center align-middle"
-                  style={{ minWidth: "clamp(9rem, 50dvw, 15dvw)" }}
+                  className="text-center align-middle "
+                  style={{ minWidth: "clamp(16rem, 70dvw, 20dvw)" }}
                 >
-                  <select
-                    value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
-                    className="form-select border-0 p-0 ps-3 fw-bold text-center"
-                    style={{
-                      maxWidth: "250px",
-                    }}
-                  >
-                    <option value="All">Courses</option>
-                    <option
-                      className="text-break"
-                      value="BS Information Technology"
+                  <div className="d-flex align-items-center justify-content-center">
+                    <select
+                      value={selectedCourse}
+                      onChange={(e) => setSelectedCourse(e.target.value)}
+                      className="form-select border-0 fw-bold text-center "
+                      style={{ maxWidth: "max-content" }}
                     >
-                      BS Information Technology
-                    </option>
-                    <option value="BS Industrial Technology">
-                      BS Industrial Technology
-                    </option>
-                    <option value="BS Computer Science">
-                      BS Computer Science
-                    </option>
-                    <option value="BS Computer Engineering">
-                      BS Computer Engineering
-                    </option>
-                  </select>
+                      <option value="All">Courses(All)</option>
+                      <option className="" value="BS Information Technology">
+                        BS Information Technology
+                      </option>
+                      <option value="BS Industrial Technology">
+                        BS Industrial Technology
+                      </option>
+                      <option value="BS Computer Science">
+                        BS Computer Science
+                      </option>
+                      <option value="BS Computer Engineering">
+                        BS Computer Engineering
+                      </option>
+                    </select>
+                  </div>
                 </th>
                 <th
                   scope="col"
-                  className="text-center align-middle"
-                  style={{ minWidth: "clamp(6.5rem, 50dvw, 7dvw)" }}
+                  className="text-center align-middle ps-3 ps-lg-4"
+                  style={{ minWidth: "clamp(6.5rem, 50dvw, 10rem)" }}
                 >
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="form-select border-0 p-0 px-3 fw-bold text-center"
-                    style={{
-                      maxWidth: "300px",
-                    }}
-                  >
-                    <option value="All">Year</option>
-                    <option value="1st">1st</option>
-                    <option value="2nd">2nd</option>
-                    <option value="3rd">3rd</option>
-                    <option value="4th">4th</option>
-                  </select>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="form-select border-0 fw-bold text-center"
+                      style={{
+                        maxWidth: "max-content",
+                      }}
+                    >
+                      <option value="All">Year(All)</option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                    </select>
+                  </div>
                 </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">CvSU Email</h5>
@@ -341,19 +340,23 @@ const RegisteredUsers = ({ users }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex gap-1 mt-2">
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("html")}
-        >
-          <p className="m-0">Download as HTML</p>
-        </button>
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("excel")}
-        >
-          <p className="m-0">Download as Excel</p>
-        </button>
+      <div className="row d-flex gap-1 mt-2 px-3">
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("html")}
+          >
+            <p className="m-0">Download as HTML</p>
+          </button>
+        </div>
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("excel")}
+          >
+            <p className="m-0">Download as Excel</p>
+          </button>
+        </div>
       </div>
     </div>
   );

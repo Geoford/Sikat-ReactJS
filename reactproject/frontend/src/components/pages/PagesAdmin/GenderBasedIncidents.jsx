@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MainLayout from "../../Layouts/MainLayout";
 import axios from "axios";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
+import Pagination from "react-bootstrap/Pagination";
 
 export default function GenderBasedIncidents() {
   const [reports, setReports] = useState([]);
@@ -48,61 +51,101 @@ export default function GenderBasedIncidents() {
       });
   };
 
+  let active = 2;
+  let items = [];
+  for (let number = 1; number <= 5; number++) {
+    items.push(
+      <Pagination.Item key={number} active={number === active}>
+        {number}
+      </Pagination.Item>
+    );
+  }
+
   return (
     <MainLayout ActiveTab="Complaints">
-      <div className="mt-4">
-        <h2 className="fw-bold m-0">Gender-Based Incidents Complaints</h2>
-        <div className="container-fluid container-lg mb-2">
-          <h3 className="text-start">Case Status</h3>
-          <div className="d-flex gap-2">
-            <div className="rounded p-3" style={{ backgroundColor: "#ffff" }}>
-              <h5 className="m-0">
-                Awaiting Review {reports.filter((r) => !r.isAddress).length}
-              </h5>
+      <div className="mt-3 pt-0 pt-lg-2 px-2" style={{}}>
+        <div
+          className="container rounded "
+          style={{ backgroundColor: "var(--primary)" }}
+        >
+          <h4 className="text-light fw-bold m-0 mt-4 mt-lg-0 py-2">
+            Gender-Based Incidents Complaints
+          </h4>
+        </div>
+
+        <div className="container mt-2">
+          <div className="row gap-2 gy-2">
+            {/* <h3 className="text-start">Case Status</h3> */}
+            <div className="col-md-4 d-flex p-0 gap-2">
+              <div
+                className="w-50 rounded p-3"
+                style={{ backgroundColor: "#ffff" }}
+              >
+                <h5 className="m-0">Awaiting Review</h5>
+                <h4 className="m-0 mt-1">
+                  {reports.filter((r) => !r.isAddress).length}
+                </h4>
+              </div>
+              <div className="w-50 bg-success rounded text-light p-3">
+                <h5 className="m-0">Addressed</h5>
+                <h4 className="m-0 mt-1">
+                  {reports.filter((r) => r.isAddress).length}
+                </h4>
+              </div>
             </div>
-            <div className="bg-success rounded text-light p-3">
-              <h5 className="m-0">
-                Addressed {reports.filter((r) => r.isAddress).length}
-              </h5>
+            <div className="col p-0 d-flex align-items-">
+              <FloatingLabel
+                className="w-100"
+                id="filterDropdown"
+                controlId="filterDropdown"
+                label="Filter Cases:"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              >
+                <Form.Select aria-label="Floating label select example">
+                  <option value="all">All Cases</option>
+                  <option value="unaddressed">Unaddressed Cases</option>
+                  <option value="addressed">Addressed Cases</option>
+                </Form.Select>
+              </FloatingLabel>
             </div>
           </div>
         </div>
-        <div className="container-fluid container-lg mb-3">
-          <div className="d-flex align-items-center">
-            <label htmlFor="filterDropdown" className="me-3">
-              Filter Cases:
-            </label>
-            <select
-              id="filterDropdown"
-              className="form-select w-auto"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="all">All Cases</option>
-              <option value="unaddressed">Unaddressed Cases</option>
-              <option value="addressed">Addressed Cases</option>
-            </select>
-          </div>
-        </div>
-        <div className="container-fluid container-lg">
+
+        <div className="container mt-3 p-0  rounded  overflow-auto">
           {error ? (
             <div className="alert alert-danger">{error}</div>
           ) : (
-            <table className="table rounded overflow-hidden">
+            <table className="table m-0">
               <thead>
                 <tr>
-                  <th scope="col">Case #</th>
-                  <th scope="col">Victim's Name</th>
-                  <th scope="col">Sex</th>
-                  <th scope="col">Location</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Actions</th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Case #</h5>
+                  </th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Victim's Name</h5>
+                  </th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Sex</h5>
+                  </th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Location</h5>
+                  </th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Date</h5>
+                  </th>
+                  <th scope="col" className="text-center align-middle">
+                    <h5 className="m-0">Actions</h5>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredReports.map((report) => (
-                  <tr key={report.reportID}>
-                    <th scope="row">
+                  <tr
+                    className={report.isAddress === 0 ? "table-danger" : ""}
+                    key={report.reportID}
+                  >
+                    <th scope="row" className="text-center align-middle">
                       <p className="m-0 mt-1 d-flex align-items-center justify-content-center">
                         {report.isAddress === 0 ? (
                           <div
@@ -126,44 +169,52 @@ export default function GenderBasedIncidents() {
                               color: "#7fff00",
                             }}
                           ></div>
-                        )}{" "}
+                        )}
                         {report.reportID}
                       </p>
                     </th>
-                    <td>
+                    <td className="text-center align-middle">
                       <p className="m-0 mt-1">{report.victimName}</p>
                     </td>
-                    <td>
+                    <td className="text-center align-middle">
                       <p className="m-0 mt-1">{report.gender}</p>
                     </td>
-                    <td>
+                    <td className="text-center align-middle">
                       <p className="m-0 mt-1">{report.location}</p>
                     </td>
-                    <td>
+                    <td className="text-center align-middle">
                       <p className="m-0 mt-1">
                         {new Date(report.date).toLocaleDateString()}
                       </p>
                     </td>
-                    <td className="d-flex justify-content-center gap-2">
-                      {!report.isAddress && (
-                        <button
-                          className="btn btn-success text-light py-1"
-                          onClick={() => handleAddressed(report.reportID)}
-                        >
-                          Mark as Addressed
-                        </button>
-                      )}
-                      <Link to={`/Admin/CaseDetails/${report.reportID}`}>
-                        <button className="primaryButton text-light">
-                          View
-                        </button>
-                      </Link>
+                    <td
+                      className="text-center align-middle"
+                      style={{ height: "100%" }}
+                    >
+                      <div className="d-flex align-items-center justify-content-center gap-1">
+                        {!report.isAddress && (
+                          <button
+                            className="btn btn-success text-light"
+                            onClick={() => handleAddressed(report.reportID)}
+                          >
+                            <p className="m-0">Mark as Addressed</p>
+                          </button>
+                        )}
+                        <Link to={`/Admin/CaseDetails/${report.reportID}`}>
+                          <button className="primaryButton rounded text-light py-2">
+                            <p className="m-0">View</p>
+                          </button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
+        </div>
+        <div className="container d-flex justify-content-center mt-3">
+          <Pagination size="sm">{items}</Pagination>
         </div>
       </div>
     </MainLayout>

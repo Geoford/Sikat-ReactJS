@@ -210,26 +210,32 @@ const ReportedUsers = ({ reportedComments }) => {
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Name</h5>
                 </th>
-                <th scope="col" className="text-center align-middle">
-                  <select
-                    value={selectedSubject}
-                    onChange={(e) => setSelectedSubject(e.target.value)}
-                    className="form-select border-0 p-0 fw-bold text-center"
-                    style={{
-                      maxWidth: "250px",
-                    }}
-                  >
-                    <option value="All">Violation</option>
-                    {option.map((word, index) => (
-                      <option
-                        key={index}
-                        className="text-break"
-                        value={word.reason || word.title}
-                      >
-                        {word.reason || word.title}
-                      </option>
-                    ))}
-                  </select>
+                <th
+                  scope="col"
+                  className="text-center align-middle ps-3 ps-lg-5"
+                  style={{ minWidth: "clamp(9rem, 50dvw, 15rem)" }}
+                >
+                  <div className="d-flex align-items-center justify-content-center">
+                    <select
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                      className="form-select border-0 fw-bold text-center"
+                      style={{
+                        maxWidth: "max-content",
+                      }}
+                    >
+                      <option value="All">Violation(All)</option>
+                      {option.map((word, index) => (
+                        <option
+                          key={index}
+                          className="text-break"
+                          value={word.reason || word.title}
+                        >
+                          {word.reason || word.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Reported Comment</h5>
@@ -324,19 +330,23 @@ const ReportedUsers = ({ reportedComments }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex gap-1 mt-2">
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("html")}
-        >
-          <p className="m-0">Download as HTML</p>
-        </button>
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("excel")}
-        >
-          <p className="m-0">Download as Excel</p>
-        </button>
+      <div className="row d-flex gap-1 mt-2 px-3">
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("html")}
+          >
+            <p className="m-0">Download as HTML</p>
+          </button>
+        </div>
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("excel")}
+          >
+            <p className="m-0">Download as Excel</p>
+          </button>
+        </div>
       </div>
     </div>
   );

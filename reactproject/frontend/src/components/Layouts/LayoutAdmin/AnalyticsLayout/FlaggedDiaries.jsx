@@ -200,26 +200,32 @@ const FlaggedDiaries = ({ flags }) => {
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Author</h5>
                 </th>
-                <th scope="col" className="text-center align-middle">
-                  <select
-                    className="form-select border-0 p-0 fw-bold text-center"
-                    style={{
-                      maxWidth: "250px",
-                    }}
-                    value={selectedSubject}
-                    onChange={(e) => setSelectedSubject(e.target.value)}
-                  >
-                    <option value="All">Reason</option>
-                    {alarmingWords.map((word, index) => (
-                      <option
-                        key={index}
-                        className="text-break"
-                        value={word.reason || word.title}
-                      >
-                        {word.reason || word.title}
-                      </option>
-                    ))}
-                  </select>
+                <th
+                  scope="col"
+                  className="text-center align-middle"
+                  style={{ minWidth: "clamp(11rem, 50dvw, 15dvw)" }}
+                >
+                  <div className="d-flex align-items-center justify-content-center">
+                    <select
+                      className="form-select border-0 fw-bold text-center"
+                      style={{
+                        maxWidth: "max-content",
+                      }}
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                    >
+                      <option value="All">Reason(All)</option>
+                      {alarmingWords.map((word, index) => (
+                        <option
+                          key={index}
+                          className="text-break"
+                          value={word.reason || word.title}
+                        >
+                          {word.reason || word.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Diary Title</h5>
@@ -227,7 +233,7 @@ const FlaggedDiaries = ({ flags }) => {
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
-                <th scope="col" className="text-center align-middle">
+                <th scope="col" className="text-center align-middle" style={{}}>
                   <h5 className="m-0">Action</h5>
                 </th>
               </tr>
@@ -314,19 +320,23 @@ const FlaggedDiaries = ({ flags }) => {
       </div>
 
       {/* Download Button */}
-      <div className="d-flex gap-1 mt-2">
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("html")}
-        >
-          <p className="m-0">Download as HTML</p>
-        </button>
-        <button
-          className="primaryButton py-1 py-md-2 px-3 "
-          onClick={() => downloadData("excel")}
-        >
-          <p className="m-0">Download as Excel</p>
-        </button>
+      <div className="row d-flex gap-1 mt-2 px-3">
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("html")}
+          >
+            <p className="m-0">Download as HTML</p>
+          </button>
+        </div>
+        <div className="col p-0">
+          <button
+            className="w-100 primaryButton py-1 py-md-2"
+            onClick={() => downloadData("excel")}
+          >
+            <p className="m-0">Download as Excel</p>
+          </button>
+        </div>
       </div>
     </div>
   );
