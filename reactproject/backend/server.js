@@ -357,6 +357,8 @@ app.get("/verify-email/:token", (req, res) => {
 
 app.post("/Login", (req, res) => {
   const { cvsuEmail, password } = req.body;
+
+  // Validate email and password input
   if (!cvsuEmail || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
@@ -373,25 +375,98 @@ app.post("/Login", (req, res) => {
       console.error("Error retrieving data: ", err);
       return res.status(500).json({ error: "Error retrieving data" });
     }
+
+    // If no user found
     if (data.length === 0) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const user = data[0];
+
+    // Validate password
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-    return res.json({
-      userID: user.userID,
-      cvsuEmail: user.cvsuEmail,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isAdmin: user.isAdmin,
-      profile_image: user.profile_image,
+
+    // Update user status to online (isActive = true)
+    const updateStatusSql =
+      "UPDATE user_table SET isActive = ? WHERE userID = ?";
+    db.query(updateStatusSql, [true, user.userID], (err, result) => {
+      if (err) {
+        console.error("Error updating user status: ", err);
+        return res.status(500).json({ error: "Failed to update user status" });
+      }
+
+      // Send response with user data
+      return res.json({
+        userID: user.userID,
+        cvsuEmail: user.cvsuEmail,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isAdmin: user.isAdmin,
+        profile_image: user.profile_image,
+      });
     });
+  });
+});
+
+app.post("/logout", (req, res) => {
+  const { userID } = req.body;
+
+  if (!userID) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  const query = "UPDATE user_table SET isActive = ? WHERE userID = ?";
+
+  db.execute(query, [false, userID], (err, results) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error logging out", error: err.message });
+    }
+
+    // Check if any rows were updated (user found and updated)
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "Logged out successfully" });
+  });
+});
+
+app.post("/update-activity", (req, res) => {
+  const { userID, status } = req.body;
+
+  // Update the user's activity status in the database
+  const query = "UPDATE user_table SET isActive = ? WHERE userID = ?";
+
+  db.query(query, [status, userID], (err, result) => {
+    if (err) {
+      console.error("Error updating activity status:", err);
+      return res
+        .status(500)
+        .send({ error: "Failed to update activity status" });
+    } else {
+      // Check if the update was successful
+      if (result.affectedRows > 0) {
+        // Broadcast the activity status update to Pusher
+        pusher.trigger("admin-channel", "user-activity-event", {
+          userID: userID,
+          isActive: status,
+        });
+
+        // Send success response
+        res.send({ success: true });
+      } else {
+        // Handle case where no rows were affected
+        console.error("No user found with the provided userID.");
+        res.status(404).send({ error: "User not found" });
+      }
+    }
   });
 });
 

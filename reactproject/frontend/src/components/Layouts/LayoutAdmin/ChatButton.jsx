@@ -244,16 +244,29 @@ const ChatButton = () => {
                             {userItem.firstName} {userItem.lastName} or (Alias)
                           </p>
                         </div>
-                        <div
-                          className="p-0 m-0 d-flex align-items-center justify-content-center"
-                          style={{
-                            backgroundColor: "var(--primary)",
-                            height: "15px",
-                            width: "15px",
-                            borderRadius: "50%",
-                            color: "#ffff",
-                          }}
-                        ></div>
+                        {userItem.isActive === 1 ? (
+                          <div
+                            className="p-0 m-0 d-flex align-items-center justify-content-center"
+                            style={{
+                              backgroundColor: "var(--primary)",
+                              height: "15px",
+                              width: "15px",
+                              borderRadius: "50%",
+                              color: "#ffff",
+                            }}
+                          ></div>
+                        ) : (
+                          <div
+                            className="p-0 m-0 d-flex align-items-center justify-content-center"
+                            style={{
+                              backgroundColor: "gray",
+                              height: "15px",
+                              width: "15px",
+                              borderRadius: "50%",
+                              color: "#ffff",
+                            }}
+                          ></div>
+                        )}
                       </div>
                     ))}
                   </div>

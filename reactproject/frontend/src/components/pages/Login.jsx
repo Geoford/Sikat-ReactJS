@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LoginValidation from "./LoginValidation"; // Make sure this validates email
-import usernameIcon from "../../assets/Username.png"; // You can keep the same icon or change it to one representing email
+import LoginValidation from "./LoginValidation";
+import usernameIcon from "../../assets/Username.png";
 import passwordIcon from "../../assets/Password.png";
 import showIcon from "../../assets/show.png";
 import hiddenIcon from "../../assets/hidden.png";

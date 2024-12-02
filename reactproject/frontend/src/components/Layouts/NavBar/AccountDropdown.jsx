@@ -3,6 +3,7 @@ import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import DropDownButton from "../../../assets/DropDown.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AccountDropdown = () => {
   const [user, setUser] = useState(null);
@@ -40,8 +41,28 @@ const AccountDropdown = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/");
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+
+      axios
+        .post("http://localhost:8081/logout", {
+          userID: parsedUser.userID,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            localStorage.removeItem("user");
+            navigate("/");
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "Error logging out:",
+            error.response ? error.response.data.message : error.message
+          );
+        });
+    }
   };
 
   if (loading)
@@ -155,9 +176,7 @@ const AccountDropdown = () => {
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link className="text-decoration-none text-dark" to="/DiaryEntries">
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-<p className="m-0">
-Diary Entries
-</p>              <i class="bx bx-edit"></i>
+              <p className="m-0">Diary Entries</p> <i class="bx bx-edit"></i>
             </button>
           </Link>
         </Dropdown.Item>

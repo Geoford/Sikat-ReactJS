@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import LeftSide from "../../pages/PagesUser/HomeLayout/LeftSide";
@@ -15,22 +15,33 @@ import AdminChatButton from "../LayoutAdmin/ChatButton";
 import CenterLayout from "./CenterLayout";
 import LeftSideLayout from "./LeftSideLayout";
 
+import { InactivityContext } from "../../../components/InactivityContext";
+
 export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // loading state for user data
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  const { isInactive } = useContext(InactivityContext);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
-      navigate("/"); // use react-router navigation for redirect
+      navigate("/"); // If no user is found, redirect to home page
     }
     setIsLoading(false);
   }, [navigate]);
 
-  if (isLoading) return <div>Loading...</div>; // simple loading indicator
+  useEffect(() => {
+    if (isInactive) {
+      localStorage.removeItem("user"); // Remove user from localStorage upon inactivity
+      navigate("/Login"); // Redirect to login page
+    }
+  }, [isInactive, navigate]);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <MainLayout ActiveTab="Home">
@@ -90,6 +101,11 @@ export default function HomeMainLayout({ isAdminPage }) {
             {isAdminPage ? <AdminRightSide /> : <RightSide />}
           </div>
         </div>
+      </div>
+      <div>
+        {isInactive
+          ? "You have been logged out due to inactivity"
+          : "You are active"}
       </div>
     </MainLayout>
   );

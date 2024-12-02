@@ -11,6 +11,8 @@ export default function GenderBasedIncidents() {
   const [filteredReports, setFilteredReports] = useState([]);
   const [filter, setFilter] = useState("all"); // "all", "addressed", or "unaddressed"
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of reports per page
 
   useEffect(() => {
     fetchReports();
@@ -19,6 +21,15 @@ export default function GenderBasedIncidents() {
   useEffect(() => {
     applyFilter();
   }, [filter, reports]);
+
+  useEffect(() => {
+    // Slice the filtered reports based on current page and items per page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setFilteredReports((prevReports) =>
+      prevReports.slice(startIndex, endIndex)
+    );
+  }, [currentPage, reports, filter]);
 
   const fetchReports = () => {
     axios
@@ -51,11 +62,20 @@ export default function GenderBasedIncidents() {
       });
   };
 
-  let active = 2;
+  // Pagination logic
+  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   let items = [];
-  for (let number = 1; number <= 5; number++) {
+  for (let number = 1; number <= totalPages; number++) {
     items.push(
-      <Pagination.Item key={number} active={number === active}>
+      <Pagination.Item
+        key={number}
+        active={number === currentPage}
+        onClick={() => handlePageChange(number)}
+      >
         {number}
       </Pagination.Item>
     );
@@ -63,9 +83,9 @@ export default function GenderBasedIncidents() {
 
   return (
     <MainLayout ActiveTab="Complaints">
-      <div className="mt-0 mt-lg-2 pt-2 px-2" style={{}}>
+      <div className="mt-0 mt-lg-2 pt-2 px-2">
         <div
-          className="container rounded "
+          className="container rounded"
           style={{ backgroundColor: "var(--primary)" }}
         >
           <h4 className="text-light fw-bold m-0 mt-4 mt-lg-0 py-2">
@@ -75,7 +95,6 @@ export default function GenderBasedIncidents() {
 
         <div className="container mt-2">
           <div className="row gap-1">
-            {/* <h3 className="text-start">Case Status</h3> */}
             <div className="col-md-4 d-flex p-0 gap-2">
               <div
                 className="w-50 rounded p-3"
@@ -204,6 +223,7 @@ export default function GenderBasedIncidents() {
             </table>
           )}
         </div>
+
         <div className="container d-flex justify-content-center mt-3">
           <Pagination size="sm">{items}</Pagination>
         </div>

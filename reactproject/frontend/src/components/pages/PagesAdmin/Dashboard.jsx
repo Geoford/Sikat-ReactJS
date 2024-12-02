@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [timeFilter, setTimeFilter] = useState("Day");
+  const [specificDate, setSpecificDate] = useState("");
 
   const usersPerPage = 4;
 
@@ -29,7 +30,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     applyTimeFilter();
-  }, [entries, timeFilter]);
+  }, [entries, timeFilter, specificDate]);
 
   const fetchEntries = async () => {
     try {
@@ -87,6 +88,14 @@ const Dashboard = () => {
     const now = new Date();
     const filtered = entries.filter((entry) => {
       const entryDate = new Date(entry.created_at);
+      if (specificDate) {
+        const selectedDate = new Date(specificDate);
+        return (
+          entryDate.getFullYear() === selectedDate.getFullYear() &&
+          entryDate.getMonth() === selectedDate.getMonth() &&
+          entryDate.getDate() === selectedDate.getDate()
+        );
+      }
       switch (timeFilter) {
         case "Day":
           return now - entryDate <= 1 * 24 * 60 * 60 * 1000;
@@ -107,7 +116,10 @@ const Dashboard = () => {
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const totalPages = Math.max(
+    Math.ceil(filteredUsers.length / usersPerPage),
+    1
+  );
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -115,6 +127,12 @@ const Dashboard = () => {
 
   const handleTimeFilterChange = (event) => {
     setTimeFilter(event.target.value);
+    setSpecificDate("");
+  };
+
+  const handleDateChange = (event) => {
+    setSpecificDate(event.target.value);
+    setTimeFilter("SpecificDate");
   };
 
   return (
@@ -130,24 +148,39 @@ const Dashboard = () => {
         >
           <h2 className="border-bottom border-2 pb-2">Dashboard</h2>
           <div>
-            <div className="col-md mb-2">
-              <div className="form-floating">
-                <select
-                  className="form-select"
-                  id="floatingSelectGrid"
-                  value={timeFilter}
-                  onChange={handleTimeFilterChange}
-                >
-                  <option value="Day">Day</option>
-                  <option value="Week">Week</option>
-                  <option value="Month">Month</option>
-                  <option value="Year">Year</option>
-                </select>
-                <label className="z-0" htmlFor="floatingSelectGrid">
-                  Viewing Data By
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                <div className="form-floating">
+                  <select
+                    className="form-select"
+                    id="floatingSelectGrid"
+                    value={timeFilter}
+                    onChange={handleTimeFilterChange}
+                  >
+                    <option value="Day">Day</option>
+                    <option value="Week">Week</option>
+                    <option value="Month">Month</option>
+                    <option value="Year">Year</option>
+                  </select>
+                  <label className="z-0" htmlFor="floatingSelectGrid">
+                    Viewing Data By
+                  </label>
+                </div>
+              </div>
+              <div className="col-md-6 mb-2">
+                <label htmlFor="specificDate" className="form-label">
+                  Select Specific Date:
                 </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="specificDate"
+                  value={specificDate}
+                  onChange={handleDateChange}
+                />
               </div>
             </div>
+
             <div className="row gy-2">
               <div className="col-lg-3 d-flex flex-column gap-2">
                 <div className="row gap-2 px-2">
@@ -166,7 +199,7 @@ const Dashboard = () => {
                       <h2 className="m-0">
                         <i className="bx bx-edit"></i>
                       </h2>
-                      <p className="m-0">New Diary Entries</p>
+                      <p className="m-0">Diary Entries</p>
                     </div>
                     <div
                       className="d-flex align-items-center justify-content-center gap-2"
@@ -190,13 +223,13 @@ const Dashboard = () => {
                       <h2 className="m-0">
                         <i className="bx bx-user-plus"></i>
                       </h2>
-                      <p className="m-0">New Users</p>
+                      <p className="m-0">Users</p>
                     </div>
                     <div
                       className="d-flex align-items-center justify-content-center gap-2"
                       style={{ height: "5rem" }}
                     >
-                      <h1 className="m-0">00</h1>
+                      <h1 className="m-0">{users.length}</h1>
                     </div>
                   </div>
                 </div>
@@ -228,18 +261,15 @@ const Dashboard = () => {
                             <td>0</td>
                             <td>
                               <Link to={`/DiaryEntry/${entry.entryID}`}>
-                                <button className="primaryButton">Visit</button>
+                                <button className="primaryButton">View</button>
                               </Link>
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td
-                            colSpan="5"
-                            className="text-center text-secondary"
-                          >
-                            No diary entry available.
+                          <td colSpan="5" className="text-center">
+                            No Diary Entries Available
                           </td>
                         </tr>
                       )}
@@ -248,73 +278,73 @@ const Dashboard = () => {
                 </div>
                 <div className="d-flex justify-content-center">
                   <Pagination>
-                    {Array.from({ length: totalPages }, (_, index) => (
-                      <Pagination.Item
-                        key={index + 1}
-                        active={index + 1 === currentPage}
-                        onClick={() => handlePageChange(index + 1)}
-                      >
-                        {index + 1}
-                      </Pagination.Item>
-                    ))}
+                    {totalPages > 1 &&
+                      Array.from({ length: totalPages }, (_, index) => (
+                        <Pagination.Item
+                          key={index + 1}
+                          active={index + 1 === currentPage}
+                          onClick={() => handlePageChange(index + 1)}
+                        >
+                          {index + 1}
+                        </Pagination.Item>
+                      ))}
                   </Pagination>
                 </div>
               </div>
-
-              <div className="row gap-2 px-2">
+            </div>
+            <div className="row gap-2 px-2">
+              <div
+                className="col-md border rounded shadow-sm overflow-hidden p-0"
+                style={{
+                  height: "7rem",
+                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                }}
+              >
                 <div
-                  className="col-md border rounded shadow-sm overflow-hidden p-0"
+                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
                   style={{
-                    height: "7rem",
-                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                    height: "100%",
                   }}
                 >
-                  <div
-                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
-                    style={{
-                      height: "100%",
-                    }}
-                  >
-                    <h2 className="m-0">{flags.length}</h2>
+                  <h2 className="m-0">{flags.length}</h2>
 
-                    <p className="m-0">Flagged Diaries</p>
-                  </div>
+                  <p className="m-0">Flagged Diaries</p>
                 </div>
+              </div>
+              <div
+                className="col-md border rounded shadow-sm overflow-hidden p-0"
+                style={{
+                  height: "7rem",
+                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                }}
+              >
                 <div
-                  className="col-md border rounded shadow-sm overflow-hidden p-0"
+                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
                   style={{
-                    height: "7rem",
-                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                    height: "100%",
                   }}
                 >
-                  <div
-                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
-                    style={{
-                      height: "100%",
-                    }}
-                  >
-                    <h2 className="m-0">{reportedComments.length}</h2>
+                  <h2 className="m-0">{reportedComments.length}</h2>
 
-                    <p className="m-0">Reported Comments</p>
-                  </div>
+                  <p className="m-0">Reported Comments</p>
                 </div>
+              </div>
+              <div
+                className="col-md border rounded shadow-sm overflow-hidden p-0"
+                style={{
+                  height: "7rem",
+                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                }}
+              >
                 <div
-                  className="col-md border rounded shadow-sm overflow-hidden p-0"
+                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
                   style={{
-                    height: "7rem",
-                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                    height: "100%",
                   }}
                 >
-                  <div
-                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
-                    style={{
-                      height: "100%",
-                    }}
-                  >
-                    <h2 className="m-0">00</h2>
+                  <h2 className="m-0">00</h2>
 
-                    <p className="m-0">Reported Users</p>
-                  </div>
+                  <p className="m-0">Reported Users</p>
                 </div>
               </div>
             </div>
