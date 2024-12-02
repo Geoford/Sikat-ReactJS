@@ -6,7 +6,7 @@ import Tab from "react-bootstrap/Tab";
 import MainLayout from "../../Layouts/MainLayout";
 import RegisteredUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/RegisteredUser";
 import FlaggedDiaries from "../../Layouts/LayoutAdmin/AnalyticsLayout/FlaggedDiaries";
-import ReportedUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedUsers";
+import ReportedComment from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedComment";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
@@ -136,7 +136,7 @@ const Analytics = () => {
                   <FlaggedDiaries flags={flags} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="ReportedUsers">
-                  <ReportedUsers reportedComments={reportedComments} />
+                  <ReportedComment reportedComments={reportedComments} />
                 </Tab.Pane>
               </Tab.Content>
             </div>

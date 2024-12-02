@@ -181,7 +181,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="row gy-2">
+            <div className="row gy-2 px-1">
               <div className="col-lg-3 d-flex flex-column gap-2">
                 <div className="row gap-2 px-2">
                   <div
@@ -229,7 +229,7 @@ const Dashboard = () => {
                       className="d-flex align-items-center justify-content-center gap-2"
                       style={{ height: "5rem" }}
                     >
-                      <h1 className="m-0">{users.length}</h1>
+                      <h2 className="m-0">{users.length}</h2>
                     </div>
                   </div>
                 </div>
@@ -292,7 +292,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="row gap-2 px-2">
+            <div className="row gap-2 px-2 m-auto">
               <div
                 className="col-md border rounded shadow-sm overflow-hidden p-0"
                 style={{

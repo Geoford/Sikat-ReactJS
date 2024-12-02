@@ -16,6 +16,7 @@ import CenterLayout from "./CenterLayout";
 import LeftSideLayout from "./LeftSideLayout";
 
 import { InactivityContext } from "../../../components/InactivityContext";
+import axios from "axios";
 
 export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
@@ -29,17 +30,27 @@ export default function HomeMainLayout({ isAdminPage }) {
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
-      navigate("/"); // If no user is found, redirect to home page
+      navigate("/");
     }
     setIsLoading(false);
   }, [navigate]);
 
   useEffect(() => {
-    if (isInactive) {
-      localStorage.removeItem("user"); // Remove user from localStorage upon inactivity
-      navigate("/Login"); // Redirect to login page
+    if (isInactive && user) {
+      alert("You have been logged out due to inactivity.");
+      axios
+        .post("http://localhost:8081/logout", {
+          userID: user.userID,
+        })
+        .then(() => {
+          localStorage.removeItem("user");
+          navigate("/Login");
+        })
+        .catch((error) => {
+          console.error("Error logging out due to inactivity:", error);
+        });
     }
-  }, [isInactive, navigate]);
+  }, [isInactive, navigate, user]);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -59,10 +70,10 @@ export default function HomeMainLayout({ isAdminPage }) {
               width: "25%",
             }}
           >
-            <LeftSideLayout></LeftSideLayout>
+            <LeftSideLayout />
           </div>
 
-          {/* Center Layout - Adjust the margin to prevent overlap */}
+          {/* Center Layout */}
           <div
             className="col-lg-6 mx-auto p-0 px-lg-2 mt-2 mt-lg-0"
             style={{ marginLeft: "20%", marginRight: "20%" }}
@@ -78,8 +89,7 @@ export default function HomeMainLayout({ isAdminPage }) {
                     width: "33%",
                   }}
                 >
-                  {/* {isAdminPage ? <AdminLeftSide /> : <LeftSide />} */}
-                  <LeftSideLayout></LeftSideLayout>
+                  <LeftSideLayout />
                 </div>
               </div>
               <div className="col me-0 me-md-2 me-lg-0">
@@ -102,11 +112,11 @@ export default function HomeMainLayout({ isAdminPage }) {
           </div>
         </div>
       </div>
-      <div>
+      {/* <div>
         {isInactive
           ? "You have been logged out due to inactivity"
           : "You are active"}
-      </div>
+      </div> */}
     </MainLayout>
   );
 }

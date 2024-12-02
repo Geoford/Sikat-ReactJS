@@ -358,7 +358,7 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
           </div>
 
           <div className="ps-5 d-flex align-items-center gap-2">
-            <button className="btn btn-light btn-sm ">Gadify</button>
+            {/* <button className="btn btn-light btn-sm ">Gadify</button> */}
             <button
               className="btn btn-light btn-sm"
               onClick={() => setReplyTo(comment.commentID)}

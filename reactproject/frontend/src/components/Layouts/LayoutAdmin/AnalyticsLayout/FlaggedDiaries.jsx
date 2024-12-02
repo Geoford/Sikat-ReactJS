@@ -40,13 +40,13 @@ const FlaggedDiaries = ({ flags }) => {
         );
       }
 
-      // Apply search filter
       if (searchTerm) {
-        filtered = filtered.filter((flag) =>
-          `${flag.firstName} ${flag.lastName} ${flag.studentNumber} ${flag.reasons} ${flag.title}`
+        filtered = filtered.filter((flag) => {
+          const isAddressed = flag.isAddress === 1 ? "Addressed" : "Pending";
+          return `${flag.firstName} ${flag.lastName} ${flag.studentNumber} ${flag.reasons} ${flag.title} ${isAddressed}`
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        );
+            .includes(searchTerm.toLowerCase());
+        });
       }
 
       setFilteredUsers(filtered);
@@ -71,6 +71,17 @@ const FlaggedDiaries = ({ flags }) => {
 
   const handleNextClick = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handleAddressed = (report_id) => {
+    axios
+      .put(`http://localhost:8081/flaggedAddress/${report_id}`)
+      .then(() => {
+        alert("The diary has been addressed!");
+      })
+      .catch((err) => {
+        setError(err.response?.data?.error || "Failed to update flagged");
+      });
   };
 
   const downloadData = (format) => {
@@ -254,13 +265,22 @@ const FlaggedDiaries = ({ flags }) => {
                     <td className="text-center align-middle">
                       <p className="m-0">{flag.title}</p>
                     </td>
-                    <td className="text-success text-center align-middle">
-                      <p className="m-0">Pending</p>
+                    <td className=" text-center align-middle">
+                      {flag.isAddress === 1 ? (
+                        <p className="text-success m-0">Addressed</p>
+                      ) : (
+                        <p className="text-danger m-0">Pending</p>
+                      )}
                     </td>
                     <td className="text-center align-middle">
-                      <button className="secondaryButton">
-                        <p className="m-0">Mark as Reviewed</p>
-                      </button>
+                      {!flag.isAddress && (
+                        <button
+                          className="secondaryButton"
+                          onClick={() => handleAddressed(flag.report_id)}
+                        >
+                          <p className="m-0">Mark as Reviewed</p>
+                        </button>
+                      )}
                       <Link to={`/DiaryEntry/${flag.entryID}`}>
                         <button className="primaryButton">
                           <p className="m-0">Check</p>

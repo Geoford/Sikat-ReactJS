@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ReportedUsers = ({ reportedComments }) => {
+const ReportedComment = ({ reportedComments }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [option, setOption] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("All");
@@ -54,7 +54,8 @@ const ReportedUsers = ({ reportedComments }) => {
               .includes(searchQuery.toLowerCase()) ||
             reportedComment.reason
               .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+              .includes(searchQuery.toLowerCase()) ||
+            reportedComment.isAddress.toString().includes(searchQuery)
         );
       }
 
@@ -81,6 +82,23 @@ const ReportedUsers = ({ reportedComments }) => {
 
   const handleNextClick = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAddressed = async (reportcommentID) => {
+    setIsLoading(true);
+    try {
+      await axios.put(
+        `http://localhost:8081/commentAddress/${reportcommentID}`
+      );
+      alert("The comment has been addressed!");
+    } catch (error) {
+      console.error("Failed to update comment:", error);
+      alert("Failed to update the comment. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const downloadData = (format) => {
@@ -265,12 +283,23 @@ const ReportedUsers = ({ reportedComments }) => {
                       <p className="m-0">{reportedComment.text}</p>
                     </td>
                     <td className="text-success text-center align-middle">
-                      <p className="m-0">Pending</p>
+                      {reportedComment.isAddress === 1 ? (
+                        <p className="text-success m-0">Addressed</p>
+                      ) : (
+                        <p className="text-danger m-0">Pending</p>
+                      )}
                     </td>
                     <td className="text-center align-middle">
-                      <button className="secondaryButton">
-                        <p className="m-0">Mark as Reviewed</p>
-                      </button>
+                      {!reportedComment.isAddress && (
+                        <button
+                          className="secondaryButton"
+                          onClick={() =>
+                            handleAddressed(reportedComment.reportcommentID)
+                          }
+                        >
+                          <p className="m-0">Mark as Reviewed</p>
+                        </button>
+                      )}
                       <Link to={`/DiaryEntry/${reportedComment.entryID}`}>
                         <button className="primaryButton">
                           <p className="m-0">Check</p>
@@ -352,4 +381,4 @@ const ReportedUsers = ({ reportedComments }) => {
   );
 };
 
-export default ReportedUsers;
+export default ReportedComment;

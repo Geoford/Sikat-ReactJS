@@ -2473,7 +2473,6 @@ app.put("/faqedit/:faqID", (req, res) => {
   });
 });
 
-// 4. Delete an FAQ
 app.delete("/faq/:faqID", (req, res) => {
   const faqID = req.params.faqID;
 
@@ -2488,6 +2487,46 @@ app.delete("/faq/:faqID", (req, res) => {
       return res.status(404).json({ message: "FAQ not found" });
     }
     res.json({ message: "FAQ deleted successfully" });
+  });
+});
+
+app.put("/flaggedAddress/:id", (req, res) => {
+  const report_id = req.params.id;
+
+  const query = `
+    UPDATE flagged_reports
+    SET isAddress = true
+    WHERE report_id = ?
+  `;
+
+  db.query(query, [report_id], (err, result) => {
+    if (err) {
+      console.error("Error updating flagged status:", err.message);
+      return res.status(500).json({ error: "Failed to update flagged" });
+    }
+    res
+      .status(200)
+      .json({ message: "Report marked as addressed successfully" });
+  });
+});
+
+app.put("/commentAddress/:id", (req, res) => {
+  const reportcommentID = req.params.id;
+
+  const query = `
+    UPDATE comment_reports
+    SET isAddress = true
+    WHERE reportcommentID = ?
+  `;
+
+  db.query(query, [reportcommentID], (err, result) => {
+    if (err) {
+      console.error("Error updating comment status:", err.message);
+      return res.status(500).json({ error: "Failed to update comment" });
+    }
+    res
+      .status(200)
+      .json({ message: "comment marked as addressed successfully" });
   });
 });
 
