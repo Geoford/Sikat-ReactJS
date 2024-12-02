@@ -82,7 +82,7 @@ export default function HomeMainLayout({ isAdminPage }) {
                   <LeftSideLayout></LeftSideLayout>
                 </div>
               </div>
-              <div className="col">
+              <div className="col me-0 me-md-2 me-lg-0">
                 <CenterLayout />
               </div>
             </div>

@@ -139,7 +139,7 @@ const Dashboard = () => {
     <MainLayout ActiveTab="Dashboard">
       <div className="mt-2 mt-lg-3 pt-2 px-2">
         <div
-          className="container rounded mt-4 mt-lg-0 py-2 shadow-sm mb-5"
+          className="container rounded mt-4 mt-lg-0 p-4 shadow-sm mb-5"
           style={{
             width: "",
             minHeight: "65vh",
@@ -185,8 +185,8 @@ const Dashboard = () => {
               <div className="col-lg-3 d-flex flex-column gap-2">
                 <div className="row gap-2 px-2">
                   <div
-                    className="col-md col-lg-12 border rounded shadow-sm overflow-hidden px-0"
-                    style={{ height: "10rem" }}
+                    className="col-sm col-lg-12 border rounded shadow-sm overflow-hidden px-0"
+                    style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
                   >
                     <div
                       className="text-light d-flex justify-content-center align-items-center gap-2"
@@ -205,12 +205,12 @@ const Dashboard = () => {
                       className="d-flex align-items-center justify-content-center gap-2"
                       style={{ height: "5rem" }}
                     >
-                      <h1 className="m-0">{filteredEntries.length}</h1>
+                      <h2 className="m-0">{filteredEntries.length}</h2>
                     </div>
                   </div>
                   <div
                     className="col border rounded shadow-sm overflow-hidden px-0"
-                    style={{ height: "10rem" }}
+                    style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
                   >
                     <div
                       className="text-light d-flex justify-content-center align-items-center gap-2"

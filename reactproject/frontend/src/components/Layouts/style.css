@@ -13,7 +13,6 @@
 } */
 
 p,
-h6,
 label,
 .nav-link,
 input::placeholder,
@@ -26,14 +25,14 @@ h2 {
 }
 h4,
 select {
-  font-size: clamp(1.2rem, 1.7dvw, 1.4rem) !important;
+  font-size: clamp(1rem, 1.5dvw, 1.4rem) !important;
 }
 h5,
 .form-select {
-  font-size: clamp(0.9rem, 1.5dvw, 1.1rem) !important;
+  font-size: clamp(0.85rem, 1.5dvw, 1.1rem) !important;
 }
 h6 {
-  font-size: clamp(0.75rem, 1.5dvw, 0.9rem) !important;
+  font-size: clamp(0.7rem, 1.5dvw, 0.9rem) !important;
 }
 select.form-select:focus {
   box-shadow: none;
@@ -632,6 +631,7 @@ input.form-control:focus {
 .informationToolTip:hover {
   color: black;
 }
+
 .infToolTip {
   visibility: hidden;
   position: absolute;

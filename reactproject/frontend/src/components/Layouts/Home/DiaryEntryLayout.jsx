@@ -380,26 +380,46 @@ const DiaryEntryLayout = ({
       </div>
 
       <div
-        className="text-start border-bottom py-2"
+        className="text-start border-bottom py-2 pt-2"
         style={{ minHeight: "5rem" }}
       >
-        {entry.containsAlarmingWords === 1 && user.isAdmin === 1 ? (
-          <>
-            <h5 className="text-danger">
-              {entry.title}{" "}
-              <span className="text-secondary fs-6 ">{entry.subjects}</span>
-            </h5>
-            <p>{entry.description}</p>
-          </>
-        ) : (
-          <>
-            <h5>
-              {entry.title}{" "}
-              <span className="text-secondary fs-6">{entry.subjects}</span>
-            </h5>
-            <p style={{ whiteSpace: "pre-wrap" }}>{entry.description}</p>
-          </>
-        )}
+        <div className="d-flex alig-items-center gap-1 position-relative">
+          {entry.subjects && (
+            <h6 className="text-secondary m-0 mt-2">
+              Trigger Warning: {entry.subjects}
+            </h6>
+          )}
+          {entry.containsAlarmingWords === 1 && user.isAdmin === 1 ? (
+            <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
+              <div className="informationToolTip accordion text-danger align-middle">
+                <h4 className="m-0">
+                  <i class="bx bx-error" style={{}}></i>
+                </h4>
+                <p
+                  className="infToolTip rounded p-2 m-0 text-center"
+                  style={{
+                    backgroundColor: "rgb(179, 0, 0, .7)",
+                    width: "85%",
+                  }}
+                >
+                  This diary entry has been flagged by the system as potentially
+                  containing sensitive or distressing topics and may require
+                  immediate attention.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+
+        <div className="d-flex gap-1 align-items-center mt-2">
+          <div className="d-flex flex-column gap-1">
+            <h5 className="m-0">{entry.title}</h5>
+          </div>
+        </div>
+
+        <p style={{ whiteSpace: "pre-wrap" }}>{entry.description}</p>
 
         {entry.diary_image && (
           <img
