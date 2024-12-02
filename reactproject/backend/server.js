@@ -1131,7 +1131,7 @@ app.get("/users", (req, res) => {
 
 app.get("/admin", (req, res) => {
   db.query(
-    "SELECT userID, username FROM user_table WHERE isAdmin = 1 LIMIT 1",
+    "SELECT userID, username, isActive FROM user_table WHERE isAdmin = 1 LIMIT 1",
     (err, results) => {
       if (err) {
         return res.status(500).send("Error fetching admin.");
