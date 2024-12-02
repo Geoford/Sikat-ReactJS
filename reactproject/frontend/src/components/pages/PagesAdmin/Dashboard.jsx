@@ -119,195 +119,202 @@ const Dashboard = () => {
 
   return (
     <MainLayout ActiveTab="Dashboard">
-      <div
-        className="container mt-4 rounded p-3 shadow-sm mb-5"
-        style={{
-          width: "clamp(20rem, 90vw, 90rem)",
-          minHeight: "65vh",
-          backgroundColor: "#ffff",
-        }}
-      >
-        <h2 className="border-bottom border-2 pb-2">Dashboard</h2>
-        <div>
-          <div className="col-md mb-2">
-            <div className="form-floating">
-              <select
-                className="form-select"
-                id="floatingSelectGrid"
-                value={timeFilter}
-                onChange={handleTimeFilterChange}
-              >
-                <option value="Day">Day</option>
-                <option value="Week">Week</option>
-                <option value="Month">Month</option>
-                <option value="Year">Year</option>
-              </select>
-              <label htmlFor="floatingSelectGrid">Viewing Data By</label>
+      <div className="mt-2 mt-lg-3 pt-2 px-2">
+        <div
+          className="container rounded mt-4 mt-lg-0 py-2 shadow-sm mb-5"
+          style={{
+            width: "",
+            minHeight: "65vh",
+            backgroundColor: "#ffff",
+          }}
+        >
+          <h2 className="border-bottom border-2 pb-2">Dashboard</h2>
+          <div>
+            <div className="col-md mb-2">
+              <div className="form-floating">
+                <select
+                  className="form-select"
+                  id="floatingSelectGrid"
+                  value={timeFilter}
+                  onChange={handleTimeFilterChange}
+                >
+                  <option value="Day">Day</option>
+                  <option value="Week">Week</option>
+                  <option value="Month">Month</option>
+                  <option value="Year">Year</option>
+                </select>
+                <label className="z-0" htmlFor="floatingSelectGrid">
+                  Viewing Data By
+                </label>
+              </div>
             </div>
-          </div>
-          <div className="row gy-2">
-            <div className="col-lg-3 d-flex flex-column gap-2">
-              <div className="row gap-2 px-2">
-                <div
-                  className="col-md col-lg-12 border rounded shadow-sm overflow-hidden px-0"
-                  style={{ height: "10rem" }}
-                >
+            <div className="row gy-2">
+              <div className="col-lg-3 d-flex flex-column gap-2">
+                <div className="row gap-2 px-2">
                   <div
-                    className="text-light d-flex justify-content-center align-items-center gap-2"
-                    style={{
-                      background:
-                        "linear-gradient(to right, var(--primary_light), var(--primary))",
-                      height: "4rem",
-                    }}
+                    className="col-md col-lg-12 border rounded shadow-sm overflow-hidden px-0"
+                    style={{ height: "10rem" }}
                   >
-                    <h2 className="m-0">
-                      <i className="bx bx-edit"></i>
-                    </h2>
-                    <p className="m-0">New Diary Entries</p>
+                    <div
+                      className="text-light d-flex justify-content-center align-items-center gap-2"
+                      style={{
+                        background:
+                          "linear-gradient(to right, var(--primary_light), var(--primary))",
+                        height: "clamp(2.5rem, 5dvw, 4rem)",
+                      }}
+                    >
+                      <h2 className="m-0">
+                        <i className="bx bx-edit"></i>
+                      </h2>
+                      <p className="m-0">New Diary Entries</p>
+                    </div>
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      style={{ height: "5rem" }}
+                    >
+                      <h1 className="m-0">{filteredEntries.length}</h1>
+                    </div>
                   </div>
                   <div
-                    className="d-flex align-items-center justify-content-center gap-2"
-                    style={{ height: "5rem" }}
+                    className="col border rounded shadow-sm overflow-hidden px-0"
+                    style={{ height: "10rem" }}
                   >
-                    <h1 className="m-0">{filteredEntries.length}</h1>
-                  </div>
-                </div>
-                <div
-                  className="col border rounded shadow-sm overflow-hidden px-0"
-                  style={{ height: "10rem" }}
-                >
-                  <div
-                    className="text-light d-flex justify-content-center align-items-center gap-2"
-                    style={{
-                      background:
-                        "linear-gradient(to right, var(--secondary), var(--secondary_hover))",
-                      height: "4rem",
-                    }}
-                  >
-                    <h2 className="m-0">
-                      <i className="bx bx-user-plus"></i>
-                    </h2>
-                    <p className="m-0">New Users</p>
-                  </div>
-                  <div
-                    className="d-flex align-items-center justify-content-center gap-2"
-                    style={{ height: "5rem" }}
-                  >
-                    <h1 className="m-0">00</h1>
+                    <div
+                      className="text-light d-flex justify-content-center align-items-center gap-2"
+                      style={{
+                        background:
+                          "linear-gradient(to right, var(--secondary), var(--secondary_hover))",
+                        height: "clamp(2.5rem, 5dvw, 4rem)",
+                      }}
+                    >
+                      <h2 className="m-0">
+                        <i className="bx bx-user-plus"></i>
+                      </h2>
+                      <p className="m-0">New Users</p>
+                    </div>
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      style={{ height: "5rem" }}
+                    >
+                      <h1 className="m-0">00</h1>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md ">
-              <div
-                className="overflow-y-scroll custom-scrollbar pe-1 mb-2"
-                style={{ height: "18rem" }}
-              >
-                <table className="table rounded">
-                  <thead>
-                    <tr>
-                      <th scope="col">Author</th>
-                      <th scope="col">Diary Title</th>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Engagements</th>
-                      <th scope="col">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredEntries.length > 0 ? (
-                      filteredEntries.map((entry, index) => (
-                        <tr key={`${entry.userID}-${index}`}>
-                          <td>
-                            {entry.firstName} {entry.lastName}
-                          </td>
-                          <td>{entry.title}</td>
-                          <td>{entry.subjects}</td>
-                          <td>0</td>
-                          <td>
-                            <Link to={`/DiaryEntry/${entry.entryID}`}>
-                              <button className="primaryButton">Visit</button>
-                            </Link>
+              <div className="col-md ">
+                <div
+                  className="overflow-y-scroll custom-scrollbar pe-1 mb-2"
+                  style={{ height: "18rem" }}
+                >
+                  <table className="table rounded">
+                    <thead>
+                      <tr>
+                        <th scope="col">Author</th>
+                        <th scope="col">Diary Title</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Engagements</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEntries.length > 0 ? (
+                        filteredEntries.map((entry, index) => (
+                          <tr key={`${entry.userID}-${index}`}>
+                            <td>
+                              {entry.firstName} {entry.lastName}
+                            </td>
+                            <td>{entry.title}</td>
+                            <td>{entry.subjects}</td>
+                            <td>0</td>
+                            <td>
+                              <Link to={`/DiaryEntry/${entry.entryID}`}>
+                                <button className="primaryButton">Visit</button>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="5"
+                            className="text-center text-secondary"
+                          >
+                            No diary entry available.
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="5" className="text-center text-secondary">
-                          No diary entry available.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              <div className="d-flex justify-content-center">
-                <Pagination>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <Pagination.Item
-                      key={index + 1}
-                      active={index + 1 === currentPage}
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </Pagination.Item>
-                  ))}
-                </Pagination>
-              </div>
-            </div>
-
-            <div className="row gap-2 px-2">
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
-                style={{
-                  height: "7rem",
-                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
-                }}
-              >
-                <div
-                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
-                  style={{
-                    height: "100%",
-                  }}
-                >
-                  <h2 className="m-0">{flags.length}</h2>
-
-                  <p className="m-0">Flagged Diaries</p>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="d-flex justify-content-center">
+                  <Pagination>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <Pagination.Item
+                        key={index + 1}
+                        active={index + 1 === currentPage}
+                        onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </Pagination.Item>
+                    ))}
+                  </Pagination>
                 </div>
               </div>
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
-                style={{
-                  height: "7rem",
-                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
-                }}
-              >
+
+              <div className="row gap-2 px-2">
                 <div
-                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                  className="col-md border rounded shadow-sm overflow-hidden p-0"
                   style={{
-                    height: "100%",
+                    height: "7rem",
+                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
                   }}
                 >
-                  <h2 className="m-0">{reportedComments.length}</h2>
+                  <div
+                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                    style={{
+                      height: "100%",
+                    }}
+                  >
+                    <h2 className="m-0">{flags.length}</h2>
 
-                  <p className="m-0">Reported Comments</p>
+                    <p className="m-0">Flagged Diaries</p>
+                  </div>
                 </div>
-              </div>
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
-                style={{
-                  height: "7rem",
-                  background: "linear-gradient(to right, #ff4d4d, #ff3333)",
-                }}
-              >
                 <div
-                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                  className="col-md border rounded shadow-sm overflow-hidden p-0"
                   style={{
-                    height: "100%",
+                    height: "7rem",
+                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
                   }}
                 >
-                  <h2 className="m-0">00</h2>
+                  <div
+                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                    style={{
+                      height: "100%",
+                    }}
+                  >
+                    <h2 className="m-0">{reportedComments.length}</h2>
 
-                  <p className="m-0">Reported Users</p>
+                    <p className="m-0">Reported Comments</p>
+                  </div>
+                </div>
+                <div
+                  className="col-md border rounded shadow-sm overflow-hidden p-0"
+                  style={{
+                    height: "7rem",
+                    background: "linear-gradient(to right, #ff4d4d, #ff3333)",
+                  }}
+                >
+                  <div
+                    className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                    style={{
+                      height: "100%",
+                    }}
+                  >
+                    <h2 className="m-0">00</h2>
+
+                    <p className="m-0">Reported Users</p>
+                  </div>
                 </div>
               </div>
             </div>

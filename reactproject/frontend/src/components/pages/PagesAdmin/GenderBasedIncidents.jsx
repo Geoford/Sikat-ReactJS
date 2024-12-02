@@ -63,7 +63,7 @@ export default function GenderBasedIncidents() {
 
   return (
     <MainLayout ActiveTab="Complaints">
-      <div className="mt-3 pt-0 pt-lg-2 px-2" style={{}}>
+      <div className="mt-0 mt-lg-2 pt-2 px-2" style={{}}>
         <div
           className="container rounded "
           style={{ backgroundColor: "var(--primary)" }}
@@ -74,7 +74,7 @@ export default function GenderBasedIncidents() {
         </div>
 
         <div className="container mt-2">
-          <div className="row gap-2 gy-2">
+          <div className="row gap-1">
             {/* <h3 className="text-start">Case Status</h3> */}
             <div className="col-md-4 d-flex p-0 gap-2">
               <div
@@ -98,12 +98,12 @@ export default function GenderBasedIncidents() {
                 className="w-100"
                 id="filterDropdown"
                 controlId="filterDropdown"
-                label="Filter Cases:"
+                label="Case Status:"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
                 <Form.Select aria-label="Floating label select example">
-                  <option value="all">All Cases</option>
+                  <option value="all">All</option>
                   <option value="unaddressed">Unaddressed Cases</option>
                   <option value="addressed">Addressed Cases</option>
                 </Form.Select>
@@ -112,7 +112,7 @@ export default function GenderBasedIncidents() {
           </div>
         </div>
 
-        <div className="container mt-3 p-0  rounded  overflow-auto">
+        <div className="container mt-2 p-0  rounded  overflow-auto">
           {error ? (
             <div className="alert alert-danger">{error}</div>
           ) : (
@@ -146,31 +146,19 @@ export default function GenderBasedIncidents() {
                     key={report.reportID}
                   >
                     <th scope="row" className="text-center align-middle">
-                      <p className="m-0 mt-1 d-flex align-items-center justify-content-center">
-                        {report.isAddress === 0 ? (
-                          <div
-                            className="p-0 m-0 d-flex align-items-center justify-content-center"
-                            style={{
-                              backgroundColor: "#b22222",
-                              height: "15px",
-                              width: "15px",
-                              borderRadius: "50%",
-                              color: "#dc143c",
-                            }}
-                          ></div>
-                        ) : (
-                          <div
-                            className="p-0 m-0 d-flex align-items-center justify-content-center"
-                            style={{
-                              backgroundColor: "#228b22",
-                              height: "15px",
-                              width: "15px",
-                              borderRadius: "50%",
-                              color: "#7fff00",
-                            }}
-                          ></div>
-                        )}
-                        {report.reportID}
+                      <p className="m-0 mt-1 d-flex align-items-center justify-content-center gap-1">
+                        <div
+                          className={`p-0 m-0 d-flex align-items-center justify-content-center ${
+                            report.isAddress === 0 ? "bg-danger" : "bg-success"
+                          }`}
+                          style={{
+                            height: ".6rem",
+                            width: ".6rem",
+                            borderRadius: "50%",
+                            color: "#dc143c",
+                          }}
+                        ></div>
+                        <p className="m-0">{report.reportID}</p>
                       </p>
                     </th>
                     <td className="text-center align-middle">
@@ -201,8 +189,11 @@ export default function GenderBasedIncidents() {
                           </button>
                         )}
                         <Link to={`/Admin/CaseDetails/${report.reportID}`}>
-                          <button className="primaryButton rounded text-light py-2">
-                            <p className="m-0">View</p>
+                          <button
+                            className="primaryButton rounded text-light py-2"
+                            style={{ height: "100" }}
+                          >
+                            <p className="m-0">View Details</p>
                           </button>
                         </Link>
                       </div>

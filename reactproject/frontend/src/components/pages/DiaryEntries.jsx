@@ -133,7 +133,7 @@ const DiaryEntries = () => {
 
   return (
     <MainLayout ActiveTab={ActiveTab}>
-      <div className="row mt-3 px-3">
+      <div className="row mt-0 mt-lg-2 pt-2 px-2">
         <div
           className="col-lg-3 d-none d-lg-block"
           style={{ position: "sticky", top: "75px", height: "100%" }}
@@ -141,8 +141,8 @@ const DiaryEntries = () => {
           <LeftSideLayout></LeftSideLayout>
         </div>
         <div className="col-lg">
-          <div className="container-fluid container-md mb-2 mt-2 px-0">
-            <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1 mt-3 mt-md-4 mt-lg-0">
+          <div className="container-fluid container-md mb-2 mt-4 mt-lg-2 px-0">
+            <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1">
               <div className="ps-1">
                 <h4 className="m-0 text-light fw-bolder">Diary Entries for</h4>
               </div>
