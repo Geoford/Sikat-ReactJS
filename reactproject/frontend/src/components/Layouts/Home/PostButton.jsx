@@ -227,7 +227,7 @@ function PostButton({ onEntrySaved }) {
           {serverError && <p className="text-danger">{serverError}</p>}
 
           <div
-            className="mt-2 pe-1 overflow-y-scroll overflow-x-visible custom-scrollbar"
+            className="mt-2 pe-1 overflow-y-scroll custom-scrollbar"
             style={{ maxHeight: "50dvh" }}
           >
             <InputGroup className="mb-1">
@@ -269,7 +269,7 @@ function PostButton({ onEntrySaved }) {
 
             {/* Display selected file preview */}
             {imagePreview ? (
-              <div className="mt-2 position-relative">
+              <div className="mt-1 position-relative">
                 <img
                   src={imagePreview}
                   alt="Selected Preview"
@@ -295,15 +295,19 @@ function PostButton({ onEntrySaved }) {
                 </div>
               </div>
             ) : (
-              <div className="ps-1 pt-2 mt-2">
-                <label htmlFor="uploadPhoto">
-                  <div style={{ cursor: "pointer" }}>
-                    <img
-                      className="miniIcon mb-1 me-1"
-                      src={uploadIcon}
-                      alt=""
-                    />
-                    Upload Photo
+              <div className="mt-1">
+                <label className="w-100" htmlFor="uploadPhoto">
+                  <div
+                    className="d-flex justify-content-center border rounded py-2 "
+                    style={{ cursor: "pointer" }}
+                  >
+                    <p className="m-0 d-flex align-items-center gap-1 text-secondary">
+                      <i
+                        class="bx bx-image-add bx-sm"
+                        style={{ color: "var(--secondary)" }}
+                      ></i>
+                      Upload Photo
+                    </p>
                   </div>
                 </label>
                 <input

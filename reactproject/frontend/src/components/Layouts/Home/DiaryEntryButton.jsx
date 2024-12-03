@@ -27,6 +27,11 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [selectedSubjects, setSelectedSubjects] = useState("");
   const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
   const [fileError, setFileError] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const removePreview = () => {
+    setFile(null);
+    setImagePreview(null);
+  };
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);
@@ -44,19 +49,26 @@ function DiaryEntryButton({ onEntrySaved }) {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
+    setFile(selectedFile);
     if (selectedFile) {
-      if (selectedFile.size > maxSize) {
-        setFileError(
-          "File size exceeds the 2MB limit. Please select a smaller file."
-        );
-        setFile(null); // Clear the invalid file
-      } else {
-        setFileError(""); // Clear any previous errors
-        setFile(selectedFile); // Set the valid file
-      }
+      setImagePreview(URL.createObjectURL(selectedFile));
+    } else {
+      setImagePreview(null);
     }
+    // const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+    // if (selectedFile) {
+    //   if (selectedFile.size > maxSize) {
+    //     setFileError(
+    //       "File size exceeds the 2MB limit. Please select a smaller file."
+    //     );
+    //     setFile(null); // Clear the invalid file
+    //   } else {
+    //     setFileError(""); // Clear any previous errors
+    //     setFile(selectedFile); // Set the valid file
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -217,7 +229,7 @@ function DiaryEntryButton({ onEntrySaved }) {
           {alarmingWordWarning && (
             <p className="text-warning">{alarmingWordWarning}</p>
           )}
-          <div className="d-flex align-items-center">
+          <div className="mt-1 d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
             {selectedSubjects && (
               <div className="">
@@ -225,7 +237,10 @@ function DiaryEntryButton({ onEntrySaved }) {
               </div>
             )}
           </div>
-          <div className="">
+          <div
+            className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"
+            style={{ maxHeight: "50dvh" }}
+          >
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"
@@ -257,25 +272,57 @@ function DiaryEntryButton({ onEntrySaved }) {
                 {formErrors.description}
               </Form.Control.Feedback>
             </FloatingLabel>
-            <div className="ps-1 pt-2">
-              <label htmlFor="uploadPhoto">
-                <div style={{ cursor: "pointer" }}>
-                  <img
-                    className="miniIcon mb-1 me-1"
-                    src={uploadIcon}
-                    alt="Upload icon"
-                  />
-                  <span>Upload Photo (e.g., .jpg, .png)</span>
+            {imagePreview ? (
+              <div className="mt-1 position-relative">
+                <img
+                  src={imagePreview}
+                  alt="Selected Preview"
+                  style={{
+                    width: "100%",
+                    maxHeight: "100%",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                />
+                <div
+                  className="position-absolute rounded"
+                  onClick={removePreview}
+                  style={{
+                    right: "1rem",
+                    top: "1rem",
+                    backgroundColor: "rgb(242, 242, 242,.5)",
+                  }}
+                >
+                  <h4 className="m-0 d-flex justify-content-center text-dark">
+                    <i class="bx bx-x"></i>
+                  </h4>
                 </div>
-              </label>
-              <input
-                type="file"
-                id="uploadPhoto"
-                hidden
-                accept="image/*" // Restricts file selection to images only
-                onChange={handleFileChange}
-              />
-              {file && (
+              </div>
+            ) : (
+              <div className="mt-1">
+                <label className="w-100" htmlFor="uploadPhoto">
+                  <div
+                    className="d-flex justify-content-center border rounded py-2 "
+                    style={{ cursor: "pointer" }}
+                  >
+                    <p className="m-0 d-flex align-items-center gap-1 text-secondary">
+                      <i
+                        class="bx bx-image-add bx-sm"
+                        style={{ color: "var(--secondary)" }}
+                      ></i>
+                      Upload Photo
+                    </p>
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="uploadPhoto"
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </div>
+            )}
+            {/* {file && (
                 <div className="mt-2 d-flex align-items-center gap-2">
                   <p className="text-success m-0">
                     Selected file: <strong>{file.name}</strong>
@@ -289,9 +336,8 @@ function DiaryEntryButton({ onEntrySaved }) {
                     Remove
                   </Button>
                 </div>
-              )}
-              {fileError && <p className="text-danger mt-2">{fileError}</p>}
-            </div>
+              )} */}
+            {fileError && <p className="text-danger mt-2">{fileError}</p>}
           </div>
         </Modal.Body>
         <Modal.Footer>
