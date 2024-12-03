@@ -35,7 +35,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                   />
                 </div>
               </div>
-              <div className="col ps-2">
+              <div className="col ps-0 ps-xl-2">
                 <div className="overflow-hidden followerName" style={{}}>
                   <p className="m-0 ms-2 text-start text-nowrap">
                     {user.isAdmin === 1
@@ -202,24 +202,30 @@ const RightSide = () => {
           <i className="bx bx-news bx-sm"></i>
           <h5 className="m-0">Announcements/Events</h5>
         </div>
+
         {latestAnnouncement ? (
-          <Link
-            to={`/DiaryEntry/${latestAnnouncement.entryID}`}
-            className="linkText rounded p-0"
+          <div
+            className="overflow-y-scroll custom-scrollbar rounded"
+            style={{ height: "clamp(5rem, 17dvw, 30rem)" }}
           >
-            <p className="m-0 mb-1 text-start">
-              {latestAnnouncement.title || "Untitled Announcement"}
-            </p>
-            <img
-              src={
-                latestAnnouncement.diary_image
-                  ? `http://localhost:8081${latestAnnouncement.diary_image}`
-                  : SampleImage
-              }
-              alt="Announcement"
-              style={{ width: "100%", borderRadius: ".3rem" }}
-            />
-          </Link>
+            <Link
+              to={`/DiaryEntry/${latestAnnouncement.entryID}`}
+              className="linkText rounded p-0"
+            >
+              <p className="m-0 mb-1 text-start">
+                {latestAnnouncement.title || "Untitled Announcement"}
+              </p>
+              <img
+                src={
+                  latestAnnouncement.diary_image
+                    ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                    : SampleImage
+                }
+                alt="Announcement"
+                style={{ width: "100%", borderRadius: ".3rem" }}
+              />
+            </Link>
+          </div>
         ) : (
           <p className="text-secondary">No announcements available.</p>
         )}

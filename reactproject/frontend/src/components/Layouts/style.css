@@ -137,8 +137,8 @@ select.form-select:focus {
 }
 
 .profilePicture {
-  height: clamp(2.5rem, 5vw, 3rem);
-  width: clamp(2.5rem, 5vw, 3rem);
+  height: clamp(2.5rem, 4vw, 3rem);
+  width: clamp(2.5rem, 4vw, 3rem);
   background-color: var(--background_light);
   border-radius: 50%;
   overflow: hidden;

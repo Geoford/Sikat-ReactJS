@@ -81,7 +81,7 @@ export default function HomeMainLayout({ isAdminPage }) {
             <div className="row">
               <div className="col-4 d-block d-none d-md-block d-lg-none">
                 <div
-                  className="position-fixed ps-1"
+                  className="position-fixed ps-1 ms-3"
                   style={{
                     top: "7.8rem",
                     height: "calc(100dvh - 5.5rem)",
@@ -92,7 +92,7 @@ export default function HomeMainLayout({ isAdminPage }) {
                   <LeftSideLayout />
                 </div>
               </div>
-              <div className="col me-0 me-md-2 me-lg-0">
+              <div className="col mx-0 mx-md-4">
                 <CenterLayout />
               </div>
             </div>
