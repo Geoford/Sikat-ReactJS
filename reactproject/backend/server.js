@@ -304,24 +304,56 @@ app.post("/Register", (req, res) => {
         return res.status(500).json({ error: "Error inserting profile data" });
       }
 
-      const mailOptions = {
-        from: "ndendi00@gmail.com",
-        to: cvsuEmail,
-        subject: "Your OTP Code",
-        text: `Your OTP code is: ${otp}`,
-      };
-
-      transporter.sendMail(mailOptions, (err, info) => {
+      // Retrieve all admin users
+      const adminQuery = "SELECT userID FROM user_table WHERE isAdmin = 1";
+      db.query(adminQuery, (err, admins) => {
         if (err) {
-          console.error("Error sending email: ", err);
-          return res.status(500).json({ error: "Error sending email" });
+          console.error("Error retrieving admin users: ", err);
+          return res
+            .status(500)
+            .json({ error: "Error retrieving admin users" });
         }
-        console.log("Verification email sent: " + info.response);
-      });
 
-      return res.status(201).json({
-        message:
-          "User registered successfully. Please check your email to verify your account.",
+        const followQueries = admins.map((admin) => {
+          return new Promise((resolve, reject) => {
+            const followSql =
+              "INSERT INTO followers (userID, followedUserID) VALUES (?, ?)";
+            db.query(followSql, [userID, admin.userID], (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
+        });
+
+        // Execute all follow queries
+        Promise.all(followQueries)
+          .then(() => {
+            const mailOptions = {
+              from: "ndendi00@gmail.com",
+              to: cvsuEmail,
+              subject: "Your OTP Code",
+              text: `Your OTP code is: ${otp}`,
+            };
+
+            transporter.sendMail(mailOptions, (err, info) => {
+              if (err) {
+                console.error("Error sending email: ", err);
+                return res.status(500).json({ error: "Error sending email" });
+              }
+              console.log("Verification email sent: " + info.response);
+            });
+
+            res.status(201).json({
+              message:
+                "User registered successfully. Automatically followed admins.",
+            });
+          })
+          .catch((err) => {
+            console.error("Error following admins: ", err);
+            res
+              .status(500)
+              .json({ error: "Error automatically following admins" });
+          });
       });
     });
   });

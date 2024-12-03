@@ -152,7 +152,7 @@ const ChatButton = () => {
 
   // Function to filter users based on search query
   const filteredUsers = users.filter((userItem) =>
-    `${userItem.username} ${userItem.lastName}`
+    `${userItem.firstName} ${userItem.lastName}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
