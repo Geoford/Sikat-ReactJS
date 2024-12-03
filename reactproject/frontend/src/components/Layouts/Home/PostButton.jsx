@@ -26,6 +26,11 @@ function PostButton({ onEntrySaved }) {
   const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
   const [scheduledDate, setScheduledDate] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const removePreview = () => {
+    setFile(null);
+    setImagePreview(null);
+  };
 
   const navigate = useNavigate();
 
@@ -41,7 +46,13 @@ function PostButton({ onEntrySaved }) {
   };
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    if (selectedFile) {
+      setImagePreview(URL.createObjectURL(selectedFile));
+    } else {
+      setImagePreview(null);
+    }
   };
 
   useEffect(() => {
@@ -61,6 +72,7 @@ function PostButton({ onEntrySaved }) {
     setDescription("");
     setFile(null);
     setScheduledDate(null);
+    setImagePreview(null);
   };
   const handleShow = () => setShow(true);
 
@@ -138,7 +150,7 @@ function PostButton({ onEntrySaved }) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="d-flex align-items-start gap-2 border-bottom pb-2">
             <div className="d-flex align-items-center gap-2">
               <div className="profilePicture">
                 <img
@@ -158,14 +170,14 @@ function PostButton({ onEntrySaved }) {
               <p className="m-0">{user?.username || "User"}</p>
             </div>
 
-            <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
-              <div class=" col input-group p-0">
+            <div className="w-100 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
+              <div class=" col-12 input-group p-0">
                 <select
                   class="form-select"
                   id="visibility"
                   value={visibility}
                   onChange={handleChangeVisibility}
-                  style={{ fonSize: "clamp(0.8rem, 2dvw, 0.9rem)" }}
+                  style={{ fontSize: "clamp(0.8rem, 2dvw, 0.9rem)" }}
                 >
                   <option value="now">
                     <p className="m-0">Post Now</p>
@@ -176,18 +188,35 @@ function PostButton({ onEntrySaved }) {
                 </select>
               </div>
               {visibility === "later" && (
-                <div className="col p-0">
-                  <DatePicker
-                    selected={scheduledDate}
-                    onChange={(date) => setScheduledDate(date)}
-                    showTimeSelect
-                    dateFormat="Pp"
-                    className="form-control"
-                    isInvalid={!!formErrors.scheduledDate}
-                    placeholderText="Select Date and Time"
-                  />
+                <div className="col  position-relative">
+                  <div className="row gap-1">
+                    <div className="col-md p-0">
+                      {/* Month Picker */}
+                      <DatePicker
+                        selected={scheduledDate}
+                        onChange={(date) => setScheduledDate(date)}
+                        dateFormat="MMMM d, yyyy"
+                        className="form-control"
+                        placeholderText="Select a Day and Month"
+                      />
+                    </div>
+                    <div className="col-md p-0">
+                      {/* Time Picker */}
+                      <DatePicker
+                        selected={scheduledDate}
+                        onChange={(date) => setScheduledDate(date)}
+                        dateFormat="hh:mm aa"
+                        showTimeSelect
+                        showTimeSelectOnly
+                        className="form-control"
+                        placeholderText="Select Time"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Error Message */}
                   {formErrors.scheduledDate && (
-                    <div className="text-danger">
+                    <div className="text-danger mt-1">
                       {formErrors.scheduledDate}
                     </div>
                   )}
@@ -197,7 +226,10 @@ function PostButton({ onEntrySaved }) {
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
 
-          <div className="mt-2">
+          <div
+            className="mt-2 pe-1 overflow-y-scroll overflow-x-visible custom-scrollbar"
+            style={{ maxHeight: "50dvh" }}
+          >
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"
@@ -212,34 +244,76 @@ function PostButton({ onEntrySaved }) {
                 {formErrors.title}
               </Form.Control.Feedback>
             </InputGroup>
+
+            {/* <FloatingLabel controlId="floatingTextarea2" label="Description">
+              <Form.Control as="textarea" style={{ height: "100px" }} />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.description}
+              </Form.Control.Feedback>
+            </FloatingLabel> */}
+
             <FloatingLabel controlId="floatingTextarea2" label="Description">
               <Form.Control
                 as="textarea"
-                style={{ height: "100px" }}
+                placeholder="Leave a comment here"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 isInvalid={!!formErrors.description}
                 disabled={loading}
+                style={{ height: "100px" }}
               />
               <Form.Control.Feedback type="invalid">
                 {formErrors.description}
               </Form.Control.Feedback>
             </FloatingLabel>
 
-            <div className="ps-1 pt-2 mt-2">
-              <label htmlFor="uploadPhoto">
-                <div style={{ cursor: "pointer" }}>
-                  <img className="miniIcon mb-1 me-1" src={uploadIcon} alt="" />
-                  Upload Photo
+            {/* Display selected file preview */}
+            {imagePreview ? (
+              <div className="mt-2 position-relative">
+                <img
+                  src={imagePreview}
+                  alt="Selected Preview"
+                  style={{
+                    width: "100%",
+                    maxHeight: "100%",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                />
+                <div
+                  className="position-absolute rounded"
+                  onClick={removePreview}
+                  style={{
+                    right: "1rem",
+                    top: "1rem",
+                    backgroundColor: "rgb(242, 242, 242,.5)",
+                  }}
+                >
+                  <h4 className="m-0 d-flex justify-content-center text-dark">
+                    <i class="bx bx-x"></i>
+                  </h4>
                 </div>
-              </label>
-              <input
-                type="file"
-                id="uploadPhoto"
-                hidden
-                onChange={handleFileChange}
-              />
-            </div>
+              </div>
+            ) : (
+              <div className="ps-1 pt-2 mt-2">
+                <label htmlFor="uploadPhoto">
+                  <div style={{ cursor: "pointer" }}>
+                    <img
+                      className="miniIcon mb-1 me-1"
+                      src={uploadIcon}
+                      alt=""
+                    />
+                    Upload Photo
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="uploadPhoto"
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </div>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>

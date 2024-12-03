@@ -7,7 +7,6 @@ import CommentSection from "../CommentSection/CommentSection";
 import Dropdown from "react-bootstrap/Dropdown";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import CloseButton from "react-bootstrap/CloseButton";
 import axios from "axios";
 import FlagButton from "./FlagButton";
 
@@ -32,9 +31,7 @@ const DiaryEntryLayout = ({
   });
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+  cosnt[(showModal, setShowModal)] = useState(false);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -439,59 +436,23 @@ const DiaryEntryLayout = ({
             />
 
             {/* Modal */}
-            <Modal show={showModal} onHide={handleCloseModal} centered size="">
-              {/* <Modal.Header closeButton>
+            <Modal show={showModal} onHide={handleCloseModal} centered>
+              <Modal.Header closeButton>
                 <Modal.Title>Diary Image</Modal.Title>
-              </Modal.Header> */}
-              <Modal.Body
-                className="text-center p-1 position-relative"
-                style={{ width: "auto" }}
-              >
-                <div
-                  className="position-absolute rounded"
-                  style={{
-                    right: "1rem",
-                    top: "1rem",
-                    backgroundColor: "rgb(242, 242, 242,.5)",
-                    paddingTop: ".15rem",
-                    paddingLeft: ".15rem",
-                    paddingRight: ".15rem",
-                  }}
-                >
-                  <CloseButton onClick={handleCloseModal} style={{}} />
-                </div>
-
+              </Modal.Header>
+              <Modal.Body className="text-center">
                 <img
                   src={`http://localhost:8081${entry.diary_image}`}
                   alt="Diary Full View"
                   className="img-fluid rounded"
-                  style={{
-                    width: "100%",
-                    // height: "100%",
-                    // objectFit: "cover",
-                  }}
+                  style={{ maxHeight: "80vh" }}
                 />
-                {/* <div
-                  className="position-absolute p-1 rounded"
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    backgroundColor: "#ffff",
-                    width: "clamp(100%, 40dvw,110%)",
-                  }}
-                >
-                  <div
-                    className="position-relative overflow-y-scroll custom-scrollbar"
-                    style={{ maxHeight: "90dvh" }}
-                  ></div>
-                </div> */}
               </Modal.Body>
-              {/* <Modal.Footer>
+              <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseModal}>
                   Close
                 </Button>
-              </Modal.Footer> */}
+              </Modal.Footer>
             </Modal>
           </>
         )}

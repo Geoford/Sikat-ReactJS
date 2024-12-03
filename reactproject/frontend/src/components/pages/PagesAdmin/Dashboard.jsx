@@ -292,7 +292,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="row gap-2 px-2 m-auto">
+            <div className="row gap-2 m-auto">
               <div
                 className="col-md border rounded shadow-sm overflow-hidden p-0"
                 style={{
