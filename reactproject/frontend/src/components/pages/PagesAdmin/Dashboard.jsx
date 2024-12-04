@@ -3,6 +3,27 @@ import { Link } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import MainLayout from "../../Layouts/MainLayout";
 import axios from "axios";
+import { Bar, Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +36,178 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [timeFilter, setTimeFilter] = useState("Day");
   const [specificDate, setSpecificDate] = useState("");
+  const [weeklyEntries, setWeeklyEntries] = useState({
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+    Sunday: 0,
+  });
+  const [weeklyFlags, setWeeklyFlags] = useState({
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+    Sunday: 0,
+  });
+  const [weeklyReportedComments, setWeeklyReportedComments] = useState({
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+    Sunday: 0,
+  });
+
+  useEffect(() => {
+    calculateWeeklyEntries();
+    applyTimeFilter();
+  }, [entries, timeFilter, specificDate]);
+
+  const calculateWeeklyEntries = () => {
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    const weeklyEntriesData = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    const weeklyFlagsData = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    const weeklyReportedCommentsData = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    // Count diary entries
+    filteredEntries.forEach((entry) => {
+      const day = new Date(entry.created_at).getDay();
+      const dayName = days[day];
+      weeklyEntriesData[dayName] += 1;
+    });
+
+    // Count flagged diaries
+    flags.forEach((flag) => {
+      const day = new Date(flag.created_at).getDay();
+      const dayName = days[day];
+      weeklyFlagsData[dayName] += 1;
+    });
+
+    // Count reported comments
+    reportedComments.forEach((comment) => {
+      const day = new Date(comment.created_at).getDay();
+      const dayName = days[day];
+      weeklyReportedCommentsData[dayName] += 1;
+    });
+
+    setWeeklyEntries(weeklyEntriesData);
+    setWeeklyFlags(weeklyFlagsData);
+    setWeeklyReportedComments(weeklyReportedCommentsData);
+  };
+
+  const graphData = {
+    labels: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ],
+    datasets: [
+      {
+        label: "Diary Entries",
+        data: Object.values(weeklyEntries),
+        barThickness: 18,
+        backgroundColor: "#5c0099",
+        borderColor: "#5c0099",
+        borderWidth: 1,
+      },
+      {
+        label: "Flagged Diaries",
+        data: Object.values(weeklyFlags),
+        barThickness: 18,
+        backgroundColor: "#ff4d4d",
+        borderColor: "#ff4d4d",
+        borderWidth: 1,
+      },
+      {
+        label: "Reported Comments",
+        data: Object.values(weeklyReportedComments),
+        barThickness: 18,
+        backgroundColor: "#e65c00",
+        borderColor: "#e65c00",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const graphOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Data this week (Mon-Sun)",
+      },
+    },
+    scales: {
+      y: {
+        ticks: {
+          stepSize: 1,
+          callback: function (value) {
+            return Math.floor(value);
+          },
+        },
+      },
+    },
+  };
+
+  const doughnut = {
+    labels: ["Total Entries", "Total Users"],
+    datasets: [
+      {
+        data: [filteredEntries.length, users.length],
+        backgroundColor: ["#5c0099", "#0099cc"],
+        borderColor: ["#5c0099", "#0099cc"],
+        borderWidth: 1,
+      },
+    ],
+  };
 
   const usersPerPage = 4;
 
@@ -349,6 +542,14 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-6">
+          <Bar data={graphData} options={graphOptions} />
+        </div>
+        <div className="col-3">
+          <Doughnut data={doughnut} />
         </div>
       </div>
     </MainLayout>

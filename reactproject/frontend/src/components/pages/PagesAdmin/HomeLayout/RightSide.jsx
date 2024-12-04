@@ -191,7 +191,7 @@ const RightSide = () => {
                         {flaggedUser.title}
                       </h5>
                       <h6 className="text-danger m-0">
-                        Reason: {flaggedUser.reasons} x {flaggedUser.count}
+                        Reason: {flaggedUser.reasons} x{flaggedUser.count}
                       </h6>
                       {/* <p className="text-danger m-0">Flagged times</p> */}
                     </div>
