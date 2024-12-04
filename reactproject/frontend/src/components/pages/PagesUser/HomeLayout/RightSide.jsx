@@ -8,7 +8,7 @@ import SampleImage from "../../../../assets/Background.jpg";
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
     className="custom-scrollbar mt-2"
-    style={{ height: "25vh", overflowY: "scroll" }}
+    style={{ height: "clamp(5rem, 12dvw, 25rem)", overflowY: "scroll" }}
   >
     {users.map((user) => (
       <div key={user.userID} className="pb-2 pe-1 mb-2">
@@ -205,7 +205,7 @@ const RightSide = () => {
 
         {latestAnnouncement ? (
           <div
-            className="overflow-y-scroll custom-scrollbar rounded"
+            className="overflow-y-scroll custom-scrollbar rounded pe-1"
             style={{ height: "clamp(5rem, 17dvw, 30rem)" }}
           >
             <Link

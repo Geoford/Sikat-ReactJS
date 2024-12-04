@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/anonymous.png";
 
-const Center = () => {
+const RightSide = () => {
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [reportedUsers, setReportedUsers] = useState([]);
@@ -93,9 +93,10 @@ const Center = () => {
           </p>
         </Link>
       </div>
-      <div className="rounded p-3 mb-2">
-        <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Reported User/s</h4>
+      <div className="rounded mt-2 ">
+        <div className="py-2 d-flex justify-content-start align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
+          <i class="bx bx-user-voice bx-sm"></i>
+          <h5 className=" m-0">Reported User/s</h5>
         </div>
         <div className="d-flex align-items-center gap-2">
           <div
@@ -127,16 +128,16 @@ const Center = () => {
                         }}
                       />
                     </div>
-                    <div className="d-flex flex-column align-items-start">
+                    <div className="w-75 d-flex flex-column align-items-start text-start">
                       <p className="text-secondary m-0">
                         {reportedUser.firstName} {reportedUser.lastName}
                       </p>
-                      <p className="text-danger m-0">
+                      <h6 className="text-danger m-0">
                         Reason: {reportedUser.reason}
-                      </p>
-                      <p className="text-danger m-0">
+                      </h6>
+                      {/* <p className="text-danger m-0">
                         Reported {reportedUser.count} times
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </Link>
@@ -148,9 +149,10 @@ const Center = () => {
         </div>
       </div>
 
-      <div className="p-3">
-        <div className="d-flex justify-content-between border-bottom">
-          <h4 className="text-secondary">Flagged Diaries</h4>
+      <div className="">
+        <div className="py-2 d-flex justify-content-start align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
+          <i class="bx bx-comment-error bx-sm"></i>
+          <h5 className="m-0">Flagged Diaries</h5>
         </div>
         <div className="d-flex align-items-center gap-2">
           <div
@@ -165,37 +167,33 @@ const Center = () => {
                   className="text-decoration-none rounded"
                   style={{ cursor: "pointer" }}
                 >
-                  <div className="row linkText d-flex align-items-center gap-3 rounded mb-2">
-                    <div className="col-md-2">
-                      <div className="profilePicture">
-                        <img
-                          src={
-                            flaggedUser.profile_image
-                              ? `http://localhost:8081${flaggedUser.profile_image}`
-                              : DefaultProfile
-                          }
-                          alt="Profile"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </div>
+                  <div className="linkText d-flex align-items-center gap-2 rounded">
+                    <div className="profilePicture">
+                      <img
+                        src={
+                          flaggedUser.profile_image
+                            ? `http://localhost:8081${flaggedUser.profile_image}`
+                            : DefaultProfile
+                        }
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
                     </div>
-                    <div className="col-md d-flex flex-column align-items-start text-start">
-                      <p className="text-secondary m-0">
+                    <div className="w-75 d-flex flex-column align-items-start text-start">
+                      {/* <p className="text-secondary m-0">
                         {flaggedUser.firstName} {flaggedUser.lastName}
-                      </p>
+                      </p> */}
                       <h5 className="text-secondary m-0">
-                        Title: {flaggedUser.title}
+                        {flaggedUser.title}
                       </h5>
-                      <p className="text-danger m-0">
-                        Reason: {flaggedUser.reasons}
-                      </p>
-                      <p className="text-danger m-0">
-                        Flagged {flaggedUser.count} times
-                      </p>
+                      <h6 className="text-danger m-0">
+                        Reason: {flaggedUser.reasons} x {flaggedUser.count}
+                      </h6>
+                      {/* <p className="text-danger m-0">Flagged times</p> */}
                     </div>
                   </div>
                 </Link>
@@ -210,4 +208,4 @@ const Center = () => {
   );
 };
 
-export default Center;
+export default RightSide;
