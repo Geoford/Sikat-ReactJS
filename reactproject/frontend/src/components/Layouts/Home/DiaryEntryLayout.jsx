@@ -25,6 +25,7 @@ const DiaryEntryLayout = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]); // New state for comments
+  const [flaggedCount, setFlaggedCount] = useState(null);
   const [filters, setFilters] = useState({
     sexualHarassment: false,
     domesticAbuse: false,
@@ -74,6 +75,41 @@ const DiaryEntryLayout = ({
       fetchEntries(user.userID, filters);
     }
   }, [user, filters]);
+
+  useEffect(() => {
+    if (entry.entryID) {
+      const fetchComments = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/fetchComments/${entry.entryID}`
+          );
+          setComments(response.data);
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        }
+      };
+      fetchComments();
+    }
+  }, [entry.entryID]);
+
+  const commentCount = comments.length;
+
+  useEffect(() => {
+    if (entry.entryID) {
+      const fetchFlaggedCount = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/flagged/${entry.entryID}`
+          );
+          const count = response.data.flaggedCount;
+          setFlaggedCount(count);
+        } catch (error) {
+          console.error("Error fetching flagged count:", error);
+        }
+      };
+      fetchFlaggedCount();
+    }
+  }, [entry.entryID]);
 
   useEffect(() => {
     if (entry.entryID) {
@@ -522,6 +558,7 @@ const DiaryEntryLayout = ({
 
         <div className="col p-0">
           <CommentSection
+            commentCount={commentCount}
             userID={user.userID}
             entryID={entry.entryID}
             entry={entry.userID}
@@ -531,6 +568,7 @@ const DiaryEntryLayout = ({
 
         <div className="col p-0">
           <FlagButton
+            flaggedCount={flaggedCount}
             userID={user.userID}
             entryID={entry.entryID}
             entry={entry.userID}

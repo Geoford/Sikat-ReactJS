@@ -105,7 +105,7 @@ function NotificationButton() {
       );
 
       axios
-        .post("http://localhost:8081/notifications/mark-as-read", {
+        .put("http://localhost:8081/notifications/mark-as-read", {
           userID: user.userID,
         })
         .catch((error) =>
@@ -119,7 +119,7 @@ function NotificationButton() {
 
     // Mark the notification as read
     axios
-      .post("http://localhost:8081/notifications/mark-as-read", {
+      .put("http://localhost:8081/notifications/mark-as-read", {
         userID: user.userID,
         notificationID,
       })
@@ -192,7 +192,12 @@ function NotificationButton() {
                   markAsReadAndNavigate(notification.notificationID)
                 }
               >
-                <div className="row grayHover d-flex align-items-center gap-2 p-2 rounded my-1">
+                <div
+                  className="row grayHover d-flex align-items-center gap-2 p-2 rounded my-1"
+                  style={{
+                    backgroundColor: notification.read ? "white" : "",
+                  }}
+                >
                   <div className="col-1 p-0">
                     <div className="profilePicture">
                       <img
@@ -216,6 +221,7 @@ function NotificationButton() {
                       className="text-secondary"
                       style={{ fontSize: "13px" }}
                     >
+                      {" "}
                       {new Date(notification.timestamp).toLocaleTimeString()}
                     </span>
                   </p>

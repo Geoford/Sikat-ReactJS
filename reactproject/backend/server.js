@@ -422,7 +422,6 @@ app.post("/Login", (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Update user status to online (isActive = true)
     const updateStatusSql =
       "UPDATE user_table SET isActive = ? WHERE userID = ?";
     db.query(updateStatusSql, [true, user.userID], (err, result) => {
@@ -431,7 +430,6 @@ app.post("/Login", (req, res) => {
         return res.status(500).json({ error: "Failed to update user status" });
       }
 
-      // Send response with user data
       return res.json({
         userID: user.userID,
         cvsuEmail: user.cvsuEmail,
@@ -1952,6 +1950,25 @@ app.get("/flagged", (req, res) => {
   });
 });
 
+app.get("/flagged/:entryID", (req, res) => {
+  const { entryID } = req.params;
+  const query = `
+    SELECT COUNT(*) AS flaggedCount
+    FROM flagged_reports
+    WHERE entryID = ?
+  `;
+
+  db.query(query, [entryID], (err, results) => {
+    if (err) {
+      console.error("Error fetching flagged count:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged count" });
+    }
+
+    const flaggedCount = results[0].flaggedCount;
+    res.status(200).json({ flaggedCount });
+  });
+});
+
 app.post("/verify-password/:userID", (req, res) => {
   const { password } = req.body;
   const { userID } = req.params;
@@ -1990,7 +2007,7 @@ app.post("/verify-password/:userID", (req, res) => {
   });
 });
 
-app.post("/notifications/mark-as-read", (req, res) => {
+app.put("/notifications/mark-as-read", (req, res) => {
   const { userID, notificationID } = req.body;
 
   if (!userID || !notificationID) {
@@ -2000,16 +2017,23 @@ app.post("/notifications/mark-as-read", (req, res) => {
   }
 
   const query = `
-  UPDATE notifications
-  SET read = TRUE
-  WHERE userID = ? AND read = FALSE
-`;
+    UPDATE notifications
+    SET \`read\` = TRUE
+    WHERE userID = ? AND notificationID = ?
+  `;
+
   db.query(query, [userID, notificationID], (err, result) => {
     if (err) {
       console.error("Error updating notification:", err);
       return res
         .status(500)
         .json({ message: "Error marking notification as read." });
+    }
+
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ message: "Notification not found or already marked as read." });
     }
 
     return res.status(200).json({

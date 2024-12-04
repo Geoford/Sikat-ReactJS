@@ -56,19 +56,21 @@ function DiaryEntryButton({ onEntrySaved }) {
     } else {
       setImagePreview(null);
     }
-    // const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
-    // if (selectedFile) {
-    //   if (selectedFile.size > maxSize) {
-    //     setFileError(
-    //       "File size exceeds the 2MB limit. Please select a smaller file."
-    //     );
-    //     setFile(null); // Clear the invalid file
-    //   } else {
-    //     setFileError(""); // Clear any previous errors
-    //     setFile(selectedFile); // Set the valid file
-    //   }
-    // }
+    if (selectedFile) {
+      if (selectedFile.size > maxSize) {
+        setFileError(
+          "File size exceeds the 2MB limit. Please select a smaller file."
+        );
+        setFile(null);
+        setImagePreview(null);
+      } else {
+        setFileError("");
+        setFile(selectedFile);
+        setImagePreview(URL.createObjectURL(selectedFile));
+      }
+    }
   };
 
   useEffect(() => {

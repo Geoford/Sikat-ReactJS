@@ -11,7 +11,13 @@ import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
 
-const CommentSection = ({ userID, entryID, entry, firstName }) => {
+const CommentSection = ({
+  userID,
+  entryID,
+  entry,
+  firstName,
+  commentCount,
+}) => {
   const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
   const [comments, setComments] = useState([]);
@@ -446,7 +452,7 @@ const CommentSection = ({ userID, entryID, entry, firstName }) => {
         onClick={handleShow}
       >
         <i className="bx bx-comment"></i>
-        <span>{comments.length}</span>
+        <span>{commentCount}</span>
         <p className="m-0 d-none d-md-block">Comments</p>
       </button>
 

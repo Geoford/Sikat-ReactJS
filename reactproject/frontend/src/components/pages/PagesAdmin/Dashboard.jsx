@@ -544,11 +544,11 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="row">
-        <div className="col-6">
+      <div className="row row-cols-1 row-cols-lg-2 justify-content-center">
+        <div className="col">
           <Bar data={graphData} options={graphOptions} />
         </div>
-        <div className="col-3">
+        <div className="col-lg-3">
           <Doughnut data={doughnut} />
         </div>
       </div>

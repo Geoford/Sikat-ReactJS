@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function FlagButton({ userID, entryID, entry }) {
+function FlagButton({ userID, entryID, entry, flaggedCount }) {
   const [show, setShow] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [otherText, setOtherText] = useState("");
@@ -90,7 +90,7 @@ function FlagButton({ userID, entryID, entry }) {
         onClick={handleShow}
       >
         <i className="bx bx-flag"></i>
-        <span>0</span>
+        <span>{flaggedCount}</span>
         <p className="m-0 d-none d-md-block">Flag</p>
       </button>
 
