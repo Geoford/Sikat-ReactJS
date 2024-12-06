@@ -32,55 +32,32 @@ const Dashboard = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [entries, setEntries] = useState([]);
   const [filteredEntries, setFilteredEntries] = useState([]);
+  const [filteredFlags, setFilteredFlags] = useState([]);
+  const [filteredReportedComments, setFilteredReportedComments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [timeFilter, setTimeFilter] = useState("Day");
+  const [timeFilter, setTimeFilter] = useState("Week");
   const [specificDate, setSpecificDate] = useState("");
-  const [weeklyEntries, setWeeklyEntries] = useState({
-    Monday: 0,
-    Tuesday: 0,
-    Wednesday: 0,
-    Thursday: 0,
-    Friday: 0,
-    Saturday: 0,
-    Sunday: 0,
-  });
-  const [weeklyFlags, setWeeklyFlags] = useState({
-    Monday: 0,
-    Tuesday: 0,
-    Wednesday: 0,
-    Thursday: 0,
-    Friday: 0,
-    Saturday: 0,
-    Sunday: 0,
-  });
-  const [weeklyReportedComments, setWeeklyReportedComments] = useState({
-    Monday: 0,
-    Tuesday: 0,
-    Wednesday: 0,
-    Thursday: 0,
-    Friday: 0,
-    Saturday: 0,
-    Sunday: 0,
-  });
 
   useEffect(() => {
-    calculateWeeklyEntries();
+    fetchEntries();
+    fetchUsers();
+    fetchFlags();
+    fetchReportedComments();
+  }, []);
+
+  useEffect(() => {
     applyTimeFilter();
-  }, [entries, timeFilter, specificDate]);
+  }, [entries, flags, reportedComments, timeFilter, specificDate]);
 
-  const calculateWeeklyEntries = () => {
-    const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
+  useEffect(() => {
+    setWeeklyEntries(calculateWeeklyData(filteredEntries));
+    setWeeklyFlags(calculateWeeklyData(filteredFlags));
+    setWeeklyReportedComments(calculateWeeklyData(filteredReportedComments));
+  }, [filteredEntries, filteredFlags, filteredReportedComments]);
 
-    const weeklyEntriesData = {
+  const calculateWeeklyData = (data) => {
+    const weeklyData = {
       Monday: 0,
       Tuesday: 0,
       Wednesday: 0,
@@ -89,51 +66,20 @@ const Dashboard = () => {
       Saturday: 0,
       Sunday: 0,
     };
-
-    const weeklyFlagsData = {
-      Monday: 0,
-      Tuesday: 0,
-      Wednesday: 0,
-      Thursday: 0,
-      Friday: 0,
-      Saturday: 0,
-      Sunday: 0,
-    };
-
-    const weeklyReportedCommentsData = {
-      Monday: 0,
-      Tuesday: 0,
-      Wednesday: 0,
-      Thursday: 0,
-      Friday: 0,
-      Saturday: 0,
-      Sunday: 0,
-    };
-
-    // Count diary entries
-    filteredEntries.forEach((entry) => {
-      const day = new Date(entry.created_at).getDay();
-      const dayName = days[day];
-      weeklyEntriesData[dayName] += 1;
+    data.forEach((item) => {
+      const day = new Date(item.created_at).getDay();
+      const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      weeklyData[days[day]]++;
     });
-
-    // Count flagged diaries
-    flags.forEach((flag) => {
-      const day = new Date(flag.created_at).getDay();
-      const dayName = days[day];
-      weeklyFlagsData[dayName] += 1;
-    });
-
-    // Count reported comments
-    reportedComments.forEach((comment) => {
-      const day = new Date(comment.created_at).getDay();
-      const dayName = days[day];
-      weeklyReportedCommentsData[dayName] += 1;
-    });
-
-    setWeeklyEntries(weeklyEntriesData);
-    setWeeklyFlags(weeklyFlagsData);
-    setWeeklyReportedComments(weeklyReportedCommentsData);
+    return weeklyData;
   };
 
   const graphData = {
@@ -149,27 +95,18 @@ const Dashboard = () => {
     datasets: [
       {
         label: "Diary Entries",
-        data: Object.values(weeklyEntries),
-        barThickness: 18,
+        data: Object.values(calculateWeeklyData(filteredEntries)),
         backgroundColor: "#5c0099",
-        borderColor: "#5c0099",
-        borderWidth: 1,
       },
       {
         label: "Flagged Diaries",
-        data: Object.values(weeklyFlags),
-        barThickness: 18,
+        data: Object.values(calculateWeeklyData(filteredFlags)),
         backgroundColor: "#ff4d4d",
-        borderColor: "#ff4d4d",
-        borderWidth: 1,
       },
       {
         label: "Reported Comments",
-        data: Object.values(weeklyReportedComments),
-        barThickness: 18,
+        data: Object.values(calculateWeeklyData(filteredReportedComments)),
         backgroundColor: "#e65c00",
-        borderColor: "#e65c00",
-        borderWidth: 1,
       },
     ],
   };
@@ -197,7 +134,7 @@ const Dashboard = () => {
     },
   };
 
-  const doughnut = {
+  const doughnutData = {
     labels: ["Total Entries", "Total Users"],
     datasets: [
       {
@@ -210,20 +147,6 @@ const Dashboard = () => {
   };
 
   const usersPerPage = 4;
-
-  useEffect(() => {
-    fetchEntries();
-  }, []);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchFlags();
-    fetchReportedComments();
-  }, []);
-
-  useEffect(() => {
-    applyTimeFilter();
-  }, [entries, timeFilter, specificDate]);
 
   const fetchEntries = async () => {
     try {
@@ -279,30 +202,36 @@ const Dashboard = () => {
 
   const applyTimeFilter = () => {
     const now = new Date();
-    const filtered = entries.filter((entry) => {
-      const entryDate = new Date(entry.created_at);
-      if (specificDate) {
-        const selectedDate = new Date(specificDate);
-        return (
-          entryDate.getFullYear() === selectedDate.getFullYear() &&
-          entryDate.getMonth() === selectedDate.getMonth() &&
-          entryDate.getDate() === selectedDate.getDate()
-        );
-      }
-      switch (timeFilter) {
-        case "Day":
-          return now - entryDate <= 1 * 24 * 60 * 60 * 1000;
-        case "Week":
-          return now - entryDate <= 7 * 24 * 60 * 60 * 1000;
-        case "Month":
-          return now - entryDate <= 30 * 24 * 60 * 60 * 1000;
-        case "Year":
-          return now - entryDate <= 365 * 24 * 60 * 60 * 1000;
-        default:
-          return true;
-      }
-    });
-    setFilteredEntries(filtered);
+
+    const filterData = (data) => {
+      return data.filter((item) => {
+        const date = new Date(item.created_at);
+        if (specificDate) {
+          const selectedDate = new Date(specificDate);
+          return (
+            date.getFullYear() === selectedDate.getFullYear() &&
+            date.getMonth() === selectedDate.getMonth() &&
+            date.getDate() === selectedDate.getDate()
+          );
+        }
+        switch (timeFilter) {
+          case "Day":
+            return now - date <= 1 * 24 * 60 * 60 * 1000;
+          case "Week":
+            return now - date <= 7 * 24 * 60 * 60 * 1000;
+          case "Month":
+            return now - date <= 30 * 24 * 60 * 60 * 1000;
+          case "Year":
+            return now - date <= 365 * 24 * 60 * 60 * 1000;
+          default:
+            return true;
+        }
+      });
+    };
+
+    setFilteredEntries(filterData(entries));
+    setFilteredFlags(filterData(flags));
+    setFilteredReportedComments(filterData(reportedComments));
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -549,7 +478,7 @@ const Dashboard = () => {
           <Bar data={graphData} options={graphOptions} />
         </div>
         <div className="col-lg-3">
-          <Doughnut data={doughnut} />
+          <Doughnut data={doughnutData} />
         </div>
       </div>
     </MainLayout>
