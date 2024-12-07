@@ -87,17 +87,22 @@ const ReportedComment = ({ reportedComments }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAddressed = async (reportcommentID) => {
-    setIsLoading(true);
-    try {
-      await axios.put(
-        `http://localhost:8081/commentAddress/${reportcommentID}`
-      );
-      alert("The comment has been addressed!");
-    } catch (error) {
-      console.error("Failed to update comment:", error);
-      alert("Failed to update the comment. Please try again.");
-    } finally {
-      setIsLoading(false);
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this entry?"
+    );
+    if (confirmed) {
+      setIsLoading(true);
+      try {
+        await axios.put(
+          `http://localhost:8081/commentAddress/${reportcommentID}`
+        );
+        alert("The comment has been addressed!");
+      } catch (error) {
+        console.error("Failed to update comment:", error);
+        alert("Failed to update the comment. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

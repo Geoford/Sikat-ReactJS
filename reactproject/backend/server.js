@@ -1774,7 +1774,7 @@ app.get("/user_profile/:userID", (req, res) => {
 });
 
 app.post("/submit-report", (req, res) => {
-  upload.single("supportingDocuments")(req, res, (err) => {
+  upload.array("supportingDocuments", 5)(req, res, (err) => {
     if (err) {
       return res
         .status(500)
@@ -1793,10 +1793,10 @@ app.post("/submit-report", (req, res) => {
       isAddress,
     } = req.body;
 
-    let supportingDocuments = null; // Default to null if no file is uploaded
-    if (req.file) {
-      supportingDocuments = `/uploads/${req.file.filename}`; // Use the file's upload destination
-    }
+    // Retrieve file paths for the uploaded files
+    const supportingDocuments = req.files.map(
+      (file) => `/uploads/${file.filename}`
+    );
 
     const query = `
       INSERT INTO gender_based_crime_reports 
@@ -1814,9 +1814,9 @@ app.post("/submit-report", (req, res) => {
         incidentDescription,
         location,
         date,
-        supportingDocuments,
+        JSON.stringify(supportingDocuments), // Save as JSON string
         subjects,
-        true,
+        false,
       ],
       (err, result) => {
         if (err) {
@@ -1851,7 +1851,7 @@ app.put("/reports/:id", (req, res) => {
 
 app.get("/reports", (req, res) => {
   const query = `
-  SELECT * FROM gender_based_crime_reports
+  SELECT * FROM gender_based_crime_reports ORDER BY created_at DESC
 `;
 
   db.query(query, (err, results) => {

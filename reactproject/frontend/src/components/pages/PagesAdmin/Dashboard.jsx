@@ -38,6 +38,9 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [timeFilter, setTimeFilter] = useState("Week");
   const [specificDate, setSpecificDate] = useState("");
+  const [weeklyEntries, setWeeklyEntries] = useState({});
+  const [weeklyFlags, setWeeklyFlags] = useState({});
+  const [weeklyReportedComments, setWeeklyReportedComments] = useState({});
 
   useEffect(() => {
     fetchEntries();
@@ -202,7 +205,6 @@ const Dashboard = () => {
 
   const applyTimeFilter = () => {
     const now = new Date();
-
     const filterData = (data) => {
       return data.filter((item) => {
         const date = new Date(item.created_at);
@@ -228,7 +230,6 @@ const Dashboard = () => {
         }
       });
     };
-
     setFilteredEntries(filterData(entries));
     setFilteredFlags(filterData(flags));
     setFilteredReportedComments(filterData(reportedComments));

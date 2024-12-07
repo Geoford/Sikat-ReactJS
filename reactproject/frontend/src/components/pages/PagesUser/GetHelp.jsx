@@ -67,6 +67,7 @@ const GetHelp = () => {
     if (selectedSubjects && selectedSubjects.trim() !== "") {
       data.append("subjects", selectedSubjects);
     }
+
     try {
       const response = await axios.post(
         "http://localhost:8081/submit-report",

@@ -7,7 +7,7 @@ import MainLayout from "../../Layouts/MainLayout";
 
 const CaseDetails = () => {
   const { reportID } = useParams(); // Get reportID from the route parameter
-  const [caseDetails, setCaseDetails] = useState(null);
+  const [caseDetails, setCaseDetails] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +18,7 @@ const CaseDetails = () => {
     axios
       .get(`http://localhost:8081/reports/${reportID}`)
       .then((response) => {
+        console.log(response.data);
         setCaseDetails(response.data);
         setError(null);
       })
@@ -48,6 +49,11 @@ const CaseDetails = () => {
       </MainLayout>
     );
   }
+
+  const documents = Array.isArray(caseDetails.supportingDocuments)
+    ? caseDetails.supportingDocuments
+    : [caseDetails.supportingDocuments];
+  // If it's not an array, convert it into one
 
   if (error) {
     return (
@@ -109,7 +115,6 @@ const CaseDetails = () => {
                 </p>
               </div>
             </div>
-
             {/* Incident Details */}
             <h5 className="mt-3">Incident Details</h5>
             <div className="px-2 d-flex flex-column gap-3">
@@ -143,27 +148,44 @@ const CaseDetails = () => {
               </div>
             </div>
 
-            <div className="d-flex flex-column justify-content-between">
-              <div>
-                <h5 className="mt-3">Proof of Incident</h5>
-                <div className="d-flex gap-2">
-                  <div onClick={() => handleImageClick(document)}>
-                    <div
-                      className="supportImageContainer overflow-hidden border-0"
-                      style={{ cursor: "pointer" }}
-                    >
-                      <img
-                        src={`http://localhost:8081${caseDetails.supportingDocuments}`} // Displaying the supporting document as an image
-                        alt={`Supporting Document`}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
+            <div>
+              <h5 className="mt-3">Proof of Incident</h5>
+              <div className="d-flex flex-wrap gap-2">
+                {caseDetails.supportingDocuments &&
+                Array.isArray(JSON.parse(caseDetails.supportingDocuments)) &&
+                JSON.parse(caseDetails.supportingDocuments).length > 0 ? (
+                  JSON.parse(caseDetails.supportingDocuments).map(
+                    (document, index) => (
+                      <div
+                        key={index}
+                        onClick={() =>
+                          handleImageClick(`http://localhost:8081${document}`)
+                        }
+                      >
+                        <div
+                          className="supportImageContainer overflow-hidden border-0"
+                          style={{
+                            cursor: "pointer",
+                            width: "100px",
+                            height: "100px",
+                          }}
+                        >
+                          <img
+                            src={`http://localhost:8081${document}`} // Displaying the supporting document as an image
+                            alt={`Supporting Document ${index + 1}`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  )
+                ) : (
+                  <p>No supporting documents available.</p>
+                )}
               </div>
             </div>
 

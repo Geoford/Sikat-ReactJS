@@ -1,36 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 
-const UserAuthentication = ({ userID }) => {
+const UserAuthentication = ({ cvsuEmail }) => {
   const [show, setShow] = useState(false);
   const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("");
   const [verificationStatus, setVerificationStatus] = useState(null);
-  const [isVerifying, setIsVerifying] = useState(false); // Track verification state
-
-  const navigate = useNavigate(); // Initialize useNavigate hook
-
-  useEffect(() => {
-    // Fetch the logged-in user's email from the backend
-    const fetchUserEmail = async () => {
-      try {
-        const response = await axios.get(`/get-user-email/${userID}`); // Replace with your API endpoint
-        setEmail(response.data.cvsuEmail);
-      } catch (error) {
-        console.error("Error fetching email:", error);
-        setVerificationStatus("Failed to fetch email. Please try again.");
-      }
-    };
-    fetchUserEmail();
-  }, [userID]);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const email = cvsuEmail;
 
   const handleClose = () => {
-    // If the modal is being closed and the OTP wasn't verified, reload the page
     if (
       !verificationStatus ||
       verificationStatus !== "OTP verified successfully!"
@@ -40,25 +22,45 @@ const UserAuthentication = ({ userID }) => {
     }
     setShow(false);
     setOtp("");
-    setVerificationStatus(null); // Reset status on close
+    setVerificationStatus(null);
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = async () => {
+    setShow(true);
+    await sendOtp(); // Automatically send OTP when modal opens
+  };
+
+  const sendOtp = async () => {
+    setIsSendingOtp(true); // Set sending state to true
+    try {
+      const response = await axios.post("http://localhost:8081/send-otp", {
+        email: cvsuEmail,
+      });
+
+      if (response.status === 200) {
+        alert("OTP has been sent to your CvSU email.");
+      } else {
+        alert("Failed to send OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      alert("Error sending OTP. Please check your connection.");
+    } finally {
+      setIsSendingOtp(false); // Reset sending state
+    }
+  };
 
   const handleOtpChange = (e) => {
     setOtp(e.target.value);
   };
 
   const handleVerifyOtp = async () => {
-    setIsVerifying(true); // Set verifying state to true
+    setIsVerifying(true);
     try {
-      const response = await axios.post(
-        `http://localhost:8081/verify-otp/${userID}`, // Replace with your endpoint to verify OTP
-        {
-          email,
-          otp,
-        }
-      );
+      const response = await axios.post("http://localhost:8081/verify-otp", {
+        email,
+        otp,
+      });
 
       if (response.status === 200) {
         setVerificationStatus("OTP verified successfully!");
@@ -70,7 +72,7 @@ const UserAuthentication = ({ userID }) => {
       console.error("Verification error:", error);
       setVerificationStatus("OTP verification failed. Try again.");
     } finally {
-      setIsVerifying(false); // Reset verification state
+      setIsVerifying(false);
     }
   };
 
@@ -115,13 +117,20 @@ const UserAuthentication = ({ userID }) => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <button
+          <Button
+            className="primaryButton px-4 py-2"
+            onClick={sendOtp}
+            disabled={isSendingOtp}
+          >
+            {isSendingOtp ? "Sending OTP..." : "Resend OTP"}
+          </Button>
+          <Button
             className="primaryButton px-4 py-2"
             onClick={handleVerifyOtp}
             disabled={isVerifying}
           >
-            <p className="m-0">{isVerifying ? "Verifying..." : "Verify OTP"}</p>
-          </button>
+            {isVerifying ? "Verifying..." : "Verify OTP"}
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
