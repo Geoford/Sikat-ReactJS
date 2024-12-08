@@ -930,6 +930,28 @@ app.get("/entries", (req, res) => {
   });
 });
 
+app.post("/updateEngagement", (req, res) => {
+  const { entryID } = req.body;
+
+  if (!entryID) {
+    res.status(400).send({ error: "Entry ID is required" });
+    return;
+  }
+
+  db.query(
+    "UPDATE diary_entries SET engagementCount = engagementCount + 1 WHERE entryID = ?",
+    [entryID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating engagement count:", err);
+        res.status(500).send({ error: "Failed to update engagement count" });
+      } else {
+        res.status(200).send({ message: "Engagement count updated" });
+      }
+    }
+  );
+});
+
 app.get("/analytics", (req, res) => {
   let query = `
     SELECT 

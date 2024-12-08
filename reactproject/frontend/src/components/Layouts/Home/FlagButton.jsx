@@ -73,6 +73,7 @@ function FlagButton({ userID, entryID, entry, flaggedCount }) {
       if (response.status === 200) {
         alert("Flagged successfully");
         console.log("Report submitted successfully");
+        updateEngagement(entryID);
         handleClose();
       } else {
         console.error("Failed to submit report");
@@ -80,6 +81,14 @@ function FlagButton({ userID, entryID, entry, flaggedCount }) {
     } catch (error) {
       console.error("Error submitting report:", error);
       alert("There was an error submitting your report. Please try again.");
+    }
+  };
+
+  const updateEngagement = async (entryID) => {
+    try {
+      await axios.post("http://localhost:8081/updateEngagement", { entryID });
+    } catch (error) {
+      console.error("Error updating engagement:", error);
     }
   };
 

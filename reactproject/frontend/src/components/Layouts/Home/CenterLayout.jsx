@@ -236,6 +236,14 @@ const CenterLayout = () => {
     handleGadify(entryID);
   };
 
+  const updateEngagement = async (entryID) => {
+    try {
+      await axios.post("http://localhost:8081/updateEngagement", { entryID });
+    } catch (error) {
+      console.error("Error updating engagement:", error);
+    }
+  };
+
   const formatDate = (dateString) => {
     const entryDate = new Date(dateString);
     const now = new Date();
