@@ -34,7 +34,10 @@ const DiaryEntryLayout = ({
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = (entryID) => {
+    setShowModal(true);
+    updateEngagement(entryID);
+  };
   const handleCloseModal = () => setShowModal(false);
 
   useEffect(() => {
@@ -169,6 +172,14 @@ const DiaryEntryLayout = ({
         console.error("Error deleting diary entry:", error);
         alert("Failed to delete the entry.");
       }
+    }
+  };
+
+  const updateEngagement = async (entryID) => {
+    try {
+      await axios.post("http://localhost:8081/updateEngagement", { entryID });
+    } catch (error) {
+      console.error("Error updating engagement:", error);
     }
   };
 
@@ -471,7 +482,7 @@ const DiaryEntryLayout = ({
               src={`http://localhost:8081${entry.diary_image}`}
               alt="Diary"
               style={{ cursor: "pointer" }} // Add pointer cursor
-              onClick={handleShowModal} // Open modal on click
+              onClick={() => handleShowModal(entry.entryID)} // Open modal on click
             />
 
             {/* Modal */}

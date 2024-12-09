@@ -79,7 +79,10 @@ const Settings = () => {
                     className="shadow d-flex align-items-center gap-2 p-0"
                     eventKey="security"
                   >
-                    <UserAuthentication userID={userID}></UserAuthentication>
+                    <UserAuthentication
+                      userID={userID}
+                      cvsuEmail={user?.cvsuEmail}
+                    ></UserAuthentication>
                   </Nav.Link>
                 </Nav.Item>
                 {user && user.isAdmin ? (

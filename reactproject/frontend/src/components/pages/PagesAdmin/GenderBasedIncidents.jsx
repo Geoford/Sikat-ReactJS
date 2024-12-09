@@ -51,7 +51,13 @@ export default function GenderBasedIncidents() {
   };
 
   const handleAddressed = (reportID) => {
+<<<<<<< HEAD
     const confirmed = window.confirm("Mark this as addressed?");
+=======
+    const confirmed = window.confirm(
+      "Are you sure you want to address this entry?"
+    );
+>>>>>>> b58916f967c5af0e25ac98f089b72991f877beb5
     if (confirmed) {
       axios
         .put(`http://localhost:8081/reports/${reportID}`)
@@ -60,7 +66,11 @@ export default function GenderBasedIncidents() {
           fetchReports();
         })
         .catch((err) => {
+<<<<<<< HEAD
           setError(err.response?.data?.error || "Failed to update report");
+=======
+          setError(err.response?.data?.error || "Failed to update case report");
+>>>>>>> b58916f967c5af0e25ac98f089b72991f877beb5
         });
     }
   };

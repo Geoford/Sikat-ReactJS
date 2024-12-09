@@ -137,6 +137,26 @@ function NotificationButton() {
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+  };
+
   return (
     <>
       <button
@@ -222,7 +242,7 @@ function NotificationButton() {
                       style={{ fontSize: "13px" }}
                     >
                       {" "}
-                      {new Date(notification.timestamp).toLocaleTimeString()}
+                      {formatDate(notification.timestamp)}
                     </span>
                   </p>
                 </div>

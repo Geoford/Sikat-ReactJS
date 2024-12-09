@@ -104,7 +104,7 @@ const CommentSection = ({
       await axios.post("http://localhost:8081/comments", newCommentObj);
       setNewComment("");
       fetchComments();
-      // Scroll to the newly added comment after it is added
+      updateEngagement(entryID);
       setTimeout(() => {
         newCommentRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
@@ -153,8 +153,7 @@ const CommentSection = ({
       setReplyTo(null);
       replyTextsRef.current[parentID] = "";
       fetchComments();
-
-      // Keep the current accordion open and scroll to the new reply
+      updateEngagement(entryID);
       setOpenAccordions((prevOpen) => [...prevOpen, parentID]);
       setTimeout(() => {
         newReplyRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -239,6 +238,14 @@ const CommentSection = ({
         month: "short",
         day: "numeric",
       });
+    }
+  };
+
+  const updateEngagement = async (entryID) => {
+    try {
+      await axios.post("http://localhost:8081/updateEngagement", { entryID });
+    } catch (error) {
+      console.error("Error updating engagement:", error);
     }
   };
 

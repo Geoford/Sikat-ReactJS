@@ -11,7 +11,7 @@ const FlaggedDiaries = ({ flags }) => {
   const [alarmingWords, setAlarmingWords] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubject, setSelectedSubject] = useState("All");
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState("");
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -74,14 +74,17 @@ const FlaggedDiaries = ({ flags }) => {
   };
 
   const handleAddressed = (report_id) => {
-    axios
-      .put(`http://localhost:8081/flaggedAddress/${report_id}`)
-      .then(() => {
-        alert("The diary has been addressed!");
-      })
-      .catch((err) => {
-        setError(err.response?.data?.error || "Failed to update flagged");
-      });
+    const confirmed = window.confirm("Want to address this flagged?");
+    if (confirmed) {
+      axios
+        .put(`http://localhost:8081/flaggedAddress/${report_id}`)
+        .then(() => {
+          alert("The flagged has been addressed!");
+        })
+        .catch((err) => {
+          setError(err.response?.data?.error || "Failed to update flagged");
+        });
+    }
   };
 
   const downloadData = (format) => {

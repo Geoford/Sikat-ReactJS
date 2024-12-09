@@ -930,6 +930,28 @@ app.get("/entries", (req, res) => {
   });
 });
 
+app.post("/updateEngagement", (req, res) => {
+  const { entryID } = req.body;
+
+  if (!entryID) {
+    res.status(400).send({ error: "Entry ID is required" });
+    return;
+  }
+
+  db.query(
+    "UPDATE diary_entries SET engagementCount = engagementCount + 1 WHERE entryID = ?",
+    [entryID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating engagement count:", err);
+        res.status(500).send({ error: "Failed to update engagement count" });
+      } else {
+        res.status(200).send({ message: "Engagement count updated" });
+      }
+    }
+  );
+});
+
 app.get("/analytics", (req, res) => {
   let query = `
     SELECT 
@@ -1774,7 +1796,7 @@ app.get("/user_profile/:userID", (req, res) => {
 });
 
 app.post("/submit-report", (req, res) => {
-  upload.single("supportingDocuments")(req, res, (err) => {
+  upload.array("supportingDocuments", 5)(req, res, (err) => {
     if (err) {
       return res
         .status(500)
@@ -1793,10 +1815,10 @@ app.post("/submit-report", (req, res) => {
       isAddress,
     } = req.body;
 
-    let supportingDocuments = null; // Default to null if no file is uploaded
-    if (req.file) {
-      supportingDocuments = `/uploads/${req.file.filename}`; // Use the file's upload destination
-    }
+    // Retrieve file paths for the uploaded files
+    const supportingDocuments = req.files.map(
+      (file) => `/uploads/${file.filename}`
+    );
 
     const query = `
       INSERT INTO gender_based_crime_reports 
@@ -1814,9 +1836,9 @@ app.post("/submit-report", (req, res) => {
         incidentDescription,
         location,
         date,
-        supportingDocuments,
+        JSON.stringify(supportingDocuments), // Save as JSON string
         subjects,
-        true,
+        false,
       ],
       (err, result) => {
         if (err) {
@@ -1851,7 +1873,7 @@ app.put("/reports/:id", (req, res) => {
 
 app.get("/reports", (req, res) => {
   const query = `
-  SELECT * FROM gender_based_crime_reports
+  SELECT * FROM gender_based_crime_reports ORDER BY created_at DESC
 `;
 
   db.query(query, (err, results) => {
