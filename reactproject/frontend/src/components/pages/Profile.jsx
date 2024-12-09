@@ -186,7 +186,7 @@ const Profile = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const ownProfile = currentUser?.userID == userID;
+  const ownProfile = currentUser.userID == userID;
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
@@ -197,7 +197,7 @@ const Profile = () => {
         className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
         style={{ background: "#ffff" }}
       >
-        <div className="w-100 row m-0 py-3">
+        <div className="w-100 row m-0 py-2">
           <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0">
             <div
               style={{
@@ -278,8 +278,27 @@ const Profile = () => {
                 {user.bio || "No bio available."}{" "}
               </p>
             </div>
-            <div>
-              {ownProfile ? <ProfileDropdown /> : <OthersProfileDropdown />}
+            <div className="w-100 d-flex justify-content-between">
+              {ownProfile ? (
+                <div>
+                  {/* <button className="primaryButton py-2 px-5">
+                    <h5 className="m-0">Follow</h5>
+                  </button> */}
+                </div>
+              ) : (
+                <div>
+                  <button className="primaryButton py-2 px-5">
+                    <h5 className="m-0">Follow</h5>
+                  </button>
+                </div>
+              )}
+
+              {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
+              {ownProfile ? (
+                <ProfileDropdown />
+              ) : (
+                <OthersProfileDropdown isAdmin={currentUser.isAdmin} />
+              )}
             </div>
           </div>
         </div>

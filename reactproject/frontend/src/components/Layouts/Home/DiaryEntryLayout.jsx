@@ -475,7 +475,12 @@ const DiaryEntryLayout = ({
             />
 
             {/* Modal */}
-            <Modal show={showModal} onHide={handleCloseModal} centered size="">
+            <Modal
+              show={showModal}
+              onHide={handleCloseModal}
+              centered
+              size="lg"
+            >
               {/* <Modal.Header closeButton>
                 <Modal.Title>Diary Image</Modal.Title>
               </Modal.Header> */}

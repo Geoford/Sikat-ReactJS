@@ -51,15 +51,18 @@ export default function GenderBasedIncidents() {
   };
 
   const handleAddressed = (reportID) => {
-    axios
-      .put(`http://localhost:8081/reports/${reportID}`)
-      .then(() => {
-        alert("The case has been addressed!");
-        fetchReports();
-      })
-      .catch((err) => {
-        setError(err.response?.data?.error || "Failed to update report");
-      });
+    const confirmed = window.confirm("Mark this as addressed?");
+    if (confirmed) {
+      axios
+        .put(`http://localhost:8081/reports/${reportID}`)
+        .then(() => {
+          alert("The case has been addressed!");
+          fetchReports();
+        })
+        .catch((err) => {
+          setError(err.response?.data?.error || "Failed to update report");
+        });
+    }
   };
 
   // Pagination logic

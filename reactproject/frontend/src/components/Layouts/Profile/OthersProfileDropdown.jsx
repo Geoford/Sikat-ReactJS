@@ -1,7 +1,9 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import EditPersonalDetailButton from "../../pages/PagesUser/UserProfileLayout/EditPersonalDetailButton";
+import ReportUserButton from "./ReportUserButton";
+import Suspend from "./Suspend";
 
-const OthersProfileDropdown = () => {
+const OthersProfileDropdown = ({ isAdmin }) => {
   return (
     <Dropdown>
       <Dropdown.Toggle
@@ -12,14 +14,23 @@ const OthersProfileDropdown = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item href="#/action-1">
-          <button className="w-100 btn btn-light text-start">
-            Activity log
-          </button>
-        </Dropdown.Item>
-        <Dropdown.Item href="#/action-2">
-          <button className="w-100 btn btn-light text-start">Filed Case</button>
-        </Dropdown.Item>
+        {isAdmin ? (
+          ""
+        ) : (
+          <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
+            <ReportUserButton></ReportUserButton>
+          </Dropdown.Item>
+        )}
+
+        {/* {isAdmin ? "im admin" : "Im not an Admin"} */}
+        {isAdmin ? (
+          <Dropdown.Item className="btn btn-light p-0 px-2">
+            {/* <button className="w-100 btn btn-light text-start">Suspend</button> */}
+            <Suspend></Suspend>
+          </Dropdown.Item>
+        ) : (
+          ""
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );
