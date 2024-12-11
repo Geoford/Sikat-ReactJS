@@ -54,7 +54,7 @@ select.form-select:focus {
 .navbar {
   background-color: var(--primary);
   position: absolute;
-  z-index: 1;
+  z-index: 10;
   /* height: 3.5rem; */
   /* position: static; */
 }
@@ -228,7 +228,13 @@ body > div.fade.modal.show > div > div > div {
   transform: scale(102%);
   transition: transform 0.2s ease;
 }
-
+.underlinedLink {
+  color: gray;
+}
+.underlinedLink:hover {
+  color: black;
+  text-decoration: underline;
+}
 .linkText {
   background-color: transparent;
   border: none;
@@ -260,9 +266,11 @@ body > div.fade.modal.show > div > div > div {
   background-color: #e6e6e6;
   cursor: pointer;
   transition: 0.3s;
+  color: gray;
 }
 .grayHover:hover {
   background-color: #d9d9d9 !important;
+  color: black;
 }
 .hoverUnderline:hover {
   text-decoration: underline;
@@ -451,6 +459,19 @@ input.form-control:focus {
 .days:hover h5 {
   color: var(--secondary) !important;
 }
+/* FOR ACCORDION */
+.accordion-button:focus {
+  box-shadow: none !important;
+  z-index: -10;
+}
+.accordion-button:not(.collapsed) {
+  background-color: transparent !important;
+  color: black !important;
+}
+.accordion-button {
+  color: gray !important;
+  z-index: ;
+}
 
 /* FOR COMMENT REPLIES */
 .commentAccordion .accordion-item {
@@ -631,6 +652,8 @@ input.form-control:focus {
 .informationToolTip {
   color: gray;
   transition: 0.2s;
+  z-index: 0;
+  cursor: pointer;
 }
 .informationToolTip:hover {
   color: black;

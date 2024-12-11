@@ -67,6 +67,11 @@ function NotificationButton() {
           (notification) => !notification.read
         ).length;
         setUnreadCount(unread);
+
+        localStorage.setItem(
+          "notifications",
+          JSON.stringify(fetchedNotifications)
+        );
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -107,6 +112,7 @@ function NotificationButton() {
       axios
         .put("http://localhost:8081/notifications/mark-as-read", {
           userID: user.userID,
+          notificationIDs: notifications.map((n) => n.notificationID),
         })
         .catch((error) =>
           console.error("Error marking notifications as read:", error)
@@ -117,7 +123,6 @@ function NotificationButton() {
   const markAsReadAndNavigate = (notificationID) => {
     if (!user) return;
 
-    // Mark the notification as read
     axios
       .put("http://localhost:8081/notifications/mark-as-read", {
         userID: user.userID,
@@ -127,9 +132,7 @@ function NotificationButton() {
         console.error("Error marking notification as read:", error)
       );
 
-    // Navigate to the appropriate page
     if (notificationID) {
-      // Navigate depending on the notification type
     }
   };
 
@@ -169,26 +172,28 @@ function NotificationButton() {
           className={isHovered ? "bx bxs-bell-ring bx-sm" : "bx bxs-bell bx-sm"}
         ></i>
 
-        <div
-          className="position-absolute p-0 d-flex align-items-center justify-content-center"
-          style={{
-            backgroundColor: "red",
-            top: "0",
-            left: "clamp(-7px, 2.5dvw, -10px)",
-            height: "clamp(.95rem, 2.5dvw, 1.2rem)",
-            width: "clamp(.95rem, 2.5dvw, 1.2rem)",
-            borderRadius: "50%",
-            color: "#ffff",
-            border: "2px solid var(--primary)",
-          }}
-        >
-          <h6
-            className="m-0 p-0 fw-lighter d-none d-lg-block"
-            style={{ fontSize: "clamp(.5rem, 1.5dvw, .8rem)" }}
+        {unreadCount > 0 && (
+          <div
+            className="position-absolute p-0 d-flex align-items-center justify-content-center"
+            style={{
+              backgroundColor: "red",
+              top: "0",
+              left: "clamp(-7px, 2.5dvw, -10px)",
+              height: "clamp(.95rem, 2.5dvw, 1.2rem)",
+              width: "clamp(.95rem, 2.5dvw, 1.2rem)",
+              borderRadius: "50%",
+              color: "#ffff",
+              border: "2px solid var(--primary)",
+            }}
           >
-            {unreadCount}
-          </h6>
-        </div>
+            <h6
+              className="m-0 p-0 fw-lighter d-none d-lg-block"
+              style={{ fontSize: "clamp(.5rem, 1.5dvw, .8rem)" }}
+            >
+              {unreadCount}
+            </h6>
+          </div>
+        )}
       </button>
 
       <Offcanvas show={show} onHide={handleClose} placement="end">

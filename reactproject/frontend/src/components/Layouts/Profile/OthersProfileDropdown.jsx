@@ -5,15 +5,25 @@ import Suspend from "./Suspend";
 
 const OthersProfileDropdown = ({ isAdmin }) => {
   return (
-    <Dropdown>
+    <Dropdown className="d-flex align-items-center">
       <Dropdown.Toggle
-        className="btn-light d-flex align-items-center"
+        className="btn-light d-flex align-items-center p-0 ms-1"
         id="dropdown-basic"
+        bsPrefix
       >
-        <p className="m-0">More Options</p>
+        <button className="btn btn-bg-secondary bg-secondary-subtle d-lg-none p-0 px-2 py-1">
+          <i class="bx bx-dots-vertical-rounded "></i>
+        </button>
+        <div className="align-items-center gap-2 d-none d-lg-flex px-3 py-2">
+          <p className="m-0">More Options</p>
+          <i
+            class="bx bxs-down-arrow"
+            style={{ fontSize: "clamp(0.7rem, 1.5dvw, 0.75rem)" }}
+          ></i>
+        </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu style={{ zIndex: "1" }}>
         {isAdmin ? (
           ""
         ) : (

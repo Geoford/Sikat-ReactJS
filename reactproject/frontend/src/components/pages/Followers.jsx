@@ -44,7 +44,9 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
             onClick={() => handleFollowToggle(user.userID)}
             style={{ right: "0" }}
           >
-            {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+            <p className="m-0">
+              {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+            </p>
           </button>
         </div>
       </div>

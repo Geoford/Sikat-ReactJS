@@ -7,6 +7,10 @@ import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/Profile/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/Profile/OthersProfileDropdown";
 import axios from "axios";
+import { Accordion } from "react-bootstrap";
+import FlaggedDiaries from "../Layouts/Profile/FlaggedDiaries";
+import ReportedComments from "../Layouts/Profile/ReportedComments";
+import Followers from "../Layouts/Profile/Followers";
 
 const Profile = () => {
   const { userID } = useParams();
@@ -194,11 +198,11 @@ const Profile = () => {
   return (
     <MainLayout>
       <div
-        className="container d-flex rounded shadow-sm mt-4 py-4 px-4"
+        className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
-        <div className="w-100 row m-0 py-2">
-          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0">
+        <div className="w-100 row m-0">
+          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0 p-1 p-md-3">
             <div
               style={{
                 position: "relative",
@@ -206,8 +210,8 @@ const Profile = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "clamp(13rem, 17dvw, 20rem)",
-                height: "clamp(13rem, 17dvw, 20rem)",
+                width: "clamp(10rem, 17dvw, 20rem)",
+                height: "clamp(10rem, 17dvw, 20rem)",
                 borderRadius: "50%",
               }}
             >
@@ -236,10 +240,10 @@ const Profile = () => {
                     style={{
                       position: "absolute",
                       borderRadius: "50%",
-                      width: "clamp(2.5rem, 10dvw, 3rem)",
-                      height: "clamp(2.5rem, 10dvw, 3rem)",
+                      width: "clamp(2.3rem, 3dvw, 3rem)",
+                      height: "clamp(2.3rem, 3dvw, 3rem)",
                       border: "3px solid #ffff",
-                      right: "clamp(.3rem, 5dvw, -0rem)",
+                      right: ".2rem",
                       bottom: "15px",
                     }}
                   >
@@ -264,21 +268,24 @@ const Profile = () => {
 
           <div className="col-md d-flex align-items-end justify-content-between flex-column text-dark text-center text-lg-start">
             <div
-              className="w-100 position-relative rounded border-bottom p-4"
+              className="w-100 position-relative rounded border-bottom pt-2 pt-lg-5"
               style={{ height: "80%" }}
             >
               <h4 className="m-0">
                 {user.firstName} {user.lastName} ({user.alias || "No Alias"})
               </h4>
-              <p className="m-0 mt-1 text-secondary">
-                {user.followersCount} Followers - {user.followingCount}{" "}
-                Following
-              </p>
+              <Followers
+                followersCount={user.followersCount}
+                followingCount={user.followingCount}
+              ></Followers>
               <p className="mt-3 text-secondary">
-                {user.bio || "No bio available."}{" "}
+                {user.bio || "No bio available."}
               </p>
             </div>
-            <div className="w-100 d-flex justify-content-between">
+            <div
+              className="w-100 d-flex justify-content-center  justify-content-lg-between algn-items-center pt-1"
+              style={{ height: "4rem" }}
+            >
               {ownProfile ? (
                 <div>
                   {/* <button className="primaryButton py-2 px-5">
@@ -286,16 +293,26 @@ const Profile = () => {
                   </button> */}
                 </div>
               ) : (
-                <div>
-                  <button className="primaryButton py-2 px-5">
-                    <h5 className="m-0">Follow</h5>
-                  </button>
+                <div className="d-flex align-items-center">
+                  {currentUser.isAdmin ? (
+                    <div className="d-flex gap-1">
+                      <FlaggedDiaries></FlaggedDiaries>
+                      <ReportedComments></ReportedComments>
+                    </div>
+                  ) : (
+                    <button className="primaryButton py-2 px-5">
+                      <h5 className="m-0">Follow</h5>
+                    </button>
+                  )}
                 </div>
               )}
 
               {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
               {ownProfile ? (
-                <ProfileDropdown />
+                <ProfileDropdown
+                  userID={userID}
+                  isAdmin={currentUser.isAdmin}
+                />
               ) : (
                 <OthersProfileDropdown isAdmin={currentUser.isAdmin} />
               )}
@@ -304,26 +321,28 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="container mt-3">
+      <div className="container mt-2">
         <div className="row">
           <div className="col-lg-4 mb-2 p-0 px-md-1">
             <JournalEntries userID={userID} ownProfile={ownProfile} />
           </div>
 
-          <div className="col-md-8 mb-2 p-0 px-md-1">
+          <div className="col-md mb-2 p-0 px-md-1">
             {entries.length > 0 ? (
               entries.map((entry) => (
-                <DiaryEntryLayout
-                  key={entry.entryID}
-                  entry={entry}
-                  expandButtons={expandButtons}
-                  formatDate={formatDate}
-                  followedUsers={followedUsers}
-                  handleClick={handleClick}
-                  setEntries={setEntries}
-                  setFollowedUsers={setFollowedUsers}
-                  user={user}
-                />
+                <div className="w-100 ">
+                  <DiaryEntryLayout
+                    key={entry.entryID}
+                    entry={entry}
+                    expandButtons={expandButtons}
+                    formatDate={formatDate}
+                    followedUsers={followedUsers}
+                    handleClick={handleClick}
+                    setEntries={setEntries}
+                    setFollowedUsers={setFollowedUsers}
+                    user={user}
+                  />
+                </div>
               ))
             ) : (
               <p>No entries to display.</p>

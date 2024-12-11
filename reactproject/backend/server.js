@@ -1096,8 +1096,11 @@ app.get("/gadifyStatus/:userID", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  const userValues =
-    "SELECT * FROM user_table JOIN user_profiles ON user_table.userID = user_profiles.userID WHERE user_table.userID = ?";
+  const userValues = `SELECT * 
+    FROM user_table
+    JOIN 
+    user_profiles ON user_table.userID = user_profiles.userID 
+    WHERE user_table.userID = ?`;
 
   db.query(userValues, [userID], (err, result) => {
     if (err) {

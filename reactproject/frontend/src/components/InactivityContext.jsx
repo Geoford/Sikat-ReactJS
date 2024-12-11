@@ -13,7 +13,7 @@ export const InactivityProvider = ({ children }) => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         setIsInactive(true); // Mark user as inactive after the timeout
-      }, 15 * 60 * 1000); // 15 minutes of inactivity
+      }, 30 * 60 * 1000); // 15 minutes of inactivity
     };
 
     // Attach event listeners to reset inactivity timer
