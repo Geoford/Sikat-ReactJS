@@ -126,6 +126,69 @@ const Profile = () => {
     }
   };
 
+  const handleFollowToggle = async (followUserId) => {
+    if (!followUserId) {
+      console.error("User ID to follow/unfollow is undefined");
+      return;
+    }
+
+    if (user.userID === followUserId) {
+      alert("You cannot follow yourself.");
+      return;
+    }
+
+    const isFollowing = followedUsers.includes(followUserId);
+
+    try {
+      if (isFollowing) {
+        const confirmed = window.confirm(
+          `Are you sure you want to unfollow ${user.username}?`
+        );
+
+        if (!confirmed) return;
+
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
+
+        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
+        alert(`You have unfollowed user ${user.username}`);
+      } else {
+        const response = await axios.post(
+          `http://localhost:8081/follow/${followUserId}`,
+          {
+            followerId: user.userID,
+          }
+        );
+
+        if (response.data.message === "Already following this user") {
+          alert("You are already following this user.");
+          return;
+        }
+
+        setFollowedUsers((prev) => [...prev, followUserId]);
+        alert(`You are now following ${user.username}`);
+
+        await axios.post(
+          `http://localhost:8081/notifications/${followUserId}`,
+          {
+            userID: followUserId,
+            actorID: user.userID,
+            entryID: null,
+            profile_image: user.profile_image,
+            type: "follow",
+            message: `${user.username} has followed you.`,
+          }
+        );
+      }
+
+      await fetchFollowedUsers(user.userID);
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+      alert("There was an error processing your request.");
+    }
+  };
+
   const handleGadify = (entryID) => {
     if (!user) return;
 
@@ -300,8 +363,14 @@ const Profile = () => {
                       <ReportedComments></ReportedComments>
                     </div>
                   ) : (
-                    <button className="primaryButton py-2 px-5">
-                      <h5 className="m-0">Follow</h5>
+                    <button
+                      className="primaryButton py-2 px-5"
+                      onClick={() => handleFollowToggle(userID)} // Use the user's ID directly
+                    >
+                      <h5 className="m-0">
+                        {" "}
+                        {followedUsers.includes(userID) ? "Unfollow" : "Follow"}
+                      </h5>
                     </button>
                   )}
                 </div>

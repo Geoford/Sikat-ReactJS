@@ -9,7 +9,7 @@ function FlagButton({ userID, entryID, entry, flaggedCount }) {
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
-  const otherInputRef = useRef(null); // Reference for the "Others" input field
+  const otherInputRef = useRef(null);
 
   useEffect(() => {
     const fetchFlaggingOptions = async () => {
