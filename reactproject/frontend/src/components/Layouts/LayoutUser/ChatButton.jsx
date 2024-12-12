@@ -179,7 +179,7 @@ const UserChatButton = () => {
         <button className="shadow" onClick={handleShow}>
           <img className="" src={ChatIcon} alt="Message" />
           <span className="tooltiptext">
-            Message {user?.isAdmin ? "Users" : "Admin"}
+            <p className="m-0">Message {user?.isAdmin ? "Users" : "Admin"}</p>{" "}
           </span>
         </button>
       </div>
@@ -188,12 +188,7 @@ const UserChatButton = () => {
         <Modal.Header closeButton>
           <Modal.Title className="w-100 pe-2 d-flex align-items-end justify-content-between">
             <div className="d-flex align-items-center gap-2">
-              <h4 className="m-0">
-                {" "}
-                {user?.isAdmin
-                  ? "Select a User to Chat"
-                  : `Hello, ${user?.username || "UserName"}!`}
-              </h4>{" "}
+              <h5 className="m-0">Hello, {user?.username}!</h5>
               {admin?.isActive === 1 ? (
                 <div
                   className="p-0 m-0 d-flex align-items-center justify-content-center"
@@ -220,8 +215,8 @@ const UserChatButton = () => {
             </div>
 
             <Link to={"/GetHelp/"}>
-              <button className="secondaryButton text-decoration-underline">
-                <p className="m-0 fs-6">Report an Incident</p>
+              <button className="secondaryButton text-decoration-underline p-0">
+                <p className="m-0">Report an Incident</p>
               </button>
             </Link>
           </Modal.Title>
@@ -255,8 +250,8 @@ const UserChatButton = () => {
                   </p>
                 </div>
 
-                <div>
-                  <p className="m-0">Frequently Ask Questions</p>
+                <div className="mt-3">
+                  <h5 className="m-0 mb-1">Frequently Ask Questions</h5>
                   <FrequentlyAskQuestion></FrequentlyAskQuestion>
                 </div>
 
@@ -274,15 +269,21 @@ const UserChatButton = () => {
                           msg.senderID === user?.userID
                             ? "var(--secondary)"
                             : "var(--primary)",
-                        maxWidth: "300px",
+                        maxWidth: "80%",
                         width: "fit-content",
                         wordWrap: "break-word",
                         whiteSpace: "pre-wrap",
                       }}
                     >
                       <p className="m-0">{msg.message}</p>
-                      <p className="m-0 text-end" style={{ fontSize: ".7rem" }}>
-                        {formatDate(msg.created_at)}
+                      <p className="m-0 text-end">
+                        <span
+                          style={{
+                            fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
+                          }}
+                        >
+                          {formatDate(msg.created_at)}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -321,7 +322,10 @@ const UserChatButton = () => {
                       color: "var(--primary)",
                     }}
                   >
-                    <i className="bx bxs-send bx-sm"></i>
+                    <i
+                      className="bx bxs-send"
+                      style={{ fontSize: "clamp(1.2rem, 2dvw, 1.5rem)" }}
+                    ></i>
                   </button>
                 ) : null}
               </div>

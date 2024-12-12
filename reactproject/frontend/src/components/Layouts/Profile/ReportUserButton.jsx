@@ -71,7 +71,7 @@ function ReportUserButton({ commentID, userID, username, entryID }) {
   return (
     <>
       <button
-        className="btn btn-light w-100  d-flex align-items-center justify-content-center gap-1"
+        className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
         onClick={handleShow}
       >
         <i class="bx bx-error"></i>

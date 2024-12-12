@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import Toast from "react-bootstrap/Toast";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Pusher from "pusher-js";
@@ -10,6 +11,7 @@ function NotificationButton() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [user, setUser] = useState(null);
+  const [toasts, setToasts] = useState([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -37,6 +39,20 @@ function NotificationButton() {
           setUnreadCount((prevCount) => prevCount + 1);
           return updatedNotifications;
         });
+
+        // Add toasts for new notifications
+        const newToast = { ...data, id: Date.now(), visible: true };
+
+        setToasts((prevToasts) => [...prevToasts, newToast]);
+
+        // Set a timeout to hide the toast after 5 seconds
+        setTimeout(() => {
+          setToasts((prevToasts) =>
+            prevToasts.map((toast) =>
+              toast.id === newToast.id ? { ...toast, visible: false } : toast
+            )
+          );
+        }, 5000);
       });
 
       return () => {
@@ -120,26 +136,6 @@ function NotificationButton() {
     }
   }, [show]);
 
-  const markAsReadAndNavigate = (notificationID) => {
-    if (!user) return;
-
-    axios
-      .put("http://localhost:8081/notifications/mark-as-read", {
-        userID: user.userID,
-        notificationID,
-      })
-      .catch((error) =>
-        console.error("Error marking notification as read:", error)
-      );
-
-    if (notificationID) {
-    }
-  };
-
-  const [isHovered, setIsHovered] = useState(false);
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
-
   const formatDate = (dateString) => {
     const entryDate = new Date(dateString);
     const now = new Date();
@@ -165,13 +161,8 @@ function NotificationButton() {
       <button
         className="logo overflow-visible position-relative d-flex align-items-center justify-content-center"
         onClick={handleShow}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
-        <i
-          className={isHovered ? "bx bxs-bell-ring bx-sm" : "bx bxs-bell bx-sm"}
-        ></i>
-
+        <i className="bx bxs-bell bx-sm"></i>
         {unreadCount > 0 && (
           <div
             className="position-absolute p-0 d-flex align-items-center justify-content-center"
@@ -196,6 +187,38 @@ function NotificationButton() {
         )}
       </button>
 
+      {/* Toasts for new notifications */}
+      <div
+        style={{ position: "fixed", bottom: "1rem", left: "1rem" }}
+        className="toast-container"
+      >
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            onClose={() =>
+              setToasts((prevToasts) =>
+                prevToasts.filter((t) => t.id !== toast.id)
+              )
+            }
+            show={toast.visible}
+            delay={5000}
+            autohide
+          >
+            <Toast.Header>
+              <div className="w-100 d-flex justify-content-between align-items-end">
+                <p className="m-0 fw-bold">New Notification</p>
+                <p className="m-0">
+                  <span style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}>
+                    {formatDate(toast.timestamp)}
+                  </span>
+                </p>
+              </div>
+            </Toast.Header>
+            <Toast.Body>{toast.message}</Toast.Body>
+          </Toast>
+        ))}
+      </div>
+
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Notifications</Offcanvas.Title>
@@ -213,9 +236,6 @@ function NotificationButton() {
                     ? `/profile/${notification.actorID}`
                     : `/DiaryEntry/${notification.entryID || ""}`
                 }
-                onClick={() =>
-                  markAsReadAndNavigate(notification.notificationID)
-                }
               >
                 <div
                   className="row grayHover d-flex align-items-center gap-2 p-2 rounded my-1"
@@ -226,11 +246,7 @@ function NotificationButton() {
                   <div className="col-1 p-0">
                     <div className="profilePicture">
                       <img
-                        src={
-                          notification.actorProfileImage
-                            ? notification.actorProfileImage
-                            : DefaultProfile
-                        }
+                        src={notification.actorProfileImage || DefaultProfile}
                         alt="Profile"
                         style={{
                           width: "100%",
