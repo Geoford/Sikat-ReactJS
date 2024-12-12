@@ -23,8 +23,6 @@ export default function HomeMainLayout({ isAdminPage }) {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const { isInactive } = useContext(InactivityContext);
-
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -35,22 +33,21 @@ export default function HomeMainLayout({ isAdminPage }) {
     setIsLoading(false);
   }, [navigate]);
 
-  useEffect(() => {
-    if (isInactive && user) {
-      alert("You have been logged out due to inactivity.");
-      axios
-        .post("http://localhost:8081/logout", {
-          userID: user.userID,
-        })
-        .then(() => {
-          localStorage.removeItem("user");
-          navigate("/Login");
-        })
-        .catch((error) => {
-          console.error("Error logging out due to inactivity:", error);
-        });
-    }
-  }, [isInactive, navigate, user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     axios
+  //       .post("http://localhost:8081/logout", {
+  //         userID: user.userID,
+  //       })
+  //       .then(() => {
+  //         localStorage.removeItem("user");
+  //         navigate("/Login");
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error logging out due to inactivity:", error);
+  //       });
+  //   }
+  // }, [navigate, user]);
 
   if (isLoading) return <div>Loading...</div>;
 
