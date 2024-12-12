@@ -114,13 +114,18 @@ const Profile = () => {
       });
   };
 
-  const fetchFollowedUsers = async (userID) => {
+  const fetchFollowedUsers = async () => {
     try {
+      if (!currentUser || !currentUser.userID) {
+        console.error("Current user or userID is not available");
+        return;
+      }
       const response = await axios.get(
-        `http://localhost:8081/followedUsers/${userID}`
+        `http://localhost:8081/followedUsers/${currentUser.userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
+      console.log("Followed Users:", followedUsersData);
     } catch (error) {
       console.error("Error fetching followed users:", error);
     }
@@ -132,7 +137,7 @@ const Profile = () => {
       return;
     }
 
-    if (user.userID === followUserId) {
+    if (currentUser.userID === followUserId) {
       alert("You cannot follow yourself.");
       return;
     }
@@ -148,7 +153,7 @@ const Profile = () => {
         if (!confirmed) return;
 
         await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
+          data: { followerId: currentUser.userID },
         });
 
         setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
@@ -157,7 +162,7 @@ const Profile = () => {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
           {
-            followerId: user.userID,
+            followerId: currentUser.userID,
           }
         );
 
@@ -173,16 +178,16 @@ const Profile = () => {
           `http://localhost:8081/notifications/${followUserId}`,
           {
             userID: followUserId,
-            actorID: user.userID,
+            actorID: currentUser.userID,
             entryID: null,
             profile_image: user.profile_image,
             type: "follow",
-            message: `${user.username} has followed you.`,
+            message: `${currentUser.username} has followed you.`,
           }
         );
       }
 
-      await fetchFollowedUsers(user.userID);
+      await fetchFollowedUsers(currentUser.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
       alert("There was an error processing your request.");
@@ -359,17 +364,19 @@ const Profile = () => {
                 <div className="d-flex align-items-center">
                   {currentUser.isAdmin ? (
                     <div className="d-flex gap-1">
-                      <FlaggedDiaries></FlaggedDiaries>
+                      <FlaggedDiaries userID={user.userID}></FlaggedDiaries>
                       <ReportedComments></ReportedComments>
                     </div>
                   ) : (
                     <button
                       className="primaryButton py-2 px-5"
-                      onClick={() => handleFollowToggle(userID)} // Use the user's ID directly
+                      onClick={() => handleFollowToggle(user.userID)} // Use the user's ID directly
                     >
                       <h5 className="m-0">
                         {" "}
-                        {followedUsers.includes(userID) ? "Unfollow" : "Follow"}
+                        {followedUsers.includes(user.userID)
+                          ? "Unfollow"
+                          : "Follow"}
                       </h5>
                     </button>
                   )}
@@ -379,11 +386,16 @@ const Profile = () => {
               {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
               {ownProfile ? (
                 <ProfileDropdown
-                  userID={userID}
+                  userID={currentUser.userID}
                   isAdmin={currentUser.isAdmin}
                 />
               ) : (
-                <OthersProfileDropdown isAdmin={currentUser.isAdmin} />
+                <OthersProfileDropdown
+                  isAdmin={currentUser.isAdmin}
+                  userID={currentUser.userID}
+                  reportedUserID={user.userID}
+                  toBeReported={user.username}
+                />
               )}
             </div>
           </div>

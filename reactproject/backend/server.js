@@ -1494,6 +1494,92 @@ app.post("/comments", (req, res) => {
   );
 });
 
+app.post("/reportingUser", (req, res) => {
+  const { reportedUserID, userID, reason } = req.body;
+
+  if (!userID || !reason) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  // Insert the report into the comment_reports table
+  db.query(
+    "INSERT INTO reported_users (userID, reportedUserID, reason, isAddress) VALUES (?,?,?,?)",
+    [userID, reportedUserID, reason, false],
+    (error, results) => {
+      if (error) {
+        console.error("Error saving report:", error);
+        return res
+          .status(500)
+          .json({ message: "Error submitting report", error: error.message });
+      }
+
+      const reasonArray = reason.split(", ").map((r) => r.trim());
+
+      // Update the count for each reason
+      reasonArray.forEach((reasonItem) => {
+        db.query(
+          "UPDATE reporting_users SET count = count + 1 WHERE reason = ?",
+          [reasonItem],
+          (updateError) => {
+            if (updateError) {
+              console.error(
+                `Error updating count for reason: ${reasonItem}`,
+                updateError
+              );
+            }
+          }
+        );
+      });
+
+      // Send response once the main report is saved
+      res
+        .status(200)
+        .json({ message: "Report submitted and counts updated successfully" });
+    }
+  );
+});
+
+app.get("/getReportedUsers", (req, res) => {
+  const query = `
+    SELECT
+      reported_users.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.studentNumber
+    FROM 
+      reported_users
+    JOIN user_table ON reported_users.reportedUserID = user_table.userID
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reported users:", err.message);
+      return res.status(500).json({ error: "Error fetching reported users" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.put("/reportingUsersAddress/:id", (req, res) => {
+  const reportedUsersID = req.params.id;
+
+  const query = `
+    UPDATE reported_users
+    SET isAddress = true
+    WHERE reportedUsersID = ?
+  `;
+
+  db.query(query, [reportedUsersID], (err, result) => {
+    if (err) {
+      console.error("Error updating report status:", err.message);
+      return res.status(500).json({ error: "Failed to update report" });
+    }
+    res
+      .status(200)
+      .json({ message: "Report marked as addressed successfully" });
+  });
+});
+
 app.post("/reportuserComment", (req, res) => {
   const { commentID, userID, entryID, reason, otherText } = req.body;
 
@@ -1967,6 +2053,37 @@ app.get("/flagged", (req, res) => {
 `;
 
   db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/flagged/:userID", (req, res) => {
+  const { userID } = req.query; // Get userID from query parameters
+
+  if (!userID) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  const query = `
+  SELECT 
+    flagged_reports.*,
+    user_table.firstName,
+    user_table.lastName,
+    user_table.studentNumber,
+    user_table.sex,
+    user_profiles.profile_image,
+    diary_entries.title
+  FROM flagged_reports
+  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
+  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+  WHERE flagged_reports.userID = ?`;
+
+  db.query(query, [userID], (err, results) => {
     if (err) {
       console.error("Error fetching reports:", err.message);
       return res.status(500).json({ error: "Error fetching flagged reports" });
