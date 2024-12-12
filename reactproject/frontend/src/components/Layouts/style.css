@@ -33,7 +33,7 @@ h5 {
   font-size: clamp(0.85rem, 1.5dvw, 1.1rem) !important;
 }
 h6 {
-  font-size: clamp(0.7rem, 1.5dvw, 0.9rem) !important;
+  font-size: clamp(0.6rem, 1.5dvw, 0.7rem) !important;
 }
 select.form-select:focus {
   box-shadow: none;

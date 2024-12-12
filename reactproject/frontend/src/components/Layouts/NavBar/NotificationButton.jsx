@@ -331,15 +331,14 @@ function NotificationButton() {
                       />
                     </div>
                   </div>
-                  <p className="col m-0 ms-3">
-                    {notification.actorUsername} {notification.message}
-                    <span
-                      className="text-secondary"
-                      style={{ fontSize: "13px" }}
-                    >
+                  <div className="col ms-1">
+                    <p className="m-0 ">
+                      {notification.actorUsername} {notification.message}
+                    </p>
+                    <h6 className="text-secondary" style={{ fontSize: "13px" }}>
                       {formatDate(notification.timestamp)}
-                    </span>
-                  </p>
+                    </h6>
+                  </div>
                 </div>
               </Link>
             ))

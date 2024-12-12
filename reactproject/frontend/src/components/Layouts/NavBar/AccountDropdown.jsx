@@ -163,7 +163,7 @@ const AccountDropdown = ({ isAdmin }) => {
               to={`/Profile/${user.userID}`}
             >
               <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-                {user && user.isAdmin ? (
+                {isAdmin ? (
                   <p className="m-0">Admin Account</p>
                 ) : (
                   <p className="m-0">Account</p>
@@ -176,21 +176,29 @@ const AccountDropdown = ({ isAdmin }) => {
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link className="text-decoration-none text-dark" to="/DiaryEntries">
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              <p className="m-0">Diary Entries</p> <i class="bx bx-edit"></i>
+              <p className="m-0">
+                {isAdmin ? "Post/Announcements" : "Diary Entries"}
+              </p>{" "}
+              <i class="bx bx-edit"></i>
             </button>
           </Link>
         </Dropdown.Item>
-        <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
-          <Link
-            className="text-decoration-none text-dark"
-            to="/Admin/Analytics"
-          >
-            <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              <p className="m-0">Analytics</p>
-              <i class="bx bx-chart"></i>
-            </button>
-          </Link>
-        </Dropdown.Item>
+        {isAdmin ? (
+          <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
+            <Link
+              className="text-decoration-none text-dark"
+              to="/Admin/Analytics"
+            >
+              <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
+                <p className="m-0">Analytics</p>
+                <i class="bx bx-chart"></i>
+              </button>
+            </Link>
+          </Dropdown.Item>
+        ) : (
+          ""
+        )}
+
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link
             className="text-decoration-none text-dark"

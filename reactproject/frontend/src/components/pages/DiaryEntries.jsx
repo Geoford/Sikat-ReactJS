@@ -144,7 +144,11 @@ const DiaryEntries = () => {
           <div className="container-fluid container-md mb-2 mt-4 mt-lg-2 px-0">
             <div className="dateContainer shadow d-flex justify-content-center flex-wrap gap-1">
               <div className="ps-1">
-                <h4 className="m-0 text-light fw-bolder">Diary Entries for</h4>
+                <h4 className="m-0 text-light fw-bolder">
+                  {user.isAdmin
+                    ? "Post/Announcements for"
+                    : "Diary Entries for"}
+                </h4>
               </div>
               <div>
                 <select
@@ -197,7 +201,13 @@ const DiaryEntries = () => {
                             >
                               <p className="m-0 my-1 mx-1 text-wrap">
                                 {entriesForDay.length}{" "}
-                                {entriesForDay.length > 1 ? "Entries" : "Entry"}
+                                {user.isAdmin
+                                  ? entriesForDay.length > 1
+                                    ? "Posts"
+                                    : "Post"
+                                  : entriesForDay.length > 1
+                                  ? "Entries"
+                                  : "Entry"}
                               </p>
 
                               <i className="bx bx-chevron-down d-none d-md-block"></i>
@@ -228,7 +238,7 @@ const DiaryEntries = () => {
                           </Dropdown>
                         ) : (
                           <p className="m-0 mt-2 mt-md-0 text-secondary fw-normal">
-                            No Entry
+                            {user.isAdmin ? "No Post" : "No Entry"}
                           </p>
                         )}
                       </div>
