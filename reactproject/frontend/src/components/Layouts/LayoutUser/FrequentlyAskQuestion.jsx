@@ -21,8 +21,12 @@ const FrequentlyAskQuestion = () => {
       <Accordion>
         {faqs.map((faq, index) => (
           <Accordion.Item key={faq.faqID} eventKey={String(index)}>
-            <Accordion.Header>{faq.question}</Accordion.Header>
-            <Accordion.Body>{faq.answer}</Accordion.Body>
+            <Accordion.Header>
+              <h6 className="m-0">Q: {faq.question}</h6>
+            </Accordion.Header>
+            <Accordion.Body className="border-top">
+              <p className="m-0 ms-2 text-secondary">A: {faq.answer}</p>
+            </Accordion.Body>
           </Accordion.Item>
         ))}
       </Accordion>

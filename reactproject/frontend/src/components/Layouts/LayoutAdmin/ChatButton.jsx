@@ -180,15 +180,19 @@ const ChatButton = () => {
       <div className="ChatButton d-flex align-items-center justify-content-center">
         <button className="shadow p-2" onClick={handleShow}>
           <img src={ChatIcon} alt="" />
-          <span className="tooltiptext" style={{ zIndex: "-2" }}>
-            Messages
-          </span>
+          <p>
+            <span className="tooltiptext" style={{ zIndex: "-2" }}>
+              Messages
+            </span>
+          </p>
         </button>
       </div>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Messages</Modal.Title>
+          <Modal.Title>
+            <h4 className="m-0">Messages</h4>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-1" style={{ overflow: "hidden" }}>
           <div>
@@ -287,7 +291,7 @@ const ChatButton = () => {
                 </div>
                 <div>
                   <div
-                    className="border rounded mb-1 p-2 overflow-x-hidden"
+                    className="border rounded mb-1 p-2 custom-scrollbar"
                     style={{ height: "300px", overflowY: "scroll" }}
                   >
                     {messages.map((msg, index) => (
@@ -298,24 +302,27 @@ const ChatButton = () => {
                         }`}
                       >
                         <div
-                          className="rounded p-2 mt-1 text-light"
+                          className="rounded p-2 mt-1 text-light text-start"
                           style={{
                             backgroundColor:
                               msg.senderID === user?.userID
                                 ? "var(--secondary)"
                                 : "var(--primary)",
-                            maxWidth: "300px",
+                            maxWidth: "80%",
                             width: "fit-content",
                             wordWrap: "break-word",
                             whiteSpace: "pre-wrap",
                           }}
                         >
                           <p className="m-0">{msg.message}</p>
-                          <p
-                            className="m-0 text-end"
-                            style={{ fontSize: ".7rem" }}
-                          >
-                            {formatDate(msg.created_at)}
+                          <p className="m-0 text-end">
+                            <span
+                              style={{
+                                fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
+                              }}
+                            >
+                              {formatDate(msg.created_at)}
+                            </span>{" "}
                           </p>
                         </div>
                       </div>
@@ -333,6 +340,12 @@ const ChatButton = () => {
                         style={{ height: "70px" }}
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                          }
+                        }}
                       />
                     </FloatingLabel>
                     <button
@@ -348,7 +361,10 @@ const ChatButton = () => {
                         color: "var(--primary)",
                       }}
                     >
-                      <i className="bx bxs-send bx-sm"></i>
+                      <i
+                        className="bx bxs-send "
+                        style={{ fontSize: "clamp(1.2rem, 2dvw, 1.5rem)" }}
+                      ></i>
                     </button>
                   </div>
                 </div>

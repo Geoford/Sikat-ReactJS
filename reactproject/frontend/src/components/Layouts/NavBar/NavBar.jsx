@@ -155,7 +155,7 @@ const NavBar = ({ ActiveTab }) => {
             <NotificationButton userID={user.userID} />
           </div>
           <div>
-            <AccountDropdown userID={user.userID} />
+            <AccountDropdown userID={user.userID} isAdmin={user.isAdmin} />
           </div>
         </div>
       </div>

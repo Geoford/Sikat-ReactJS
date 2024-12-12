@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const AccountDropdown = () => {
+const AccountDropdown = ({ isAdmin }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -186,7 +186,7 @@ const AccountDropdown = () => {
             to="/Admin/Analytics"
           >
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              Analytics
+              <p className="m-0">Analytics</p>
               <i class="bx bx-chart"></i>
             </button>
           </Link>
@@ -197,7 +197,8 @@ const AccountDropdown = () => {
             to={`/Settings/${user.userID}`}
           >
             <button className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2">
-              Settings <i class="bx bx-cog"></i>
+              <p className="m-0">Settings</p>
+              <i class="bx bx-cog"></i>
             </button>
           </Link>
         </Dropdown.Item>
@@ -206,7 +207,8 @@ const AccountDropdown = () => {
             className="w-100 btn btn-light text-end d-flex align-items-center justify-content-end gap-2"
             onClick={handleLogout}
           >
-            Log out <i class="bx bx-log-in"></i>
+            <p className="m-0">Log out</p>
+            <i class="bx bx-log-in"></i>
           </button>
         </Dropdown.Item>
       </Dropdown.Menu>
