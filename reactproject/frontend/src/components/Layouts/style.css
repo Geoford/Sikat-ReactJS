@@ -429,9 +429,11 @@ input.form-control:focus {
   font-weight: bold;
   padding: 0 8px;
 }
-.dateSelector:focus {
-  border: none;
-  outline: none;
+.dateSelector:focus,
+.btn-close {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 /* Styles for the options inside the select dropdown */
 .dateOption {

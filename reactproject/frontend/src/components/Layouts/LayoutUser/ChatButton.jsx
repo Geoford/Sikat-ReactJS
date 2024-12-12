@@ -176,11 +176,13 @@ const UserChatButton = () => {
   return (
     <>
       <div className="ChatButton d-flex align-items-center justify-content-center">
-        <button className="shadow" onClick={handleShow}>
-          <img className="" src={ChatIcon} alt="Message" />
-          <span className="tooltiptext">
-            <p className="m-0">Message {user?.isAdmin ? "Users" : "Admin"}</p>{" "}
-          </span>
+        <button className="shadow p-2" onClick={handleShow}>
+          <img src={ChatIcon} alt="" />
+          <p>
+            <span className="tooltiptext" style={{ zIndex: "-2" }}>
+              Message GAD
+            </span>
+          </p>
         </button>
       </div>
 

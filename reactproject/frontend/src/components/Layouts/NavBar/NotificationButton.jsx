@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Pusher from "pusher-js";
 import DefaultProfile from "../../../../src/assets/userDefaultProfile.png";
+import { Dropdown } from "react-bootstrap";
 
 function NotificationButton() {
   const [show, setShow] = useState(false);
@@ -136,6 +137,22 @@ function NotificationButton() {
     }
   }, [show]);
 
+  const markAsReadAndNavigate = (notificationID) => {
+    if (!user) return;
+
+    axios
+      .put("http://localhost:8081/notifications/mark-as-read", {
+        userID: user.userID,
+        notificationID,
+      })
+      .catch((error) =>
+        console.error("Error marking notification as read:", error)
+      );
+
+    if (notificationID) {
+    }
+  };
+
   const formatDate = (dateString) => {
     const entryDate = new Date(dateString);
     const now = new Date();
@@ -158,35 +175,6 @@ function NotificationButton() {
 
   return (
     <>
-      <button
-        className="logo overflow-visible position-relative d-flex align-items-center justify-content-center"
-        onClick={handleShow}
-      >
-        <i className="bx bxs-bell bx-sm"></i>
-        {unreadCount > 0 && (
-          <div
-            className="position-absolute p-0 d-flex align-items-center justify-content-center"
-            style={{
-              backgroundColor: "red",
-              top: "0",
-              left: "clamp(-7px, 2.5dvw, -10px)",
-              height: "clamp(.95rem, 2.5dvw, 1.2rem)",
-              width: "clamp(.95rem, 2.5dvw, 1.2rem)",
-              borderRadius: "50%",
-              color: "#ffff",
-              border: "2px solid var(--primary)",
-            }}
-          >
-            <h6
-              className="m-0 p-0 fw-lighter d-none d-lg-block"
-              style={{ fontSize: "clamp(.5rem, 1.5dvw, .8rem)" }}
-            >
-              {unreadCount}
-            </h6>
-          </div>
-        )}
-      </button>
-
       {/* Toasts for new notifications */}
       <div
         style={{ position: "fixed", bottom: "1rem", left: "1rem" }}
@@ -218,10 +206,94 @@ function NotificationButton() {
           </Toast>
         ))}
       </div>
+      <button
+        className="logo overflow-visible position-relative d-flex align-items-center justify-content-center"
+        onClick={handleShow}
+      >
+        <i className="bx bxs-bell bx-sm"></i>
+        {unreadCount > 0 && (
+          <div
+            className="position-absolute p-0 d-flex align-items-center justify-content-center"
+            style={{
+              backgroundColor: "red",
+              top: "0",
+              left: "clamp(-7px, 2.5dvw, -10px)",
+              height: "clamp(.9rem, 1.7dvw, 1.3rem)",
+              width: "clamp(.9rem, 1.7dvw, 1.3rem)",
+              borderRadius: "50%",
+              color: "#ffff",
+              border: "2px solid var(--primary)",
+            }}
+          >
+            <div className="position-relative">
+              <h6
+                className="position-absolute m-0 p-0 fw-lighter d-none d-lg-block"
+                style={{
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "clamp(.5rem, 1dvw, .7rem)",
+                  }}
+                >
+                  {unreadCount < 10 ? unreadCount : "9+"}
+                </span>
+              </h6>
+            </div>
+          </div>
+        )}
+      </button>
 
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Notifications</Offcanvas.Title>
+          <Offcanvas.Title>
+            <div className="d-flex align-items-center gap-1">
+              <h4 className="m-0 ">Notifications</h4>
+              {unreadCount > 0 && (
+                <div
+                  className="p-0 d-flex align-items-center justify-content-center"
+                  style={{
+                    backgroundColor: "red",
+                    top: "0",
+                    left: "clamp(-7px, 2.5dvw, -10px)",
+                    height: "clamp(1.3rem, 2.5dvw, 1.5rem)",
+                    width: "clamp(1.3rem, 2.5dvw, 1.5rem)",
+                    borderRadius: "50%",
+                    color: "#ffff",
+                  }}
+                >
+                  <h6 className="m-0 p-0 fw-bolder">
+                    <span style={{ fontSize: "clamp(.8rem, 1dvw, .9rem)" }}>
+                      {unreadCount}
+                    </span>
+                  </h6>
+                </div>
+              )}
+
+              <Dropdown>
+                <Dropdown.Toggle
+                  className="p-0 px-1 py-1 grayHover d-flex"
+                  variant="transparent"
+                  bsPrefix
+                >
+                  <i
+                    class="bx bx-dots-horizontal-rounded"
+                    style={{ fontSize: "clamp(1.2rem, 1.3dvw, 1.5rem)" }}
+                  ></i>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item className="btn btn-light p-0 px-2">
+                    <button className="w-100 btn btn-light">
+                      <p className="m-0">Mark all as read</p>
+                    </button>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           {notifications.length === 0 ? (
@@ -235,6 +307,9 @@ function NotificationButton() {
                   notification.type === "follow"
                     ? `/profile/${notification.actorID}`
                     : `/DiaryEntry/${notification.entryID || ""}`
+                }
+                onClick={() =>
+                  markAsReadAndNavigate(notification.notificationID)
                 }
               >
                 <div
@@ -262,7 +337,6 @@ function NotificationButton() {
                       className="text-secondary"
                       style={{ fontSize: "13px" }}
                     >
-                      {" "}
                       {formatDate(notification.timestamp)}
                     </span>
                   </p>

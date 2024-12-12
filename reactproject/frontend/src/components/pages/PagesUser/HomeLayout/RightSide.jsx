@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
@@ -48,7 +49,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
           </Link>
           <button
             className="secondaryButton position-absolute"
-            onClick={() => handleFollowToggle(user.userID, user.username)}
+            onClick={() => handleFollowToggle(user.userID, user.firstName)}
             style={{ right: "2.5rem" }}
           >
             <p className="m-0">
@@ -68,6 +69,27 @@ const RightSide = () => {
   const [followedUsers, setFollowedUsers] = useState([]);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
   const navigate = useNavigate();
+
+  // FOR MODALS
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -139,21 +161,28 @@ const RightSide = () => {
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow ${targetUsername}?`
-        );
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${targetUsername}?`,
+          onConfirm: async () => {
+            await axios.delete(
+              `http://localhost:8081/unfollow/${followUserId}`,
+              {
+                data: { followerId: user.userID },
+              }
+            );
 
-        if (!confirmed) {
-          return;
-        }
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
+            setFollowedUsers((prev) =>
+              prev.filter((u) => u.userID !== followUserId)
+            );
+            setConfirmModal({ show: false, message: "" });
+            setModal({
+              show: true,
+              message: `You have unfollowed ${targetUsername}.`,
+            });
+          },
+          onCancel: () => {},
         });
-
-        setFollowedUsers((prev) =>
-          prev.filter((u) => u.userID !== followUserId)
-        );
-        alert(`You have unfollowed ${targetUsername}`);
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -162,75 +191,124 @@ const RightSide = () => {
           }
         );
         setFollowedUsers((prev) => [...prev, response.data]);
-        alert(`You are now following ${targetUsername}`);
+
+        setModal({
+          show: true,
+          message: `You are now following ${targetUsername}.`,
+        });
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
+      setModal({
+        show: true,
+        message: `There was an error processing your request.`,
+      });
     }
   };
 
   if (!user) return null;
 
   return (
-    <div className="p-2 " style={{ height: "87vh" }}>
-      <div className="text-end" style={{ fontSize: "15px", color: "gray" }}>
-        <p className="m-0 mb-1">
-          Are you or someone you know experiencing gender-based violence?
-        </p>
-        <Link to={"/GetHelp/"}>
-          <button className="secondaryButton text-decoration-underline">
-            Report an Incident
+    <>
+      <Modal show={modal.show} onHide={closeModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <h4 className="m-0">Notice</h4>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modal.message}</Modal.Body>{" "}
+        <Modal.Footer>
+          <button className="primaryButton py-2" onClick={closeModal}>
+            Close
           </button>
-        </Link>
-      </div>
+        </Modal.Footer>
+      </Modal>
 
-      <div className="rounded mb-2 mt-3">
-        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
-          <i className="bx bx-group bx-sm"></i>
-          <h5 className="m-0">Followers</h5>
-        </div>
-
-        <UserList
-          users={followers}
-          handleFollowToggle={handleFollowToggle}
-          isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
-        />
-      </div>
-      <div>
-        <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2 mb-2">
-          <i className="bx bx-news bx-sm"></i>
-          <h5 className="m-0">Announcements/Events</h5>
-        </div>
-
-        {latestAnnouncement ? (
-          <div
-            className="overflow-y-scroll custom-scrollbar rounded pe-1"
-            style={{ height: "clamp(5rem, 17dvw, 30rem)" }}
+      <Modal show={confirmModal.show} onHide={closeConfirmModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <h4 className="m-0">Confirmation</h4>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="m-0">{confirmModal.message}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="py-2"
+            variant="secondary"
+            onClick={closeConfirmModal}
           >
-            <Link
-              to={`/DiaryEntry/${latestAnnouncement.entryID}`}
-              className="linkText rounded p-0"
-            >
-              <p className="m-0 mb-1 text-start">
-                {latestAnnouncement.title || "Untitled Announcement"}
-              </p>
-              <img
-                src={
-                  latestAnnouncement.diary_image
-                    ? `http://localhost:8081${latestAnnouncement.diary_image}`
-                    : SampleImage
-                }
-                alt="Announcement"
-                style={{ width: "100%", borderRadius: ".3rem" }}
-              />
-            </Link>
+            <p className="m-0">Cancel</p>
+          </Button>
+          <button
+            className="primaryButton py-2 rounded"
+            onClick={confirmModal.onConfirm}
+          >
+            <p className="m-0">Confirm</p>
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      <div className="p-2 " style={{ height: "87vh" }}>
+        <div className="text-end" style={{ fontSize: "15px", color: "gray" }}>
+          <p className="m-0 mb-1">
+            Are you or someone you know experiencing gender-based violence?
+          </p>
+          <Link to={"/GetHelp/"}>
+            <button className="secondaryButton text-decoration-underline">
+              Report an Incident
+            </button>
+          </Link>
+        </div>
+
+        <div className="rounded mb-2 mt-3">
+          <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
+            <i className="bx bx-group bx-sm"></i>
+            <h5 className="m-0">Followers</h5>
           </div>
-        ) : (
-          <p className="text-secondary">No announcements available.</p>
-        )}
+
+          <UserList
+            users={followers}
+            handleFollowToggle={handleFollowToggle}
+            isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
+          />
+        </div>
+        <div>
+          <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2 mb-2">
+            <i className="bx bx-news bx-sm"></i>
+            <h5 className="m-0">Announcements/Events</h5>
+          </div>
+
+          {latestAnnouncement ? (
+            <div
+              className="overflow-y-scroll custom-scrollbar rounded pe-1"
+              style={{ height: "clamp(5rem, 17dvw, 30rem)" }}
+            >
+              <Link
+                to={`/DiaryEntry/${latestAnnouncement.entryID}`}
+                className="linkText rounded p-0"
+              >
+                <p className="m-0 mb-1 text-start">
+                  {latestAnnouncement.title || "Untitled Announcement"}
+                </p>
+                <img
+                  src={
+                    latestAnnouncement.diary_image
+                      ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                      : SampleImage
+                  }
+                  alt="Announcement"
+                  style={{ width: "100%", borderRadius: ".3rem" }}
+                />
+              </Link>
+            </div>
+          ) : (
+            <p className="text-secondary">No announcements available.</p>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
