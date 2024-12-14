@@ -7,11 +7,13 @@ import MainLayout from "../../Layouts/MainLayout";
 import RegisteredUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/RegisteredUser";
 import FlaggedDiaries from "../../Layouts/LayoutAdmin/AnalyticsLayout/FlaggedDiaries";
 import ReportedComment from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedComment";
+import ReportedUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedUsers";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
   const [flags, setFlags] = useState([]);
   const [reportedComments, setReportedComments] = useState([]);
+  const [reportedUsers, setreportedUsers] = useState([]);
   const [activeTab, setActiveTab] = useState("RegisteredUser");
 
   useEffect(() => {
@@ -67,6 +69,24 @@ const Analytics = () => {
     fetchReportedComments();
   }, []);
 
+  useEffect(() => {
+    const fetchReportedUsers = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/getReportedUsers`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch reported users");
+        }
+        const data = await response.json();
+        setreportedUsers(data);
+        console.log("Error fetching reported comments:", data);
+      } catch (error) {
+        console.error("Error fetching reported comments:", error);
+      }
+    };
+
+    fetchReportedUsers();
+  }, []);
+
   return (
     <MainLayout ActiveTab="Analytics">
       <div className="mt-0 mt-lg-2 pt-2 px-2">
@@ -117,12 +137,23 @@ const Analytics = () => {
                 <Nav.Item>
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
-                    eventKey="ReportedUsers"
+                    eventKey="ReportedCommments"
                   >
                     <h5 className="m-0">
                       <i class="bx bx-user-pin mt-1"></i>
                     </h5>
                     <p className="m-0 d-none d-md-block">Reported Commments</p>
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link
+                    className=" d-flex align-items-center gap-2"
+                    eventKey="ReportedUsers"
+                  >
+                    <h5 className="m-0">
+                      <i class="bx bx-user-pin mt-1"></i>
+                    </h5>
+                    <p className="m-0 d-none d-md-block">Reported Users</p>
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
@@ -135,8 +166,11 @@ const Analytics = () => {
                 <Tab.Pane eventKey="FlaggedDiaries">
                   <FlaggedDiaries flags={flags} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="ReportedUsers">
+                <Tab.Pane eventKey="ReportedCommments">
                   <ReportedComment reportedComments={reportedComments} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="ReportedUsers">
+                  <ReportedUsers reportedUsers={reportedUsers} />
                 </Tab.Pane>
               </Tab.Content>
             </div>

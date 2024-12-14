@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ReportedComment = ({ reportedComments }) => {
+const ReportedComment = ({ reportedUsers }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [option, setOption] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("All");
@@ -16,9 +16,7 @@ const ReportedComment = ({ reportedComments }) => {
   useEffect(() => {
     const fetchReportComments = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8081/reportComments"
-        );
+        const response = await axios.get("http://localhost:8081/reportUsers");
         setOption(response.data);
       } catch (error) {
         console.error("Error fetching alarming words:", error);
@@ -30,11 +28,11 @@ const ReportedComment = ({ reportedComments }) => {
 
   useEffect(() => {
     const applyFilter = () => {
-      let filtered = reportedComments;
+      let filtered = reportedUsers;
 
       if (selectedSubject !== "All") {
-        filtered = filtered.filter((reportedComment) =>
-          reportedComment.reason
+        filtered = filtered.filter((reportedUser) =>
+          reportedUser.reason
             .toLowerCase()
             .includes(selectedSubject.toLowerCase())
         );
@@ -42,20 +40,16 @@ const ReportedComment = ({ reportedComments }) => {
 
       if (searchQuery.trim() !== "") {
         filtered = filtered.filter(
-          (reportedComment) =>
-            reportedComment.firstName
+          (reportedUser) =>
+            reportedUser.firstName
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            reportedComment.lastName
+            reportedUser.lastName
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            reportedComment.text
+            reportedUser.reason
               .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            reportedComment.reason
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            reportedComment.isAddress.toString().includes(searchQuery)
+              .includes(searchQuery.toLowerCase())
         );
       }
 
@@ -64,7 +58,7 @@ const ReportedComment = ({ reportedComments }) => {
     };
 
     applyFilter();
-  }, [reportedComments, selectedSubject, searchQuery]);
+  }, [reportedUsers, selectedSubject, searchQuery]);
 
   // Calculate pagination
   const indexOfLastUser = currentPage * usersPerPage;
@@ -86,20 +80,20 @@ const ReportedComment = ({ reportedComments }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddressed = async (reportcommentID) => {
+  const handleAddressed = async (reportedUsersID) => {
     const confirmed = window.confirm(
-      "Are you sure you want to mark this comment?"
+      "Are you sure you want to mark this report?"
     );
     if (confirmed) {
       setIsLoading(true);
       try {
         await axios.put(
-          `http://localhost:8081/commentAddress/${reportcommentID}`
+          `http://localhost:8081/reportingUsersAddress/${reportedUsersID}`
         );
-        alert("The comment has been addressed!");
+        alert("The user has been addressed!");
       } catch (error) {
-        console.error("Failed to update comment:", error);
-        alert("Failed to update the comment. Please try again.");
+        console.error("Failed to update user:", error);
+        alert("Failed to update the user. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -170,11 +164,10 @@ const ReportedComment = ({ reportedComments }) => {
       URL.revokeObjectURL(url);
     } else if (format === "excel") {
       const header = ["Student No.", "Full Name", "Reason", "Comment"];
-      const rows = currentUsers.map((reportedComment) => [
-        reportedComment.studentNumber,
-        `${reportedComment.firstName} ${reportedComment.lastName}`,
-        reportedComment.reason,
-        reportedComment.text,
+      const rows = currentUsers.map((reportedUser) => [
+        reportedUser.studentNumber,
+        `${reportedUser.firstName} ${reportedUser.lastName}`,
+        reportedUser.reason,
       ]);
 
       const csvContent = [header, ...rows]
@@ -261,11 +254,9 @@ const ReportedComment = ({ reportedComments }) => {
                   </div>
                 </th>
                 <th scope="col" className="text-center align-middle">
-                  <h5 className="m-0">Reported Comment</h5>
-                </th>
-                <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
+
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Action</h5>
                 </th>
@@ -273,39 +264,36 @@ const ReportedComment = ({ reportedComments }) => {
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
-                currentUsers.map((reportedComment) => (
-                  <tr key={reportedComment.userID}>
+                currentUsers.map((reportedUser) => (
+                  <tr key={reportedUser.userID}>
                     <th scope="row" className="text-center align-middle">
-                      <p className="m-0">{reportedComment.studentNumber}</p>
+                      <p className="m-0">{reportedUser.studentNumber}</p>
                     </th>
                     <td className="text-center align-middle">
-                      <p className="m-0">{`${reportedComment.firstName} ${reportedComment.lastName}`}</p>
+                      <p className="m-0">{`${reportedUser.firstName} ${reportedUser.lastName}`}</p>
                     </td>
                     <td className="text-center align-middle">
-                      <p className="m-0">{reportedComment.reason}</p>
-                    </td>
-                    <td className="text-center align-middle">
-                      <p className="m-0">{reportedComment.text}</p>
+                      <p className="m-0">{reportedUser.reason}</p>
                     </td>
                     <td className="text-success text-center align-middle">
-                      {reportedComment.isAddress === 1 ? (
+                      {reportedUser.isAddress === 1 ? (
                         <p className="text-success m-0">Addressed</p>
                       ) : (
                         <p className="text-danger m-0">Pending</p>
                       )}
                     </td>
                     <td className="text-center align-middle">
-                      {!reportedComment.isAddress && (
+                      {!reportedUser.isAddress && (
                         <button
                           className="secondaryButton"
                           onClick={() =>
-                            handleAddressed(reportedComment.reportcommentID)
+                            handleAddressed(reportedUser.reportedUsersID)
                           }
                         >
                           <p className="m-0">Mark as Reviewed</p>
                         </button>
                       )}
-                      <Link to={`/DiaryEntry/${reportedComment.entryID}`}>
+                      <Link to={`/Profile/${reportedUser.reportedUserID}`}>
                         <button className="primaryButton">
                           <p className="m-0">Check</p>
                         </button>
