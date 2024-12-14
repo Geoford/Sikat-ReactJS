@@ -320,8 +320,10 @@ const DiaryEntryLayout = ({
       style={{ backgroundColor: "white", width: "100%" }}
     >
       <div className="d-flex align-items-start justify-content-between border-bottom pb-2">
-        {entry.anonimity === "private" ? (
-          <div className="d-flex align-items-center gap-2">
+        {/* TO DETERMINE IF THE DIARY IS PUBLIC OR PRIVATE */}
+        {entry.visibility === "private" ? (
+          // IF PRIVATE
+          <div className="d-flex align-items-center gap-2 text-secondary">
             <div className="profilePicture">
               <img
                 src={
@@ -338,21 +340,37 @@ const DiaryEntryLayout = ({
               />
             </div>
             <div className="d-flex flex-column align-items-start">
-              {entry.isAdmin === 1 ? "Gender and Development" : entry.alias}
+              <h5 className="m-0">
+                {entry.isAdmin === 1
+                  ? "Gender and Development"
+                  : entry.firstName && entry.lastName
+                  ? entry.firstName + " " + entry.lastName
+                  : user.firstName + " " + user.lastName}
+              </h5>
+
               <p className="m-0" style={{ fontSize: ".7rem" }}>
-                {formatDate(entry.created_at)}
+                {formatDate(entry.created_at)}{" "}
+                <span>
+                  {entry.anonimity === "public" ? (
+                    <i class="bx bx-globe"></i>
+                  ) : (
+                    <i class="bx bx-lock-alt"></i>
+                  )}
+                </span>
               </p>
             </div>
           </div>
         ) : (
-          <Link to={`/Profile/${entry.userID}`} className="linkText rounded">
-            <div className="d-flex align-items-center gap-2">
+          // IF PUBLIC
+          <div className="d-flex align-items-center gap-2 text-secondary">
+            {/* TO DETERMINE IF THE DIARY IN ANONYMOUS OR NOT */}
+            {entry.anonimity === "private" ? (
               <div className="profilePicture">
                 <img
                   src={
-                    entry.profile_image
+                    entry.isAdmin === 1
                       ? `http://localhost:8081${entry.profile_image}`
-                      : userDefaultProfile
+                      : anonymous
                   }
                   alt="Profile"
                   style={{
@@ -362,53 +380,85 @@ const DiaryEntryLayout = ({
                   }}
                 />
               </div>
-              <div className="d-flex flex-column align-items-start">
-                <div className="d-flex align-items-center justify-content-center gap-1">
-                  <h5 className="m-0 text-start">
-                    {entry.isAdmin === 1
-                      ? "Gender and Development"
-                      : entry.firstName && entry.lastName
-                      ? entry.firstName + " " + entry.lastName
-                      : user.firstName + " " + user.lastName}
-                  </h5>
-                  {user &&
-                    user.userID !== entry.userID &&
-                    entry.anonymity !== "private" &&
-                    entry.isAdmin !== 1 && (
-                      <div className="d-flex align-items-center gap-1">
-                        <h3
-                          className="m-0 text-secondary d-flex align-items-center"
-                          style={{ height: ".9rem" }}
-                        >
-                          ·
-                        </h3>
-                        <button
-                          className="secondaryButton p-0 m-0"
-                          onClick={() => handleFollowToggle(entry.userID)}
-                          style={{ height: "" }}
-                        >
-                          <h5 className="m-0">
-                            {followedUsers.includes(entry.userID)
-                              ? "Following"
-                              : "Follow"}
-                          </h5>{" "}
-                        </button>
-                      </div>
-                    )}
+            ) : (
+              <Link
+                to={`/Profile/${entry.userID}`}
+                className="linkText rounded p-0"
+              >
+                <div className="profilePicture">
+                  <img
+                    src={
+                      entry.profile_image
+                        ? `http://localhost:8081${entry.profile_image}`
+                        : userDefaultProfile
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
                 </div>
-                <p className="m-0" style={{ fontSize: ".7rem" }}>
-                  {formatDate(entry.created_at)}{" "}
-                  <span>
-                    {entry.anonimity === "public" ? (
-                      <i class="bx bx-globe"></i>
-                    ) : (
-                      <i class="bx bx-lock-alt"></i>
-                    )}
-                  </span>
-                </p>
+              </Link>
+            )}
+
+            <div className="d-flex flex-column align-items-start">
+              <div className="d-flex align-items-center justify-content-center gap-1">
+                {entry.anonimity === "private" ? (
+                  <h5 className="m-0">{entry.alias}</h5>
+                ) : (
+                  <Link
+                    to={`/Profile/${entry.userID}`}
+                    className="linkText rounded p-0"
+                  >
+                    <h5 className="m-0 text-start">
+                      {entry.isAdmin === 1
+                        ? "Gender and Development"
+                        : entry.firstName && entry.lastName
+                        ? entry.firstName + " " + entry.lastName
+                        : user.firstName + " " + user.lastName}
+                    </h5>
+                  </Link>
+                )}
+
+                {user &&
+                  user.userID !== entry.userID &&
+                  entry.anonymity !== "private" &&
+                  entry.isAdmin !== 1 && (
+                    <div className="d-flex align-items-center gap-1">
+                      <h3
+                        className="m-0 text-secondary d-flex align-items-center"
+                        style={{ height: ".9rem" }}
+                      >
+                        ·
+                      </h3>
+                      <button
+                        className="secondaryButton p-0 m-0"
+                        onClick={() => handleFollowToggle(entry.userID)}
+                        style={{ height: "" }}
+                      >
+                        <h5 className="m-0">
+                          {followedUsers.includes(entry.userID)
+                            ? "Following"
+                            : "Follow"}
+                        </h5>{" "}
+                      </button>
+                    </div>
+                  )}
               </div>
+              <p className="m-0" style={{ fontSize: ".7rem" }}>
+                {formatDate(entry.created_at)}{" "}
+                <span>
+                  {entry.visibility === "public" ? (
+                    <i class="bx bx-globe"></i>
+                  ) : (
+                    <i class="bx bx-lock-alt"></i>
+                  )}
+                </span>
+              </p>
             </div>
-          </Link>
+          </div>
         )}
 
         <div>
@@ -446,7 +496,9 @@ const DiaryEntryLayout = ({
         <div className="d-flex alig-items-center gap-1 position-relative">
           {entry.subjects && (
             <h6 className="text-secondary m-0 mt-2">
-              Trigger Warning: {entry.subjects}
+              <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
+                Trigger Warning: {entry.subjects}
+              </span>
             </h6>
           )}
           {entry.containsAlarmingWords === 1 && user.isAdmin === 1 ? (
