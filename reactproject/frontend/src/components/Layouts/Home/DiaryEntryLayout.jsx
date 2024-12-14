@@ -397,7 +397,14 @@ const DiaryEntryLayout = ({
                     )}
                 </div>
                 <p className="m-0" style={{ fontSize: ".7rem" }}>
-                  {formatDate(entry.created_at)}
+                  {formatDate(entry.created_at)}{" "}
+                  <span>
+                    {entry.anonimity === "public" ? (
+                      <i class="bx bx-globe"></i>
+                    ) : (
+                      <i class="bx bx-lock-alt"></i>
+                    )}
+                  </span>
                 </p>
               </div>
             </div>
