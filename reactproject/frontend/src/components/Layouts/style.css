@@ -4,7 +4,7 @@
   --primary_light: #7a00cc;
   --secondary: #ffb31a;
   --secondary_hover: #e65c00;
-  --background: #d9d9d9;
+  --background: #ededed;
   --background_light: #f2f2f2;
 }
 /* p {
@@ -721,8 +721,21 @@ input.form-control:focus {
   color: red !important;
   font-size: clamp(0.7rem, 2dvw, 0.9rem) !important;
 }
- {
+/* {
   font-size: 0.1rem !important;
+} */
+/* FOR INDEX CAROUSEL */
+.carousel-item:hover .carouselBlackFade {
+  visibility: visible;
+  opacity: 1;
+}
+.carouselBlackFade {
+  position: absolute;
+  background: linear-gradient(rgb(0, 0, 0, 0), rgb(26, 26, 26, 0.45));
+  height: 100%;
+  width: 100%;
+
+  transition: 0.2s;
 }
 @media screen and (max-width: ) {
 }

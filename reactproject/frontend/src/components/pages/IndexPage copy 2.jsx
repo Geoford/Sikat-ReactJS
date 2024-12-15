@@ -184,8 +184,9 @@ const IndexPage = () => {
             </div>
           </div>
 
-          {/* MISSION AND VISION */}
-          <div className="mx-4 px-2 rounded">
+          {/* GOALS, OBJECTIVES, MISSION AND VISION */}
+          <div className="d-flex flex-column gap-2 mx-4 px-2 rounded">
+            {/* MISSION VISION */}
             <div className="row gap-2 px-1">
               <div
                 className="col-md p-4 rounded shadow-sm"
@@ -222,6 +223,96 @@ const IndexPage = () => {
                   CvSU–GAD Resource Center shall integrate and advocate gender
                   equity and equality principles and perspectives in providing
                   instruction, research and extension services.
+                </h5>
+              </div>
+            </div>
+            {/* GOALS AND OBJECTIVES */}
+            <div className="row gap-2 px-1 text-start">
+              <div
+                className=" p-4 rounded shadow-sm"
+                style={{ backgroundColor: "white" }}
+              >
+                <h1
+                  className="m-0 mb-3 pb-3 fw-bolder"
+                  style={{
+                    borderBottom: ".2rem solid var(--secondary)",
+                    color: "var(--primary)",
+                  }}
+                >
+                  Goals
+                </h1>
+                <h5 className="m-0 fw-bold text-secondary">
+                  The GAD Resource Center shall aim for:
+                  <ol>
+                    <li>
+                      Sustainable and gender responsive instruction, research,
+                      community development and involvement;
+                    </li>
+                    <li>
+                      Gender equity and equality among the academic community;
+                    </li>
+                    <li>
+                      Sustainable partnership and cooperation among
+                      stakeholders; and
+                    </li>
+                    <li>Gender responsive governance.</li>
+                  </ol>
+                </h5>
+              </div>
+              <div
+                className="p-4 rounded shadow-sm"
+                style={{ backgroundColor: "white" }}
+              >
+                <h1
+                  className="m-0 mb-3 pb-3 fw-bolder"
+                  style={{
+                    borderBottom: ".2rem solid var(--secondary)",
+                    color: "var(--primary)",
+                  }}
+                >
+                  Objectives
+                </h1>
+                <h5 className="m-0 fw-bold text-secondary">
+                  <ol style={{ gap: "1rem" }}>
+                    <li>
+                      Strengthen the capacity of faculty members in the
+                      integration of GAD and other issues and concerns in the
+                      course syllabi and instructional materials;
+                    </li>
+                    <li>
+                      Enhance data and information on women’s participation in
+                      politics, economics, education, peace and order and other
+                      activities, and disseminate information to clients;
+                    </li>
+                    <li>
+                      Improve level of understanding, awareness, and
+                      responsiveness of residents of the community and members
+                      of other organizations on GAD issues and concerns and laws
+                      on women;
+                    </li>
+                    <li>
+                      Establish a repository for gender-related instruction,
+                      research, and extension materials and other forms of
+                      literature on gender and development;
+                    </li>
+                    <li>
+                      Strengthen accessibility of men and women to knowledge
+                      management products, resources and networks;
+                    </li>
+                    <li>
+                      Establish networks and linkages with other local,
+                      national, and international organizations;
+                    </li>
+                    <li>
+                      Ensure that the sex-disaggregated data and other vital
+                      information obtained from its operations shall be used as
+                      basis in decision making processes; and
+                    </li>
+                    <li>
+                      Sustain the gender mainstreaming efforts of the
+                      University.
+                    </li>
+                  </ol>
                 </h5>
               </div>
             </div>
@@ -265,11 +356,11 @@ const IndexPage = () => {
           <div>
             <div
               style={{
-                minHeight: "15rem",
+                height: "20rem",
                 backgroundColor: "#0f001a",
               }}
             >
-              <div className="row p-5 text-light" style={{ height: "100%" }}>
+              <div className="row p-5" style={{ height: "100%" }}>
                 <div className="col-md-3 d-flex align-items-center">
                   <img
                     src={TextLogo}
@@ -280,39 +371,7 @@ const IndexPage = () => {
                     }}
                   />
                 </div>
-                <div className="col-md">
-                  <div className="row ps-5 pt-4 text-start">
-                    <div className="col-md">
-                      <h5
-                        className="m-0 pb-3 mb-4"
-                        style={{ borderBottom: ".1rem solid var(--secondary)" }}
-                      >
-                        CONTACTS
-                      </h5>
-                      <p>EMAIL: gadccat@cvsu-rosario.edu.ph</p>
-                    </div>
-                    <div className="col-md">
-                      <h5
-                        className="m-0 pb-3 mb-4"
-                        style={{ borderBottom: ".1rem solid var(--secondary)" }}
-                      >
-                        SOCIALS
-                      </h5>
-                      <p>
-                        FB:{" "}
-                        <a
-                          className="text-decoration-none text-light"
-                          href="https://www.facebook.com/gadccat"
-                        >
-                          CvSU - CCAT Gender and Development
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="border-top border-light py-3 text-light">
-                <p className="m-0">Copyright © 2024 | All rights reserved</p>
+                <div className="col-md">CONTACTS</div>
               </div>
             </div>
           </div>
