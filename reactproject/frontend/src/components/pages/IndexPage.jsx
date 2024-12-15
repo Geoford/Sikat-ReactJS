@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import NavBarIndex from "../Layouts/NavBar/NavBarIndex";
 import Background from "../Layouts/Background";
@@ -15,12 +15,45 @@ import { PreLoader } from "./PreLoader";
 import axios from "axios";
 import Carousel from "react-bootstrap/Carousel";
 import { over } from "lodash";
+import IndexFooter from "../Layouts/IndexPage/IndexFooter";
 // import ExampleCarouselImage from "components/ExampleCarouselImage";
 
 const IndexPage = () => {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [fadeIn, setFadeIn] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+
+  const [scrollUpButton, setScrollUpButton] = useState(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 700) {
+        setScrollUpButton(true);
+      } else {
+        setScrollUpButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // USEREFS
+  const Home = useRef(null);
+  const Events = useRef(null);
+  const MissionVision = useRef(null);
+  const About = useRef(null);
+  const Contacts = useRef(null);
+
+  const ScrollToSection = (ref) => {
+    ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const ScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -40,25 +73,6 @@ const IndexPage = () => {
     fetchAnnouncement();
   }, []);
 
-  const handleLoginClick = () => {
-    if (!isLoginPage) {
-      setFadeIn(false);
-      setTimeout(() => {
-        setIsLoginPage(true);
-        setFadeIn(true);
-      }, 200);
-    }
-  };
-
-  const handleRegisterClick = () => {
-    if (isLoginPage) {
-      setFadeIn(false);
-      setTimeout(() => {
-        setIsLoginPage(false);
-        setFadeIn(true);
-      }, 200); // duration of the fade-out animation
-    }
-  };
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex) => {
@@ -69,19 +83,50 @@ const IndexPage = () => {
     <>
       <PreLoader></PreLoader>
 
-      <div className=" vh-100">
-        <NavBarIndex></NavBarIndex>
+      {scrollUpButton && (
+        <div
+          className="position-fixed"
+          style={{ right: "1rem", bottom: "1rem" }}
+        >
+          <button
+            className="border-0 text-light rounded p-2"
+            onClick={ScrollToTop}
+            style={{ background: "var(--primary)" }}
+          >
+            <i
+              class="bx bx-chevrons-up"
+              style={{ fontSize: "clamp(2rem, 3dvw, 2.5rem)" }}
+            ></i>
+          </button>
+        </div>
+      )}
+
+      <div ref={Home} className="" style={{}}>
+        <NavBarIndex
+          onNavigate={ScrollToSection}
+          refs={{ Home, Events, MissionVision, About, Contacts }}
+        ></NavBarIndex>
 
         <div
-          className="mt-4 d-flex flex-column gap-5"
+          className="mt-2 d-flex flex-column gap-5"
           style={{ height: "100dvh" }}
         >
           {/* CAROUSEL */}
-          <div className="mt-5">
+          <div className="my-5">
             <Carousel activeIndex={index} onSelect={handleSelect}>
               <Carousel.Item>
-                <div className="carouselBlackFade"></div>
-                <img src={sampleImage} alt="" />
+                <div className="position-relative">
+                  <div className="carouselBlackFade"></div>
+                  <img
+                    src={sampleImage}
+                    alt=""
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
                 <Carousel.Caption>
                   <h3>First slide label</h3>
                   <p>
@@ -90,8 +135,18 @@ const IndexPage = () => {
                 </Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item>
-                <div className="carouselBlackFade"></div>
-                <img src={sampleImage} alt="" />
+                <div className="position-relative">
+                  <div className="carouselBlackFade"></div>
+                  <img
+                    src={sampleImage}
+                    alt=""
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
                 <Carousel.Caption>
                   <h3>Second slide label</h3>
                   <p>
@@ -100,8 +155,18 @@ const IndexPage = () => {
                 </Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item>
-                <div className="carouselBlackFade"></div>
-                <img src={sampleImage} alt="" />
+                <div className="position-relative">
+                  <div className="carouselBlackFade"></div>
+                  <img
+                    src={sampleImage}
+                    alt=""
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
                 <Carousel.Caption>
                   <h3>Third slide label</h3>
                   <p>
@@ -115,8 +180,9 @@ const IndexPage = () => {
 
           {/* EVENTS AND ANNOUNCEMENTS */}
           <div
+            ref={Events}
             className="mx-4 p-4 d-flex flex-column gap-3 rounded shadow-sm"
-            style={{ backgroundColor: "white" }}
+            style={{ backgroundColor: "white", scrollMarginTop: "5rem" }}
           >
             <div
               className="rounded text-light py-3"
@@ -185,7 +251,11 @@ const IndexPage = () => {
           </div>
 
           {/* MISSION AND VISION */}
-          <div className="mx-4 px-2 rounded">
+          <div
+            ref={MissionVision}
+            className="mx-4 px-2 rounded"
+            style={{ scrollMarginTop: "10rem" }}
+          >
             <div className="row gap-2 px-1">
               <div
                 className="col-md p-4 rounded shadow-sm"
@@ -229,8 +299,9 @@ const IndexPage = () => {
 
           {/* ABOUT */}
           <div
+            ref={About}
             className="mx-4 rounded p-5 shadow-sm"
-            style={{ backgroundColor: "white" }}
+            style={{ backgroundColor: "white", scrollMarginTop: "6rem" }}
           >
             <div className="d-flex flex-column gap-4">
               <h1
@@ -262,59 +333,8 @@ const IndexPage = () => {
           </div>
 
           {/* FOOTER */}
-          <div>
-            <div
-              style={{
-                minHeight: "15rem",
-                backgroundColor: "#0f001a",
-              }}
-            >
-              <div className="row p-5 text-light" style={{ height: "100%" }}>
-                <div className="col-md-3 d-flex align-items-center">
-                  <img
-                    src={TextLogo}
-                    alt=""
-                    style={{
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <div className="col-md">
-                  <div className="row ps-5 pt-4 text-start">
-                    <div className="col-md">
-                      <h5
-                        className="m-0 pb-3 mb-4"
-                        style={{ borderBottom: ".1rem solid var(--secondary)" }}
-                      >
-                        CONTACTS
-                      </h5>
-                      <p>EMAIL: gadccat@cvsu-rosario.edu.ph</p>
-                    </div>
-                    <div className="col-md">
-                      <h5
-                        className="m-0 pb-3 mb-4"
-                        style={{ borderBottom: ".1rem solid var(--secondary)" }}
-                      >
-                        SOCIALS
-                      </h5>
-                      <p>
-                        FB:{" "}
-                        <a
-                          className="text-decoration-none text-light"
-                          href="https://www.facebook.com/gadccat"
-                        >
-                          CvSU - CCAT Gender and Development
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="border-top border-light py-3 text-light">
-                <p className="m-0">Copyright © 2024 | All rights reserved</p>
-              </div>
-            </div>
+          <div ref={Contacts}>
+            <IndexFooter></IndexFooter>
           </div>
         </div>
         <Background>

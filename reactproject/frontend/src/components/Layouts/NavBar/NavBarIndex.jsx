@@ -3,7 +3,8 @@ import Logo from "../../../assets/logo.jpg";
 import TextLogo from "../../../assets/TextLogo.png";
 import { Link, useNavigate } from "react-router-dom";
 
-const NavBarIndex = () => {
+const NavBarIndex = ({ onNavigate, refs }) => {
+  const { Home, Events, MissionVision, About, Contacts } = refs;
   return (
     <nav
       class="navbar navbar-expand-lg p-0 position-sticky"
@@ -24,9 +25,21 @@ const NavBarIndex = () => {
         </div>
         <div className="d-flex align-items-center gap-4">
           <div className="d-flex align-items-center gap-4 text-light">
-            <p className="m-0">Home</p>
-            <p className="m-0">Contacts</p>
-            <p className="m-0">About</p>
+            <p className="m-0" onClick={() => onNavigate(Home)}>
+              Home
+            </p>
+            <p className="m-0" onClick={() => onNavigate(Events)}>
+              Events/Announcements
+            </p>
+            <p className="m-0" onClick={() => onNavigate(MissionVision)}>
+              Mission/Vision
+            </p>
+            <p className="m-0" onClick={() => onNavigate(About)}>
+              About
+            </p>
+            <p className="m-0" onClick={() => onNavigate(Contacts)}>
+              Contacts
+            </p>
           </div>
           <Link to="/Login">
             <button className="orangeButton px-4 py-1">
