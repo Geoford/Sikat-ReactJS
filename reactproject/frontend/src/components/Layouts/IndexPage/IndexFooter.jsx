@@ -9,7 +9,7 @@ const IndexFooter = () => {
         backgroundColor: "#0f001a",
       }}
     >
-      <div className="row p-5 text-light" style={{ height: "100%" }}>
+      <div className="row p-5 text-light" style={{ width: "100%" }}>
         <div className="col-md-3 d-flex align-items-center">
           <img
             src={TextLogo}
@@ -21,7 +21,7 @@ const IndexFooter = () => {
           />
         </div>
         <div className="col-md">
-          <div className="row ps-5 pt-4 text-start">
+          <div className="row ps-0 ps-md-5 pt-4 text-start">
             <div className="col-md">
               <h5
                 className="m-0 pb-3 mb-4"

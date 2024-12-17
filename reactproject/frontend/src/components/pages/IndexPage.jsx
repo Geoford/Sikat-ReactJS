@@ -13,9 +13,9 @@ import sampleImage from "../../assets/Background.jpg";
 import overlay from "../../assets/OverlayBackground.jpg";
 import { PreLoader } from "./PreLoader";
 import axios from "axios";
-import Carousel from "react-bootstrap/Carousel";
 import { over } from "lodash";
 import IndexFooter from "../Layouts/IndexPage/IndexFooter";
+import IndexCarousel from "../Layouts/IndexPage/IndexCarousel";
 // import ExampleCarouselImage from "components/ExampleCarouselImage";
 
 const IndexPage = () => {
@@ -73,12 +73,6 @@ const IndexPage = () => {
     fetchAnnouncement();
   }, []);
 
-  const [index, setIndex] = useState(0);
-
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
-
   return (
     <>
       <PreLoader></PreLoader>
@@ -89,13 +83,13 @@ const IndexPage = () => {
           style={{ right: "1rem", bottom: "1rem" }}
         >
           <button
-            className="border-0 text-light rounded p-2"
+            className="border-0 text-light rounded p-1 py-2"
             onClick={ScrollToTop}
             style={{ background: "var(--primary)" }}
           >
             <i
               class="bx bx-chevrons-up"
-              style={{ fontSize: "clamp(2rem, 3dvw, 2.5rem)" }}
+              style={{ fontSize: "clamp(2rem, 3dvw, 2.3rem)" }}
             ></i>
           </button>
         </div>
@@ -113,82 +107,20 @@ const IndexPage = () => {
         >
           {/* CAROUSEL */}
           <div className="my-5">
-            <Carousel activeIndex={index} onSelect={handleSelect}>
-              <Carousel.Item>
-                <div className="position-relative">
-                  <div className="carouselBlackFade"></div>
-                  <img
-                    src={sampleImage}
-                    alt=""
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <Carousel.Caption>
-                  <h3>First slide label</h3>
-                  <p>
-                    Nulla vitae elit libero, a pharetra augue mollis interdum.
-                  </p>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <div className="position-relative">
-                  <div className="carouselBlackFade"></div>
-                  <img
-                    src={sampleImage}
-                    alt=""
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <Carousel.Caption>
-                  <h3>Second slide label</h3>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  </p>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <div className="position-relative">
-                  <div className="carouselBlackFade"></div>
-                  <img
-                    src={sampleImage}
-                    alt=""
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <Carousel.Caption>
-                  <h3>Third slide label</h3>
-                  <p>
-                    Praesent commodo cursus magna, vel scelerisque nisl
-                    consectetur.
-                  </p>
-                </Carousel.Caption>
-              </Carousel.Item>
-            </Carousel>
+            <IndexCarousel></IndexCarousel>
           </div>
 
           {/* EVENTS AND ANNOUNCEMENTS */}
           <div
             ref={Events}
-            className="mx-4 p-4 d-flex flex-column gap-3 rounded shadow-sm"
+            className="mx-0 mx-md-4 p-3 p-md-4 d-flex flex-column gap-3 rounded shadow-sm"
             style={{ backgroundColor: "white", scrollMarginTop: "5rem" }}
           >
             <div
               className="rounded text-light py-3"
               style={{ backgroundColor: "var(--primary)" }}
             >
-              <h2 className="m-0">Events/Announcements</h2>
+              <h1 className="m-0">Events/Announcements</h1>
             </div>
             <div className="row gap-2">
               <div
@@ -226,7 +158,7 @@ const IndexPage = () => {
           </div>
 
           {/* STATISTICS */}
-          <div className="row gap-2 mx-4 rounded">
+          <div className="row gap-2 mx-1 mx-sm-4 rounded">
             <div
               className="col-md rounded text-light py-3 shadow-sm"
               style={{ background: "var(--primary)" }}
@@ -253,7 +185,7 @@ const IndexPage = () => {
           {/* MISSION AND VISION */}
           <div
             ref={MissionVision}
-            className="mx-4 px-2 rounded"
+            className="mx-0 mx-md-4 px-2 rounded"
             style={{ scrollMarginTop: "10rem" }}
           >
             <div className="row gap-2 px-1">
@@ -261,7 +193,7 @@ const IndexPage = () => {
                 className="col-md p-4 rounded shadow-sm"
                 style={{ backgroundColor: "white" }}
               >
-                <h1
+                <h2
                   className="m-0 mb-3 pb-3 fw-bolder"
                   style={{
                     borderBottom: ".2rem solid var(--secondary)",
@@ -269,7 +201,7 @@ const IndexPage = () => {
                   }}
                 >
                   Mission
-                </h1>
+                </h2>
                 <h5 className="m-0 fw-bold text-secondary">
                   A gender responsive educational institution where stakeholders
                   enjoy equal responsibilities and opportunities.
@@ -279,7 +211,7 @@ const IndexPage = () => {
                 className="col-md p-4 rounded shadow-sm"
                 style={{ backgroundColor: "white" }}
               >
-                <h1
+                <h2
                   className="m-0 mb-3 pb-3 fw-bolder"
                   style={{
                     borderBottom: ".2rem solid var(--secondary)",
@@ -287,7 +219,7 @@ const IndexPage = () => {
                   }}
                 >
                   Vision
-                </h1>
+                </h2>
                 <h5 className="m-0 fw-bold text-secondary">
                   CvSU–GAD Resource Center shall integrate and advocate gender
                   equity and equality principles and perspectives in providing
@@ -300,7 +232,7 @@ const IndexPage = () => {
           {/* ABOUT */}
           <div
             ref={About}
-            className="mx-4 rounded p-5 shadow-sm"
+            className="mx-0 mx-md-4 rounded p-3 p-md-5 shadow-sm"
             style={{ backgroundColor: "white", scrollMarginTop: "6rem" }}
           >
             <div className="d-flex flex-column gap-4">

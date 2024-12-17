@@ -21,8 +21,11 @@ input::placeholder,
 .form-select {
   font-size: clamp(0.7rem, 2dvw, 0.9rem) !important;
 }
+h1 {
+  font-size: clamp(1.5rem, 2.5dvw, 3rem) !important;
+}
 h2 {
-  font-size: clamp(1.5rem, 2.5dvw, 2rem) !important;
+  font-size: clamp(1.3rem, 2.5dvw, 2rem) !important;
 }
 h4,
 select,
@@ -57,6 +60,18 @@ select.form-select:focus {
   z-index: 10;
   /* height: 3.5rem; */
   /* position: static; */
+}
+.navText {
+  transition: 0.2s;
+  padding: 0.2rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  cursor: pointer;
+  border-radius: 0.375rem;
+}
+.navText:hover {
+  color: var(--secondary);
+  background-color: rgb(217, 217, 217, 0.25);
 }
 .navIcons {
   position: relative;
