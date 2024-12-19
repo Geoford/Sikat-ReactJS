@@ -23,9 +23,11 @@ const IndexCarousel = () => {
             }}
           />
         </div>
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+        <Carousel.Caption className="p-0 p-md-3">
+          <h4 className="m-0">Sample Title</h4>
+          <p className="m-0 d-none d-md-block">
+            Nulla vitae elit libero, a pharetra augue mollis interdum.
+          </p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
@@ -41,9 +43,11 @@ const IndexCarousel = () => {
             }}
           />
         </div>
-        <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <Carousel.Caption className="p-0 p-md-3">
+          <h4 className="m-0">Sample Title</h4>
+          <p className="m-0 d-none d-md-block">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          </p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
@@ -59,9 +63,9 @@ const IndexCarousel = () => {
             }}
           />
         </div>
-        <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
+        <Carousel.Caption className="p-0 p-md-3">
+          <h4 className="m-0">Sample Title</h4>
+          <p className="m-0 d-none d-md-block">
             Praesent commodo cursus magna, vel scelerisque nisl consectetur.
           </p>
         </Carousel.Caption>

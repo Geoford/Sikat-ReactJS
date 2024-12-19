@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import LoginValidation from "./LoginValidation";
@@ -77,7 +77,9 @@ export default function Login() {
         }}
       >
         <div>
-          <img src={logo} alt="" style={{ width: "65px", height: "65px" }} />
+          <Link to="/">
+            <img src={logo} alt="" style={{ width: "65px", height: "65px" }} />
+          </Link>
           <h3
             className="m-0 text-light"
             style={{ fontSize: "clamp(20px, 3vw, 25px)", color: "#ffff" }}

@@ -83,7 +83,7 @@ const IndexPage = () => {
           style={{ right: "1rem", bottom: "1rem" }}
         >
           <button
-            className="border-0 text-light rounded p-1 py-2"
+            className="border-0 text-light rounded p-0 p-md-1 py-1 py-md-2"
             onClick={ScrollToTop}
             style={{ background: "var(--primary)" }}
           >
@@ -106,7 +106,7 @@ const IndexPage = () => {
           style={{ height: "100dvh" }}
         >
           {/* CAROUSEL */}
-          <div className="my-5">
+          <div className="my-5 shadow">
             <IndexCarousel></IndexCarousel>
           </div>
 

@@ -10,18 +10,18 @@ const IndexFooter = () => {
       }}
     >
       <div className="row p-5 text-light" style={{ width: "100%" }}>
-        <div className="col-md-3 d-flex align-items-center">
+        <div className="col-md-3 ps-md-5 d-flex justify-content-center align-items-center">
           <img
             src={TextLogo}
             alt=""
             style={{
-              width: "100%",
+              width: "clamp(10rem, 25dvw, 20rem)",
               objectFit: "cover",
             }}
           />
         </div>
         <div className="col-md">
-          <div className="row ps-0 ps-md-5 pt-4 text-start">
+          <div className="row ps-md-5 pt-4 text-center text-md-start">
             <div className="col-md">
               <h5
                 className="m-0 pb-3 mb-4"

@@ -56,14 +56,14 @@ const LoginRegister = () => {
             onClick={handleRegisterClick}
             style={{ border: "none", width: "90px", padding: "5px" }}
           >
-            Register
+            <h5 className="m-0">Register</h5>
           </button>
           <button
             className={isLoginPage ? "purpleButton fw-bolder" : "btn fw-bolder"}
             onClick={handleLoginClick}
             style={{ border: "none", width: "90px", padding: "5px" }}
           >
-            Log in
+            <h5 className="m-0">Log in</h5>
           </button>
         </div>
 
