@@ -165,8 +165,8 @@ export default function Register() {
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center flex-column pt-2">
       <div
-        className=" mb-3 position-relative py-2 "
-        style={{ width: "clamp(450px, 80vw, 650px)" }}
+        className=" mb-2 mb-md-3 position-relative "
+        style={{ width: "clamp(18.5rem, 80vw, 40rem)" }}
       >
         <div
           className="position-absolute w-100"
@@ -174,7 +174,7 @@ export default function Register() {
         >
           <ProgressBar
             now={progressPercent}
-            className="custom-progress-bar"
+            className="custom-progress-bar border"
             animated
           />
         </div>
@@ -212,8 +212,8 @@ export default function Register() {
       <div
         className="bg-white rounded border border-secondary-subtle shadow text-start p-3 "
         style={{
-          width: "clamp(450px, 80vw, 650px)",
-          minHeight: "clamp(350px, 60vh, 450px)",
+          width: "clamp(18.5rem, 80vw, 40rem)",
+          minHeight: "15rem",
           overflow: "hidden",
           position: "relative",
         }}
@@ -242,7 +242,9 @@ export default function Register() {
               >
                 <ul className="mb-0">
                   {Object.entries(errors).map(([key, message]) => (
-                    <li key={key}>{message}</li>
+                    <li key={key}>
+                      <p className="m-0">{message}</p>
+                    </li>
                   ))}
                 </ul>
               </Alert>
@@ -255,132 +257,144 @@ export default function Register() {
                 style={{ transition: "all 0.5s ease-in-out" }}
               >
                 <h5>Personal Details</h5>
-                <div className="row">
-                  <div className="col mb-3">
-                    <input
-                      type="text"
-                      name="firstName"
-                      placeholder="First name"
-                      onChange={handleInput}
-                      className="form-control rounded"
-                      value={values.firstName}
-                    />
-                  </div>
-                  <div className="col mb-3">
-                    <input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last name"
-                      onChange={handleInput}
-                      className="form-control rounded"
-                      value={values.lastName}
-                    />
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col mb-3">
-                    <input
-                      type="text"
-                      name="alias"
-                      placeholder="Alias (for anonymity purposes)"
-                      onChange={handleInput}
-                      className="form-control rounded"
-                      value={values.alias}
-                    />
-                  </div>
-                  <div class="col mb-3">
-                    <label class="visually-hidden" for="sex">
-                      Sex
-                    </label>
-                    <select
-                      class="form-select"
-                      id="sex"
-                      className="form-select"
-                      name="sex"
-                      onChange={handleInput}
-                      value={values.sex}
-                    >
-                      <option selected>Sex...</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Prefer not to say">
-                        Prefer not to say
-                      </option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col mb-3">
-                    <label className="visually-hidden" htmlFor="course">
-                      Course
-                    </label>
-                    <select
-                      class="form-select"
-                      id="course"
-                      name="course"
-                      onChange={handleInput}
-                      value={values.course}
-                    >
-                      <option value="">Course...</option>
-                      <option value="BS Information Technology">
-                        BS Information Technology
-                      </option>
-                      <option value="BS Industrial Technology">
-                        BS Industrial Technology
-                      </option>
-                      <option value="BS Computer Science">
-                        BS Computer Science
-                      </option>
-                      <option value="BS Computer Engineering">
-                        BS Computer Engineering
-                      </option>
-                    </select>
+                <div className="d-flex flex-column gap-1 gap-md-2 mb-2">
+                  <div className="row gap-1 gap-md-2 px-3">
+                    <div className="col-md p-0">
+                      <input
+                        type="text"
+                        name="firstName"
+                        placeholder="First name"
+                        onChange={handleInput}
+                        className="form-control rounded"
+                        value={values.firstName}
+                        required
+                      />
+                    </div>
+                    <div className="col-md p-0">
+                      <input
+                        type="text"
+                        name="lastName"
+                        placeholder="Last name"
+                        onChange={handleInput}
+                        className="form-control rounded"
+                        value={values.lastName}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="col mb-3">
-                    <label className="visually-hidden" htmlFor="year">
-                      Year
-                    </label>
-                    <select
-                      class="form-select"
-                      id="year"
-                      name="year"
-                      onChange={handleInput}
-                      value={values.year}
-                    >
-                      <option value="">Year...</option>
-                      <option value="1st">1st</option>
-                      <option value="2nd">2nd</option>
-                      <option value="3rd">3rd</option>
-                      <option value="4th">4th</option>
-                    </select>
+                  <div className="row gap-1 gap-md-2 px-3">
+                    <div className="col-md p-0">
+                      <input
+                        type="text"
+                        name="alias"
+                        placeholder="Alias (for anonymity purposes)"
+                        onChange={handleInput}
+                        className="form-control rounded"
+                        value={values.alias}
+                        required
+                      />
+                    </div>
+                    <div class="col-md p-0">
+                      <label class="visually-hidden" for="sex">
+                        Sex
+                      </label>
+                      <select
+                        class="form-select"
+                        id="sex"
+                        className="form-select"
+                        name="sex"
+                        onChange={handleInput}
+                        value={values.sex}
+                        required
+                      >
+                        <option selected>Sex...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Prefer not to say">
+                          Prefer not to say
+                        </option>
+                      </select>
+                    </div>
                   </div>
-                </div>
 
-                <div className="row">
-                  <div className="col mb-3">
-                    <input
-                      type="email"
-                      name="cvsuEmail"
-                      placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
-                      onChange={handleInput}
-                      className="form-control rounded"
-                      value={values.cvsuEmail}
-                    />
+                  <div className="row gap-1 gap-md-2 px-3">
+                    <div className="col-md p-0">
+                      <label className="visually-hidden" htmlFor="course">
+                        Course
+                      </label>
+                      <select
+                        class="form-select"
+                        id="course"
+                        name="course"
+                        onChange={handleInput}
+                        value={values.course}
+                        required
+                      >
+                        <option value="">Course...</option>
+                        <option value="BS Information Technology">
+                          BS Information Technology
+                        </option>
+                        <option value="BS Industrial Technology">
+                          BS Industrial Technology
+                        </option>
+                        <option value="BS Computer Science">
+                          BS Computer Science
+                        </option>
+                        <option value="BS Computer Engineering">
+                          BS Computer Engineering
+                        </option>
+                      </select>
+                    </div>
+
+                    <div className="col-md p-0">
+                      <label className="visually-hidden" htmlFor="year">
+                        Year
+                      </label>
+                      <select
+                        class="form-select"
+                        id="year"
+                        name="year"
+                        onChange={handleInput}
+                        value={values.year}
+                        required
+                      >
+                        <option value="">Year...</option>
+                        <option value="1st">1st</option>
+                        <option value="2nd">2nd</option>
+                        <option value="3rd">3rd</option>
+                        <option value="4th">4th</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="col mb-3">
-                    <input
-                      type="number"
-                      name="studentNumber"
-                      placeholder="Student Number (ex. 202100000)"
-                      onChange={handleInput}
-                      className="form-control rounded"
-                      value={values.studentNumber}
-                      min="100000000"
-                      max="999999999"
-                    />
+
+                  <div className="row gap-1 gap-md-2 px-3">
+                    <div className="col-md p-0">
+                      <input
+                        type="email"
+                        name="cvsuEmail"
+                        placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
+                        onChange={handleInput}
+                        className="form-control rounded"
+                        value={values.cvsuEmail}
+                        required
+                        pattern="^[a-zA-Z0-9._%+-]+@cvsu\.edu\.ph$"
+                        title="Please enter a valid CvSU email (e.g., johndoe@cvsu.edu.ph)"
+                      />
+                    </div>
+                    <div className="col-md p-0">
+                      <input
+                        type="number"
+                        name="studentNumber"
+                        placeholder="Student Number (ex. 202100000)"
+                        onChange={handleInput}
+                        className="form-control rounded"
+                        value={values.studentNumber}
+                        min="100000000"
+                        max="999999999"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -464,7 +478,7 @@ export default function Register() {
             )} */}
 
             {step === 3 && (
-              <div className="form-section active">
+              <div className="form-section active mb-2">
                 <h5>Account Verification</h5>
                 {otpSent ? (
                   <div>
@@ -489,7 +503,7 @@ export default function Register() {
                         className="btn btn-link"
                         disabled={resendCountdown > 0} // Disable if countdown is active
                       >
-                        Resend OTP{" "}
+                        <p className="m-0">Resend OTP</p>
                         {resendCountdown > 0 && `(${resendCountdown}s)`}
                       </button>
                     </div>
@@ -507,15 +521,15 @@ export default function Register() {
           >
             <button
               type="button"
-              className="w-25 btn btn-secondary"
+              className="w-25 btn btn-secondary px-0"
               onClick={() => setStep(step - 1)}
               disabled={step === 1}
             >
-              Back
+              <h5 className="m-0">Back</h5>
             </button>
 
-            <button type="submit" className="w-25 primaryButton">
-              {step === 3 ? "Submit" : "Next"}
+            <button type="submit" className="w-25 primaryButton p-0">
+              <h5 className="m-0">{step === 3 ? "Submit" : "Next"}</h5>
             </button>
           </div>
         </form>

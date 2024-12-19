@@ -7,6 +7,7 @@ import passwordIcon from "../../assets/Password.png";
 import showIcon from "../../assets/show.png";
 import hiddenIcon from "../../assets/hidden.png";
 import logo from "../../assets/TransparentLogo.png";
+import TextLogo from "../../assets/TextLogo.png";
 import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
@@ -76,10 +77,18 @@ export default function Login() {
           backgroundColor: "var(--primary)",
         }}
       >
-        <div>
+        <div className="d-flex flex-column align-items-center" style={{}}>
           <Link to="/">
             <img src={logo} alt="" style={{ width: "65px", height: "65px" }} />
           </Link>
+          {/* <div>
+            <img
+              src={TextLogo}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div> */}
+
           <h3
             className="m-0 text-light"
             style={{ fontSize: "clamp(20px, 3vw, 25px)", color: "#ffff" }}
@@ -88,7 +97,10 @@ export default function Login() {
           </h3>
           <h1
             className="m-0 mb-4 fw-bolder"
-            style={{ fontSize: "clamp(40px, 3vw, 60px)", color: "#ffff" }}
+            style={{
+              fontSize: "clamp(40px, 3vw, 60px)",
+              color: "var(--secondary)",
+            }}
           >
             SIKAT eDiary
           </h1>
@@ -156,7 +168,8 @@ export default function Login() {
                 <i
                   className={`${
                     showPassword ? "bx bx-show-alt" : "bx bx-hide"
-                  } bx-sm`}
+                  }`}
+                  style={{ fontSize: "clamp(1.2rem, 2dvw, 1.5rem)" }}
                 ></i>
               </div>
             </div>
@@ -175,18 +188,20 @@ export default function Login() {
             className="orangeButton rounded w-100 py-2"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-                {" Loading..."}
-              </>
-            ) : (
-              "Log in"
-            )}
+            <h5 className="m-0">
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  {" Loging in..."}
+                </>
+              ) : (
+                "Log in"
+              )}
+            </h5>
           </button>
         </form>
       </div>

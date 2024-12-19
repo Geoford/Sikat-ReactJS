@@ -518,8 +518,8 @@ input.form-control:focus {
 }
 /* FOR REGISTRATION STEPS */
 .stepsIndicator {
-  width: 40px;
-  height: 40px;
+  width: clamp(1.9rem, 4.5dvw, 2.5rem);
+  height: clamp(1.9rem, 4.5dvw, 2.5rem);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -531,6 +531,9 @@ input.form-control:focus {
 }
 .stepsIndicator h5 {
   margin: 0;
+}
+.custom-progress-bar {
+  background-color: lightgray !important;
 }
 .custom-progress-bar .progress-bar {
   background-color: var(--secondary) !important;
