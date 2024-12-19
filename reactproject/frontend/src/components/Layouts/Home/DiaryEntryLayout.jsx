@@ -102,7 +102,7 @@ const DiaryEntryLayout = ({
       const fetchFlaggedCount = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8081/flagged/${entry.entryID}`
+            `http://localhost:8081/flaggedCount/${entry.entryID}`
           );
           const count = response.data.flaggedCount;
           setFlaggedCount(count);
