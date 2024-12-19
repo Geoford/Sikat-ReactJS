@@ -14,6 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import FlaggingDiaries from "../Layouts/SettingsLayouts/FlaggingDiaries";
 import AlarmingWords from "../Layouts/SettingsLayouts/AlarmingWords";
 import FAQ from "../Layouts/SettingsLayouts/FAQ";
+import IndexImage from "../Layouts/SettingsLayouts/IndexImage";
 
 const Settings = () => {
   const { userID } = useParams();
@@ -68,7 +69,7 @@ const Settings = () => {
                 <h5 className="m-0 text-start mb-2">Account Settings</h5>
                 <Nav.Item>
                   <Nav.Link className={navItemStyle} eventKey="profile">
-                    <h5 className="m-0">
+                    <h5 className="m-0 d-flex align-items-center">
                       <i class="bx bxs-user-detail"></i>
                     </h5>
                     <p className="m-0">Profile Information</p>
@@ -90,7 +91,7 @@ const Settings = () => {
                     <h5 className="m-0 text-start my-2">Manage System</h5>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="filter">
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-filter-alt"></i>
                         </h5>
                         <p className="m-0">Filtering and Subjects</p>
@@ -98,7 +99,7 @@ const Settings = () => {
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="flag">
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-flag"></i>
                         </h5>
                         <p className="m-0">Flagging Diaries</p>
@@ -106,7 +107,7 @@ const Settings = () => {
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="repComment">
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-comment-x"></i>
                         </h5>
                         <p className="m-0">Reporting Comments</p>
@@ -114,7 +115,7 @@ const Settings = () => {
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="repUser">
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-user-x"></i>
                         </h5>
                         <p className="m-0">Reporting Users</p>
@@ -125,7 +126,7 @@ const Settings = () => {
                         className={navItemStyle}
                         eventKey="alarmingWords"
                       >
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-error"></i>
                         </h5>
                         <p className="m-0">Alarming Words</p>
@@ -133,10 +134,18 @@ const Settings = () => {
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link className={navItemStyle} eventKey="FAQ">
-                        <h5 className="m-0">
+                        <h5 className="m-0 d-flex align-items-center">
                           <i class="bx bx-question-mark"></i>
                         </h5>
                         <p className="m-0">Frequently Ask Questions(FAQ)</p>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link className={navItemStyle} eventKey="IndexImage">
+                        <h5 className="m-0 d-flex align-items-center">
+                          <i class="bx bx-image"></i>
+                        </h5>
+                        <p className="m-0">Index Page Images</p>
                       </Nav.Link>
                     </Nav.Item>
                   </>
@@ -170,6 +179,9 @@ const Settings = () => {
                 </Tab.Pane>
                 <Tab.Pane eventKey="FAQ">
                   <FAQ></FAQ>
+                </Tab.Pane>
+                <Tab.Pane eventKey="IndexImage">
+                  <IndexImage></IndexImage>
                 </Tab.Pane>
               </Tab.Content>
             </Col>

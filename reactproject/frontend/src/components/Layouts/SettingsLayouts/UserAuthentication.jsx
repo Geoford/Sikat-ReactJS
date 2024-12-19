@@ -83,7 +83,7 @@ const UserAuthentication = ({ cvsuEmail }) => {
         style={{ cursor: "pointer" }}
         onClick={handleShow}
       >
-        <h5 className="m-0">
+        <h5 className="m-0 d-flex align-items-center">
           <i className="bx bx-check-shield"></i>
         </h5>
         <p className="m-0">Password and Security</p>
