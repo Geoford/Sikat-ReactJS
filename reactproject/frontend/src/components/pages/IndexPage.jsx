@@ -22,6 +22,9 @@ const IndexPage = () => {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [fadeIn, setFadeIn] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [entries, setEntries] = useState([]);
+  const [reports, setReports] = useState([]);
 
   const [scrollUpButton, setScrollUpButton] = useState(null);
 
@@ -56,6 +59,11 @@ const IndexPage = () => {
   };
 
   useEffect(() => {
+    fetchEntries();
+    fetchReports();
+  }, []);
+
+  useEffect(() => {
     const fetchAnnouncement = async () => {
       try {
         const response = await axios.get("http://localhost:8081/announcement");
@@ -72,6 +80,41 @@ const IndexPage = () => {
 
     fetchAnnouncement();
   }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/users`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const fetchEntries = async () => {
+    try {
+      const response = await axios.get("http://localhost:8081/analytics");
+      setEntries(response.data);
+    } catch (error) {
+      console.error("Error fetching diary entries:", error);
+    }
+  };
+
+  const fetchReports = () => {
+    axios
+      .get("http://localhost:8081/reports")
+      .then((response) => setReports(response.data))
+      .catch((err) =>
+        setError(err.response?.data?.error || "Failed to fetch reports")
+      );
+  };
 
   return (
     <>
@@ -129,7 +172,11 @@ const IndexPage = () => {
               >
                 <img
                   className="rounded"
-                  src={sampleImage}
+                  src={
+                    latestAnnouncement.diary_image
+                      ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                      : sampleImage
+                  }
                   alt=""
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
@@ -139,19 +186,10 @@ const IndexPage = () => {
                   className="m-0 px-2"
                   // style={{ borderBottom: ".2rem solid var(--primary)" }}
                 >
-                  Sample Title Lorem ipsum dolor sit amet consectetur
-                  adipisicing elit. Commodi assumenda quidem velit corporis ex
-                  rem eaque illo ipsum placeat? Iure?
+                  {latestAnnouncement.title}
                 </h4>
                 <p className="m-0 text-secondary">
-                  Sample Description. Lorem ipsum dolor sit amet consectetur
-                  adipisicing elit. Quaerat itaque, reiciendis adipisci
-                  doloremque sit iste. Harum vero sunt ab facilis. Lorem ipsum
-                  dolor sit amet consectetur adipisicing elit. In voluptates
-                  enim earum, reiciendis quis obcaecati amet cumque id delectus
-                  nemo totam porro dolorem, nam est? Officia fugit, quidem
-                  officiis sit, nihil at, sed exercitationem autem est
-                  laboriosam qui ab minus.
+                  {latestAnnouncement.description}
                 </p>
               </div>
             </div>
@@ -163,21 +201,21 @@ const IndexPage = () => {
               className="col-md rounded text-light py-3 shadow-sm"
               style={{ background: "var(--primary)" }}
             >
-              <h1 className="m-0">00</h1>
+              <h1 className="m-0">{users.length}</h1>
               <h5 className="m-0">Users</h5>
             </div>
             <div
               className="col-md rounded text-light py-3 shadow-sm"
               style={{ background: "var(--primary)" }}
             >
-              <h1 className="m-0">00</h1>
+              <h1 className="m-0">{entries.length}</h1>
               <h5 className="m-0">Posted Diaries</h5>
             </div>
             <div
               className="col-md rounded text-light py-3 shadow-sm"
               style={{ background: "var(--primary)" }}
             >
-              <h1 className="m-0">00</h1>
+              <h1 className="m-0">{reports.length}</h1>
               <h5 className="m-0">Resolved Cases</h5>
             </div>
           </div>

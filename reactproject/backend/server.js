@@ -853,9 +853,16 @@ app.post(
     });
   },
   (req, res) => {
-    const { title, description, userID, anonimity = "public" } = req.body;
+    const {
+      title,
+      description,
+      userID,
+      anonimity = "public",
+      scheduledDate,
+    } = req.body;
     const file = req.file;
 
+    // Validate required fields
     if (!title || !description || !userID) {
       return res
         .status(400)
@@ -867,11 +874,33 @@ app.post(
       diary_image = `/uploads/${file.filename}`;
     }
 
+    // Determine post status based on scheduling
+    const isScheduled = scheduledDate ? 1 : 0; // 1 if scheduled, 0 otherwise
+
+    let finalScheduledDate = null;
+    if (scheduledDate) {
+      // Convert scheduledDate from string to a Date object if it's provided
+      finalScheduledDate = new Date(scheduledDate);
+
+      // Adjust for time zone offset by converting to UTC
+      finalScheduledDate.setMinutes(
+        finalScheduledDate.getMinutes() - finalScheduledDate.getTimezoneOffset()
+      );
+    }
+
     const query = `
-      INSERT INTO diary_entries (title, description, userID, diary_image, anonimity)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO diary_entries (title, description, userID, diary_image, anonimity, scheduledDate, isScheduled)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    const values = [title, description, userID, diary_image, anonimity];
+    const values = [
+      title,
+      description,
+      userID,
+      diary_image,
+      anonimity,
+      finalScheduledDate ? finalScheduledDate.toISOString() : null, // Store date in ISO string (UTC)
+      isScheduled,
+    ];
 
     db.query(query, values, (err, result) => {
       if (err) {
@@ -882,7 +911,9 @@ app.post(
       }
 
       res.status(200).send({
-        message: "Entry added successfully!",
+        message: isScheduled
+          ? "Entry scheduled successfully!"
+          : "Entry published successfully!",
       });
     });
   }
@@ -891,6 +922,7 @@ app.post(
 app.get("/entries", (req, res) => {
   const userID = req.query.userID;
   const filters = req.query.filters;
+  const scheduledDate = req.query.scheduledDate === "true";
 
   let query = `
     SELECT 
@@ -904,16 +936,27 @@ app.get("/entries", (req, res) => {
     JOIN user_table ON diary_entries.userID = user_table.userID
     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     WHERE (diary_entries.visibility = 'public' 
-    OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
+      OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
   `;
 
   const queryParams = [userID];
 
-  if (Array.isArray(filters) && filters.length > 0) {
-    const filterConditions = filters.map((filter) => {
-      return `LOWER(diary_entries.subjects) LIKE ?`;
-    });
+  if (!scheduledDate) {
+    query += `
+      AND (
+        diary_entries.isScheduled = 0
+        OR (
+          diary_entries.isScheduled = 1
+          AND diary_entries.scheduledDate <  CONVERT_TZ(NOW(), '+00:00', '+08:00')
+        )
+      )
+    `;
+  }
 
+  if (Array.isArray(filters) && filters.length > 0) {
+    const filterConditions = filters.map(
+      () => `LOWER(diary_entries.subjects) LIKE ?`
+    );
     query += ` AND (${filterConditions.join(" OR ")})`;
 
     queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
@@ -926,6 +969,7 @@ app.get("/entries", (req, res) => {
       console.error("Error fetching diary entries:", err.message);
       return res.status(500).json({ error: "Error fetching diary entries" });
     }
+
     res.status(200).json(results);
   });
 });
@@ -2092,7 +2136,7 @@ app.get("/flagged/:userID", (req, res) => {
   });
 });
 
-app.get("/flagged/:entryID", (req, res) => {
+app.get("/flaggedCount/:entryID", (req, res) => {
   const { entryID } = req.params;
   const query = `
     SELECT COUNT(*) AS flaggedCount

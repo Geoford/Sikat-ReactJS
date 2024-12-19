@@ -37,8 +37,37 @@ function PostButton({ onEntrySaved }) {
   const handleChangeVisibility = (event) => {
     setVisibility(event.target.value);
     if (event.target.value === "now") {
-      setScheduledDate(null); // Reset date when changing to "Post Now"
+      setScheduledDate(null); // Reset when "Post Now" is selected
     }
+  };
+
+  const handleDateChange = (date) => {
+    // Adjust the selected date (the date picker returns the date in the user's local timezone)
+    setScheduledDate((prevDate) => {
+      if (!prevDate) return date; // If no previous date, set new date
+      // Combine date and time into a single Date object
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        prevDate.getHours(),
+        prevDate.getMinutes()
+      );
+    });
+  };
+
+  const handleTimeChange = (time) => {
+    setScheduledDate((prevDate) => {
+      if (!prevDate) return time; // If no previous date, set new time
+      // Combine date and time into a single Date object
+      return new Date(
+        prevDate.getFullYear(),
+        prevDate.getMonth(),
+        prevDate.getDate(),
+        time.getHours(),
+        time.getMinutes()
+      );
+    });
   };
 
   const handleChangeAnonimity = (event) => {
@@ -87,18 +116,22 @@ function PostButton({ onEntrySaved }) {
 
     if (Object.keys(errors).length > 0) return;
 
-    if (!user || !user.userID) {
-      setServerError("User not authenticated. Please log in again.");
-      return;
+    // If scheduledDate exists, convert it to UTC before submitting
+    let utcScheduledDate = null;
+    if (scheduledDate) {
+      utcScheduledDate = new Date(scheduledDate);
+      // Convert to UTC (removes any timezone offset that might cause issues)
+      utcScheduledDate.setMinutes(
+        utcScheduledDate.getMinutes() - utcScheduledDate.getTimezoneOffset()
+      );
     }
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("userID", user.userID);
-
-    if (scheduledDate) {
-      formData.append("scheduledDate", scheduledDate.toISOString());
+    formData.append("userID", user?.userID);
+    if (utcScheduledDate) {
+      formData.append("scheduledDate", utcScheduledDate.toISOString()); // Send in UTC format
     }
     if (file) {
       formData.append("file", file);
@@ -114,23 +147,19 @@ function PostButton({ onEntrySaved }) {
         },
       })
       .then((response) => {
-        console.log(response.data.message);
+        console.log("Post created:", response.data.message);
         setTitle("");
         setDescription("");
         setFile(null);
         handleClose();
-        if (onEntrySaved) {
-          onEntrySaved();
-        }
+        if (onEntrySaved) onEntrySaved();
         window.location.reload();
       })
       .catch((error) => {
-        console.error("There was an error saving the diary entry!", error);
-        setServerError("Failed to save diary entry. Please try again.");
+        console.error("Error saving post:", error);
+        setServerError("Failed to save post. Please try again.");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -188,13 +217,13 @@ function PostButton({ onEntrySaved }) {
                 </select>
               </div>
               {visibility === "later" && (
-                <div className="col  position-relative">
+                <div className="col position-relative">
                   <div className="row gap-1">
                     <div className="col-md p-0">
-                      {/* Month Picker */}
+                      {/* Date Picker */}
                       <DatePicker
                         selected={scheduledDate}
-                        onChange={(date) => setScheduledDate(date)}
+                        onChange={handleDateChange}
                         dateFormat="MMMM d, yyyy"
                         className="form-control"
                         placeholderText="Select a Day and Month"
@@ -204,7 +233,7 @@ function PostButton({ onEntrySaved }) {
                       {/* Time Picker */}
                       <DatePicker
                         selected={scheduledDate}
-                        onChange={(date) => setScheduledDate(date)}
+                        onChange={handleTimeChange}
                         dateFormat="hh:mm aa"
                         showTimeSelect
                         showTimeSelectOnly
@@ -213,7 +242,6 @@ function PostButton({ onEntrySaved }) {
                       />
                     </div>
                   </div>
-
                   {/* Error Message */}
                   {formErrors.scheduledDate && (
                     <div className="text-danger mt-1">
