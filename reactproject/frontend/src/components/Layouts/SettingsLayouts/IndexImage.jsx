@@ -19,6 +19,38 @@ const IndexImage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editImages, setEditImages] = useState(false);
   const itemsPerPage = 5;
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const removePreview = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+
+    setImageFile(selectedFile);
+    if (selectedFile) {
+      setImagePreview(URL.createObjectURL(selectedFile));
+    } else {
+      setImagePreview(null);
+    }
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+    if (selectedFile) {
+      if (selectedFile.size > maxSize) {
+        setFileError(
+          "File size exceeds the 2MB limit. Please select a smaller file."
+        );
+        setFile(null);
+        setImagePreview(null);
+      } else {
+        setFileError("");
+        setImageFile(selectedFile);
+        setImagePreview(URL.createObjectURL(selectedFile));
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchReportUsers = async () => {
@@ -139,7 +171,7 @@ const IndexImage = () => {
         className="overflow-y-scroll p-3 d-flex flex-column gap-2"
         style={{ height: "40vh" }}
       >
-        <div className="row gap-2" style={{ width: "100%" }}>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           <div className="col-md-4 px-0 position-relative">
             <img
               className="rounded"
@@ -223,8 +255,8 @@ const IndexImage = () => {
               )}
             </div>
           </div>
-        </div>{" "}
-        <div className="row gap-2" style={{ width: "100%" }}>
+        </div>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           <div className="col-md-4 px-0 position-relative">
             <img
               className="rounded"
@@ -308,8 +340,8 @@ const IndexImage = () => {
               )}
             </div>
           </div>
-        </div>{" "}
-        <div className="row gap-2" style={{ width: "100%" }}>
+        </div>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           <div className="col-md-4 px-0 position-relative">
             <img
               className="rounded"
@@ -393,8 +425,8 @@ const IndexImage = () => {
               )}
             </div>
           </div>
-        </div>{" "}
-        <div className="row gap-2" style={{ width: "100%" }}>
+        </div>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           <div className="col-md-4 px-0 position-relative">
             <img
               className="rounded"
@@ -478,8 +510,8 @@ const IndexImage = () => {
               )}
             </div>
           </div>
-        </div>{" "}
-        <div className="row gap-2" style={{ width: "100%" }}>
+        </div>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           <div className="col-md-4 px-0 position-relative">
             <img
               className="rounded"
@@ -567,17 +599,75 @@ const IndexImage = () => {
       </div>
 
       <Form onSubmit={handleAddReportUsers}>
-        <h5 className="mt-4">Add User Violation</h5>
+        <h5 className="mt-4">Add Index Image</h5>
 
-        <div className="mt-3">
-          <FloatingLabel controlId="newReportReason" label="Add User Violation">
-            <Form.Control
-              type="text"
-              placeholder="Enter new report reason"
-              value={newReportUsers}
-              onChange={(e) => setNewReportUsers(e.target.value)}
-            />
-          </FloatingLabel>
+        <div className="row gap-2 m-auto" style={{ width: "100%" }}>
+          <div className="col-md-4 px-0 position-relative">
+            {imagePreview ? (
+              <div className="position-relative">
+                <img
+                  className="rounded"
+                  src={imagePreview}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <button
+                  className="btn btn-danger p-0 px-2 position-absolute"
+                  onClick={removePreview}
+                  style={{ right: ".5rem", top: ".5rem" }}
+                >
+                  <p className="m-0">x</p>
+                </button>
+              </div>
+            ) : (
+              <div className="mt-1">
+                <label className="w-100" htmlFor="uploadPhoto">
+                  <div
+                    className="d-flex justify-content-center border rounded py-2 "
+                    style={{ cursor: "pointer" }}
+                  >
+                    <p className="m-0 d-flex align-items-center gap-1 text-secondary">
+                      <i
+                        class="bx bx-image-add bx-sm"
+                        style={{ color: "var(--secondary)" }}
+                      ></i>
+                      Upload Photo
+                    </p>
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="uploadPhoto"
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </div>
+            )}
+          </div>
+          <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-start">
+            <div className="d-flex flex-column gap-2">
+              <div className="d-flex align-items-center gap-1">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Sample Title"
+                    aria-label="Username"
+                    aria-describedby="basic-addon1"
+                  />
+                </div>
+              </div>
+
+              <div class="form-floating">
+                <textarea
+                  class="form-control"
+                  placeholder="Leave a comment here"
+                  id="floatingTextarea"
+                ></textarea>
+                <label for="floatingTextarea">Short Description</label>
+              </div>
+            </div>
+          </div>
         </div>
         <h5></h5>
 
