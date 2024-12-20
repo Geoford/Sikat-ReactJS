@@ -245,7 +245,7 @@ const FilterAndSubjects = () => {
         </FloatingLabel>
         <div className="mt-2 d-flex justify-content-end">
           <button type="submit" className="w-100 primaryButton px-5 py-2">
-            <p className="m-0">Add</p>
+            <p className="m-0">Save</p>
           </button>
         </div>
       </Form>
