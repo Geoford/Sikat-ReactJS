@@ -120,10 +120,12 @@ const ReportingComments = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#ffff" }}>
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Report Comments</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i class="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Reporting comments allows users to alert admins about hurtful or
             disturbing comments, helping to protect victims and address
@@ -148,7 +150,10 @@ const ReportingComments = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         <Table striped bordered hover responsive>
           <thead>
             <tr>
@@ -241,6 +246,7 @@ const ReportingComments = () => {
         <h5 className="mt-4">Add Comment Violation</h5>
 
         <FloatingLabel
+          className="mt-3"
           controlId="floatingInputGrid"
           label="New Comment Violation"
         >
@@ -251,8 +257,8 @@ const ReportingComments = () => {
             onChange={(e) => setNewReportComments(e.target.value)}
           />
         </FloatingLabel>
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
+        <div className="mt-2 d-flex justify-content-end">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
             <p className="m-0">Add</p>
           </button>
         </div>

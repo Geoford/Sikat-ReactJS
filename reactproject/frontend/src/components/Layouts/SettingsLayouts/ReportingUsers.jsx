@@ -114,10 +114,12 @@ const ReportingUsers = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className="position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Reporting Users</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i class="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Reporting users allows individuals to notify admins about
             inappropriate or harmful behavior, ensuring a safer and more
@@ -127,7 +129,7 @@ const ReportingUsers = () => {
       </div>
 
       {/* Search Filter */}
-      <InputGroup className="mb-3">
+      <InputGroup className="my-3">
         <InputGroup.Text id="basic-addon1">
           <i class="bx bx-search"></i>
         </InputGroup.Text>
@@ -140,7 +142,10 @@ const ReportingUsers = () => {
       </InputGroup>
 
       {/* Table */}
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         <Table striped bordered hover responsive>
           <thead>
             <tr>
@@ -242,9 +247,9 @@ const ReportingUsers = () => {
         </div>
         <h5></h5>
 
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
-            <p className="m-0">Add</p>
+        <div className="mt-2 d-flex justify-content-end">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
+            <p className="m-0">Save</p>
           </button>
         </div>
       </Form>

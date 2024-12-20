@@ -129,10 +129,12 @@ const FAQ = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Frequently Asked Questions (FAQs)</h4>
         <div className="informationToolTip">
-          <i className="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i className="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Frequently Asked Questions (FAQs) provide users with quick answers
             to common inquiries, helping them navigate the platform and resolve
@@ -154,7 +156,10 @@ const FAQ = () => {
           />
         </InputGroup>
       </div>
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         <Table striped bordered hover responsive>
           <thead>
             <tr>
@@ -243,45 +248,6 @@ const FAQ = () => {
           </tbody>
         </Table>
       </div>
-      <div className="d-flex justify-content-between align-items-center gap-2">
-        <div className="d-flex gap-2">
-          <FloatingLabel
-            controlId="floatingInput"
-            label="Question"
-            className="mb-3"
-          >
-            <Form.Control
-              type="text"
-              placeholder="Enter question"
-              value={newQuestion}
-              onChange={(e) => setNewQuestion(e.target.value)}
-            />
-          </FloatingLabel>
-
-          <FloatingLabel
-            controlId="floatingPassword"
-            label="Answer"
-            className="mb-3"
-          >
-            <Form.Control
-              as="textarea"
-              placeholder="Answer to the question"
-              value={newAnswer}
-              onChange={(e) => setNewAnswer(e.target.value)}
-            />
-          </FloatingLabel>
-        </div>
-
-        <div className="d-flex justify-content-end">
-          <Button
-            className="px-4 w-auto"
-            variant="success"
-            onClick={handleAddFaq} // Rename handleAddFilter to handleAddFaq
-          >
-            <p className="m-0">Add FAQ</p>
-          </Button>
-        </div>
-      </div>
       <div className="mt-3">
         <Pagination className="justify-content-center">
           {[...Array(totalPages)].map((_, index) => (
@@ -290,10 +256,53 @@ const FAQ = () => {
               active={index + 1 === currentPage}
               onClick={() => handlePageChange(index + 1)}
             >
-              {index + 1}
+              <p className="m-0">{index + 1}</p>{" "}
             </Pagination.Item>
           ))}
         </Pagination>
+      </div>
+      <div className="d-flex flex-column gap-2 mt-4">
+        <h5>Add New FAQ</h5>
+
+        <div className="row gap-1">
+          <div className="">
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Question"
+              className=""
+            >
+              <Form.Control
+                type="text"
+                placeholder="Enter question"
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+              />
+            </FloatingLabel>
+          </div>
+          <div>
+            <FloatingLabel
+              controlId="floatingPassword"
+              label="Answer"
+              className=""
+            >
+              <Form.Control
+                as="textarea"
+                placeholder="Answer to the question"
+                value={newAnswer}
+                onChange={(e) => setNewAnswer(e.target.value)}
+              />
+            </FloatingLabel>
+          </div>
+        </div>
+
+        <div className="d-flex justify-content-end">
+          <button
+            className="w-100 primaryButton px-5 py-2"
+            onClick={handleAddFaq} // Rename handleAddFilter to handleAddFaq
+          >
+            <p className="m-0">Save</p>
+          </button>
+        </div>
       </div>
     </div>
   );

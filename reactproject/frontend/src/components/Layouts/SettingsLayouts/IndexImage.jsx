@@ -156,10 +156,12 @@ const IndexImage = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Index Page Images</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i class="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             These images will appear on the website's main page.
           </p>
@@ -168,7 +170,7 @@ const IndexImage = () => {
 
       {/* Table */}
       <div
-        className="overflow-y-scroll p-3 d-flex flex-column gap-2"
+        className="custom-scrollbar overflow-y-scroll p-3 d-flex flex-column gap-2"
         style={{ height: "40vh" }}
       >
         <div className="row gap-2 m-auto" style={{ width: "100%" }}>
@@ -621,17 +623,17 @@ const IndexImage = () => {
               </div>
             ) : (
               <div className="mt-1">
-                <label className="w-100" htmlFor="uploadPhoto">
+                <label className="w-100" htmlFor="uploadPhoto" style={{}}>
                   <div
                     className="d-flex justify-content-center border rounded py-2 "
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", minHeight: "6.5rem" }}
                   >
                     <p className="m-0 d-flex align-items-center gap-1 text-secondary">
                       <i
                         class="bx bx-image-add bx-sm"
-                        style={{ color: "var(--secondary)" }}
+                        style={{ color: "var(--primary)" }}
                       ></i>
-                      Upload Photo
+                      Upload Photo(preferably in 16:9 ratio)
                     </p>
                   </div>
                 </label>
@@ -644,8 +646,8 @@ const IndexImage = () => {
               </div>
             )}
           </div>
-          <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-start">
-            <div className="d-flex flex-column gap-2">
+          <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-center">
+            <div className="d-flex flex-column justify-content-center gap-2">
               <div className="d-flex align-items-center gap-1">
                 <div class="input-group">
                   <input
@@ -669,11 +671,10 @@ const IndexImage = () => {
             </div>
           </div>
         </div>
-        <h5></h5>
 
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
-            <p className="m-0">Add</p>
+        <div className="mt-2 d-flex justify-content-end">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
+            <p className="m-0">Save</p>
           </button>
         </div>
       </Form>

@@ -124,10 +124,12 @@ const FlaggingDiaries = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Flagging Diaries</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i class="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Flagging diaries enables users to report potentially alarming or
             disturbing entries to admins, allowing for immidiate action.
@@ -149,7 +151,10 @@ const FlaggingDiaries = () => {
           />
         </InputGroup>
       </div>
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         {/* Table */}
         <Table striped bordered hover responsive>
           <thead>
@@ -237,6 +242,7 @@ const FlaggingDiaries = () => {
       <form onSubmit={handleAddOption}>
         <h5 className="mt-4">Add Flagging Option</h5>
         <FloatingLabel
+          className="mt-3"
           controlId="floatingInputGrid"
           label="New Flagging Option"
         >
@@ -247,9 +253,9 @@ const FlaggingDiaries = () => {
             onChange={(e) => setNewOption(e.target.value)}
           />
         </FloatingLabel>
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
-            <p className="m-0">Add</p>
+        <div className="mt-2 d-flex justify-content-end">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
+            <p className="m-0">Save</p>
           </button>
         </div>
       </form>

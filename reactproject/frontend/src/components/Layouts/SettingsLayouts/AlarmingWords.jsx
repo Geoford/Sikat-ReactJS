@@ -121,10 +121,12 @@ const AlarmingWords = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className="position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className="position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Alarming Words</h4>
         <div className="informationToolTip">
-          <i className="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i className="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Alarming words are predefined terms used to automatically detect
             potentially concerning diary entries and alert admins for prompt
@@ -132,7 +134,6 @@ const AlarmingWords = () => {
           </p>
         </div>
       </div>
-      <h4 className="border-bottom border-2 pb-2"></h4>
 
       {/* Search Filter */}
       <div className="my-3">
@@ -149,7 +150,10 @@ const AlarmingWords = () => {
         </InputGroup>
       </div>
 
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         {filteredAlarmingWords.length === 0 ? (
           <div className="text-center my-4">
             <p className="text-muted">No alarming words found.</p>
@@ -227,36 +231,28 @@ const AlarmingWords = () => {
       </div>
 
       {/* Pagination */}
-      {filteredAlarmingWords.length > 0 && (
-        <div className="mt-4 d-flex justify-content-center">
-          <Pagination>
-            <Pagination.Prev
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            />
-            {[...Array(totalPages)].map((_, index) => (
-              <Pagination.Item
-                key={index}
-                active={index + 1 === currentPage}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            />
-          </Pagination>
-        </div>
-      )}
+      <div className="mt-3">
+        <Pagination className="justify-content-center">
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              <p className="m-0">{index + 1}</p>{" "}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
 
       {/* Add New Alarming Word */}
-      <div className="pt-3">
+      <div className="d-flex flex-column gap-2 mt-4">
+        <h5>Add New Alarming Word</h5>
+
         <FloatingLabel
           controlId="floatingInput"
           label="Add New Alarming Word"
-          className="mb-3"
+          className=""
         >
           <Form.Control
             type="text"
@@ -265,13 +261,12 @@ const AlarmingWords = () => {
             onChange={(e) => setNewAlarmingWord(e.target.value)}
           />
         </FloatingLabel>
-        <Button
-          variant="primary"
-          className="px-5 py-2"
+        <button
+          className="w-100 primaryButton px-5 py-2"
           onClick={handleAddAlarmingWord}
         >
-          <p className="m-0">Add Alarming Word</p>
-        </Button>
+          <p className="m-0">Save</p>
+        </button>
       </div>
     </div>
   );

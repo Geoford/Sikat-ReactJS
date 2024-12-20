@@ -117,10 +117,12 @@ const FilterAndSubjects = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
+      <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Filter and Subjects</h4>
         <div className="informationToolTip">
-          <i class="bx bx-info-circle"></i>
+          <h5 className="m-0 d-flex align-items-center justify-content-center">
+            <i className="bx bx-info-circle"></i>
+          </h5>
           <p className="infToolTip rounded p-2 m-0">
             Filters and subjects help organize diary entries, making them easy
             to navigate and allowing users to avoid potentially sensitive or
@@ -143,7 +145,10 @@ const FilterAndSubjects = () => {
         </InputGroup>
       </div>
 
-      <div className="overflow-y-scroll" style={{ height: "30vh" }}>
+      <div
+        className="overflow-y-scroll custom-scrollbar"
+        style={{ height: "30vh" }}
+      >
         <Table striped bordered hover responsive>
           <thead>
             <tr>
@@ -226,7 +231,11 @@ const FilterAndSubjects = () => {
       </Pagination>
       <Form onSubmit={handleAddFilter} className="mt-4">
         <h5>Add New Filter</h5>
-        <FloatingLabel controlId="newFilter" label="New Filter">
+        <FloatingLabel
+          className="mt-3"
+          controlId="newFilter"
+          label="New Filter"
+        >
           <Form.Control
             type="text"
             placeholder="Enter new filter"
@@ -234,8 +243,8 @@ const FilterAndSubjects = () => {
             onChange={(e) => setNewFilter(e.target.value)}
           />
         </FloatingLabel>
-        <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
+        <div className="mt-2 d-flex justify-content-end">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
             <p className="m-0">Add</p>
           </button>
         </div>
