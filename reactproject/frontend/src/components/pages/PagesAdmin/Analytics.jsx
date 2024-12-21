@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
@@ -14,7 +15,8 @@ const Analytics = () => {
   const [flags, setFlags] = useState([]);
   const [reportedComments, setReportedComments] = useState([]);
   const [reportedUsers, setreportedUsers] = useState([]);
-  const [activeTab, setActiveTab] = useState("RegisteredUser");
+  // const [activeTab, setActiveTab] = useState("RegisteredUser");
+  const { activeTab } = useParams();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -91,7 +93,7 @@ const Analytics = () => {
     <MainLayout ActiveTab="Analytics">
       <div className="mt-0 mt-lg-2 pt-2 px-2">
         <div
-          className="container rounded "
+          className="container rounded shadow"
           style={{ backgroundColor: "var(--primary)" }}
         >
           <h4 className="text-light fw-bold m-0 mt-4 mt-lg-0 py-2">
@@ -106,10 +108,7 @@ const Analytics = () => {
             backgroundColor: "#fff",
           }}
         >
-          <Tab.Container
-            id="left-tabs-example"
-            defaultActiveKey="RegisteredUser"
-          >
+          <Tab.Container id="left-tabs-example" defaultActiveKey={activeTab}>
             <div className="mb-2">
               <Nav variant="pills" className="d-flex custom-nav ">
                 <Nav.Item>
@@ -137,7 +136,7 @@ const Analytics = () => {
                 <Nav.Item>
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
-                    eventKey="ReportedCommments"
+                    eventKey="ReportedComments"
                   >
                     <h5 className="m-0">
                       <i class="bx bx-user-pin mt-1"></i>
@@ -166,7 +165,7 @@ const Analytics = () => {
                 <Tab.Pane eventKey="FlaggedDiaries">
                   <FlaggedDiaries flags={flags} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="ReportedCommments">
+                <Tab.Pane eventKey="ReportedComments">
                   <ReportedComment reportedComments={reportedComments} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="ReportedUsers">

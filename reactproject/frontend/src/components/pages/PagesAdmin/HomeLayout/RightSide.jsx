@@ -83,6 +83,9 @@ const RightSide = () => {
 
   if (!user) return null;
 
+  const ReportedUsers = "ReportedUsers";
+  const FlaggedDiaries = "FlaggedDiaries";
+
   return (
     <div className="p-2">
       <div>
@@ -94,9 +97,17 @@ const RightSide = () => {
         </Link>
       </div>
       <div className="rounded mt-2 ">
-        <div className="py-2 d-flex justify-content-start align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
-          <i class="bx bx-user-voice bx-sm"></i>
-          <h5 className=" m-0">Reported User/s</h5>
+        <div className="py-2 d-flex justify-content-between align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
+          <div className="d-flex justify-content-start align-items-center gap-2">
+            <i class="bx bx-user-voice bx-sm"></i>
+            <h5 className=" m-0">Reported User/s</h5>
+          </div>
+          <Link
+            className="linkText rounded"
+            to={`/Admin/Analytics/${ReportedUsers}`}
+          >
+            <p className="m-0">View All</p>
+          </Link>
         </div>
         <div className="d-flex align-items-center gap-2">
           <div
@@ -150,9 +161,17 @@ const RightSide = () => {
       </div>
 
       <div className="">
-        <div className="py-2 d-flex justify-content-start align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
-          <i class="bx bx-comment-error bx-sm"></i>
-          <h5 className="m-0">Flagged Diaries</h5>
+        <div className="py-2 d-flex justify-content-between align-items-center gap-2 border-bottom border-secondary-subtle text-secondary">
+          <div className="d-flex justify-content-start align-items-center gap-2">
+            <i class="bx bx-comment-error bx-sm"></i>
+            <h5 className="m-0">Flagged Diaries</h5>
+          </div>
+          <Link
+            className="linkText rounded"
+            to={`/Admin/Analytics/${FlaggedDiaries}`}
+          >
+            <p className="m-0">View All</p>
+          </Link>
         </div>
         <div className="d-flex align-items-center gap-2">
           <div

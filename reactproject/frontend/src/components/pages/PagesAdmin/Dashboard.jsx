@@ -258,6 +258,10 @@ const Dashboard = () => {
     setTimeFilter("SpecificDate");
   };
 
+  const AnalyticsFlaggedDiaries = "FlaggedDiaries";
+  const AnalyticsReportedComments = "ReportedComments";
+  const AnalyticsReportedUsers = "ReportedUsers";
+
   return (
     <MainLayout ActiveTab="Dashboard">
       <div className="mt-2 mt-lg-3 pt-2 px-2">
@@ -416,8 +420,29 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="row gap-2 m-auto">
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
+              <Link
+                to="/Admin/GenderBasedIncidents"
+                className="dashboardData text-decoration-none col-md border rounded shadow-sm overflow-hidden p-0"
+                style={{
+                  height: "7rem",
+                  background:
+                    "linear-gradient(to right, var(--primary), var(--primary_hover))",
+                }}
+              >
+                <div
+                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                  style={{
+                    height: "100%",
+                  }}
+                >
+                  <h2 className="m-0">{flags.length}</h2>
+
+                  <p className="m-0">Gender-Based Incidents Report</p>
+                </div>
+              </Link>
+              <Link
+                to={`/Admin/Analytics/${AnalyticsFlaggedDiaries}`}
+                className="dashboardData text-decoration-none col-md border rounded shadow-sm overflow-hidden p-0"
                 style={{
                   height: "7rem",
                   background: "linear-gradient(to right, #ff4d4d, #ff3333)",
@@ -433,16 +458,17 @@ const Dashboard = () => {
 
                   <p className="m-0">Flagged Diaries</p>
                 </div>
-              </div>
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
+              </Link>
+              <Link
+                to={`/Admin/Analytics/${AnalyticsReportedComments}`}
+                className="dashboardData text-decoration-none col-md border rounded shadow-sm overflow-hidden p-0"
                 style={{
                   height: "7rem",
                   background: "linear-gradient(to right, #ff4d4d, #ff3333)",
                 }}
               >
                 <div
-                  className="text-light d-flex flex-column justify-content-center align-items-center gap-1"
+                  className="text-light text-decoration-none d-flex flex-column justify-content-center align-items-center gap-1"
                   style={{
                     height: "100%",
                   }}
@@ -451,9 +477,10 @@ const Dashboard = () => {
 
                   <p className="m-0">Reported Comments</p>
                 </div>
-              </div>
-              <div
-                className="col-md border rounded shadow-sm overflow-hidden p-0"
+              </Link>
+              <Link
+                to={`/Admin/Analytics/${AnalyticsReportedUsers}`}
+                className="dashboardData text-decoration-none col-md border rounded shadow-sm overflow-hidden p-0"
                 style={{
                   height: "7rem",
                   background: "linear-gradient(to right, #ff4d4d, #ff3333)",
@@ -469,7 +496,7 @@ const Dashboard = () => {
 
                   <p className="m-0">Reported Users</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

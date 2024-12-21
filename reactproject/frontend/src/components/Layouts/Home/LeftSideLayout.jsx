@@ -108,7 +108,7 @@ const LeftSideAdmin = () => {
               {user.isAdmin ? "Latest Post" : "My Diary Entries"}
             </h5>
           </div>
-          <Link to="/DiaryEntries" className="linkText rounded p-0">
+          <Link to="/DiaryEntries" className="linkText rounded p-1">
             <p className="m-0">View All</p>
           </Link>
         </div>

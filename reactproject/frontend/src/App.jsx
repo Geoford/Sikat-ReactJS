@@ -76,7 +76,7 @@ function App() {
             element={<GenderBasedIncidents />}
           />
           <Route path="/Admin/Dashboard" element={<Dashboard />} />
-          <Route path="/Admin/Analytics" element={<Analytics />} />
+          <Route path="/Admin/Analytics/:activeTab" element={<Analytics />} />
           <Route
             path="/Admin/CaseDetails/:reportID"
             element={<CaseDetails />}

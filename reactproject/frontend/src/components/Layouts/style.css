@@ -764,9 +764,14 @@ input.form-control:focus {
 .carousel-indicators button {
   width: clamp(1rem, 3dvw, 3rem) !important;
 }
-
-@media screen and (max-width: ) {
+/* FOR DASHBOARD */
+.dashboardData {
+  transition: 0.2s;
 }
+.dashboardData:hover {
+  transform: scale(102%);
+}
+
 @media screen and (max-width: 1150px) {
   .followerName {
     /* display: none; */
