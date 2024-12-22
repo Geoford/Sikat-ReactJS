@@ -44,6 +44,8 @@ const NavBar = ({ ActiveTab }) => {
 
   if (!user) return null;
 
+  const RegisteredUser = "RegisteredUser";
+
   return (
     <nav
       className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
@@ -117,7 +119,7 @@ const NavBar = ({ ActiveTab }) => {
               className={`navIcons text-light ${
                 ActiveTab === "Analytics" ? "active" : ""
               }`}
-              to="/Admin/Analytics"
+              to={`/Admin/Analytics/${RegisteredUser}`}
             >
               <i class="bx bx-chart"></i>
               <p className="navToolTip">User Analytics</p>
@@ -140,7 +142,7 @@ const NavBar = ({ ActiveTab }) => {
             ""
           )}
 
-          <Link
+          {/* <Link
             className={`navIcons text-light ${
               ActiveTab === "Settings" ? "active" : ""
             }`}
@@ -148,7 +150,7 @@ const NavBar = ({ ActiveTab }) => {
           >
             <i class="bx bx-cog"></i>
             <p className="navToolTip">Settings</p>
-          </Link>
+          </Link> */}
         </div>
         <div className="d-flex align-items-center gap-2 navDropdown">
           <div>

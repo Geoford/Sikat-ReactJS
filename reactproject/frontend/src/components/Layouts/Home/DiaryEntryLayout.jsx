@@ -324,29 +324,36 @@ const DiaryEntryLayout = ({
         {entry.visibility === "private" ? (
           // IF PRIVATE
           <div className="d-flex align-items-center gap-2 text-secondary">
-            <div className="profilePicture">
-              <img
-                src={
-                  entry.isAdmin === 1
-                    ? `http://localhost:8081${entry.profile_image}`
-                    : anonymous
-                }
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
+            <Link
+              to={`/Profile/${entry.userID}`}
+              className="linkText rounded p-0"
+            >
+              <div className="profilePicture">
+                <img
+                  src={`http://localhost:8081${entry.profile_image}`}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            </Link>
+
             <div className="d-flex flex-column align-items-start">
-              <h5 className="m-0">
-                {entry.isAdmin === 1
-                  ? "Gender and Development"
-                  : entry.firstName && entry.lastName
-                  ? entry.firstName + " " + entry.lastName
-                  : user.firstName + " " + user.lastName}
-              </h5>
+              <Link
+                to={`/Profile/${entry.userID}`}
+                className="linkText rounded p-0"
+              >
+                <h5 className="m-0">
+                  {entry.isAdmin === 1
+                    ? "Gender and Development"
+                    : entry.firstName && entry.lastName
+                    ? entry.firstName + " " + entry.lastName
+                    : user.firstName + " " + user.lastName}
+                </h5>
+              </Link>
 
               <p className="m-0" style={{ fontSize: ".7rem" }}>
                 {formatDate(entry.created_at)}{" "}
@@ -550,13 +557,11 @@ const DiaryEntryLayout = ({
               onHide={handleCloseModal}
               centered
               size="lg"
+              style={{}}
             >
-              {/* <Modal.Header closeButton>
-                <Modal.Title>Diary Image</Modal.Title>
-              </Modal.Header> */}
               <Modal.Body
                 className="text-center p-1 position-relative"
-                style={{ width: "auto" }}
+                // style={{ maxHeight: "70vh" }}
               >
                 <div
                   className="position-absolute rounded"
@@ -575,34 +580,13 @@ const DiaryEntryLayout = ({
                 <img
                   src={`http://localhost:8081${entry.diary_image}`}
                   alt="Diary Full View"
-                  className="img-fluid rounded"
+                  className="rounded"
                   style={{
-                    width: "100%",
-                    // height: "100%",
-                    // objectFit: "cover",
+                    height: "clamp(20rem, 80dvh, 60rem)",
+                    maxWidth: "100%",
                   }}
                 />
-                {/* <div
-                  className="position-absolute p-1 rounded"
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    backgroundColor: "#ffff",
-                    width: "clamp(100%, 40dvw,110%)",
-                  }}
-                >
-                  <div
-                    className="position-relative overflow-y-scroll custom-scrollbar"
-                    style={{ maxHeight: "90dvh" }}
-                  ></div>
-                </div> */}
               </Modal.Body>
-              {/* <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseModal}>
-                  Close
-                </Button>
-              </Modal.Footer> */}
             </Modal>
           </>
         )}

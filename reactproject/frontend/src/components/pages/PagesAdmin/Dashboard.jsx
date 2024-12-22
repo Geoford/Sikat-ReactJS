@@ -422,7 +422,7 @@ const Dashboard = () => {
             <div className="row gap-2 m-auto">
               <Link
                 to="/Admin/GenderBasedIncidents"
-                className="dashboardData text-decoration-none col-md border rounded shadow-sm overflow-hidden p-0"
+                className="dashboardData text-decoration-none col-lg border rounded shadow-sm overflow-hidden p-0"
                 style={{
                   height: "7rem",
                   background:

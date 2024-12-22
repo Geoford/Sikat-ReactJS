@@ -173,7 +173,7 @@ const AccountDropdown = ({ isAdmin }) => {
             </Link>
           </Dropdown.Item>
         )}
-        <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
+        {/* <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link className="text-decoration-none text-dark" to="/DiaryEntries">
             <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
               <p className="m-0">
@@ -182,8 +182,8 @@ const AccountDropdown = ({ isAdmin }) => {
               <i class="bx bx-edit"></i>
             </button>
           </Link>
-        </Dropdown.Item>
-        {isAdmin ? (
+        </Dropdown.Item> */}
+        {/* {isAdmin ? (
           <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
@@ -197,7 +197,7 @@ const AccountDropdown = ({ isAdmin }) => {
           </Dropdown.Item>
         ) : (
           ""
-        )}
+        )} */}
 
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link
