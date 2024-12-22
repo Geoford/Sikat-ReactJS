@@ -62,23 +62,38 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                 </div>
               ) : (
                 <div
-                  className="px-2 pt-2 my-1 me-1 custom-scrollbar"
+                  className="my-1 px-2 custom-scrollbar"
                   style={{ eight: "35vh", overflowY: "scroll" }}
                 >
                   {entries.map((entry) => (
                     <Link
-                      to={`/DiaryEntry/${entry.entryID}`}
                       key={entry.entryID}
-                      className="rounded text-decoration-none  text-secondary"
-                      style={{ cursor: "pointer" }}
+                      to={`/DiaryEntry/${entry.entryID}`}
+                      className="rounded text-decoration-none"
                     >
-                      <div
-                        className="grayHover  d-flex align-items-start flex-column rounded text-start ps-2  py-2"
-                        style={{ backgroundColor: "#ffff" }}
-                      >
-                        <p className="m-0">
-                          {entry.title} - {formatDate(entry.created_at)}
-                        </p>
+                      <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                        <div>
+                          <div className="d-flex flex-column align-items-start p-1">
+                            <p className="m-0 text-start text-secondary">
+                              {entry.title}{" "}
+                              <span>
+                                {entry.visibility === "private" ? (
+                                  <i class="bx bx-lock-alt"></i>
+                                ) : (
+                                  <i class="bx bx-globe"></i>
+                                )}
+                              </span>
+                            </p>
+                            <span
+                              className="text-secondary"
+                              style={{
+                                fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                              }}
+                            >
+                              {formatDate(entry.created_at)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </Link>
                   ))}
@@ -90,19 +105,14 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
       </div>
       <div className=" p-2 text-secondary d-none d-lg-block">
         <div className="d-flex justify-content-between border-bottom border-secondary-subtle px-1 pb-2">
-          <div className="d-flex align-items-center">
-            <h5 className="m-0">Diary entries</h5>
+          <div className="d-flex align-items-center text-secondary gap-1">
+            <i className="bx bx-edit bx-sm"></i>
+            <h5 className="m-0 text-start">Diary Entries</h5>
           </div>
           {ownProfile ? (
-            <div>
-              <Link
-                to="/DiaryEntries"
-                className=" rounded text-decoration-none"
-                style={{ cursor: "pointer" }}
-              >
-                <h6 className="m-0 linkText rounded">View All</h6>
-              </Link>
-            </div>
+            <Link to="/DiaryEntries" className="linkText rounded p-1">
+              <p className="m-0">View All</p>
+            </Link>
           ) : (
             <div></div>
           )}
@@ -117,23 +127,44 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
           </div>
         ) : (
           <div
-            className="pe-2 pt-2 mt-1 custom-scrollbar"
+            className="pe-2 mt-1 custom-scrollbar"
             style={{ height: "35vh", overflowY: "scroll" }}
           >
-            {entries.map((entry) => (
-              <Link
-                to={`/DiaryEntry/${entry.entryID}`}
-                key={entry.entryID}
-                className="rounded text-decoration-none  text-secondary"
-                style={{ cursor: "pointer" }}
-              >
-                <div className="journalEntries d-flex align-items-start flex-column rounded text-start ps-2  py-2">
-                  <p className="m-0">
-                    {entry.title} - {formatDate(entry.created_at)}
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {entries.map((entry) => {
+              if (!ownProfile && entry.visibility === "private") {
+                return null;
+              }
+              return (
+                <Link
+                  key={entry.entryID}
+                  to={`/DiaryEntry/${entry.entryID}`}
+                  className="rounded text-decoration-none"
+                >
+                  <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                    <div>
+                      <div className="d-flex flex-column align-items-start p-1">
+                        <p className="m-0 text-start text-secondary">
+                          {entry.title}{" "}
+                          <span>
+                            {entry.visibility === "private" ? (
+                              <i class="bx bx-lock-alt"></i>
+                            ) : (
+                              <i class="bx bx-globe"></i>
+                            )}
+                          </span>
+                        </p>
+                        <span
+                          className="text-secondary"
+                          style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
+                        >
+                          {formatDate(entry.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

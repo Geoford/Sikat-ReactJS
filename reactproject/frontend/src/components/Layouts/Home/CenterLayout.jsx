@@ -271,7 +271,7 @@ const CenterLayout = () => {
   if (!user) return null;
 
   return (
-    <div className="p-2 px-0">
+    <div className="p-2 px-0 mx-sm-5 mx-md-0">
       <div
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}

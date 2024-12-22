@@ -128,9 +128,26 @@ const LeftSideAdmin = () => {
                 className="rounded text-decoration-none"
               >
                 <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
-                  <p className="m-0 p-1 text-start text-secondary">
-                    {entry.title} - {formatDate(entry.created_at)}
-                  </p>
+                  <div>
+                    <div className="d-flex flex-column align-items-start p-1">
+                      <p className="m-0 text-start text-secondary">
+                        {entry.title}{" "}
+                        <span>
+                          {entry.visibility === "private" ? (
+                            <i class="bx bx-lock-alt"></i>
+                          ) : (
+                            <i class="bx bx-globe"></i>
+                          )}
+                        </span>
+                      </p>
+                      <span
+                        className="text-secondary"
+                        style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
+                      >
+                        {formatDate(entry.created_at)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))
