@@ -2772,6 +2772,85 @@ app.put("/commentAddress/:id", (req, res) => {
   });
 });
 
+app.post("/reset-password", (req, res) => {
+  const { email, password } = req.body;
+
+  // Hash the password before saving
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  db.query(
+    "UPDATE user_table SET password = ? WHERE cvsuEmail = ?",
+    [hashedPassword, email],
+    (err, result) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Error resetting password" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res
+          .status(400)
+          .json({ error: "No user found with that email address." });
+      }
+
+      res.json({ message: "Password reset successfully" });
+    }
+  );
+});
+
+app.post("/api/index-images", upload.single("image"), (req, res) => {
+  const { title, description } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!title || !imagePath) {
+    return res.status(400).json({ error: "Title and image are required" });
+  }
+
+  const sql =
+    "INSERT INTO index_images (title, description, image_path) VALUES (?, ?, ?)";
+  db.query(sql, [title, description, imagePath], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res
+      .status(201)
+      .json({ message: "Image added successfully", id: result.insertId });
+  });
+});
+
+app.get("/api/index-images", (req, res) => {
+  const sql = "SELECT * FROM index_images";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.delete("/index-images/:index_imagesID", (req, res) => {
+  const { index_imagesID } = req.params;
+  const query = "DELETE FROM index_images WHERE index_imagesID = ?";
+  db.query(query, [index_imagesID], (err) => {
+    if (err) return res.status(500).send("Error deleting image");
+    res.status(200).send("Image deleted successfully");
+  });
+});
+
+// Update an image
+app.put("/api/index-images/:index_imagesID", (req, res) => {
+  const { index_imagesID } = req.params;
+  const { title, description } = req.body;
+  const query =
+    "UPDATE index_images SET title = ?, description = ? WHERE index_imagesID = ?";
+  db.query(query, [title, description, index_imagesID], (err) => {
+    if (err) return res.status(500).send("Error updating image");
+    res.status(200).send("Image updated successfully");
+  });
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

@@ -2,74 +2,39 @@ import React, { useState, useEffect, useRef } from "react";
 import sampleImage from "../../../assets/Background.jpg";
 import Carousel from "react-bootstrap/Carousel";
 
-const IndexCarousel = () => {
-  const [index, setIndex] = useState(0);
+const IndexCarousel = ({ images }) => {
+  const [index, setIndex] = useState(0); // Track the active index
 
   const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
+    setIndex(selectedIndex); // Update the active index
   };
+
   return (
     <Carousel activeIndex={index} onSelect={handleSelect}>
-      <Carousel.Item>
-        <div className="position-relative">
-          <div className="carouselBlackFade"></div>
-          <img
-            src={sampleImage}
-            alt=""
-            style={{
-              height: "100%",
-              width: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <Carousel.Caption className="p-0 p-md-3">
-          <h4 className="m-0">Sample Title</h4>
-          <p className="m-0 d-none d-md-block">
-            Nulla vitae elit libero, a pharetra augue mollis interdum.
-          </p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <div className="position-relative">
-          <div className="carouselBlackFade"></div>
-          <img
-            src={sampleImage}
-            alt=""
-            style={{
-              height: "100%",
-              width: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <Carousel.Caption className="p-0 p-md-3">
-          <h4 className="m-0">Sample Title</h4>
-          <p className="m-0 d-none d-md-block">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <div className="position-relative">
-          <div className="carouselBlackFade"></div>
-          <img
-            src={sampleImage}
-            alt=""
-            style={{
-              height: "100%",
-              width: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <Carousel.Caption className="p-0 p-md-3">
-          <h4 className="m-0">Sample Title</h4>
-          <p className="m-0 d-none d-md-block">
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
-        </Carousel.Caption>
-      </Carousel.Item>
+      {images.map((image) => (
+        <Carousel.Item key={image.id}>
+          <div className="position-relative">
+            <div className="carouselBlackFade"></div>
+            <img
+              src={
+                image && image.image_path
+                  ? `http://localhost:8081${image.image_path}`
+                  : sampleImage
+              }
+              alt={image.title}
+              style={{
+                height: "100%",
+                width: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <Carousel.Caption>
+            <h3>{image.title}</h3>
+            <p>{image.description}</p>
+          </Carousel.Caption>
+        </Carousel.Item>
+      ))}
     </Carousel>
   );
 };

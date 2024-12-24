@@ -21,10 +21,11 @@ import IndexCarousel from "../Layouts/IndexPage/IndexCarousel";
 const IndexPage = () => {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [fadeIn, setFadeIn] = useState(true);
-  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+  const [latestAnnouncement, setLatestAnnouncement] = useState({});
   const [users, setUsers] = useState([]);
   const [entries, setEntries] = useState([]);
   const [reports, setReports] = useState([]);
+  const [images, setImages] = useState([]);
 
   const [scrollUpButton, setScrollUpButton] = useState(null);
 
@@ -61,6 +62,21 @@ const IndexPage = () => {
   useEffect(() => {
     fetchEntries();
     fetchReports();
+  }, []);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/api/index-images"
+        );
+        setImages(response.data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
   }, []);
 
   useEffect(() => {
@@ -150,7 +166,7 @@ const IndexPage = () => {
         >
           {/* CAROUSEL */}
           <div className="my-5 shadow">
-            <IndexCarousel></IndexCarousel>
+            <IndexCarousel images={images}></IndexCarousel>
           </div>
 
           {/* EVENTS AND ANNOUNCEMENTS */}
@@ -173,7 +189,7 @@ const IndexPage = () => {
                 <img
                   className="rounded"
                   src={
-                    latestAnnouncement.diary_image
+                    latestAnnouncement && latestAnnouncement.diary_image
                       ? `http://localhost:8081${latestAnnouncement.diary_image}`
                       : sampleImage
                   }

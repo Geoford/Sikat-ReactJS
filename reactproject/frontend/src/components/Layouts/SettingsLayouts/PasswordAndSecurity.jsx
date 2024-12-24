@@ -19,43 +19,6 @@ const PasswordAndSecurity = () => {
     >
       <h5 className="border-bottom border-2 pb-2">Password and Security</h5>
       <form action="" autoComplete="off">
-        {/* <Row className="g-2 pt-2 text-start ">
-          <h5 className="m-0">Change Security Question</h5>
-          <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
-            Security questions are used as an additional layer of authentication
-            to verify a user's identity by asking them to provide answers to
-            personal questions only they should know.
-          </p>
-          <Col md>
-            <FloatingLabel
-              controlId="floatingSelectGrid"
-              label="Select questions here..."
-            >
-              <Form.Select
-                aria-label="Floating label select example"
-                autoComplete="off"
-              >
-                <option value="1">What is your favorite color?</option>
-                <option value="2">
-                  What is the name of your father and mother?
-                </option>
-                <option value="3">
-                  What is the name of your favorite pet?
-                </option>
-                <option value="4">Others</option>
-              </Form.Select>
-            </FloatingLabel>
-            <Form.Floating className="mb-3 mt-2">
-              <Form.Control
-                id="securityAnswer"
-                type="text"
-                placeholder="asdasd"
-                autoComplete="off"
-              />
-              <label htmlFor="securityAnswer">Answer</label>
-            </Form.Floating>
-          </Col>
-        </Row> */}
         <Row className="g-2 pt-2 text-start ">
           <h5 className="m-0">Change Password</h5>
           <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
