@@ -250,11 +250,11 @@ const DiaryEntry = () => {
                   {/* DIARY DETAILS SIDE */}
                   <div
                     className="col-lg"
-                    // style={{
-                    //   width: entry.diary_image
-                    //     ? "clamp(19rem, 30dvw, 30rem)"
-                    //     : "clamp(19rem, 50dvw, 50rem)",
-                    // }}
+                    style={{
+                      width: entry.diary_image
+                        ? "clamp(19rem, 30dvw, 30rem)"
+                        : "clamp(19rem, 50dvw, 50rem)",
+                    }}
                   >
                     <div className="border-bottom d-flex gap-2 pb-2">
                       {/* // IF PUBLIC */}
