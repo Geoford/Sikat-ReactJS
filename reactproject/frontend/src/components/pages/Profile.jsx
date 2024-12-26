@@ -410,21 +410,23 @@ const Profile = () => {
 
           <div className="col-md mb-2 p-0 px-md-1">
             {entries.length > 0 ? (
-              entries.map((entry) => (
-                <div className="w-100 ">
-                  <DiaryEntryLayout
-                    key={entry.entryID}
-                    entry={entry}
-                    expandButtons={expandButtons}
-                    formatDate={formatDate}
-                    followedUsers={followedUsers}
-                    handleClick={handleClick}
-                    setEntries={setEntries}
-                    setFollowedUsers={setFollowedUsers}
-                    user={user}
-                  />
-                </div>
-              ))
+              entries
+                .filter((entry) => ownProfile || entry.visibility !== "private")
+                .map((entry) => (
+                  <div className="w-100 ">
+                    <DiaryEntryLayout
+                      key={entry.entryID}
+                      entry={entry}
+                      expandButtons={expandButtons}
+                      formatDate={formatDate}
+                      followedUsers={followedUsers}
+                      handleClick={handleClick}
+                      setEntries={setEntries}
+                      setFollowedUsers={setFollowedUsers}
+                      user={user}
+                    />
+                  </div>
+                ))
             ) : (
               <p>No entries to display.</p>
             )}

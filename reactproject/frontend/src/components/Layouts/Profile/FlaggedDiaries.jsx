@@ -31,7 +31,7 @@ const FlaggedDiaries = ({ userID }) => {
         onClick={handleShow}
         style={{ height: "100%" }}
       >
-        <h6 className="m-0">Flagged Diaries: {flaggedDiaries.length}</h6>
+        <h5 className="m-0">Flagged Diaries: {flaggedDiaries.length}</h5>
       </button>
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>

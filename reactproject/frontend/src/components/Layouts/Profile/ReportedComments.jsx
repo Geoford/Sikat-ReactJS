@@ -15,7 +15,7 @@ const ReportedComments = () => {
         style={{ height: "100%" }}
       >
         <i class="bx bx-message-alt-error d-md-none"></i>
-        <h6 className="m-0 d-none d-md-block">Reported Comments: 0</h6>
+        <h5 className="m-0 d-none d-md-block">Reported Comments: 0</h5>
       </button>
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
