@@ -27,7 +27,7 @@ const CommentSection = ({
   const [error, setError] = useState(null);
   const [openAccordions, setOpenAccordions] = useState([]);
 
-  const [editCommentID, setEditCommentID] = useState(null);
+  const [editComment, setEditComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
 
   const replyTextsRef = useRef({});
@@ -165,7 +165,7 @@ const CommentSection = ({
   };
 
   const handleEditComment = useCallback((comment) => {
-    setEditCommentID(comment.commentID);
+    setEditComment(comment.commentID);
     setEditCommentText(comment.text);
   }, []);
 
@@ -173,10 +173,10 @@ const CommentSection = ({
     if (!editCommentText.trim()) return; // Ensure non-empty edit text
     setLoading(true);
     try {
-      await axios.put(`http://localhost:8081/editComment/${editCommentID}`, {
+      await axios.put(`http://localhost:8081/editComment/${editComment}`, {
         text: editCommentText,
       });
-      setEditCommentID(null);
+      setEditComment(null);
       setEditCommentText("");
       fetchComments();
     } catch (error) {
@@ -185,7 +185,7 @@ const CommentSection = ({
     } finally {
       setLoading(false);
     }
-  }, [editCommentID, editCommentText, fetchComments]);
+  }, [editComment, editCommentText, fetchComments]);
 
   const handleDeleteComment = async (commentID) => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
@@ -288,7 +288,9 @@ const CommentSection = ({
                   />
                 </div>
                 <div className="d-flex justify-content-start flex-column">
-                  <p className="m-0 text-start">{comment.username}</p>
+                  <p className="m-0 text-start">
+                    {comment.firstName} {comment.lastName}
+                  </p>
                 </div>
               </div>
             </Link>
@@ -321,7 +323,7 @@ const CommentSection = ({
                         className="btn btn-light w-100 "
                         onClick={() => handleDeleteComment(comment.commentID)}
                       >
-                        Delete
+                        <p className="m-0">Delete</p>
                       </button>
                     </Dropdown.Item>
                   )}
@@ -331,7 +333,7 @@ const CommentSection = ({
                         className="btn btn-light w-100"
                         onClick={() => handleEditComment(comment)}
                       >
-                        Edit
+                        <p className="m-0">Edit</p>
                       </button>
                     </Dropdown.Item>
                   )}
@@ -374,15 +376,9 @@ const CommentSection = ({
               className="btn btn-light btn-sm"
               onClick={() => setReplyTo(comment.commentID)}
             >
-              Reply
+              <p className="m-0">Reply</p>
             </button>
           </div>
-
-          {editCommentID === comment.commentID ? (
-            <div className="mb-2 w-100"></div>
-          ) : (
-            <div></div>
-          )}
         </div>
 
         {replyTo === comment.commentID && (
@@ -405,21 +401,40 @@ const CommentSection = ({
                   }
                 }}
               />
-              <button
-                onClick={() => handleSendReply(comment.commentID)}
-                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
-                style={{
-                  height: "40px",
-                  width: "40px",
-                  borderRadius: "50%",
-                  backgroundColor: "#ffff",
-                  right: "10px",
-                  bottom: "10px",
-                  color: "var(--primary)",
-                }}
+              <div
+                className="d-flex justify-content-end mt-2 position-absolute gap-1 gap-md-2"
+                style={{ right: "10px", bottom: "10px" }}
               >
-                <i className="bx bxs-send bx-sm"></i>
-              </button>
+                <button
+                  className="py-2 d-flex align-items-center justify-content-center border-0"
+                  onClick={() => setReplyTo(null)}
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#ffff",
+                    right: "10px",
+                    bottom: "10px",
+                    color: "red",
+                    fontSize: "clamp(1.2rem, 5dvw, 2rem)",
+                  }}
+                >
+                  <i class="bx bx-x"></i>
+                </button>
+                <button
+                  onClick={() => handleSendReply(comment.commentID)}
+                  className="py-2 d-flex align-items-center justify-content-center border-0"
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#ffff",
+                    color: "var(--primary)",
+                  }}
+                >
+                  <i className="bx bxs-send bx-sm"></i>
+                </button>
+              </div>
             </FloatingLabel>
           </div>
         )}
@@ -455,7 +470,7 @@ const CommentSection = ({
       <div>
         <div
           className="pe-2 custom-scrollbar"
-          style={{ overflowY: "scroll", height: "15.5rem" }}
+          style={{ overflowY: "scroll", height: "35dvh" }}
         >
           {loading && <p className="text-center">Loading comments...</p>}
           {error && <p className="text-danger">{error}</p>}
@@ -468,66 +483,41 @@ const CommentSection = ({
             <Comment key={comment.commentID} comment={comment} />
           ))}
         </div>
-        {editCommentID ? (
-          <>
-            <Form.Control
-              as="textarea"
-              style={{ height: "100px" }}
-              rows={2}
-              value={editCommentText}
-              onChange={(e) => setEditCommentText(e.target.value)}
-              className="mb-2"
-            />
 
-            <div className="d-flex justify-content-end mt-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="me-5"
-                onClick={() => setEditCommentID(null)}
-              >
-                Cancel
-              </Button>
-              <button
-                onClick={handleSaveEditComment}
-                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
-                style={{
-                  height: "40px",
-                  width: "40px",
-                  borderRadius: "50%",
-                  backgroundColor: "#ffff",
-                  right: "10px",
-                  bottom: "10px",
-                  color: "var(--primary)",
-                }}
-              >
-                <i className="bx bxs-send bx-sm"></i>
-              </button>
-            </div>
-          </>
-        ) : (
-          <FloatingLabel
-            controlId="newCommentTextarea"
-            label="Comment"
-            className="commentInput mt-3 position-relative"
-          >
-            <Form.Control
-              as="textarea"
-              placeholder="Leave a comment here"
-              style={{ height: "clamp(4rem, 10dvw, 6rem)" }}
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendComment();
+        <FloatingLabel
+          controlId="newCommentTextarea"
+          label={editComment ? "Edit Comment" : "Comment"}
+          className="commentInput mt-3 position-relative"
+        >
+          <Form.Control
+            as="textarea"
+            placeholder="Leave a comment here"
+            style={{ height: "clamp(4rem, 10dvw, 6rem)" }}
+            value={editComment ? editCommentText : newComment}
+            onChange={(e) => {
+              if (editComment) {
+                setEditCommentText(e.target.value); // Update the text for editing
+              } else {
+                setNewComment(e.target.value); // Update the new comment
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                {
+                  editComment ? handleSaveEditComment() : handleSendComment();
                 }
-              }}
-            />
-            <div className="d-flex justify-content-end mt-2">
+              }
+            }}
+          />
+          <div
+            className="d-flex justify-content-end mt-2 position-absolute gap-1 gap-md-2"
+            style={{ right: "10px", bottom: "10px" }}
+          >
+            {editComment ? (
               <button
-                onClick={handleSendComment}
-                className="position-absolute py-2 d-flex align-items-center justify-content-center border-0"
+                className="py-2 d-flex align-items-center justify-content-center border-0"
+                onClick={() => setEditComment(null)}
                 style={{
                   height: "40px",
                   width: "40px",
@@ -535,15 +525,32 @@ const CommentSection = ({
                   backgroundColor: "#ffff",
                   right: "10px",
                   bottom: "10px",
-                  color: "var(--primary)",
-                  fontSize: "clamp(1.2rem, 5dvw, 1.5rem)",
+                  color: "red",
+                  fontSize: "clamp(1.2rem, 5dvw, 2rem)",
                 }}
               >
-                <i className="bx bxs-send"></i>
+                <i class="bx bx-x"></i>
               </button>
-            </div>
-          </FloatingLabel>
-        )}
+            ) : (
+              ""
+            )}
+
+            <button
+              onClick={editComment ? handleSaveEditComment : handleSendComment}
+              className="py-2 d-flex align-items-center justify-content-center border-0"
+              style={{
+                height: "40px",
+                width: "40px",
+                borderRadius: "50%",
+                backgroundColor: "#ffff",
+                color: "var(--primary)",
+                fontSize: "clamp(1.2rem, 5dvw, 1.5rem)",
+              }}
+            >
+              <i className="bx bxs-send"></i>
+            </button>
+          </div>
+        </FloatingLabel>
       </div>
     </>
   );

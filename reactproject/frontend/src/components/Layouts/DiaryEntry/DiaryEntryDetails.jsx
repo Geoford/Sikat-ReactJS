@@ -23,6 +23,174 @@ const DiaryEntryDetails = ({
   followedUsers,
   ownDiary,
 }) => {
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  // Fetch the data of the current user
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser) {
+      navigate("/");
+      return;
+    }
+    setCurrentUser(storedUser);
+  }, [navigate]);
+
+  // Fetch entry and comments when user or entryID changes
+  useEffect(() => {
+    if (user && entryID) {
+      fetchEntry();
+      fetchComments();
+      fetchFollowedUsers(user.userID);
+    }
+  }, [user, entryID]);
+
+  const fetchEntry = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchDiaryEntry/${entryID}`
+      );
+      const gadifyStatusResponse = await axios.get(
+        `http://localhost:8081/gadifyStatus/${user.userID}`
+      );
+
+      if (response.data && response.data.entry) {
+        const entry = response.data.entry;
+        const isGadified = gadifyStatusResponse.data.some(
+          (g) => g.entryID === entry.entryID
+        );
+        setEntries([{ ...entry, isGadified }]);
+      } else {
+        setError("No entry found.");
+      }
+    } catch (error) {
+      console.error("Error fetching entry:", error);
+      setError("Error loading entry.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/fetchComments/${entryID}`
+      );
+      setComments(response.data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      setError("Failed to load comments.");
+    }
+  };
+
+  const fetchFollowedUsers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followedUsers/${userID}`
+      );
+      setFollowedUsers(response.data.map((user) => user.userID));
+    } catch (error) {
+      console.error("Error fetching followed users:", error);
+    }
+  };
+
+  const handleGadify = async (entryID) => {
+    if (!user) return;
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8081/entry/${entryID}/gadify`,
+        {
+          userID: user.userID,
+        }
+      );
+      const isGadified =
+        response.data.message === "Gadify action recorded successfully";
+
+      setEntries((prevEntries) =>
+        prevEntries.map((entry) =>
+          entry.entryID === entryID
+            ? {
+                ...entry,
+                gadifyCount: isGadified
+                  ? entry.gadifyCount + 1
+                  : entry.gadifyCount - 1,
+                isGadified,
+              }
+            : entry
+        )
+      );
+    } catch (error) {
+      console.error("Error updating gadify count:", error);
+    }
+  };
+
+  const handleClick = (entryID) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.entryID === entryID
+          ? { ...entry, isGadified: !entry.isGadified }
+          : entry
+      )
+    );
+    setExpandButtons((prev) => ({ ...prev, [entryID]: true }));
+    setTimeout(
+      () => setExpandButtons((prev) => ({ ...prev, [entryID]: false })),
+      300
+    );
+    handleGadify(entryID);
+  };
+
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    return timeDiff < 24 * 60 * 60 * 1000
+      ? entryDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : entryDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+  };
+
+  // FOR FLAGGED AND COMMENT COUNT
+  const commentCount = comments.length;
+
+  const [flaggedCount, setFlaggedCount] = useState(null);
+
+  useEffect(() => {
+    if (entries.length > 0) {
+      const entry = entries[0]; // Assuming there's only one entry per page
+      const fetchFlaggedCount = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/flaggedCount/${entry.entryID}`
+          );
+          setFlaggedCount(response.data.flaggedCount);
+        } catch (error) {
+          console.error("Error fetching flagged count:", error);
+        }
+      };
+      fetchFlaggedCount();
+    }
+  }, [entries]);
+
+  const handleFollowToggle = (userID) => {
+    setFollowedUsers((prevFollowedUsers) =>
+      prevFollowedUsers.includes(userID)
+        ? prevFollowedUsers.filter((id) => id !== userID)
+        : [...prevFollowedUsers, userID]
+    );
+  };
   return (
     <div>
       <div className="border-bottom d-flex gap-2 pb-2">

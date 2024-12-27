@@ -12,6 +12,9 @@ import CommentSectionButton from "../Layouts/CommentSection/CommentSection";
 import CommentSection from "../Layouts/DiaryEntry/CommentSection";
 
 import FlagButton from "../Layouts/Home/FlagButton";
+import ChatButton from "../Layouts/DiaryEntry/ChatButton";
+import DiaryDetails from "../Layouts/DiaryEntry/DiaryDetails";
+import ImageModal from "../Layouts/DiaryEntry/ImageModal";
 
 const DiaryEntry = () => {
   const { entryID } = useParams();
@@ -203,6 +206,12 @@ const DiaryEntry = () => {
     );
   };
 
+  // FOR COMMENT BUTTON
+  const commentButtonInput = useRef(null);
+  const focusCommentInput = () => {
+    commentButtonInput.current?.focusCommentInput();
+  };
+
   return (
     <MainLayout>
       <div
@@ -219,16 +228,23 @@ const DiaryEntry = () => {
             return (
               <div
                 className="d-flex justify-content-center align-items-center mt-3 bg-light rounded shadow-sm p-3"
-                style={{ width: "clamp(30rem, 90vw, 80rem)" }}
+                style={{ width: "clamp(30rem, 90vw, auto)" }}
               >
-                <div className="row gap-2">
+                <div
+                  className="row d-flex justify-content-center gap-3"
+                  style={{
+                    width: entry.diary_image
+                      ? "clamp(19rem, 80dvw, 90rem)"
+                      : "clamp(19rem, 50dvw, 40rem)",
+                  }}
+                >
                   {entry.diary_image && (
                     // IMAGE SIDE
-                    <div className="col-lg-7 d-flex justify-content-center overflow-hidden rounded">
+                    <div className="col-lg-7 d-flex justify-content-center align-items-center overflow-hidden rounded">
                       <div
                         style={{
-                          width: "clamp(19rem, 50dvw, 50rem)",
-                          height: "clamp(19rem, 50dvw, 80dvh)",
+                          width: "clamp(19rem, 90dvw, 90rem)",
+                          height: "clamp(19rem, 80dvw, 80dvh)",
                         }}
                       >
                         <img
@@ -249,13 +265,17 @@ const DiaryEntry = () => {
 
                   {/* DIARY DETAILS SIDE */}
                   <div
-                    className="col-lg"
-                    style={{
-                      width: entry.diary_image
-                        ? "clamp(19rem, 30dvw, 30rem)"
-                        : "clamp(19rem, 50dvw, 50rem)",
-                    }}
+                    className="col-lg col-md"
+                    style={
+                      {
+                        // width: entry.diary_image
+                        //   ? "clamp(19rem, 30dvw, 30rem)"
+                        //   : "clamp(19rem, 50dvw, 50rem)",
+                        // height: "clamp(19rem, 50dvw, 80dvh)",
+                      }
+                    }
                   >
+                    {/* DIARY OWNER DETAILS */}
                     <div className="border-bottom d-flex gap-2 pb-2">
                       {/* // IF PUBLIC */}
                       <div className="d-flex align-items-center gap-2 text-secondary">
@@ -358,7 +378,7 @@ const DiaryEntry = () => {
                         </div>
                       </div>
                       <div>
-                        {ownDiary ? (
+                        {ownDiary || currentUser.isAdmin ? (
                           <Dropdown>
                             <Dropdown.Toggle
                               className="btn-light d-flex align-items-center pt-0 pb-2"
@@ -369,13 +389,13 @@ const DiaryEntry = () => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="p-2">
                               <Dropdown.Item className="p-0 btn btn-light">
-                                Edit
+                                <p className="m-0">Edit</p>
                               </Dropdown.Item>
                               <Dropdown.Item
                                 className="p-0 btn btn-light"
                                 onClick={() => handleDeleteEntry(entry.entryID)}
                               >
-                                Delete
+                                <p className="m-0">Delete</p>
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
@@ -386,100 +406,26 @@ const DiaryEntry = () => {
                     </div>
                     {/* DIARY ENTRY DETAILS */}
                     <div
-                      className="text-start border-bottom py-2 pt-2"
-                      style={{ minHeight: "5rem" }}
+                      className="text-start border-bottom py-2 pt-2 overflow-y-scroll custom-scrollbar"
+                      style={{ height: "18dvh" }}
                     >
-                      <div className="d-flex alig-items-center gap-1 position-relative">
-                        {entry.subjects && (
-                          <h6 className="text-secondary m-0 mt-2">
-                            <span
-                              style={{
-                                fontSize: "clamp(0.7rem, 1dvw, .85rem)",
-                              }}
-                            >
-                              Trigger Warning: {entry.subjects}
-                            </span>
-                          </h6>
-                        )}
-                        {entry.containsAlarmingWords === 1 &&
-                        user.isAdmin === 1 ? (
-                          <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
-                            <div className="informationToolTip accordion text-danger align-middle">
-                              <h4 className="m-0">
-                                <i class="bx bx-error" style={{}}></i>
-                              </h4>
-                              <p
-                                className="infToolTip rounded p-2 m-0 text-center"
-                                style={{
-                                  backgroundColor: "rgb(179, 0, 0, .7)",
-                                  width: "85%",
-                                }}
-                              >
-                                This diary entry has been flagged by the system
-                                as potentially containing sensitive or
-                                distressing topics and may require immediate
-                                attention.
-                              </p>
-                            </div>
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </div>
-
-                      <div className="d-flex gap-1 align-items-center mt-2">
-                        <div className="d-flex flex-column gap-1">
-                          <h5 className="m-0">{entry.title}</h5>
-                        </div>
-                      </div>
-
-                      <p style={{ whiteSpace: "pre-wrap" }}>
-                        {entry.description}
-                      </p>
+                      <DiaryDetails
+                        isAdmin={user.isAdmin}
+                        entrySubject={entry.subjects}
+                        containAlarmingWords={entry.containsAlarmingWords}
+                        title={entry.title}
+                        description={entry.description}
+                      ></DiaryDetails>
 
                       {/* Clickable Image */}
                       {entry.diary_image && (
                         <>
                           {/* Modal */}
-                          <Modal
-                            show={showModal}
-                            onHide={handleCloseModal}
-                            centered
-                            size="lg"
-                            style={{}}
-                          >
-                            <Modal.Body
-                              className="text-center p-1 position-relative"
-                              // style={{ maxHeight: "70vh" }}
-                            >
-                              <div
-                                className="position-absolute rounded"
-                                style={{
-                                  right: "1rem",
-                                  top: "1rem",
-                                  backgroundColor: "rgb(242, 242, 242,.5)",
-                                  paddingTop: ".15rem",
-                                  paddingLeft: ".15rem",
-                                  paddingRight: ".15rem",
-                                }}
-                              >
-                                <CloseButton
-                                  onClick={handleCloseModal}
-                                  style={{}}
-                                />
-                              </div>
-
-                              <img
-                                src={`http://localhost:8081${entry.diary_image}`}
-                                alt="Diary Full View"
-                                className="rounded"
-                                style={{
-                                  height: "clamp(20rem, 80dvh, 60rem)",
-                                  maxWidth: "100%",
-                                }}
-                              />
-                            </Modal.Body>
-                          </Modal>
+                          <ImageModal
+                            showModal={showModal}
+                            handleCloseModal={handleCloseModal}
+                            diaryImage={`http://localhost:8081${entry.diary_image}`}
+                          ></ImageModal>
                         </>
                       )}
                     </div>
@@ -501,24 +447,45 @@ const DiaryEntry = () => {
                         </button>
                       </div>
 
+                      {entry.diary_image ? (
+                        <div className="col p-0">
+                          <button
+                            className="InteractButton d-flex align-items-center justify-content-center gap-2"
+                            onClick={focusCommentInput}
+                          >
+                            <i className="bx bx-comment"></i>
+                            <span>{commentCount}</span>
+                            <p className="m-0 d-lg-none d-xl-block">Comments</p>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="col p-0">
+                          <button
+                            className="InteractButton d-flex align-items-center justify-content-center gap-2"
+                            onClick={focusCommentInput}
+                          >
+                            <i className="bx bx-comment"></i>
+                            <span>{commentCount}</span>
+                            <p className="m-0 d-none d-md-block">Comments</p>
+                          </button>
+                        </div>
+                      )}
                       <div className="col p-0">
-                        <button className="InteractButton d-flex align-items-center justify-content-center gap-2">
-                          <i className="bx bx-comment"></i>
-                          <span>{commentCount}</span>
-                          <p className="m-0 d-none d-md-block">Comments</p>
-                        </button>
-                      </div>
-                      <div className="col p-0">
-                        <FlagButton
-                          flaggedCount={flaggedCount}
-                          userID={user.userID}
-                          entryID={entry.entryID}
-                          entry={entry.userID}
-                        />
+                        {currentUser.isAdmin ? (
+                          <ChatButton userToChat={entry.userID}></ChatButton>
+                        ) : (
+                          <FlagButton
+                            flaggedCount={flaggedCount}
+                            userID={user.userID}
+                            entryID={entry.entryID}
+                            entry={entry.userID}
+                          />
+                        )}
                       </div>
                     </div>
                     <div>
                       <CommentSection
+                        ref={commentButtonInput}
                         commentCount={commentCount}
                         userID={user.userID}
                         entryID={entry.entryID}
