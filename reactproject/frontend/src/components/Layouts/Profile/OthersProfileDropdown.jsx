@@ -6,6 +6,7 @@ import Suspend from "./Suspend";
 const OthersProfileDropdown = ({
   isAdmin,
   userID,
+  firstName,
   toBeReported,
   reportedUserID,
 }) => {
@@ -45,7 +46,7 @@ const OthersProfileDropdown = ({
         {isAdmin ? (
           <Dropdown.Item className="btn btn-light p-0 px-2">
             {/* <button className="w-100 btn btn-light text-start">Suspend</button> */}
-            <Suspend></Suspend>
+            <Suspend userID={userID} firstName={firstName}></Suspend>
           </Dropdown.Item>
         ) : (
           ""

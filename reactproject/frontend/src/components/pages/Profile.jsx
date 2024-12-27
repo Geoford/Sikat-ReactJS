@@ -11,6 +11,7 @@ import { Accordion } from "react-bootstrap";
 import FlaggedDiaries from "../Layouts/Profile/FlaggedDiaries";
 import ReportedComments from "../Layouts/Profile/ReportedComments";
 import Followers from "../Layouts/Profile/Followers";
+import Suspended from "../../components/pages/PagesUser/Suspended";
 
 const Profile = () => {
   const { userID } = useParams();
@@ -46,6 +47,12 @@ const Profile = () => {
         );
         if (!response.ok) throw new Error("User not found");
         const data = await response.json();
+
+        console.log("User data:", data);
+        if (data.isSuspended === 1) {
+          navigate("/suspended");
+          return;
+        }
         setUser(data);
       } catch (err) {
         setError(err.message);
@@ -365,7 +372,7 @@ const Profile = () => {
                   {currentUser.isAdmin ? (
                     <div className="d-flex gap-1">
                       <FlaggedDiaries userID={user.userID}></FlaggedDiaries>
-                      <ReportedComments></ReportedComments>
+                      <ReportedComments userID={user.userID}></ReportedComments>
                     </div>
                   ) : (
                     <button
@@ -392,7 +399,8 @@ const Profile = () => {
               ) : (
                 <OthersProfileDropdown
                   isAdmin={currentUser.isAdmin}
-                  userID={currentUser.userID}
+                  userID={user.userID}
+                  firstName={user.firstName}
                   reportedUserID={user.userID}
                   toBeReported={user.username}
                 />

@@ -415,11 +415,27 @@ app.post("/Login", (req, res) => {
 
     const user = data[0];
 
+    // Check suspension status
+    const currentDate = new Date();
+    if (user.suspendUntil && new Date(user.suspendUntil) > currentDate) {
+      return res.status(403).json({
+        error: "Account is suspended.",
+        suspendReason: user.suspendReason,
+        suspendUntil: user.suspendUntil,
+      });
+    }
+
     // Validate password
     const isPasswordValid = bcrypt.compareSync(password, user.password);
-
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // If the user is not suspended, update their status
+    if (user.isSuspended === 1) {
+      return res
+        .status(403)
+        .json({ error: "Account is suspended. Please try again later." });
     }
 
     const updateStatusSql =
@@ -1698,6 +1714,37 @@ app.get("/getReportedComments", (req, res) => {
   });
 });
 
+app.get("/getReportedComments/:userID", (req, res) => {
+  const { userID } = req.params; // Get userID from URL parameters
+
+  const query = `
+  SELECT
+    comment_reports.*,
+    comments.*,
+    user_table.firstName,
+    user_table.lastName,
+    user_table.studentNumber,
+    user_profiles.profile_image,
+    diary_entries.*
+  FROM 
+    comment_reports
+  JOIN user_table ON comment_reports.userID = user_table.userID
+  JOIN comments ON comment_reports.commentID = comments.commentID
+  JOIN user_profiles ON comment_reports.userID = user_profiles.userID
+  JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+  WHERE comment_reports.userID = ?`;
+
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error("Error fetching reported comments:", err.message);
+      return res
+        .status(500)
+        .json({ error: "Error fetching reported comments" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.delete("/deleteComment/:commentID", (req, res) => {
   const commentID = req.params.commentID;
 
@@ -2106,7 +2153,7 @@ app.get("/flagged", (req, res) => {
 });
 
 app.get("/flagged/:userID", (req, res) => {
-  const { userID } = req.query; // Get userID from query parameters
+  const { userID } = req.params; // Get userID from query parameters
 
   if (!userID) {
     return res.status(400).json({ error: "User ID is required" });
@@ -2839,7 +2886,6 @@ app.delete("/index-images/:index_imagesID", (req, res) => {
   });
 });
 
-// Update an image
 app.put("/api/index-images/:index_imagesID", (req, res) => {
   const { index_imagesID } = req.params;
   const { title, description } = req.body;
@@ -2849,6 +2895,60 @@ app.put("/api/index-images/:index_imagesID", (req, res) => {
     if (err) return res.status(500).send("Error updating image");
     res.status(200).send("Image updated successfully");
   });
+});
+
+// setInterval(() => {
+//   db.query(
+//     "UPDATE user_table SET isActive = 1, suspendReason = NULL, suspendUntil = NULL WHERE suspendUntil < NOW()",
+//     (err) => {
+//       if (err) {
+//         console.error("Error lifting suspensions:", err);
+//       } else {
+//         console.log("Suspensions lifted for eligible users.");
+//       }
+//     }
+//   );
+// }, 60 * 60 * 1000);
+
+app.post("/suspendUser", (req, res) => {
+  const { userID, reason, period } = req.body;
+
+  // Initialize the suspendUntil variable
+  const suspendUntil = new Date();
+  if (period === "3 Days") suspendUntil.setDate(suspendUntil.getDate() + 3);
+  if (period === "3 Weeks") suspendUntil.setDate(suspendUntil.getDate() + 21);
+  if (period === "3 Months") suspendUntil.setMonth(suspendUntil.getMonth() + 3);
+  if (period === "1 Year")
+    suspendUntil.setFullYear(suspendUntil.getFullYear() + 1);
+
+  // Log after the variable is defined
+  console.log("Request Body:", req.body);
+  console.log("Suspend Until Date:", suspendUntil);
+
+  // Database query to update suspension details
+  db.query(
+    "UPDATE user_table SET isSuspended = 1, suspendReason = ?, suspendUntil = ? WHERE userID = ?",
+    [reason, suspendUntil, userID],
+    (err, result) => {
+      if (err) {
+        console.error("Error suspending user:", err.message);
+        res
+          .status(500)
+          .json({ success: false, error: "Failed to suspend user" });
+      } else {
+        db.query(
+          "INSERT INTO suspensions (userID, reason, suspendUntil) VALUES (?, ?, ?)",
+          [userID, reason, suspendUntil],
+          (logErr) => {
+            if (logErr) {
+              console.error("Error logging suspension:", logErr);
+            }
+          }
+        );
+        res.json({ success: true });
+      }
+    }
+  );
 });
 
 const PORT = process.env.PORT || 8081;

@@ -6,7 +6,7 @@ const IndexCarousel = ({ images }) => {
   const [index, setIndex] = useState(0); // Track the active index
 
   const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex); // Update the active index
+    setIndex(selectedIndex);
   };
 
   return (

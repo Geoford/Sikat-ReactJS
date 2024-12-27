@@ -1,13 +1,57 @@
-import React, { useState } from "react";
-import UserAuthentication from "./UserAuthentication";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Col from "react-bootstrap/Col";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import axios from "axios";
 
 const PasswordAndSecurity = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      setEmail(parsedData.cvsuEmail);
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/reset-password",
+        {
+          email,
+          password: newPassword,
+        }
+      );
+      setSuccessMessage(response.data.message);
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(error.response.data.error || "An error occurred.");
+      } else {
+        setErrorMessage("Unable to connect to the server.");
+      }
+    }
+  };
 
   return (
     <div
@@ -18,7 +62,7 @@ const PasswordAndSecurity = () => {
       }}
     >
       <h5 className="border-bottom border-2 pb-2">Password and Security</h5>
-      <form action="" autoComplete="off">
+      <form onSubmit={handlePasswordChange} autoComplete="off">
         <Row className="g-2 pt-2 text-start ">
           <h5 className="m-0">Change Password</h5>
           <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
@@ -34,6 +78,8 @@ const PasswordAndSecurity = () => {
                 type={showNewPassword ? "text" : "password"}
                 placeholder=""
                 autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
               <label htmlFor="newPasswordInput">New Password</label>
               <div
@@ -58,6 +104,8 @@ const PasswordAndSecurity = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder=""
                 autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <label htmlFor="confirmPasswordInput">Confirm Password</label>
               <div
@@ -77,10 +125,14 @@ const PasswordAndSecurity = () => {
             </Form.Floating>
           </Col>
         </Row>
+        {errorMessage && <p className="text-danger mt-2">{errorMessage}</p>}
+        {successMessage && (
+          <p className="text-success mt-2">{successMessage}</p>
+        )}
         <div className="mt-4 d-flex justify-content-end">
           <button type="submit" className="primaryButton px-5 py-2">
             <p className="m-0">Save</p>
-          </button>{" "}
+          </button>
         </div>
       </form>
     </div>

@@ -13,6 +13,7 @@ import Profile from "./components/pages/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
 import Settings from "./components/pages/Settings";
 import Followers from "./components/pages/Followers";
+import Suspended from "./components/pages/PagesUser/Suspended";
 
 import LoginRegister from "./components/pages/LoginRegister";
 
@@ -68,6 +69,8 @@ function App() {
           <Route path="/GetHelp" element={<GetHelp />} />
           <Route path="/Settings/:userID" element={<Settings />} />
           <Route path="/Followers" element={<Followers />} />
+
+          <Route path="/suspended" element={<Suspended />} />
 
           {/* ADMIN ROUTES */}
           <Route path="/Admin/Home" element={<AdminHome />} />
