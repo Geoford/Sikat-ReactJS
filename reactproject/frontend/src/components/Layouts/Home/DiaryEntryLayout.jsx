@@ -442,7 +442,9 @@ const DiaryEntryLayout = ({
                       </h3>
                       <button
                         className="secondaryButton p-0 m-0"
-                        onClick={() => handleFollowToggle(entry.userID)}
+                        onClick={() =>
+                          handleFollowToggle(entry.userID, entry.firstName)
+                        }
                         style={{ height: "" }}
                       >
                         <h5 className="m-0">

@@ -5,6 +5,7 @@ import axios from "axios";
 import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import SampleImage from "../../../../assets/Background.jpg";
+import MessageModal from "../../../Layouts/DiaryEntry/messageModal";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
@@ -210,45 +211,21 @@ const RightSide = () => {
 
   return (
     <>
-      <Modal show={modal.show} onHide={closeModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <h4 className="m-0">Notice</h4>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{modal.message}</Modal.Body>{" "}
-        <Modal.Footer>
-          <button className="primaryButton py-2" onClick={closeModal}>
-            Close
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
 
-      <Modal show={confirmModal.show} onHide={closeConfirmModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <h4 className="m-0">Confirmation</h4>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="m-0">{confirmModal.message}</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            className="py-2"
-            variant="secondary"
-            onClick={closeConfirmModal}
-          >
-            <p className="m-0">Cancel</p>
-          </Button>
-          <button
-            className="primaryButton py-2 rounded"
-            onClick={confirmModal.onConfirm}
-          >
-            <p className="m-0">Confirm</p>
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
 
       <div className="p-2 " style={{ height: "87vh" }}>
         <div className="text-end" style={{ fontSize: "15px", color: "gray" }}>

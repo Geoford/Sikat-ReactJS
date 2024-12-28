@@ -1,11 +1,13 @@
 import DiaryEntryButton from "./DiaryEntryButton";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal } from "react-bootstrap";
 import axios from "axios";
 import FilterButton from "./FilterButton";
 import CenterLoader from "../../loaders/CenterLoader";
 import DiaryEntryLayout from "./DiaryEntryLayout";
 import PostButton from "./PostButton";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const CenterLayout = () => {
   const [entries, setEntries] = useState([]);
@@ -21,6 +23,27 @@ const CenterLayout = () => {
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  // FOR MESSAGE MODALS
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   const fetchUserData = async (userID) => {
     try {
@@ -160,7 +183,7 @@ const CenterLayout = () => {
       .catch((err) => console.error("Error updating gadify count:", err));
   };
 
-  const handleFollowToggle = async (followUserId) => {
+  const handleFollowToggle = async (followUserId, targetUsername) => {
     if (!followUserId) {
       console.error("User ID to follow/unfollow is undefined");
       return;
@@ -175,27 +198,57 @@ const CenterLayout = () => {
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow ${user.username}?`
-        );
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${targetUsername}?`,
+          onConfirm: async () => {
+            try {
+              await axios.delete(
+                `http://localhost:8081/unfollow/${followUserId}`,
+                {
+                  data: { followerId: user.userID },
+                }
+              );
 
-        if (!confirmed) {
-          return;
-        }
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
+              // Update followed users list after unfollowing
+              setFollowedUsers((prev) =>
+                prev.filter((id) => id !== followUserId)
+              );
+
+              // Close confirmation modal and show success modal
+              setConfirmModal({ show: false, message: "" });
+              setModal({
+                show: true,
+                message: `You have unfollowed ${targetUsername}.`,
+              });
+
+              // Refresh the followed users list from the backend
+              await fetchFollowedUsers(user.userID);
+            } catch (error) {
+              console.error("Error unfollowing user:", error);
+              setModal({
+                show: true,
+                message: `There was an error unfollowing ${targetUsername}.`,
+              });
+            }
+          },
+          onCancel: () => setConfirmModal({ show: false, message: "" }),
         });
-
-        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-        alert(`You have unfollowed user ${user.username}`);
       } else {
         await axios.post(`http://localhost:8081/follow/${followUserId}`, {
           followerId: user.userID,
         });
 
+        // Update followed users list after following
         setFollowedUsers((prev) => [...prev, followUserId]);
-        alert(`You are now following ${user.username}`);
 
+        // Show success modal
+        setModal({
+          show: true,
+          message: `You are now following ${targetUsername}.`,
+        });
+
+        // Send follow notification to the followed user
         await axios.post(
           `http://localhost:8081/notifications/${followUserId}`,
           {
@@ -207,12 +260,16 @@ const CenterLayout = () => {
             message: `${user.username} has followed you.`,
           }
         );
-      }
 
-      await fetchFollowedUsers(user.userID);
+        // Refresh the followed users list from the backend
+        await fetchFollowedUsers(user.userID);
+      }
     } catch (error) {
       console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
+      setModal({
+        show: true,
+        message: `There was an error processing your request.`,
+      });
     }
   };
 
@@ -272,6 +329,20 @@ const CenterLayout = () => {
 
   return (
     <div className="p-2 px-0 mx-sm-5 mx-md-0">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>{" "}
       <div
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}
