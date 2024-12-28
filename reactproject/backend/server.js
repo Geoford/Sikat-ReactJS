@@ -1715,7 +1715,7 @@ app.get("/getReportedComments", (req, res) => {
 });
 
 app.get("/getReportedComments/:userID", (req, res) => {
-  const { userID } = req.params; // Get userID from URL parameters
+  const { userID } = req.params;
 
   const query = `
   SELECT
@@ -2271,6 +2271,42 @@ app.put("/notifications/mark-as-read", (req, res) => {
 
     return res.status(200).json({
       message: "Notification marked as read successfully.",
+      updatedCount: result.affectedRows,
+    });
+  });
+});
+
+app.put("/notifications/mark-all-as-read", (req, res) => {
+  const { userID } = req.body;
+
+  // Validate request body
+  if (!userID) {
+    return res.status(400).json({ message: "User ID is required." });
+  }
+
+  const query = `
+    UPDATE notifications
+    SET \`read\` = TRUE
+    WHERE userID = ?
+  `;
+
+  // Execute the database query
+  db.query(query, [userID], (err, result) => {
+    if (err) {
+      console.error("Error updating notifications:", err);
+      return res
+        .status(500)
+        .json({ message: "Error marking notifications as read." });
+    }
+
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ message: "No notifications found for this user." });
+    }
+
+    return res.status(200).json({
+      message: "All notifications marked as read successfully.",
       updatedCount: result.affectedRows,
     });
   });

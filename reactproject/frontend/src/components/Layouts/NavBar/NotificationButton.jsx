@@ -153,6 +153,28 @@ function NotificationButton() {
     }
   };
 
+  const markAllAsRead = async () => {
+    if (!user || notifications.length === 0) return;
+
+    const updatedNotifications = notifications.map((notification) => ({
+      ...notification,
+      read: true,
+    }));
+
+    setNotifications(updatedNotifications);
+    setUnreadCount(0);
+
+    localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+
+    try {
+      await axios.put("http://localhost:8081/notifications/mark-all-as-read", {
+        userID: user.userID,
+      });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
   const formatDate = (dateString) => {
     const entryDate = new Date(dateString);
     const now = new Date();
@@ -286,7 +308,10 @@ function NotificationButton() {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item className="btn btn-light p-0 px-2">
-                    <button className="w-100 btn btn-light">
+                    <button
+                      className="w-100 btn btn-light"
+                      onClick={markAllAsRead}
+                    >
                       <p className="m-0">Mark all as read</p>
                     </button>
                   </Dropdown.Item>
