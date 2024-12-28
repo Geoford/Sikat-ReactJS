@@ -12,8 +12,21 @@ const DiaryOwnerDetails = ({
   imageFile,
   anonymousImage,
   defaultImage,
-  handleFollowToggle,
+  date,
+  // handleFollowToggle,
 }) => {
+  const formatDate = (dateString) => {
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    return timeDiff < 24 * 60 * 60 * 1000
+      ? entryDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : entryDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+  };
   return (
     <div>
       {/* // IF PUBLIC */}
@@ -73,7 +86,7 @@ const DiaryOwnerDetails = ({
                   >
                     ·
                   </h3>
-                  <button
+                  {/* <button
                     className="secondaryButton p-0 m-0"
                     onClick={() => handleFollowToggle}
                     style={{ height: "" }}
@@ -81,13 +94,13 @@ const DiaryOwnerDetails = ({
                     <h5 className="m-0">
                       {followedUsers.includes(userID) ? "Following" : "Follow"}
                     </h5>{" "}
-                  </button>
+                  </button> */}
                 </div>
               )
             }
           </div>
           <p className="m-0" style={{ fontSize: ".7rem" }}>
-            {formatDate && formatDate()}
+            {formatDate(date)}
             <span>
               {visibility === "public" ? (
                 <i class="bx bx-globe"></i>

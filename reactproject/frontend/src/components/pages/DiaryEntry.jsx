@@ -15,6 +15,7 @@ import FlagButton from "../Layouts/Home/FlagButton";
 import ChatButton from "../Layouts/DiaryEntry/ChatButton";
 import DiaryDetails from "../Layouts/DiaryEntry/DiaryDetails";
 import ImageModal from "../Layouts/DiaryEntry/ImageModal";
+import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
   const { entryID } = useParams();
@@ -276,8 +277,22 @@ const DiaryEntry = () => {
                     }
                   >
                     {/* DIARY OWNER DETAILS */}
+                    {/* <DiaryOwnerDetails
+                      userID={entry.userID}
+                      isAdmin={entry.isAdmin}
+                      firstName={entry.firstName}
+                      lastName={entry.lastName}
+                      alias={entry.alias}
+                      anonimity={entry.anonimity}
+                      visibility={entry.visibility}
+                      imageFile={`http://localhost:8081${entry.profile_image}`}
+                      anonymousImage={anonymous}
+                      defaultImage={userDefaultProfile}
+                      date={formatDate()}
+                      // handleFollowToggle
+                    /> */}
                     <div className="border-bottom d-flex gap-2 pb-2">
-                      {/* // IF PUBLIC */}
+                      {/* IF PUBLIC */}
                       <div className="d-flex align-items-center gap-2 text-secondary">
                         {/* TO DETERMINE IF THE DIARY IN ANONYMOUS OR NOT */}
                         {entry.anonimity === "private" ? (
@@ -318,7 +333,6 @@ const DiaryEntry = () => {
                             </div>
                           </Link>
                         )}
-
                         <div className="d-flex flex-column align-items-start">
                           <div className="d-flex align-items-center justify-content-center gap-1">
                             {entry.anonimity === "private" ? (
