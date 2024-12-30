@@ -98,10 +98,10 @@ const AlarmingWords = () => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = alarmingWords.filter((word) =>
-      word.subject.toLowerCase().includes(query)
+      word.alarmingWord.toLowerCase().includes(query)
     );
     setFilteredAlarmingWords(filtered);
-    setCurrentPage(1); // Reset to the first page
+    setCurrentPage(1);
   };
 
   // Pagination logic
