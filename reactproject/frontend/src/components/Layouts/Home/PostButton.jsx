@@ -42,10 +42,8 @@ function PostButton({ onEntrySaved }) {
   };
 
   const handleDateChange = (date) => {
-    // Adjust the selected date (the date picker returns the date in the user's local timezone)
     setScheduledDate((prevDate) => {
-      if (!prevDate) return date; // If no previous date, set new date
-      // Combine date and time into a single Date object
+      if (!prevDate) return date;
       return new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -58,8 +56,7 @@ function PostButton({ onEntrySaved }) {
 
   const handleTimeChange = (time) => {
     setScheduledDate((prevDate) => {
-      if (!prevDate) return time; // If no previous date, set new time
-      // Combine date and time into a single Date object
+      if (!prevDate) return time;
       return new Date(
         prevDate.getFullYear(),
         prevDate.getMonth(),

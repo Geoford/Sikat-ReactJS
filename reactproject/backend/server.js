@@ -981,7 +981,7 @@ app.get("/entries", (req, res) => {
 
   query += ` 
     ORDER BY 
-      diary_entries.created_at DESC, 
+      diary_entries.created_at DESC,
       diary_entries.engagementCount DESC,
       diary_entries.created_at DESC 
   `;
