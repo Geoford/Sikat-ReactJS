@@ -138,6 +138,17 @@ const Profile = () => {
     }
   };
 
+  const fetchFollowers = async (userID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/followers/${userID}`
+      );
+      setFollowers(response.data);
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    }
+  };
+
   const handleFollowToggle = async (followUserId) => {
     if (!followUserId) {
       console.error("User ID to follow/unfollow is undefined");

@@ -969,6 +969,7 @@ app.get("/entries", (req, res) => {
     `;
   }
 
+  // Filter by subjects if provided
   if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map(
       () => `LOWER(diary_entries.subjects) LIKE ?`
@@ -978,7 +979,12 @@ app.get("/entries", (req, res) => {
     queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
   }
 
-  query += ` ORDER BY diary_entries.created_at DESC`;
+  query += ` 
+    ORDER BY 
+      diary_entries.created_at DESC, 
+      diary_entries.engagementCount DESC,
+      diary_entries.created_at DESC 
+  `;
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
