@@ -116,7 +116,6 @@ const DiaryEntryLayout = ({
 
   useEffect(() => {
     if (entry.entryID) {
-      // Fetch comments for the entry
       const fetchComments = async () => {
         try {
           const response = await axios.get(
@@ -164,7 +163,6 @@ const DiaryEntryLayout = ({
       try {
         await axios.delete(`http://localhost:8081/deleteEntry/${entryID}`);
         alert("Diary entry deleted successfully.");
-        window.location.reload();
         setEntries((prevEntries) =>
           prevEntries.filter((entry) => entry.entryID !== entryID)
         );

@@ -70,6 +70,137 @@ const upload = multer({
   },
 });
 
+//admin diary_images upload
+const diaryImagesDirAdmin = path.join(
+  __dirname,
+  "uploads",
+  "admin_diary_images"
+);
+
+if (!fs.existsSync(diaryImagesDirAdmin)) {
+  fs.mkdirSync(diaryImagesDirAdmin, { recursive: true });
+}
+
+const diaryImageStorageAdmin = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, diaryImagesDirAdmin);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const uploadDiaryImageAdmin = multer({
+  storage: diaryImageStorageAdmin,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("INVALID_FILE_TYPE");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
+
+//user diary_images upload
+const diaryImagesDirUser = path.join(__dirname, "uploads", "user_diary_images");
+
+if (!fs.existsSync(diaryImagesDirUser)) {
+  fs.mkdirSync(diaryImagesDirUser, { recursive: true });
+}
+
+const diaryImageStorageUser = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, diaryImagesDirUser);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const uploadDiaryImageUser = multer({
+  storage: diaryImageStorageUser,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("INVALID_FILE_TYPE");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
+
+//profile picture upload
+const profilePicturesDir = path.join(__dirname, "uploads", "profile_pictures");
+
+if (!fs.existsSync(profilePicturesDir)) {
+  fs.mkdirSync(profilePicturesDir, { recursive: true });
+}
+
+const profilePictureStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, profilePicturesDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const uploadProfilePicture = multer({
+  storage: profilePictureStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("INVALID_FILE_TYPE");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
+
+//gender based incidents upload
+const genderBasedIncidentsDir = path.join(
+  __dirname,
+  "uploads",
+  "gender_based_incidents"
+);
+
+if (!fs.existsSync(genderBasedIncidentsDir)) {
+  fs.mkdirSync(genderBasedIncidentsDir, { recursive: true });
+}
+
+const uploadSupportingDocuments = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, genderBasedIncidentsDir);
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "application/pdf",
+    ];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error("INVALID_FILE_TYPE");
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error);
+    }
+    cb(null, true);
+  },
+});
+
 const otpStore = {};
 
 const transporter = nodemailer.createTransport({
@@ -390,7 +521,6 @@ app.get("/verify-email/:token", (req, res) => {
 app.post("/Login", (req, res) => {
   const { cvsuEmail, password } = req.body;
 
-  // Validate email and password input
   if (!cvsuEmail || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
@@ -408,14 +538,12 @@ app.post("/Login", (req, res) => {
       return res.status(500).json({ error: "Error retrieving data" });
     }
 
-    // If no user found
     if (data.length === 0) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const user = data[0];
 
-    // Check suspension status
     const currentDate = new Date();
     if (user.suspendUntil && new Date(user.suspendUntil) > currentDate) {
       return res.status(403).json({
@@ -425,13 +553,11 @@ app.post("/Login", (req, res) => {
       });
     }
 
-    // Validate password
     const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // If the user is not suspended, update their status
     if (user.isSuspended === 1) {
       return res
         .status(403)
@@ -653,7 +779,7 @@ app.put("/EditProfile/:userID", (req, res) => {
 app.post(
   "/entry",
   (req, res, next) => {
-    upload.single("file")(req, res, function (err) {
+    uploadDiaryImageUser.single("file")(req, res, function (err) {
       if (err) {
         if (err.code === "LIMIT_FILE_SIZE") {
           return res
@@ -683,7 +809,7 @@ app.post(
 
     let diary_image = "";
     if (file) {
-      diary_image = `/uploads/${file.filename}`;
+      diary_image = `/uploads/user_diary_images/${file.filename}`;
     }
 
     db.query("SELECT alarmingWord FROM alarming_words", (err, rows) => {
@@ -851,7 +977,7 @@ app.post(
 app.post(
   "/entryadmin",
   (req, res, next) => {
-    upload.single("file")(req, res, function (err) {
+    uploadDiaryImageAdmin.single("file")(req, res, function (err) {
       if (err) {
         if (err.code === "LIMIT_FILE_SIZE") {
           return res
@@ -887,18 +1013,15 @@ app.post(
 
     let diary_image = "";
     if (file) {
-      diary_image = `/uploads/${file.filename}`;
+      diary_image = `/uploads/admin_diary_images/${file.filename}`;
     }
 
-    // Determine post status based on scheduling
-    const isScheduled = scheduledDate ? 1 : 0; // 1 if scheduled, 0 otherwise
+    const isScheduled = scheduledDate ? 1 : 0;
 
     let finalScheduledDate = null;
     if (scheduledDate) {
-      // Convert scheduledDate from string to a Date object if it's provided
       finalScheduledDate = new Date(scheduledDate);
 
-      // Adjust for time zone offset by converting to UTC
       finalScheduledDate.setMinutes(
         finalScheduledDate.getMinutes() - finalScheduledDate.getTimezoneOffset()
       );
@@ -1075,15 +1198,72 @@ app.get("/announcement", async (req, res) => {
 app.delete("/deleteEntry/:entryID", (req, res) => {
   const { entryID } = req.params;
 
-  const deleteQuery = "DELETE FROM diary_entries WHERE entryID = ?";
+  const selectEntryQuery =
+    "SELECT diary_image, userID FROM diary_entries WHERE entryID = ?";
 
-  db.query(deleteQuery, [entryID], (err, result) => {
+  db.query(selectEntryQuery, [entryID], (err, result) => {
     if (err) {
-      console.error("Error deleting entry:", err);
-      res.status(500).send("Error deleting the entry.");
-    } else {
-      res.status(200).send("Diary entry deleted successfully.");
+      console.error("Error fetching entry:", err);
+      return res.status(500).send("Error fetching the entry.");
     }
+
+    if (result.length === 0) {
+      return res.status(404).send("Diary entry not found.");
+    }
+
+    const userID = result[0].userID;
+    const diaryImagePath = result[0].diary_image;
+
+    const selectAdminQuery = "SELECT isAdmin FROM user_table WHERE userID = ?";
+
+    db.query(selectAdminQuery, [userID], (err, adminResult) => {
+      if (err) {
+        console.error("Error fetching user info:", err);
+        return res.status(500).send("Error fetching user info.");
+      }
+
+      if (adminResult.length === 0) {
+        return res.status(404).send("User not found.");
+      }
+
+      const isAdmin = adminResult[0].isAdmin;
+      let imageDirectory = "";
+
+      if (isAdmin === 1) {
+        imageDirectory = "admin_diary_images";
+      } else {
+        imageDirectory = "user_diary_images";
+      }
+
+      if (diaryImagePath) {
+        const imagePath = path.join(
+          __dirname,
+          "uploads",
+          imageDirectory,
+          path.basename(diaryImagePath)
+        );
+
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error("Error deleting image:", err);
+            return res.status(500).send("Error deleting image.");
+          }
+
+          console.log("Image deleted successfully.");
+        });
+      }
+
+      const deleteEntryQuery = "DELETE FROM diary_entries WHERE entryID = ?";
+
+      db.query(deleteEntryQuery, [entryID], (err, result) => {
+        if (err) {
+          console.error("Error deleting entry:", err);
+          res.status(500).send("Error deleting the entry.");
+        } else {
+          res.status(200).send("Diary entry deleted successfully.");
+        }
+      });
+    });
   });
 });
 
@@ -1184,14 +1364,29 @@ app.get("/fetchUser/user/:id", (req, res) => {
 
 app.get("/fetchUserEntry/user/:id", (req, res) => {
   const userID = req.params.id;
+  const scheduledDate = req.query.scheduledDate === "true";
 
-  const query = `
+  let query = `
     SELECT diary_entries.*, user_table.username, user_table.cvsuEmail, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
     WHERE diary_entries.userID = ?
-    ORDER BY diary_entries.created_at DESC`;
+  `;
+
+  if (!scheduledDate) {
+    query += `
+      AND (
+        diary_entries.isScheduled = 0
+        OR (
+          diary_entries.isScheduled = 1
+          AND diary_entries.scheduledDate < CONVERT_TZ(NOW(), '+00:00', '+08:00')
+        )
+      )
+    `;
+  }
+
+  query += `ORDER BY diary_entries.created_at DESC`;
 
   db.query(query, [userID], (err, result) => {
     if (err) {
@@ -1764,7 +1959,7 @@ app.delete("/deleteComment/:commentID", (req, res) => {
   });
 });
 
-app.post("/uploadProfile", upload.single("file"), (req, res) => {
+app.post("/uploadProfile", uploadProfilePicture.single("file"), (req, res) => {
   const { userID } = req.body;
 
   if (!userID) {
@@ -1777,7 +1972,7 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
     return res.status(400).json({ message: "No file uploaded." });
   }
 
-  const newFilePath = `/uploads/${req.file.filename}`;
+  const newFilePath = `/uploads/profile_pictures/${req.file.filename}`;
 
   const getCurrentProfileQuery =
     "SELECT profile_image FROM user_profiles WHERE userID = ?";
@@ -1801,40 +1996,30 @@ app.post("/uploadProfile", upload.single("file"), (req, res) => {
             .json({ message: "Error deleting current profile image" });
         }
 
-        const updateQuery =
-          "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
-
-        db.query(updateQuery, [newFilePath, userID], (err) => {
-          if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ message: "Database error" });
-          }
-
-          console.log("Profile photo uploaded successfully", newFilePath);
-          res.json({
-            message: "Profile photo uploaded successfully",
-            filePath: newFilePath,
-          });
-        });
+        updateProfileImage(userID, newFilePath, res);
       });
     } else {
-      const updateQuery =
-        "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
-
-      db.query(updateQuery, [newFilePath, userID], (err) => {
-        if (err) {
-          console.error("Database error:", err);
-          return res.status(500).json({ message: "Database error" });
-        }
-
-        console.log("Profile photo uploaded successfully", newFilePath);
-        res.json({
-          message: "Profile photo uploaded successfully",
-          filePath: newFilePath,
-        });
-      });
+      updateProfileImage(userID, newFilePath, res);
     }
   });
+
+  function updateProfileImage(userID, newFilePath, res) {
+    const updateQuery =
+      "UPDATE user_profiles SET profile_image = ? WHERE userID = ?";
+
+    db.query(updateQuery, [newFilePath, userID], (err) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      console.log("Profile photo uploaded successfully", newFilePath);
+      res.json({
+        message: "Profile photo uploaded successfully",
+        filePath: newFilePath,
+      });
+    });
+  }
 });
 
 app.post("/message", (req, res) => {
@@ -1982,7 +2167,7 @@ app.get("/user_profile/:userID", (req, res) => {
 });
 
 app.post("/submit-report", (req, res) => {
-  upload.array("supportingDocuments", 5)(req, res, (err) => {
+  uploadSupportingDocuments.array("supportingDocuments", 5)(req, res, (err) => {
     if (err) {
       return res
         .status(500)
@@ -2001,9 +2186,8 @@ app.post("/submit-report", (req, res) => {
       isAddress,
     } = req.body;
 
-    // Retrieve file paths for the uploaded files
     const supportingDocuments = req.files.map(
-      (file) => `/uploads/${file.filename}`
+      (file) => `/uploads/gender_based_incidents/${file.filename}`
     );
 
     const query = `

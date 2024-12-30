@@ -11,7 +11,7 @@ import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "../LayoutUser/SubjectSelection";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
-import alarmingWords from "../AlarmingWords"; // Correct import for alarming words
+import alarmingWords from "../AlarmingWords";
 
 function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -56,7 +56,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     } else {
       setImagePreview(null);
     }
-    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+    const maxSize = 5 * 1024 * 1024;
 
     if (selectedFile) {
       if (selectedFile.size > maxSize) {
@@ -77,6 +77,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
+      console.table(JSON.parse(userData));
     } else {
       navigate("/");
     }
@@ -89,7 +90,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
-    setAlarmingWordWarning(""); // Reset warning
+    setAlarmingWordWarning("");
   };
 
   const handleShow = () => setShow(true);
@@ -104,7 +105,6 @@ function DiaryEntryButton({ onEntrySaved }) {
     if (!description) errors.description = "Description is required.";
     setFormErrors(errors);
 
-    // Check for alarming words in title and description
     if (containsAlarmingWords(title) || containsAlarmingWords(description)) {
       setAlarmingWordWarning(
         "Warning: Your entry contains potentially harmful words. Proceed with caution."

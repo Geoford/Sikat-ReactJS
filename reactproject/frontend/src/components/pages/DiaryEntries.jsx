@@ -4,7 +4,7 @@ import publicIcon from "../../assets/public.png";
 import privateIcon from "../../assets/private.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Spinner from "react-bootstrap/Spinner"; // Use a spinner if needed
+import Spinner from "react-bootstrap/Spinner";
 import LeftSideLayout from "../Layouts/Home/LeftSideLayout";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -30,7 +30,7 @@ const DiaryEntries = () => {
           return response.json();
         })
         .then((data) => {
-          setUser(data); // Ensure that data includes isAdmin property
+          setUser(data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -110,8 +110,8 @@ const DiaryEntries = () => {
 
   const findEntriesForDay = (day) => {
     return entries.filter((entry) => {
-      const entryDateParts = entry.created_at.split(" ")[0]; // Get the date part
-      const entryDate = new Date(entryDateParts); // Create a Date object from the date part
+      const entryDateParts = entry.created_at.split(" ")[0];
+      const entryDate = new Date(entryDateParts);
 
       return (
         entryDate.getDate() === day &&
@@ -122,11 +122,11 @@ const DiaryEntries = () => {
   };
 
   if (isLoading) {
-    return <Spinner animation="border" role="status" />; // Add a spinner
+    return <Spinner animation="border" role="status" />;
   }
 
   if (error) {
-    return <p>Error: {error}</p>; // Show error if something went wrong
+    return <p>Error: {error}</p>;
   }
 
   if (!user) return null;
