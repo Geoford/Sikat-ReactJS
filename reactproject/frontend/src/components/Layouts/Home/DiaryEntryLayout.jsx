@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import anonymous from "../../../assets/anonymous.png";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
-import TransparentLogo from "../../../assets/TransparentLogo.png";
+// import TransparentLogo from "../../../assets/TransparentLogo.png";
 import CommentSection from "../CommentSection/CommentSection";
 import Dropdown from "react-bootstrap/Dropdown";
 import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
 import CloseButton from "react-bootstrap/CloseButton";
 import axios from "axios";
 import FlagButton from "./FlagButton";
+import ChatButton from "../DiaryEntry/ChatButton";
+import EditDiaryEntryButton from "./EditDiaryEntryButton";
+import EditPostButton from "./EditPostButton";
 
 const DiaryEntryLayout = ({
   entry,
@@ -485,7 +488,31 @@ const DiaryEntryLayout = ({
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
                 <Dropdown.Item className="p-0 btn btn-light">
-                  Edit
+                  {user.isAdmin ? (
+                    <EditPostButton
+                      diaryTitle={entry.title}
+                      diaryDesc={entry.description}
+                      diaryVisib={entry.visibility}
+                      diaryAnon={entry.anonimity}
+                      diarySub={entry.subjects}
+                      imageFile={
+                        entry.diary_image &&
+                        `http://localhost:8081${entry.diary_image}`
+                      }
+                    ></EditPostButton>
+                  ) : (
+                    <EditDiaryEntryButton
+                      diaryTitle={entry.title}
+                      diaryDesc={entry.description}
+                      diaryVisib={entry.visibility}
+                      diaryAnon={entry.anonimity}
+                      diarySub={entry.subjects}
+                      imageFile={
+                        entry.diary_image &&
+                        `http://localhost:8081${entry.diary_image}`
+                      }
+                    />
+                  )}
                 </Dropdown.Item>
                 <Dropdown.Item
                   className="p-0 btn btn-light"
@@ -631,12 +658,16 @@ const DiaryEntryLayout = ({
         </div>
 
         <div className="col p-0">
-          <FlagButton
-            flaggedCount={flaggedCount}
-            userID={user.userID}
-            entryID={entry.entryID}
-            entry={entry.userID}
-          />
+          {user.isAdmin ? (
+            <ChatButton userToChat={entry.userID}></ChatButton>
+          ) : (
+            <FlagButton
+              flaggedCount={flaggedCount}
+              userID={user.userID}
+              entryID={entry.entryID}
+              entry={entry.userID}
+            />
+          )}
         </div>
       </div>
     </div>

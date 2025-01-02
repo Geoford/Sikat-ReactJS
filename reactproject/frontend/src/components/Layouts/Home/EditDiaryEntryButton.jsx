@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import DiaryEntry from "../../../assets/DiaryEntry.png";
-import uploadIcon from "../../../assets/upload.png";
+// import DiaryEntry from "../../../assets/DiaryEntry.png";
+// import uploadIcon from "../../../assets/upload.png";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -13,7 +13,15 @@ import SubjectSelection from "../LayoutUser/SubjectSelection";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
 import alarmingWords from "../AlarmingWords";
 
-function DiaryEntryButton({ onEntrySaved }) {
+function EditDiaryEntryButton({
+  onEntrySaved,
+  diaryTitle,
+  diaryDesc,
+  imageFile,
+  diaryVisib,
+  diaryAnon,
+  diarySub,
+}) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,13 +29,13 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [visibility, setVisibility] = useState("public");
-  const [anonimity, setAnonimity] = useState("private");
+  const [visibility, setVisibility] = useState(diaryVisib);
+  const [anonimity, setAnonimity] = useState(diaryAnon);
   const [file, setFile] = useState(null);
-  const [selectedSubjects, setSelectedSubjects] = useState("");
+  const [selectedSubjects, setSelectedSubjects] = useState(diarySub);
   const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
   const [fileError, setFileError] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(imageFile);
   const removePreview = () => {
     setFile(null);
     setImagePreview(null);
@@ -166,10 +174,10 @@ function DiaryEntryButton({ onEntrySaved }) {
   return (
     <>
       <button
-        className="primaryButton w-100 d-flex align-items-center justify-content-center"
+        className="btn btn-light w-100 d-flex align-items-center justify-content-center"
         onClick={handleShow}
       >
-        <p className="m-0">Diary Entry</p>
+        <p className="m-0">Edit</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
 
@@ -197,7 +205,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                   }}
                 />
               </div>
-              <p className="m-0">
+              <p className="m-0" style={{ maxWidth: "75%" }}>
                 {user?.firstName} {user?.lastName || "User"}
               </p>
             </div>
@@ -209,8 +217,8 @@ function DiaryEntryButton({ onEntrySaved }) {
                   value={visibility}
                   onChange={handleChangeVisibility}
                 >
-                  <option value="private">Private</option>
                   <option value="public">Public</option>
+                  <option value="private">Private</option>
                 </select>
               </div>
               <div class="col input-group p-0">
@@ -246,9 +254,9 @@ function DiaryEntryButton({ onEntrySaved }) {
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"
-                placeholder="Journal Title"
+                placeholder={diaryTitle}
                 aria-label="Journal Title"
-                value={title}
+                value={diaryTitle}
                 onChange={(e) => setTitle(e.target.value)}
                 isInvalid={!!formErrors.title}
                 disabled={loading}
@@ -265,7 +273,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                 as="textarea"
                 placeholder=""
                 style={{ height: "100px" }}
-                value={description}
+                value={diaryDesc}
                 onChange={(e) => setDescription(e.target.value)}
                 isInvalid={!!formErrors.description}
                 disabled={loading}
@@ -376,4 +384,4 @@ function DiaryEntryButton({ onEntrySaved }) {
   );
 }
 
-export default DiaryEntryButton;
+export default EditDiaryEntryButton;

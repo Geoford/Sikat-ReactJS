@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import DiaryEntry from "../../../assets/DiaryEntry.png";
 import uploadIcon from "../../../assets/upload.png";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -10,10 +9,20 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "../LayoutUser/SubjectSelection";
-import userDefaultProfile from "../../../assets/userDefaultProfile.png";
-import alarmingWords from "../AlarmingWords";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-function DiaryEntryButton({ onEntrySaved }) {
+import userDefaultProfile from "../../../assets/userDefaultProfile.png";
+
+function EditPostButton({
+  onEntrySaved,
+  diaryTitle,
+  diaryDesc,
+  imageFile,
+  diaryVisib,
+  diaryAnon,
+  diarySub,
+}) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,26 +30,49 @@ function DiaryEntryButton({ onEntrySaved }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [visibility, setVisibility] = useState("public");
-  const [anonimity, setAnonimity] = useState("private");
+  const [visibility, setVisibility] = useState("now");
+  const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
-  const [selectedSubjects, setSelectedSubjects] = useState("");
-  const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
-  const [fileError, setFileError] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [scheduledDate, setScheduledDate] = useState(null);
+  const [imagePreview, setImagePreview] = useState(imageFile);
   const removePreview = () => {
     setFile(null);
     setImagePreview(null);
-  };
-
-  const handleSubjectsChange = (subjectsText) => {
-    setSelectedSubjects(subjectsText);
   };
 
   const navigate = useNavigate();
 
   const handleChangeVisibility = (event) => {
     setVisibility(event.target.value);
+    if (event.target.value === "now") {
+      setScheduledDate(null); // Reset when "Post Now" is selected
+    }
+  };
+
+  const handleDateChange = (date) => {
+    setScheduledDate((prevDate) => {
+      if (!prevDate) return date;
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        prevDate.getHours(),
+        prevDate.getMinutes()
+      );
+    });
+  };
+
+  const handleTimeChange = (time) => {
+    setScheduledDate((prevDate) => {
+      if (!prevDate) return time;
+      return new Date(
+        prevDate.getFullYear(),
+        prevDate.getMonth(),
+        prevDate.getDate(),
+        time.getHours(),
+        time.getMinutes()
+      );
+    });
   };
 
   const handleChangeAnonimity = (event) => {
@@ -49,27 +81,11 @@ function DiaryEntryButton({ onEntrySaved }) {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-
     setFile(selectedFile);
     if (selectedFile) {
       setImagePreview(URL.createObjectURL(selectedFile));
     } else {
       setImagePreview(null);
-    }
-    const maxSize = 5 * 1024 * 1024;
-
-    if (selectedFile) {
-      if (selectedFile.size > maxSize) {
-        setFileError(
-          "File size exceeds the 2MB limit. Please select a smaller file."
-        );
-        setFile(null);
-        setImagePreview(null);
-      } else {
-        setFileError("");
-        setFile(selectedFile);
-        setImagePreview(URL.createObjectURL(selectedFile));
-      }
     }
   };
 
@@ -77,7 +93,6 @@ function DiaryEntryButton({ onEntrySaved }) {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
-      console.table(JSON.parse(userData));
     } else {
       navigate("/");
     }
@@ -90,47 +105,39 @@ function DiaryEntryButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
-    setAlarmingWordWarning("");
+    setScheduledDate(null);
+    setImagePreview(null);
   };
-
   const handleShow = () => setShow(true);
-
-  const containsAlarmingWords = (text) => {
-    return alarmingWords.some((word) => text.toLowerCase().includes(word));
-  };
 
   const handleSubmit = () => {
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
-    setFormErrors(errors);
-
-    if (containsAlarmingWords(title) || containsAlarmingWords(description)) {
-      setAlarmingWordWarning(
-        "Warning: Your entry contains potentially harmful words. Proceed with caution."
-      );
-    } else {
-      setAlarmingWordWarning("");
+    if (visibility === "later" && !scheduledDate) {
+      errors.scheduledDate = "Please select a date and time for your post.";
     }
+    setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) return;
 
-    if (!user || !user.userID) {
-      setServerError("User not authenticated. Please log in again.");
-      return;
+    // If scheduledDate exists, convert it to UTC before submitting
+    let utcScheduledDate = null;
+    if (scheduledDate) {
+      utcScheduledDate = new Date(scheduledDate);
+      // Convert to UTC (removes any timezone offset that might cause issues)
+      utcScheduledDate.setMinutes(
+        utcScheduledDate.getMinutes() - utcScheduledDate.getTimezoneOffset()
+      );
     }
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("userID", user.userID);
-    formData.append("visibility", visibility);
-    formData.append("anonimity", anonimity);
-
-    if (selectedSubjects && selectedSubjects.trim() !== "") {
-      formData.append("subjects", selectedSubjects);
+    formData.append("userID", user?.userID);
+    if (utcScheduledDate) {
+      formData.append("scheduledDate", utcScheduledDate.toISOString()); // Send in UTC format
     }
-
     if (file) {
       formData.append("file", file);
     }
@@ -139,48 +146,45 @@ function DiaryEntryButton({ onEntrySaved }) {
     setServerError("");
 
     axios
-      .post("http://localhost:8081/entry", formData, {
+      .post("http://localhost:8081/entryadmin", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
-        console.log(response.data.message);
+        console.log("Post created:", response.data.message);
         setTitle("");
         setDescription("");
         setFile(null);
         handleClose();
-        if (onEntrySaved) {
-          onEntrySaved();
-        }
+        if (onEntrySaved) onEntrySaved();
+        window.location.reload();
       })
       .catch((error) => {
-        console.error("There was an error saving the diary entry!", error);
-        setServerError("Failed to save diary entry. Please try again.");
+        console.error("Error saving post:", error);
+        setServerError("Failed to save post. Please try again.");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   };
 
   return (
     <>
       <button
-        className="primaryButton w-100 d-flex align-items-center justify-content-center"
+        className="btn btn-light w-100 d-flex align-items-center justify-content-center"
         onClick={handleShow}
       >
-        <p className="m-0">Diary Entry</p>
+        <p className="m-0">Edit</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Create New Diary</h5>
+            <h5 className="m-0">Edit Post</h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+          <div className="d-flex align-items-start gap-2 border-bottom pb-2">
             <div className="d-flex align-items-center gap-2">
               <div className="profilePicture">
                 <img
@@ -197,57 +201,73 @@ function DiaryEntryButton({ onEntrySaved }) {
                   }}
                 />
               </div>
-              <p className="m-0">
-                {user?.firstName} {user?.lastName || "User"}
-              </p>
+              <p className="m-0">{user?.username || "User"}</p>
             </div>
-            <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
-              <div class="col input-group p-0">
+
+            <div className="w-100 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
+              <div class=" col-12 input-group p-0">
                 <select
                   class="form-select"
                   id="visibility"
                   value={visibility}
                   onChange={handleChangeVisibility}
+                  style={{ fontSize: "clamp(0.8rem, 2dvw, 0.9rem)" }}
                 >
-                  <option value="private">Private</option>
-                  <option value="public">Public</option>
+                  <option value="now">
+                    <p className="m-0">Post Now</p>
+                  </option>
+                  <option value="later">
+                    <p className="m-0">Post Later</p>
+                  </option>
                 </select>
               </div>
-              <div class="col input-group p-0">
-                <select
-                  class="form-select"
-                  id="anonimity"
-                  value={anonimity}
-                  onChange={handleChangeAnonimity}
-                  disabled={visibility === "private"}
-                >
-                  <option value="private">Anonymous</option>
-                  <option value="public">Not Anonymous</option>
-                </select>
-              </div>
+              {visibility === "later" && (
+                <div className="col position-relative">
+                  <div className="row gap-1">
+                    <div className="col-md p-0">
+                      {/* Date Picker */}
+                      <DatePicker
+                        selected={scheduledDate}
+                        onChange={handleDateChange}
+                        dateFormat="MMMM d, yyyy"
+                        className="form-control"
+                        placeholderText="Select a Day and Month"
+                      />
+                    </div>
+                    <div className="col-md p-0">
+                      {/* Time Picker */}
+                      <DatePicker
+                        selected={scheduledDate}
+                        onChange={handleTimeChange}
+                        dateFormat="hh:mm aa"
+                        showTimeSelect
+                        showTimeSelectOnly
+                        className="form-control"
+                        placeholderText="Select Time"
+                      />
+                    </div>
+                  </div>
+                  {/* Error Message */}
+                  {formErrors.scheduledDate && (
+                    <div className="text-danger mt-1">
+                      {formErrors.scheduledDate}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           {serverError && <p className="text-danger">{serverError}</p>}
-          {alarmingWordWarning && (
-            <p className="text-warning">{alarmingWordWarning}</p>
-          )}
-          <div className="mt-1 d-flex align-items-center">
-            <SubjectSelection onSubjectsChange={handleSubjectsChange} />
-            {selectedSubjects && (
-              <div className="">
-                <p className="m-0">{selectedSubjects}</p>
-              </div>
-            )}
-          </div>
+
           <div
-            className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"
+            className="mt-2 pe-1 overflow-y-scroll custom-scrollbar"
             style={{ maxHeight: "50dvh" }}
           >
             <InputGroup className="mb-1">
               <Form.Control
                 className="rounded"
-                placeholder="Journal Title"
-                aria-label="Journal Title"
+                placeholder={diaryTitle}
+                aria-label="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 isInvalid={!!formErrors.title}
@@ -257,23 +277,30 @@ function DiaryEntryButton({ onEntrySaved }) {
                 {formErrors.title}
               </Form.Control.Feedback>
             </InputGroup>
-            <FloatingLabel
-              controlId="floatingTextarea2"
-              label={`Describe your day, ${user?.firstName || "User"}!`}
-            >
+
+            {/* <FloatingLabel controlId="floatingTextarea2" label="Description">
+              <Form.Control as="textarea" style={{ height: "100px" }} />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.description}
+              </Form.Control.Feedback>
+            </FloatingLabel> */}
+
+            <FloatingLabel controlId="floatingTextarea2" label="Description">
               <Form.Control
                 as="textarea"
-                placeholder=""
-                style={{ height: "100px" }}
-                value={description}
+                placeholder="Leave a comment here"
+                value={diaryDesc}
                 onChange={(e) => setDescription(e.target.value)}
                 isInvalid={!!formErrors.description}
                 disabled={loading}
+                style={{ height: "100px" }}
               />
               <Form.Control.Feedback type="invalid">
                 {formErrors.description}
               </Form.Control.Feedback>
             </FloatingLabel>
+
+            {/* Display selected file preview */}
             {imagePreview ? (
               <div className="mt-1 position-relative">
                 <img
@@ -324,22 +351,6 @@ function DiaryEntryButton({ onEntrySaved }) {
                 />
               </div>
             )}
-            {/* {file && (
-                <div className="mt-2 d-flex align-items-center gap-2">
-                  <p className="text-success m-0">
-                    Selected file: <strong>{file.name}</strong>
-                  </p>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => setFile(null)} // Clears the file
-                    aria-label="Remove selected file"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              )} */}
-            {fileError && <p className="text-danger mt-2">{fileError}</p>}
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -347,7 +358,7 @@ function DiaryEntryButton({ onEntrySaved }) {
             <p className="m-0">Close</p>
           </Button>
           <button
-            className="orangeButton py-2"
+            className="orangeButton py-2 px-3"
             variant="primary"
             onClick={handleSubmit}
             disabled={loading}
@@ -363,10 +374,10 @@ function DiaryEntryButton({ onEntrySaved }) {
                     role="status"
                     aria-hidden="true"
                   />{" "}
-                  Saving Changes...
+                  Creating Post...
                 </>
               ) : (
-                "Save Changes"
+                "Publish"
               )}
             </p>
           </button>
@@ -376,4 +387,4 @@ function DiaryEntryButton({ onEntrySaved }) {
   );
 }
 
-export default DiaryEntryButton;
+export default EditPostButton;

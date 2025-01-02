@@ -110,7 +110,7 @@ function FlagButton({ userID, entryID, entry, flaggedCount }) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ height: "clamp(27rem ,39dvw ,30rem)" }}>
+          <div style={{ height: "clamp(17rem ,30dvw ,20rem)" }}>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
               {selectedReasons.length > 0 && (
