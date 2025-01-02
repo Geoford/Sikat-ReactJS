@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 
-function Suspend({ userID, firstName }) {
+function Suspend({ userID, firstName, suspended }) {
   const [show, setShow] = useState(false);
   const [reasons, setReasons] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
@@ -50,6 +50,7 @@ function Suspend({ userID, firstName }) {
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
         onClick={handleShow}
+        disabled={suspended}
       >
         <i className="bx bx-block"></i>
         <p className="m-0">Suspend</p>

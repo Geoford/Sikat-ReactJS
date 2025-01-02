@@ -9,6 +9,7 @@ const OthersProfileDropdown = ({
   firstName,
   toBeReported,
   reportedUserID,
+  suspended,
 }) => {
   return (
     <Dropdown className="d-flex align-items-center">
@@ -46,7 +47,11 @@ const OthersProfileDropdown = ({
         {isAdmin ? (
           <Dropdown.Item className="btn btn-light p-0 px-2">
             {/* <button className="w-100 btn btn-light text-start">Suspend</button> */}
-            <Suspend userID={userID} firstName={firstName}></Suspend>
+            <Suspend
+              userID={userID}
+              firstName={firstName}
+              suspended={suspended}
+            ></Suspend>
           </Dropdown.Item>
         ) : (
           ""

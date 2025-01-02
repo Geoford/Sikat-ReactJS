@@ -19,8 +19,8 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
             to={`/Profile/${user.userID}`}
             className="linkText position-relative rounded d-flex w-100 p-2"
           >
-            <div className="row d-flex align-items-center">
-              <div className="col-3">
+            <div className=" d-flex align-items-center">
+              <div className="">
                 <div className="profilePicture">
                   <img
                     src={
@@ -37,9 +37,9 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                   />
                 </div>
               </div>
-              <div className="col ps-0 ps-xl-2">
+              <div className=" ps-0 ps-xl-2">
                 <div className="overflow-hidden followerName" style={{}}>
-                  <p className="m-0 ms-2 text-start text-nowrap">
+                  <p className="m-0 text-start text-nowrap">
                     {user.isAdmin === 1
                       ? "Gender and Development"
                       : user.firstName}

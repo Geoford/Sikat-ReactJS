@@ -7,11 +7,12 @@ import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/Profile/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/Profile/OthersProfileDropdown";
 import axios from "axios";
-import { Accordion } from "react-bootstrap";
+// import { Accordion } from "react-bootstrap";
 import FlaggedDiaries from "../Layouts/Profile/FlaggedDiaries";
 import ReportedComments from "../Layouts/Profile/ReportedComments";
 import Followers from "../Layouts/Profile/Followers";
-import Suspended from "../../components/pages/PagesUser/Suspended";
+import { SuspensionModal } from "../Layouts/Profile/SuspensionModal";
+// import Suspended from "../../components/pages/PagesUser/Suspended";
 
 const Profile = () => {
   const { userID } = useParams();
@@ -49,10 +50,10 @@ const Profile = () => {
         const data = await response.json();
 
         console.log("User data:", data);
-        if (data.isSuspended === 1) {
-          navigate("/suspended");
-          return;
-        }
+        // if (data.isSuspended === 1) {
+        //   navigate("/suspended");
+        //   return;
+        // }
         setUser(data);
       } catch (err) {
         setError(err.message);
@@ -273,6 +274,29 @@ const Profile = () => {
     }
   };
 
+  const suspensionTime = (suspendUntil) => {
+    const now = new Date();
+    const suspendDate = new Date(suspendUntil);
+
+    const diff = suspendDate - now;
+
+    if (diff <= 0) {
+      return ``;
+    }
+
+    const year = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+    const month = Math.floor(
+      (diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30)
+    );
+    const day = Math.floor(
+      (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24)
+    );
+    const hour = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minute = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `Y:${year} M:${month} D:${day} H:${hour} M:${minute}`;
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -287,6 +311,15 @@ const Profile = () => {
         className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
+        {user.isSuspended ? (
+          <SuspensionModal
+            name={user.firstName}
+            isAdmin={currentUser.isAdmin}
+            show={true}
+          ></SuspensionModal>
+        ) : (
+          ""
+        )}
         <div className="w-100 row m-0">
           <div className="col-lg-4 d-flex justify-content-center align-items-center mb-3 mb-lg-0 p-1 p-md-3">
             <div
@@ -357,13 +390,28 @@ const Profile = () => {
               className="w-100 position-relative rounded border-bottom pt-2 pt-lg-5"
               style={{ height: "80%" }}
             >
-              <h4 className="m-0">
-                {user.firstName} {user.lastName} ({user.alias || "No Alias"})
-              </h4>
-              <Followers
-                followersCount={user.followersCount}
-                followingCount={user.followingCount}
-              ></Followers>
+              <div>
+                <h4 className="m-0">
+                  {user.firstName} {user.lastName} ({user.alias || "No Alias"}){" "}
+                </h4>
+                {currentUser.isAdmin ? (
+                  <h5 className="text-danger">
+                    {user.isSuspended ? "Suspended " : ""}
+                    {suspensionTime(user.suspendUntil)}
+                  </h5>
+                ) : (
+                  ""
+                )}
+              </div>
+
+              {user.isAdmin ? (
+                ""
+              ) : (
+                <Followers
+                  followersCount={user.followersCount}
+                  followingCount={user.followingCount}
+                ></Followers>
+              )}
               <p className="mt-3 text-secondary">
                 {user.bio || "No bio available."}
               </p>
@@ -386,17 +434,33 @@ const Profile = () => {
                       <ReportedComments userID={user.userID}></ReportedComments>
                     </div>
                   ) : (
-                    <button
-                      className="primaryButton py-2 px-5"
-                      onClick={() => handleFollowToggle(user.userID)} // Use the user's ID directly
-                    >
-                      <h5 className="m-0">
-                        {" "}
-                        {followedUsers.includes(user.userID)
-                          ? "Unfollow"
-                          : "Follow"}
-                      </h5>
-                    </button>
+                    <>
+                      {user.isAdmin ? (
+                        <>
+                          {/* <button
+                            className="primaryButtonDisabled py-2 px-5"
+                            disabled={user.isAdmin}
+                          >
+                            <h5 className="m-0">Follow</h5>
+                          </button> */}
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="primaryButton py-2 px-5"
+                            onClick={() => handleFollowToggle(user.userID)} // Use the user's ID directly
+                            disabled={user.isAdmin}
+                          >
+                            <h5 className="m-0">
+                              {" "}
+                              {followedUsers.includes(user.userID)
+                                ? "Unfollow"
+                                : "Follow"}
+                            </h5>
+                          </button>
+                        </>
+                      )}
+                    </>
                   )}
                 </div>
               )}
@@ -414,6 +478,7 @@ const Profile = () => {
                   firstName={user.firstName}
                   reportedUserID={user.userID}
                   toBeReported={user.username}
+                  suspended={user.isSuspended}
                 />
               )}
             </div>

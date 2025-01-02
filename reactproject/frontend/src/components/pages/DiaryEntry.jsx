@@ -351,33 +351,41 @@ const DiaryEntry = () => {
                                 </h5>
                               </Link>
                             )}
-
-                            {user &&
-                              user.userID !== entry.userID &&
-                              entry.anonymity !== "private" &&
-                              entry.isAdmin !== 1 && (
-                                <div className="d-flex align-items-center gap-1">
-                                  <h3
-                                    className="m-0 text-secondary d-flex align-items-center"
-                                    style={{ height: ".9rem" }}
-                                  >
-                                    ·
-                                  </h3>
-                                  <button
-                                    className="secondaryButton p-0 m-0"
-                                    onClick={() =>
-                                      handleFollowToggle(entry.userID)
-                                    }
-                                    style={{ height: "" }}
-                                  >
-                                    <h5 className="m-0">
-                                      {followedUsers.includes(entry.userID)
-                                        ? "Following"
-                                        : "Follow"}
-                                    </h5>{" "}
-                                  </button>
-                                </div>
-                              )}
+                            {user.isAdmin ? (
+                              ""
+                            ) : (
+                              <>
+                                {user &&
+                                  user.userID !== entry.userID &&
+                                  entry.anonymity !== "private" &&
+                                  entry.isAdmin !== 1 && (
+                                    <div className="d-flex align-items-center gap-1">
+                                      <h3
+                                        className="m-0 text-secondary d-flex align-items-center"
+                                        style={{ height: ".9rem" }}
+                                      >
+                                        ·{entry.isAdmin}
+                                      </h3>
+                                      <button
+                                        className="secondaryButton p-0 m-0"
+                                        onClick={() =>
+                                          handleFollowToggle(
+                                            entry.userID,
+                                            entry.firstName
+                                          )
+                                        }
+                                        style={{ height: "" }}
+                                      >
+                                        <h5 className="m-0">
+                                          {followedUsers.includes(entry.userID)
+                                            ? "Following"
+                                            : "Follow"}
+                                        </h5>{" "}
+                                      </button>
+                                    </div>
+                                  )}
+                              </>
+                            )}
                           </div>
                           <p className="m-0" style={{ fontSize: ".7rem" }}>
                             {formatDate(entry.created_at)}{" "}

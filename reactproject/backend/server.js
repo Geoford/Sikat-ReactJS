@@ -1402,7 +1402,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
   const entryID = req.params.entryID;
 
   // Assuming you're fetching data from a database
-  const query = `SELECT diary_entries.*, user_table.username, user_table.firstName, user_table.lastName, user_profiles.*
+  const query = `SELECT diary_entries.*, user_table.isAdmin, user_table.firstName, user_table.lastName, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 

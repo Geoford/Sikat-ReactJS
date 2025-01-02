@@ -2,6 +2,7 @@
   --primary: #5c0099;
   --primary_hover: #4c0080;
   --primary_light: #7a00cc;
+  --primary_disabled: #ebccff;
   --secondary: #ffb31a;
   --secondary_hover: #e65c00;
   --background: #ededed;
@@ -180,6 +181,15 @@ body > div.fade.modal.show > div > div > div {
   padding: 5px 20px 5px 20px;
   transition: 0.3s;
   color: #ffff;
+}
+.primaryButtonDisabled {
+  background-color: var(--primary_disabled);
+  border: none;
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+  transition: 0.3s;
+  color: #ffff;
+  cursor: not-allowed;
 }
 .primaryButton:hover {
   background-color: var(--primary_hover);
