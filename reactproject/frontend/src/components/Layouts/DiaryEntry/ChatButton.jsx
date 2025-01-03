@@ -10,7 +10,7 @@ import SendIcon from "../../../assets/SendIcon.png";
 import DefaultProfile from "../../../assets/anonymous.png";
 import axios from "axios";
 
-const ChatButton = ({ userToChat }) => {
+const ChatButton = ({ userToChat, isAdmin }) => {
   const [show, setShow] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -193,6 +193,7 @@ const ChatButton = ({ userToChat }) => {
         <button
           className="InteractButton d-flex align-items-center justify-content-center gap-2"
           onClick={handleShow}
+          disabled={isAdmin}
         >
           <i class="bx bx-chat my-1"></i>
           <p className="m-0 d-none d-xl-block">Message</p>

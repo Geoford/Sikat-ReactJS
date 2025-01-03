@@ -238,7 +238,10 @@ body > div.fade.modal.show > div > div > div {
   color: gray;
   font-size: 0.9rem;
 }
-
+.InteractButton:disabled {
+  background-color: rgb(233, 233, 233);
+  cursor: not-allowed;
+}
 .InteractButton:hover {
   background-color: lightgray;
 }

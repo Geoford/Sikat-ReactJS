@@ -13,6 +13,7 @@ import FlagButton from "./FlagButton";
 import ChatButton from "../DiaryEntry/ChatButton";
 import EditDiaryEntryButton from "./EditDiaryEntryButton";
 import EditPostButton from "./EditPostButton";
+import DeleteButton from "../DiaryEntry/DeleteButton";
 
 const DiaryEntryLayout = ({
   entry,
@@ -514,11 +515,17 @@ const DiaryEntryLayout = ({
                     />
                   )}
                 </Dropdown.Item>
-                <Dropdown.Item
+                {/* <Dropdown.Item
                   className="p-0 btn btn-light"
                   onClick={() => handleDeleteEntry(entry.entryID)}
                 >
                   Delete
+                </Dropdown.Item> */}
+                <Dropdown.Item className="p-0 btn btn-light">
+                  <DeleteButton
+                    entryID={entry.entryID}
+                    title={entry.title}
+                  ></DeleteButton>
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -659,13 +666,17 @@ const DiaryEntryLayout = ({
 
         <div className="col p-0">
           {user.isAdmin ? (
-            <ChatButton userToChat={entry.userID}></ChatButton>
+            <ChatButton
+              isAdmin={user.isAdmin}
+              userToChat={entry.userID}
+            ></ChatButton>
           ) : (
             <FlagButton
               flaggedCount={flaggedCount}
               userID={user.userID}
               entryID={entry.entryID}
               entry={entry.userID}
+              fromAdmin={entry.isAdmin}
             />
           )}
         </div>

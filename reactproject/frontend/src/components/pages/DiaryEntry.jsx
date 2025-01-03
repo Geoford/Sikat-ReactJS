@@ -3,19 +3,24 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import anonymous from "../../assets/Anonymous.png";
 import MainLayout from "../Layouts/MainLayout";
 import Dropdown from "react-bootstrap/Dropdown";
-import Modal from "react-bootstrap/Modal";
-import CloseButton from "react-bootstrap/CloseButton";
-import CommentDropdown from "../Layouts/CommentSection/CommentDropdown";
-import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
+// import Modal from "react-bootstrap/Modal";
+// import CloseButton from "react-bootstrap/CloseButton";
+// import CommentDropdown from "../Layouts/CommentSection/CommentDropdown";
+// import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import axios from "axios";
-import CommentSectionButton from "../Layouts/CommentSection/CommentSection";
+// import CommentSectionButton from "../Layouts/CommentSection/CommentSection";
 import CommentSection from "../Layouts/DiaryEntry/CommentSection";
 
 import FlagButton from "../Layouts/Home/FlagButton";
 import ChatButton from "../Layouts/DiaryEntry/ChatButton";
 import DiaryDetails from "../Layouts/DiaryEntry/DiaryDetails";
 import ImageModal from "../Layouts/DiaryEntry/ImageModal";
-import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
+import FollowButton from "../Layouts/DiaryEntry/followButton";
+import MessageModal from "../Layouts/DiaryEntry/messageModal";
+import EditPostButton from "../Layouts/Home/EditPostButton";
+import EditDiaryEntryButton from "../Layouts/Home/EditDiaryEntryButton";
+import DeleteButton from "../Layouts/DiaryEntry/DeleteButton";
+// import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
   const { entryID } = useParams();
@@ -28,6 +33,27 @@ const DiaryEntry = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const commentSectionRef = useRef(null);
+
+  // FOR MESSAGE MODALS
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   // FOR CLICKABLE IMAGE
   const [showModal, setShowModal] = useState(false);
@@ -111,7 +137,8 @@ const DiaryEntry = () => {
       const response = await axios.get(
         `http://localhost:8081/followedUsers/${userID}`
       );
-      setFollowedUsers(response.data.map((user) => user.userID));
+      const followedUsersData = response.data.map((user) => user.userID);
+      setFollowedUsers(followedUsersData);
     } catch (error) {
       console.error("Error fetching followed users:", error);
     }
@@ -199,12 +226,94 @@ const DiaryEntry = () => {
     }
   }, [entries]);
 
-  const handleFollowToggle = (userID) => {
-    setFollowedUsers((prevFollowedUsers) =>
-      prevFollowedUsers.includes(userID)
-        ? prevFollowedUsers.filter((id) => id !== userID)
-        : [...prevFollowedUsers, userID]
-    );
+  const handleFollowToggle = async (followUserId, targetUsername) => {
+    if (!followUserId) {
+      console.error("User ID to follow/unfollow is undefined");
+      return;
+    }
+
+    if (user.userID === followUserId) {
+      alert("You cannot follow yourself.");
+      return;
+    }
+
+    const isFollowing = followedUsers.includes(followUserId);
+
+    try {
+      if (isFollowing) {
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${targetUsername}?`,
+          onConfirm: async () => {
+            try {
+              await axios.delete(
+                `http://localhost:8081/unfollow/${followUserId}`,
+                {
+                  data: { followerId: user.userID },
+                }
+              );
+
+              // Update followed users list after unfollowing
+              setFollowedUsers((prev) =>
+                prev.filter((id) => id !== followUserId)
+              );
+
+              // Close confirmation modal and show success modal
+              setConfirmModal({ show: false, message: "" });
+              setModal({
+                show: true,
+                message: `You have unfollowed ${targetUsername}.`,
+              });
+
+              // Refresh the followed users list from the backend
+              await fetchFollowedUsers(user.userID);
+            } catch (error) {
+              console.error("Error unfollowing user:", error);
+              setModal({
+                show: true,
+                message: `There was an error unfollowing ${targetUsername}.`,
+              });
+            }
+          },
+          onCancel: () => setConfirmModal({ show: false, message: "" }),
+        });
+      } else {
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
+
+        // Update followed users list after following
+        setFollowedUsers((prev) => [...prev, followUserId]);
+
+        // Show success modal
+        setModal({
+          show: true,
+          message: `You are now following ${targetUsername}.`,
+        });
+
+        // Send follow notification to the followed user
+        await axios.post(
+          `http://localhost:8081/notifications/${followUserId}`,
+          {
+            userID: followUserId,
+            actorID: user.userID,
+            entryID: null,
+            profile_image: user.profile_image,
+            type: "follow",
+            message: `${user.username} has followed you.`,
+          }
+        );
+
+        // Refresh the followed users list from the backend
+        await fetchFollowedUsers(user.userID);
+      }
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+      setModal({
+        show: true,
+        message: `There was an error processing your request.`,
+      });
+    }
   };
 
   // FOR COMMENT BUTTON
@@ -215,6 +324,20 @@ const DiaryEntry = () => {
 
   return (
     <MainLayout>
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
       <div
         className="d-flex align-items-center justify-content-center pb-3"
         style={{ minHeight: "70vh" }}
@@ -364,9 +487,15 @@ const DiaryEntry = () => {
                                         className="m-0 text-secondary d-flex align-items-center"
                                         style={{ height: ".9rem" }}
                                       >
-                                        ·{entry.isAdmin}
+                                        ·
                                       </h3>
-                                      <button
+                                      <FollowButton
+                                        userID={entry.userID}
+                                        firstName={entry.firstName}
+                                        followedUsers={followedUsers}
+                                        handleFollowToggle={handleFollowToggle}
+                                      ></FollowButton>
+                                      {/* <button
                                         className="secondaryButton p-0 m-0"
                                         onClick={() =>
                                           handleFollowToggle(
@@ -381,7 +510,7 @@ const DiaryEntry = () => {
                                             ? "Following"
                                             : "Follow"}
                                         </h5>{" "}
-                                      </button>
+                                      </button> */}
                                     </div>
                                   )}
                               </>
@@ -411,13 +540,37 @@ const DiaryEntry = () => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="p-2">
                               <Dropdown.Item className="p-0 btn btn-light">
-                                <p className="m-0">Edit</p>
+                                {user.isAdmin ? (
+                                  <EditPostButton
+                                    diaryTitle={entry.title}
+                                    diaryDesc={entry.description}
+                                    diaryVisib={entry.visibility}
+                                    diaryAnon={entry.anonimity}
+                                    diarySub={entry.subjects}
+                                    imageFile={
+                                      entry.diary_image &&
+                                      `http://localhost:8081${entry.diary_image}`
+                                    }
+                                  ></EditPostButton>
+                                ) : (
+                                  <EditDiaryEntryButton
+                                    diaryTitle={entry.title}
+                                    diaryDesc={entry.description}
+                                    diaryVisib={entry.visibility}
+                                    diaryAnon={entry.anonimity}
+                                    diarySub={entry.subjects}
+                                    imageFile={
+                                      entry.diary_image &&
+                                      `http://localhost:8081${entry.diary_image}`
+                                    }
+                                  />
+                                )}
                               </Dropdown.Item>
-                              <Dropdown.Item
-                                className="p-0 btn btn-light"
-                                onClick={() => handleDeleteEntry(entry.entryID)}
-                              >
-                                <p className="m-0">Delete</p>
+                              <Dropdown.Item className="p-0 btn btn-light">
+                                <DeleteButton
+                                  entryID={entry.entryID}
+                                  title={entry.title}
+                                ></DeleteButton>
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
