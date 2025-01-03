@@ -505,6 +505,7 @@ const DiaryEntryLayout = ({
                     ></EditPostButton>
                   ) : (
                     <EditDiaryEntryButton
+                      entryID={entry.entryID}
                       diaryTitle={entry.title}
                       diaryDesc={entry.description}
                       diaryVisib={entry.visibility}

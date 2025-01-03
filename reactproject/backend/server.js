@@ -973,6 +973,182 @@ app.post(
   }
 );
 
+app.put(
+  "/editEntry/:entryID",
+  (req, res, next) => {
+    uploadDiaryImageUser.single("file")(req, res, function (err) {
+      if (err) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res
+            .status(400)
+            .send({ message: "File size is too large. Maximum 5MB allowed." });
+        }
+        if (err.code === "INVALID_FILE_TYPE") {
+          return res
+            .status(400)
+            .send({ message: "Only image files are allowed." });
+        }
+        return res.status(500).send({ message: "File upload error." });
+      }
+      next();
+    });
+  },
+  (req, res) => {
+    const { entryID } = req.params;
+    const { title, description, visibility, anonimity, subjects } = req.body;
+    const file = req.file;
+
+    if (!entryID || !title || !description) {
+      return res
+        .status(400)
+        .send({ message: "Entry ID, title, and description are required." });
+    }
+
+    let diary_image = "";
+    if (file) {
+      diary_image = `/uploads/user_diary_images/${file.filename}`;
+    }
+
+    db.query("SELECT alarmingWord FROM alarming_words", (err, rows) => {
+      if (err) {
+        console.error("Error fetching alarming words:", err);
+        return res
+          .status(500)
+          .send({ message: "Error fetching alarming words." });
+      }
+
+      const alarmingWords = rows.map((row) => row.alarmingWord.toLowerCase());
+      const containsAlarmingWords = (text) => {
+        return alarmingWords.some((word) => text.toLowerCase().includes(word));
+      };
+
+      const hasAlarmingWords =
+        containsAlarmingWords(title) || containsAlarmingWords(description);
+
+      const updateQuery = `
+        UPDATE diary_entries
+        SET title = ?, description = ?, visibility = ?, anonimity = ?, diary_image = ?, subjects = ?, containsAlarmingWords = ?
+        WHERE entryID = ?
+      `;
+      const values = [
+        title,
+        description,
+        visibility,
+        anonimity,
+        diary_image || null,
+        subjects,
+        hasAlarmingWords ? 1 : 0,
+        entryID,
+      ];
+
+      db.query(updateQuery, values, (err, result) => {
+        if (err) {
+          console.error("Error updating diary entry:", err);
+          return res
+            .status(500)
+            .send({ message: "Failed to update diary entry." });
+        }
+
+        const subjectArray =
+          subjects && subjects.trim() !== ""
+            ? subjects.split(",").map((subject) => subject.trim())
+            : [];
+
+        subjectArray.forEach((subject) => {
+          const updateSubjectQuery = `
+            UPDATE filter_subjects
+            SET count = count + 1
+            WHERE subject = ?
+          `;
+          db.query(updateSubjectQuery, [subject], (updateError) => {
+            if (updateError) {
+              console.error(
+                `Error updating count for subject '${subject}':`,
+                updateError
+              );
+            }
+          });
+        });
+
+        if (hasAlarmingWords) {
+          const notificationMessage = `A diary entry containing alarming words has been edited.`;
+
+          const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
+
+          db.query(adminQuery, (adminError, adminResults) => {
+            if (adminError) {
+              console.error("Error fetching admin users:", adminError);
+              return res
+                .status(500)
+                .send({ message: "Failed to notify admins." });
+            }
+
+            if (adminResults.length > 0) {
+              adminResults.forEach((admin) => {
+                const notificationQuery = `
+                  INSERT INTO notifications (userID, actorID, message, entryID, type, profile_image)
+                  VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                db.query(
+                  notificationQuery,
+                  [
+                    admin.userID,
+                    req.body.userID,
+                    notificationMessage,
+                    entryID,
+                    "alarming_entry",
+                    "/default-profile.png", // Replace with actual profile image if needed
+                  ],
+                  (notificationError) => {
+                    if (notificationError) {
+                      console.error(
+                        "Error inserting admin notification:",
+                        notificationError
+                      );
+                      return res.status(500).send({
+                        message: "Failed to save admin notification.",
+                      });
+                    }
+
+                    pusher
+                      .trigger(
+                        `notifications-${admin.userID}`,
+                        "new-notification",
+                        {
+                          actorID: req.body.userID,
+                          message: notificationMessage,
+                          entryID: entryID,
+                          type: "alarming_entry",
+                          timestamp: new Date().toISOString(),
+                        }
+                      )
+                      .then(() => {
+                        console.log(
+                          `Admin ${admin.userID} notified of alarming diary entry.`
+                        );
+                      })
+                      .catch((err) => {
+                        console.error(
+                          "Error sending admin Pusher notification:",
+                          err
+                        );
+                      });
+                  }
+                );
+              });
+            }
+          });
+        }
+
+        res.status(200).send({
+          message: "Entry updated successfully!",
+          containsAlarmingWords: hasAlarmingWords,
+        });
+      });
+    });
+  }
+);
+
 app.post(
   "/entryadmin",
   (req, res, next) => {

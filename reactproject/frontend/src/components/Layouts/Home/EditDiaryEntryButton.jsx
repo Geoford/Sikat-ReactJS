@@ -14,6 +14,7 @@ import userDefaultProfile from "../../../assets/userDefaultProfile.png";
 import alarmingWords from "../AlarmingWords";
 
 function EditDiaryEntryButton({
+  entryID,
   onEntrySaved,
   diaryTitle,
   diaryDesc,
@@ -101,7 +102,11 @@ function EditDiaryEntryButton({
     setAlarmingWordWarning("");
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setTitle(diaryTitle);
+    setDescription(diaryDesc);
+    setShow(true);
+  };
 
   const containsAlarmingWords = (text) => {
     return alarmingWords.some((word) => text.toLowerCase().includes(word));
@@ -147,7 +152,7 @@ function EditDiaryEntryButton({
     setServerError("");
 
     axios
-      .post("http://localhost:8081/entry", formData, {
+      .put(`http://localhost:8081/editEntry/${entryID}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -159,6 +164,7 @@ function EditDiaryEntryButton({
         setFile(null);
         handleClose();
         if (onEntrySaved) {
+          window.location.reload();
           onEntrySaved();
         }
       })
@@ -184,7 +190,7 @@ function EditDiaryEntryButton({
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Create New Diary</h5>
+            <h5 className="m-0">Edit Diary {entryID}</h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -256,7 +262,7 @@ function EditDiaryEntryButton({
                 className="rounded"
                 placeholder={diaryTitle}
                 aria-label="Journal Title"
-                value={diaryTitle}
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 isInvalid={!!formErrors.title}
                 disabled={loading}
@@ -273,7 +279,7 @@ function EditDiaryEntryButton({
                 as="textarea"
                 placeholder=""
                 style={{ height: "100px" }}
-                value={diaryDesc}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 isInvalid={!!formErrors.description}
                 disabled={loading}
