@@ -592,16 +592,15 @@ app.post("/logout", (req, res) => {
     return res.status(400).json({ message: "User ID is required" });
   }
 
-  const query = "UPDATE user_table SET isActive = ? WHERE userID = ?";
+  const query = "UPDATE user_table SET isActive = 0 WHERE userID = ?";
 
-  db.execute(query, [false, userID], (err, results) => {
+  db.execute(query, [userID], (err, results) => {
     if (err) {
       return res
         .status(500)
         .json({ message: "Error logging out", error: err.message });
     }
 
-    // Check if any rows were updated (user found and updated)
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -1092,7 +1091,6 @@ app.get("/entries", (req, res) => {
     `;
   }
 
-  // Filter by subjects if provided
   if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map(
       () => `LOWER(diary_entries.subjects) LIKE ?`
@@ -1104,9 +1102,11 @@ app.get("/entries", (req, res) => {
 
   query += ` 
     ORDER BY 
-      diary_entries.created_at DESC,
-      diary_entries.engagementCount DESC,
-      diary_entries.created_at DESC 
+      GREATEST(
+        IFNULL(diary_entries.updated_at, diary_entries.created_at), 
+        diary_entries.created_at
+      ) DESC, 
+      diary_entries.engagementCount DESC
   `;
 
   db.query(query, queryParams, (err, results) => {
@@ -1288,7 +1288,13 @@ app.post("/entry/:entryID/gadify", (req, res) => {
             .json({ error: "Failed to remove gadify action" });
         }
 
-        const updateQuery = `UPDATE diary_entries SET gadifyCount = gadifyCount - 1 WHERE entryID = ?`;
+        const updateQuery = `UPDATE diary_entries 
+        SET
+          gadifyCount = gadifyCount - 1, 
+          engagementCount = engagementCount + 1, 
+          updated_at = CURRENT_TIMESTAMP  
+        WHERE 
+          entryID = ?`;
         db.query(updateQuery, [entryID], (err) => {
           if (err) {
             console.error("Error updating gadify count:", err);
@@ -1737,19 +1743,38 @@ app.post("/comments", (req, res) => {
       .json({ error: "User ID, Entry ID, and text are required." });
   }
 
-  const query =
+  const commentQuery =
     "INSERT INTO comments (userID, entryID, text, replyCommentID) VALUES (?, ?, ?, ?)";
+  const updateQuery = `
+    UPDATE diary_entries 
+    SET 
+    engagementCount = engagementCount + 1, 
+      updated_at = CURRENT_TIMESTAMP  
+    WHERE 
+      entryID = ?
+  `;
+
   db.query(
-    query,
+    commentQuery,
     [userID, entryID, text, replyCommentID || null],
     (err, results) => {
       if (err) {
         console.error("Error posting comment:", err);
         return res.status(500).json({ error: "Failed to post comment" });
       }
-      res.status(201).json({
-        message: "Comment posted successfully!",
-        commentID: results.insertId,
+
+      db.query(updateQuery, [entryID], (updateErr) => {
+        if (updateErr) {
+          console.error("Error updating diary entry timestamp:", updateErr);
+          return res
+            .status(500)
+            .json({ error: "Comment posted, but failed to update timestamp" });
+        }
+
+        res.status(201).json({
+          message: "Comment posted successfully!",
+          commentID: results.insertId,
+        });
       });
     }
   );
@@ -2076,7 +2101,6 @@ app.get("/messages", (req, res) => {
       res.json(messages);
     });
   } else {
-    // Non-admin request requires userID and withUserID
     if (!userID || !withUserID) {
       return res.status(400).send("userID and withUserID are required.");
     }
@@ -2310,9 +2334,28 @@ app.post("/flags", (req, res) => {
         );
       });
 
-      res
-        .status(200)
-        .json({ message: "Report submitted and counts updated successfully" });
+      const updateQuery = `
+        UPDATE diary_entries 
+        SET
+        enga
+        engagementCount = engagementCount + 1, 
+          updated_at = CURRENT_TIMESTAMP  
+        WHERE 
+          entryID = ?
+      `;
+
+      db.query(updateQuery, [entryID], (updateError) => {
+        if (updateError) {
+          console.error("Error updating diary entry timestamp:", updateError);
+          return res.status(500).json({
+            message: "Report submitted, but failed to update timestamp",
+          });
+        }
+
+        res.status(200).json({
+          message: "Report submitted and counts updated successfully",
+        });
+      });
     }
   );
 });
@@ -3123,23 +3166,22 @@ app.put("/api/index-images/:index_imagesID", (req, res) => {
   });
 });
 
-// setInterval(() => {
-//   db.query(
-//     "UPDATE user_table SET isActive = 1, suspendReason = NULL, suspendUntil = NULL WHERE suspendUntil < NOW()",
-//     (err) => {
-//       if (err) {
-//         console.error("Error lifting suspensions:", err);
-//       } else {
-//         console.log("Suspensions lifted for eligible users.");
-//       }
-//     }
-//   );
-// }, 60 * 60 * 1000);
+setInterval(() => {
+  db.query(
+    "UPDATE user_table SET isSuspended = 0, suspendReason = NULL, suspendUntil = NULL WHERE suspendUntil < NOW()",
+    (err) => {
+      if (err) {
+        console.error("Error lifting suspensions:", err);
+      } else {
+        console.log("Suspensions lifted for eligible users.");
+      }
+    }
+  );
+}, 60 * 60 * 1000);
 
 app.post("/suspendUser", (req, res) => {
   const { userID, reason, period } = req.body;
 
-  // Initialize the suspendUntil variable
   const suspendUntil = new Date();
   if (period === "3 Days") suspendUntil.setDate(suspendUntil.getDate() + 3);
   if (period === "3 Weeks") suspendUntil.setDate(suspendUntil.getDate() + 21);
@@ -3147,11 +3189,9 @@ app.post("/suspendUser", (req, res) => {
   if (period === "1 Year")
     suspendUntil.setFullYear(suspendUntil.getFullYear() + 1);
 
-  // Log after the variable is defined
   console.log("Request Body:", req.body);
   console.log("Suspend Until Date:", suspendUntil);
 
-  // Database query to update suspension details
   db.query(
     "UPDATE user_table SET isSuspended = 1, suspendReason = ?, suspendUntil = ? WHERE userID = ?",
     [reason, suspendUntil, userID],
