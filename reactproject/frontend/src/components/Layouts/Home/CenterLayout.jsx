@@ -24,7 +24,6 @@ const CenterLayout = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // FOR MESSAGE MODALS
   const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
     show: false,

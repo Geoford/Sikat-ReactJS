@@ -178,7 +178,9 @@ const DiaryEntryLayout = ({
 
   const updateEngagement = async (entryID) => {
     try {
-      await axios.post("http://localhost:8081/updateEngagement", { entryID });
+      await axios.post("http://localhost:8081/updateEngagement", {
+        entryID,
+      });
     } catch (error) {
       console.error("Error updating engagement:", error);
     }
