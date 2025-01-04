@@ -507,7 +507,7 @@ const Profile = () => {
                       handleClick={handleClick}
                       setEntries={setEntries}
                       setFollowedUsers={setFollowedUsers}
-                      user={currentUser}
+                      user={user}
                     />
                   </div>
                 ))

@@ -16,6 +16,7 @@ import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 
 const DiaryEntryLayout = ({
+  key,
   entry,
   user,
   followedUsers,
