@@ -13,7 +13,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
     style={{ height: "clamp(5rem, 12dvw, 25rem)", overflowY: "scroll" }}
   >
     {users.map((user) => (
-      <div key={user.userID} className="pb-2 pe-1 mb-2">
+      <div key={user.userID} className=" pe-1">
         <div className="w-100 d-flex align-items-center justify-content-between gap-2">
           <Link
             to={`/Profile/${user.userID}`}

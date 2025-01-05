@@ -439,6 +439,7 @@ const CommentSection = ({
                     borderRadius: "50%",
                     backgroundColor: "#ffff",
                     color: "var(--primary)",
+                    fontSize: "clamp(1.2rem, 5dvw, 1.5rem)",
                   }}
                 >
                   <i className="bx bxs-send"></i>

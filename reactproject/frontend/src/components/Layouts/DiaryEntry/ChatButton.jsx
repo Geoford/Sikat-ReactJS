@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import Pusher from "pusher-js";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -10,7 +11,7 @@ import SendIcon from "../../../assets/SendIcon.png";
 import DefaultProfile from "../../../assets/anonymous.png";
 import axios from "axios";
 
-const ChatButton = ({ userToChat, isAdmin }) => {
+const ChatButton = ({ imageFile, userToChat, isAdmin }) => {
   const [show, setShow] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -206,7 +207,7 @@ const ChatButton = ({ userToChat, isAdmin }) => {
             <h4 className="m-0">Messages</h4>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="p-1" style={{ overflow: "hidden" }}>
+        <Modal.Body className="p-2" style={{ overflow: "hidden" }}>
           <div>
             {!selectedUser ? (
               <div
@@ -257,7 +258,7 @@ const ChatButton = ({ userToChat, isAdmin }) => {
                             />
                           </div>
                           <p className="m-0">
-                            {userItem.firstName} {userItem.lastName} or (Alias)
+                            {userItem.firstName} {userItem.lastName}
                           </p>
                         </div>
                         {userItem.isActive === 1 ? (
@@ -293,13 +294,34 @@ const ChatButton = ({ userToChat, isAdmin }) => {
                 className="ChatRoom p-2 pt-0"
                 style={{ minHeight: "clamp(400px, 30vh, 500px)" }}
               >
-                <div
-                  className="py-2 d-flex align-items-center gap-2"
-                  onClick={handleBackClick}
-                  style={{ cursor: "pointer" }}
-                >
-                  <i className="bx bx-arrow-back"></i>{" "}
-                  <h5 className="m-0">{selectedUser.username}</h5>
+                <div className="py-0 d-flex align-items-center gap-2">
+                  <div
+                    className="d-flex align-items-center"
+                    onClick={handleBackClick}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <i className="bx bx-arrow-back"></i>
+                  </div>
+
+                  <Link
+                    to={`/Profile/${userToChat}`}
+                    className="linkText d-flex align-items-center gap-1 text-decoration-none "
+                  >
+                    <div className="profilePicture">
+                      <img
+                        src={`http://localhost:8081${selectedUser.profile_image}`}
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                    <h5 className="m-0">
+                      {selectedUser.firstName} {selectedUser.lastName}
+                    </h5>
+                  </Link>
                 </div>
                 <div>
                   <div
@@ -321,6 +343,7 @@ const ChatButton = ({ userToChat, isAdmin }) => {
                                 ? "var(--secondary)"
                                 : "var(--primary)",
                             maxWidth: "80%",
+                            minWidth: "20%",
                             width: "fit-content",
                             wordWrap: "break-word",
                             whiteSpace: "pre-wrap",

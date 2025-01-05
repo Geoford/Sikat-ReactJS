@@ -641,7 +641,7 @@ const DiaryEntryLayout = ({
         <div className="col p-0">
           {user.isAdmin ? (
             <ChatButton
-              isAdmin={user.isAdmin}
+              isAdmin={entry.isAdmin}
               userToChat={entry.userID}
             ></ChatButton>
           ) : (

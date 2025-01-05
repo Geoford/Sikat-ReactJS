@@ -658,7 +658,10 @@ const DiaryEntry = () => {
                       )}
                       <div className="col p-0">
                         {currentUser.isAdmin ? (
-                          <ChatButton userToChat={entry.userID}></ChatButton>
+                          <ChatButton
+                            imageFile={`http://localhost:8081${entry.profile_image}`}
+                            userToChat={entry.userID}
+                          ></ChatButton>
                         ) : (
                           <FlagButton
                             flaggedCount={flaggedCount}

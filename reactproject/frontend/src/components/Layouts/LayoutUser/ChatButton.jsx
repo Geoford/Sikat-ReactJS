@@ -9,6 +9,7 @@ import SendIcon from "../../../assets/SendIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import FrequentlyAskQuestion from "./FrequentlyAskQuestion";
 import axios from "axios";
+import { Dropdown } from "react-bootstrap";
 
 const UserChatButton = () => {
   const [show, setShow] = useState(false);
@@ -189,38 +190,54 @@ const UserChatButton = () => {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title className="w-100 pe-2 d-flex align-items-end justify-content-between">
-            <div className="d-flex align-items-center gap-2">
-              <h5 className="m-0">Hello, {user?.username}!</h5>
-              {admin?.isActive === 1 ? (
-                <div
-                  className="p-0 m-0 d-flex align-items-center justify-content-center"
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    height: "15px",
-                    width: "15px",
-                    borderRadius: "50%",
-                    color: "#ffff",
-                  }}
-                ></div>
-              ) : (
-                <div
-                  className="p-0 m-0 d-flex align-items-center justify-content-center"
-                  style={{
-                    backgroundColor: "gray",
-                    height: "15px",
-                    width: "15px",
-                    borderRadius: "50%",
-                    color: "#ffff",
-                  }}
-                ></div>
-              )}
-            </div>
+            <div className="d-flex align-items-center gap-1">
+              <Link
+                to={`/Profile/${admin?.userID}`}
+                className="linkText d-flex align-items-center gap-1 text-decoration-none "
+              >
+                <div className="profilePicture">
+                  <img
+                    src={`http://localhost:8081${admin?.profile_image}`}
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+                <h5 className="m-0">{admin?.firstName}</h5>
+              </Link>
+              <div
+                className="p-0 m-0 d-flex align-items-center justify-content-center"
+                style={{
+                  backgroundColor: admin?.isActive ? "var(--primary)" : "gray",
+                  height: "15px",
+                  width: "15px",
+                  borderRadius: "50%",
+                  color: "#ffff",
+                }}
+              ></div>
 
-            <Link to={"/GetHelp/"}>
-              <button className="secondaryButton text-decoration-underline p-0">
-                <p className="m-0">Report an Incident</p>
-              </button>
-            </Link>
+              <Dropdown>
+                <Dropdown.Toggle
+                  className="btn-light d-flex align-items-center pt-0 pb-2"
+                  id="dropdown-basic"
+                  bsPrefix="custom-toggle"
+                >
+                  <h5 className="m-0">...</h5>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="p-2">
+                  <Dropdown.Item className="btn btn-light rounded">
+                    <Link to={"/GetHelp/"}>
+                      <button className="secondaryButton text-decoration-underline p-0">
+                        <p className="m-0">Report an Incident</p>
+                      </button>
+                    </Link>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

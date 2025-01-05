@@ -70,6 +70,14 @@ const NavBar = ({ ActiveTab }) => {
               ActiveTab === "Home" ? "active" : ""
             }`}
             to={user && user.isAdmin ? "/Admin/Home" : "/Home"}
+            onClick={(e) => {
+              // Check if the current page matches the link's destination
+              const targetPath = user && user.isAdmin ? "/Admin/Home" : "/Home";
+              if (window.location.pathname === targetPath) {
+                e.preventDefault(); // Prevent the default behavior of the link
+                window.location.reload(); // Force a full page reload
+              }
+            }}
           >
             <i class="bx bx-home-alt"></i>
             <p className="navToolTip">Home</p>

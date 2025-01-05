@@ -1638,7 +1638,19 @@ app.get("/users", (req, res) => {
 
 app.get("/admin", (req, res) => {
   db.query(
-    "SELECT userID, username, isActive FROM user_table WHERE isAdmin = 1 LIMIT 1",
+    `
+    SELECT 
+      user_table.*,
+      user_profiles.profile_image
+    FROM 
+      user_table 
+    JOIN 
+      user_profiles 
+    ON 
+      user_table.userID = user_profiles.userID 
+    WHERE 
+      user_table.isAdmin = 1 
+    `,
     (err, results) => {
       if (err) {
         return res.status(500).send("Error fetching admin.");

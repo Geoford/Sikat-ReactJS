@@ -119,7 +119,7 @@ const RightSide = () => {
               reportedUsers.map((reportedUser, index) => (
                 <Link
                   key={`${reportedUser.userID}-${reportedUser.reason}-${index}`}
-                  to={`/Admin/DiaryEntry/${reportedUser.entryID}`}
+                  to={`/DiaryEntry/${reportedUser.entryID}`}
                   className="text-decoration-none"
                   style={{ cursor: "pointer" }}
                 >
@@ -182,7 +182,7 @@ const RightSide = () => {
               flaggedUsers.map((flaggedUser, index) => (
                 <Link
                   key={`${flaggedUser.userID}-${flaggedUser.reason}-${index}`}
-                  to={`/Admin/DiaryEntry/${flaggedUser.entryID}`}
+                  to={`/DiaryEntry/${flaggedUser.entryID}`}
                   className="text-decoration-none rounded"
                   style={{ cursor: "pointer" }}
                 >
