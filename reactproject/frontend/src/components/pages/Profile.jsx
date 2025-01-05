@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
 import JournalEntries from "../Layouts/Profile/JournalEntries";
-import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
+import DiaryEntryLayout from "../Layouts/Profile/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/Profile/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/Profile/OthersProfileDropdown";
 import axios from "axios";
@@ -501,14 +501,15 @@ const Profile = () => {
                     <DiaryEntryLayout
                       key={entry.entryID}
                       entry={entry}
+                      user={currentUser}
+                      // entryFirstName={entry.firstName}
+                      followedUsers={followedUsers}
+                      handleFollowToggle={handleFollowToggle}
+                      handleClick={handleClick}
                       expandButtons={expandButtons}
                       formatDate={formatDate}
-                      followedUsers={followedUsers}
-                      handleClick={handleClick}
-                      setEntries={setEntries}
-                      setFollowedUsers={setFollowedUsers}
-                      user={user}
                     />
+                    {/* {entry.firstName} */}
                   </div>
                 ))
             ) : (

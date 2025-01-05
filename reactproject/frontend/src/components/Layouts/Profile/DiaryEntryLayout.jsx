@@ -9,10 +9,10 @@ import Modal from "react-bootstrap/Modal";
 // import Button from "react-bootstrap/Button";
 import CloseButton from "react-bootstrap/CloseButton";
 import axios from "axios";
-import FlagButton from "./FlagButton";
+import FlagButton from "../Home/FlagButton";
 import ChatButton from "../DiaryEntry/ChatButton";
-import EditDiaryEntryButton from "./EditDiaryEntryButton";
-import EditPostButton from "./EditPostButton";
+import EditDiaryEntryButton from "../Home/EditDiaryEntryButton";
+import EditPostButton from "../Home/EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import ImageModal from "../DiaryEntry/ImageModal";
 

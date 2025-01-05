@@ -65,38 +65,43 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                   className="my-1 px-2 custom-scrollbar"
                   style={{ eight: "35vh", overflowY: "scroll" }}
                 >
-                  {entries.map((entry) => (
-                    <Link
-                      key={entry.entryID}
-                      to={`/DiaryEntry/${entry.entryID}`}
-                      className="rounded text-decoration-none"
-                    >
-                      <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
-                        <div>
-                          <div className="d-flex flex-column align-items-start p-1">
-                            <p className="m-0 text-start text-secondary">
-                              {entry.title}{" "}
-                              <span>
-                                {entry.visibility === "private" ? (
-                                  <i class="bx bx-lock-alt"></i>
-                                ) : (
-                                  <i class="bx bx-globe"></i>
-                                )}
+                  {entries.map((entry) => {
+                    if (!ownProfile && entry.visibility === "private") {
+                      return null;
+                    }
+                    return (
+                      <Link
+                        key={entry.entryID}
+                        to={`/DiaryEntry/${entry.entryID}`}
+                        className="rounded text-decoration-none"
+                      >
+                        <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                          <div>
+                            <div className="d-flex flex-column align-items-start p-1">
+                              <p className="m-0 text-start text-secondary">
+                                {entry.title}{" "}
+                                <span>
+                                  {entry.visibility === "private" ? (
+                                    <i class="bx bx-lock-alt"></i>
+                                  ) : (
+                                    <i class="bx bx-globe"></i>
+                                  )}
+                                </span>
+                              </p>
+                              <span
+                                className="text-secondary"
+                                style={{
+                                  fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                }}
+                              >
+                                {formatDate(entry.created_at)}
                               </span>
-                            </p>
-                            <span
-                              className="text-secondary"
-                              style={{
-                                fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                              }}
-                            >
-                              {formatDate(entry.created_at)}
-                            </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </Accordion.Body>

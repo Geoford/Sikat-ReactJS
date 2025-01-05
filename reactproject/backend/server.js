@@ -1558,7 +1558,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const scheduledDate = req.query.scheduledDate === "true";
 
   let query = `
-    SELECT diary_entries.*, user_table.username, user_table.cvsuEmail, user_profiles.*
+    SELECT diary_entries.*, user_table.*, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
