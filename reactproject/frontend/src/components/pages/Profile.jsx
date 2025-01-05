@@ -471,9 +471,12 @@ const Profile = () => {
                   userID={currentUser.userID}
                   isAdmin={currentUser.isAdmin}
                 />
+              ) : user.isAdmin ? (
+                ""
               ) : (
                 <OthersProfileDropdown
                   isAdmin={currentUser.isAdmin}
+                  ownerAdmin={user.isAdmin}
                   userID={user.userID}
                   firstName={user.firstName}
                   reportedUserID={user.userID}

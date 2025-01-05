@@ -18,6 +18,8 @@ const CommentSection = ({
   entry,
   firstName,
   commentCount,
+  isAnon,
+  alias,
 }) => {
   const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
@@ -501,7 +503,9 @@ const CommentSection = ({
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5>Comments on {firstName}'s Diary</h5>
+            <h5>
+              Comments on {isAnon === "private" ? alias : firstName}'s Diary
+            </h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body

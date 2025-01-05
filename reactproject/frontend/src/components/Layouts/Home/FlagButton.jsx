@@ -3,7 +3,16 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function FlagButton({ userID, entryID, entry, flaggedCount, fromAdmin }) {
+function FlagButton({
+  userID,
+  firstName,
+  alias,
+  isAnon,
+  entryID,
+  entry,
+  flaggedCount,
+  fromAdmin,
+}) {
   const [show, setShow] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [otherText, setOtherText] = useState("");
@@ -97,7 +106,7 @@ function FlagButton({ userID, entryID, entry, flaggedCount, fromAdmin }) {
       <button
         className="InteractButton d-flex align-items-center justify-content-center gap-2"
         onClick={handleShow}
-        disabled={fromAdmin}
+        disabled={fromAdmin || entry === userID}
       >
         <i className="bx bx-flag"></i>
         <span>{flaggedCount}</span>
@@ -107,7 +116,9 @@ function FlagButton({ userID, entryID, entry, flaggedCount, fromAdmin }) {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Flag UserName's Diary</h5>
+            <h5 className="m-0">
+              Flag {isAnon === "private" ? alias : firstName}'s Diary
+            </h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

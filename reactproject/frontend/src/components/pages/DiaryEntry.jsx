@@ -664,6 +664,9 @@ const DiaryEntry = () => {
                           ></ChatButton>
                         ) : (
                           <FlagButton
+                            firstName={entry.firstName}
+                            isAnon={entry.anonimity}
+                            alias={entry.alias}
                             flaggedCount={flaggedCount}
                             userID={user.userID}
                             entryID={entry.entryID}

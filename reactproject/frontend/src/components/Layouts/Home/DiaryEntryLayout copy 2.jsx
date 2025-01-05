@@ -9,13 +9,12 @@ import Modal from "react-bootstrap/Modal";
 // import Button from "react-bootstrap/Button";
 import CloseButton from "react-bootstrap/CloseButton";
 import axios from "axios";
-import FlagButton from "../Home/FlagButton";
+import FlagButton from "./FlagButton";
 import ChatButton from "../DiaryEntry/ChatButton";
-import EditDiaryEntryButton from "../Home/EditDiaryEntryButton";
-import EditPostButton from "../Home/EditPostButton";
+import EditDiaryEntryButton from "./EditDiaryEntryButton";
+import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import ImageModal from "../DiaryEntry/ImageModal";
-import Suspend from "./Suspend";
 
 const DiaryEntryLayout = ({
   key,
@@ -420,10 +419,7 @@ const DiaryEntryLayout = ({
             <div className="d-flex flex-column align-items-start">
               <div className="d-flex align-items-center justify-content-center gap-1">
                 {entry.anonimity === "private" ? (
-                  <h5 className="m-0">
-                    {entry.alias}
-                    {user.userID === entry.userID ? " (You)" : ""}
-                  </h5>
+                  <h5 className="m-0">{entry.alias}</h5>
                 ) : (
                   <Link
                     to={`/Profile/${entry.userID}`}
@@ -486,7 +482,7 @@ const DiaryEntryLayout = ({
         )}
 
         <div>
-          {ownDiary || currentUser.isAdmin ? (
+          {ownDiary ? (
             <Dropdown>
               <Dropdown.Toggle
                 className="btn-light d-flex align-items-center pt-0 pb-2"
@@ -496,56 +492,46 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                {user.isAdmin ? (
-                  <Suspend
-                    userID={entry.userID}
-                    firstName={entry.firstName}
-                    suspended={entry.isSuspended}
-                  ></Suspend>
-                ) : (
-                  <>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      {user.isAdmin ? (
-                        <EditPostButton
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        ></EditPostButton>
-                      ) : (
-                        <EditDiaryEntryButton
-                          entryID={entry.entryID}
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        />
-                      )}
-                    </Dropdown.Item>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <DeleteButton
-                        entryID={entry.entryID}
-                        title={entry.title}
-                      ></DeleteButton>
-                    </Dropdown.Item>
-                  </>
-                )}
+                <Dropdown.Item className="p-0 btn btn-light">
+                  {user.isAdmin ? (
+                    <EditPostButton
+                      diaryTitle={entry.title}
+                      diaryDesc={entry.description}
+                      diaryVisib={entry.visibility}
+                      diaryAnon={entry.anonimity}
+                      diarySub={entry.subjects}
+                      imageFile={
+                        entry.diary_image &&
+                        `http://localhost:8081${entry.diary_image}`
+                      }
+                    ></EditPostButton>
+                  ) : (
+                    <EditDiaryEntryButton
+                      entryID={entry.entryID}
+                      diaryTitle={entry.title}
+                      diaryDesc={entry.description}
+                      diaryVisib={entry.visibility}
+                      diaryAnon={entry.anonimity}
+                      diarySub={entry.subjects}
+                      imageFile={
+                        entry.diary_image &&
+                        `http://localhost:8081${entry.diary_image}`
+                      }
+                    />
+                  )}
+                </Dropdown.Item>
                 {/* <Dropdown.Item
                   className="p-0 btn btn-light"
                   onClick={() => handleDeleteEntry(entry.entryID)}
                 >
                   Delete
                 </Dropdown.Item> */}
+                <Dropdown.Item className="p-0 btn btn-light">
+                  <DeleteButton
+                    entryID={entry.entryID}
+                    title={entry.title}
+                  ></DeleteButton>
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           ) : (
@@ -652,8 +638,6 @@ const DiaryEntryLayout = ({
             entryID={entry.entryID}
             entry={entry.userID}
             firstName={entry.firstName}
-            isAnon={entry.anonimity}
-            alias={entry.alias}
           />
           {/* {user.firstName} */}
         </div>
@@ -666,9 +650,6 @@ const DiaryEntryLayout = ({
             ></ChatButton>
           ) : (
             <FlagButton
-              firstName={entry.firstName}
-              isAnon={entry.anonimity}
-              alias={entry.alias}
               flaggedCount={flaggedCount}
               userID={user.userID}
               entryID={entry.entryID}

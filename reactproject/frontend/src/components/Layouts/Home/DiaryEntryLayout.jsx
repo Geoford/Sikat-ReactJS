@@ -15,6 +15,7 @@ import EditDiaryEntryButton from "./EditDiaryEntryButton";
 import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import ImageModal from "../DiaryEntry/ImageModal";
+import Suspend from "../Profile/Suspend";
 
 const DiaryEntryLayout = ({
   key,
@@ -419,7 +420,10 @@ const DiaryEntryLayout = ({
             <div className="d-flex flex-column align-items-start">
               <div className="d-flex align-items-center justify-content-center gap-1">
                 {entry.anonimity === "private" ? (
-                  <h5 className="m-0">{entry.alias}</h5>
+                  <h5 className="m-0">
+                    {entry.alias}
+                    {user.userID === entry.userID ? " (You)" : ""}
+                  </h5>
                 ) : (
                   <Link
                     to={`/Profile/${entry.userID}`}
@@ -467,11 +471,14 @@ const DiaryEntryLayout = ({
                   </>
                 )}
               </div>
-              <p className="m-0" style={{ fontSize: ".7rem" }}>
-                {formatDate(entry.created_at)}{" "}
-                <span>
+              <p
+                className="m-0 d-flex align-items-center gap-1"
+                style={{ fontSize: ".7rem" }}
+              >
+                {formatDate(entry.created_at)}
+                <span className=" d-flex align-items-center">
                   {entry.visibility === "public" ? (
-                    <i class="bx bx-globe"></i>
+                    <i class="bx bx-globe "></i>
                   ) : (
                     <i class="bx bx-lock-alt"></i>
                   )}
@@ -482,7 +489,7 @@ const DiaryEntryLayout = ({
         )}
 
         <div>
-          {ownDiary ? (
+          {ownDiary || currentUser.isAdmin ? (
             <Dropdown>
               <Dropdown.Toggle
                 className="btn-light d-flex align-items-center pt-0 pb-2"
@@ -492,46 +499,52 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                <Dropdown.Item className="p-0 btn btn-light">
-                  {user.isAdmin ? (
-                    <EditPostButton
-                      diaryTitle={entry.title}
-                      diaryDesc={entry.description}
-                      diaryVisib={entry.visibility}
-                      diaryAnon={entry.anonimity}
-                      diarySub={entry.subjects}
-                      imageFile={
-                        entry.diary_image &&
-                        `http://localhost:8081${entry.diary_image}`
-                      }
-                    ></EditPostButton>
-                  ) : (
-                    <EditDiaryEntryButton
-                      entryID={entry.entryID}
-                      diaryTitle={entry.title}
-                      diaryDesc={entry.description}
-                      diaryVisib={entry.visibility}
-                      diaryAnon={entry.anonimity}
-                      diarySub={entry.subjects}
-                      imageFile={
-                        entry.diary_image &&
-                        `http://localhost:8081${entry.diary_image}`
-                      }
-                    />
-                  )}
-                </Dropdown.Item>
-                {/* <Dropdown.Item
-                  className="p-0 btn btn-light"
-                  onClick={() => handleDeleteEntry(entry.entryID)}
-                >
-                  Delete
-                </Dropdown.Item> */}
-                <Dropdown.Item className="p-0 btn btn-light">
-                  <DeleteButton
-                    entryID={entry.entryID}
-                    title={entry.title}
-                  ></DeleteButton>
-                </Dropdown.Item>
+                {currentUser.isAdmin ? (
+                  <Dropdown.Item className="p-0 btn btn-light">
+                    <Suspend
+                      userID={entry.userID}
+                      firstName={entry.firstName}
+                      suspended={entry.isSuspend}
+                    ></Suspend>
+                  </Dropdown.Item>
+                ) : (
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      {user.isAdmin ? (
+                        <EditPostButton
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        ></EditPostButton>
+                      ) : (
+                        <EditDiaryEntryButton
+                          entryID={entry.entryID}
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        />
+                      )}
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           ) : (
@@ -544,9 +557,9 @@ const DiaryEntryLayout = ({
         className="text-start border-bottom py-2 pt-2"
         style={{ minHeight: "5rem" }}
       >
-        <div className="d-flex alig-items-center gap-1 position-relative">
+        <div className="d-flex align-items-center gap-1 position-relative">
           {entry.subjects && (
-            <h6 className="text-secondary m-0 mt-2">
+            <h6 className="text-secondary m-0">
               <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
                 Trigger Warning: {entry.subjects}
               </span>
@@ -638,6 +651,8 @@ const DiaryEntryLayout = ({
             entryID={entry.entryID}
             entry={entry.userID}
             firstName={entry.firstName}
+            isAnon={entry.anonimity}
+            alias={entry.alias}
           />
           {/* {user.firstName} */}
         </div>
@@ -650,6 +665,9 @@ const DiaryEntryLayout = ({
             ></ChatButton>
           ) : (
             <FlagButton
+              firstName={entry.firstName}
+              isAnon={entry.anonimity}
+              alias={entry.alias}
               flaggedCount={flaggedCount}
               userID={user.userID}
               entryID={entry.entryID}
