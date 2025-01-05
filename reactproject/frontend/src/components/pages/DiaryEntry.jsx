@@ -20,6 +20,7 @@ import MessageModal from "../Layouts/DiaryEntry/messageModal";
 import EditPostButton from "../Layouts/Home/EditPostButton";
 import EditDiaryEntryButton from "../Layouts/Home/EditDiaryEntryButton";
 import DeleteButton from "../Layouts/DiaryEntry/DeleteButton";
+import Suspend from "../Layouts/Profile/Suspend";
 // import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
@@ -539,39 +540,49 @@ const DiaryEntry = () => {
                               <h5 className="m-0">...</h5>
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="p-2">
-                              <Dropdown.Item className="p-0 btn btn-light">
-                                {user.isAdmin ? (
-                                  <EditPostButton
-                                    diaryTitle={entry.title}
-                                    diaryDesc={entry.description}
-                                    diaryVisib={entry.visibility}
-                                    diaryAnon={entry.anonimity}
-                                    diarySub={entry.subjects}
-                                    imageFile={
-                                      entry.diary_image &&
-                                      `http://localhost:8081${entry.diary_image}`
-                                    }
-                                  ></EditPostButton>
-                                ) : (
-                                  <EditDiaryEntryButton
-                                    diaryTitle={entry.title}
-                                    diaryDesc={entry.description}
-                                    diaryVisib={entry.visibility}
-                                    diaryAnon={entry.anonimity}
-                                    diarySub={entry.subjects}
-                                    imageFile={
-                                      entry.diary_image &&
-                                      `http://localhost:8081${entry.diary_image}`
-                                    }
-                                  />
-                                )}
-                              </Dropdown.Item>
-                              <Dropdown.Item className="p-0 btn btn-light">
-                                <DeleteButton
-                                  entryID={entry.entryID}
-                                  title={entry.title}
-                                ></DeleteButton>
-                              </Dropdown.Item>
+                              {user.isAdmin ? (
+                                <Suspend
+                                  userID={entry.userID}
+                                  firstName={entry.firstName}
+                                  suspended={entry.isSuspended}
+                                ></Suspend>
+                              ) : (
+                                <>
+                                  <Dropdown.Item className="p-0 btn btn-light">
+                                    {user.isAdmin ? (
+                                      <EditPostButton
+                                        diaryTitle={entry.title}
+                                        diaryDesc={entry.description}
+                                        diaryVisib={entry.visibility}
+                                        diaryAnon={entry.anonimity}
+                                        diarySub={entry.subjects}
+                                        imageFile={
+                                          entry.diary_image &&
+                                          `http://localhost:8081${entry.diary_image}`
+                                        }
+                                      ></EditPostButton>
+                                    ) : (
+                                      <EditDiaryEntryButton
+                                        diaryTitle={entry.title}
+                                        diaryDesc={entry.description}
+                                        diaryVisib={entry.visibility}
+                                        diaryAnon={entry.anonimity}
+                                        diarySub={entry.subjects}
+                                        imageFile={
+                                          entry.diary_image &&
+                                          `http://localhost:8081${entry.diary_image}`
+                                        }
+                                      />
+                                    )}
+                                  </Dropdown.Item>
+                                  <Dropdown.Item className="p-0 btn btn-light">
+                                    <DeleteButton
+                                      entryID={entry.entryID}
+                                      title={entry.title}
+                                    ></DeleteButton>
+                                  </Dropdown.Item>
+                                </>
+                              )}
                             </Dropdown.Menu>
                           </Dropdown>
                         ) : (
@@ -666,6 +677,7 @@ const DiaryEntry = () => {
                         entryID={entry.entryID}
                         entry={entry.userID}
                         firstName={entry.firstName}
+                        lastName={entry.lastName}
                       ></CommentSection>
                     </div>
                   </div>

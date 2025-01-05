@@ -10,12 +10,14 @@ import Button from "react-bootstrap/Button";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "../CommentSection/ReportCommentButton";
+import Suspend from "../Profile/Suspend";
 
 const CommentSection = ({
   userID,
   entryID,
   entry,
   firstName,
+  lastName,
   commentCount,
 }) => {
   const [user, setUser] = useState(null);
@@ -306,16 +308,23 @@ const CommentSection = ({
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="p-2 ">
-                  {!canManage && (
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <ReportButton
-                        commentID={comment.commentID}
+                  {!canManage &&
+                    (user.isAdmin ? (
+                      <Suspend
                         userID={comment.userID}
-                        username={comment.username}
-                        entryID={entryID}
+                        firstName={comment.firstName}
+                        suspended={comment.isSuspended}
                       />
-                    </Dropdown.Item>
-                  )}
+                    ) : (
+                      <Dropdown.Item className="p-0 btn btn-light">
+                        <ReportButton
+                          commentID={comment.commentID}
+                          userID={comment.userID}
+                          username={comment.username}
+                          entryID={entryID}
+                        />
+                      </Dropdown.Item>
+                    ))}
 
                   {canManage && (
                     <Dropdown.Item className="p-0 btn btn-light ">

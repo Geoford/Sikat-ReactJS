@@ -227,9 +227,11 @@ app.post("/send-otp", async (req, res) => {
       subject: "Your OTP for Registration",
       text: `Your OTP is: ${otp}`,
       html: `
-      <html>
+      <html lang="en">
         <head>
-          <meta charset="utf-8">
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Document</title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -249,7 +251,7 @@ app.post("/send-otp", async (req, res) => {
             .header {
               text-align: center;
               padding: 20px;
-              background-color: #4CAF50;
+              background-color: #5c0099;
               color: white;
               border-radius: 8px 8px 0 0;
             }
@@ -276,23 +278,30 @@ app.post("/send-otp", async (req, res) => {
           <table>
             <tr>
               <td class="header">
-                <h2>Your OTP for Registration</h2>
+                <h2>Your Sikat eDiary OTP for Registration</h2>
               </td>
             </tr>
             <tr>
               <td class="content">
                 <p>Hello,</p>
-                <p>Thank you for registering. Your One-Time Password (OTP) is:</p>
-                <h3 style="font-size: 36px; color: #4CAF50;">${otp}</h3>
-                <p>This OTP is valid for a short time. Please use it to complete your registration.</p>
-                <p>Check out the animation below:</p>
+                <p>
+                  Thank you for registering on Sikat eDiary. Your One-Time Password
+                  (OTP) is:
+                </p>
+                <h3 style="font-size: 36px; color: #ffb31a">${otp}</h3>
+                <p>
+                  This OTP is valid for a short time. Please use it to complete your
+                  registration.
+                </p>
                 <img src="https://cldup.com/D72zpdwI-i.gif" alt="Animated GIF" />
-                <p>Enjoy the visual content!</p>
               </td>
             </tr>
             <tr>
               <td class="footer">
-                <p>If you have trouble viewing this email, please check your email client settings.</p>
+                <p>
+                  If you have trouble viewing this email, please check your email
+                  client settings.
+                </p>
               </td>
             </tr>
           </table>
@@ -1584,7 +1593,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
   const entryID = req.params.entryID;
 
   // Assuming you're fetching data from a database
-  const query = `SELECT diary_entries.*, user_table.isAdmin, user_table.firstName, user_table.lastName, user_profiles.*
+  const query = `SELECT diary_entries.*, user_table.isAdmin, user_table.isSuspended, user_table.firstName, user_table.lastName, user_profiles.*
     FROM diary_entries 
     INNER JOIN user_table ON diary_entries.userID = user_table.userID 
     INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
@@ -1892,7 +1901,7 @@ app.get("/fetchComments/:entryID", (req, res) => {
     SELECT 
       comments.commentID, comments.text, comments.created_at, comments.replyCommentID,
       comments.userID,  -- Add this line to fetch userID
-      user_table.username, user_table.firstName, user_table.lastName, user_profiles.profile_image
+      user_table.username, user_table.firstName,user_table.isSuspended, user_table.lastName, user_profiles.profile_image
     FROM comments
     INNER JOIN user_table ON comments.userID = user_table.userID
     INNER JOIN user_profiles ON comments.userID = user_profiles.userID
