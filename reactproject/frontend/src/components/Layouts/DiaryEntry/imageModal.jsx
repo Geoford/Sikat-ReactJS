@@ -35,8 +35,9 @@ const ImageModal = ({ showModal, handleCloseModal, diaryImage }) => {
             alt="Diary Full View"
             className="rounded"
             style={{
-              height: "clamp(20rem, 80dvh, 60rem)",
-              maxWidth: "100%",
+              height: "clamp(20rem, 55dvw, 38rem)",
+              width: "100%",
+              objectFit: "contain",
             }}
           />
         </Modal.Body>

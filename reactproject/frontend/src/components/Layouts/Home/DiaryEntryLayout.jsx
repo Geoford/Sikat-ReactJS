@@ -14,6 +14,7 @@ import ChatButton from "../DiaryEntry/ChatButton";
 import EditDiaryEntryButton from "./EditDiaryEntryButton";
 import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
+import ImageModal from "../DiaryEntry/ImageModal";
 
 const DiaryEntryLayout = ({
   key,
@@ -595,42 +596,11 @@ const DiaryEntryLayout = ({
             />
 
             {/* Modal */}
-            <Modal
-              show={showModal}
-              onHide={handleCloseModal}
-              centered
-              size="lg"
-              style={{}}
-            >
-              <Modal.Body
-                className="text-center p-1 position-relative"
-                // style={{ maxHeight: "70vh" }}
-              >
-                <div
-                  className="position-absolute rounded"
-                  style={{
-                    right: "1rem",
-                    top: "1rem",
-                    backgroundColor: "rgb(242, 242, 242,.5)",
-                    paddingTop: ".15rem",
-                    paddingLeft: ".15rem",
-                    paddingRight: ".15rem",
-                  }}
-                >
-                  <CloseButton onClick={handleCloseModal} style={{}} />
-                </div>
-
-                <img
-                  src={`http://localhost:8081${entry.diary_image}`}
-                  alt="Diary Full View"
-                  className="rounded"
-                  style={{
-                    height: "clamp(20rem, 80dvh, 60rem)",
-                    maxWidth: "100%",
-                  }}
-                />
-              </Modal.Body>
-            </Modal>
+            <ImageModal
+              showModal={showModal}
+              handleCloseModal={handleCloseModal}
+              diaryImage={`http://localhost:8081${entry.diary_image}`}
+            ></ImageModal>
           </>
         )}
       </div>

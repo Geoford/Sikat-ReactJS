@@ -441,7 +441,7 @@ const CommentSection = ({
                     color: "var(--primary)",
                   }}
                 >
-                  <i className="bx bxs-send bx-sm"></i>
+                  <i className="bx bxs-send"></i>
                 </button>
               </div>
             </FloatingLabel>
@@ -535,7 +535,7 @@ const CommentSection = ({
                   right: "10px",
                   bottom: "10px",
                   color: "red",
-                  fontSize: "clamp(1.2rem, 5dvw, 2rem)",
+                  fontSize: "clamp(1.4rem, 5dvw, 2rem)",
                 }}
               >
                 <i class="bx bx-x"></i>
