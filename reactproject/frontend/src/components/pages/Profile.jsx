@@ -503,12 +503,14 @@ const Profile = () => {
                       entry={entry}
                       user={currentUser}
                       // entryFirstName={entry.firstName}
+
                       followedUsers={followedUsers}
                       handleFollowToggle={handleFollowToggle}
                       handleClick={handleClick}
                       expandButtons={expandButtons}
                       formatDate={formatDate}
                     />
+
                     {/* {entry.firstName} */}
                   </div>
                 ))

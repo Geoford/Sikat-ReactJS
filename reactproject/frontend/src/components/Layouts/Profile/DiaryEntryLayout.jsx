@@ -15,6 +15,7 @@ import EditDiaryEntryButton from "../Home/EditDiaryEntryButton";
 import EditPostButton from "../Home/EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import ImageModal from "../DiaryEntry/ImageModal";
+import Suspend from "./Suspend";
 
 const DiaryEntryLayout = ({
   key,
@@ -482,7 +483,7 @@ const DiaryEntryLayout = ({
         )}
 
         <div>
-          {ownDiary ? (
+          {ownDiary || currentUser.isAdmin ? (
             <Dropdown>
               <Dropdown.Toggle
                 className="btn-light d-flex align-items-center pt-0 pb-2"
@@ -492,46 +493,56 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                <Dropdown.Item className="p-0 btn btn-light">
-                  {user.isAdmin ? (
-                    <EditPostButton
-                      diaryTitle={entry.title}
-                      diaryDesc={entry.description}
-                      diaryVisib={entry.visibility}
-                      diaryAnon={entry.anonimity}
-                      diarySub={entry.subjects}
-                      imageFile={
-                        entry.diary_image &&
-                        `http://localhost:8081${entry.diary_image}`
-                      }
-                    ></EditPostButton>
-                  ) : (
-                    <EditDiaryEntryButton
-                      entryID={entry.entryID}
-                      diaryTitle={entry.title}
-                      diaryDesc={entry.description}
-                      diaryVisib={entry.visibility}
-                      diaryAnon={entry.anonimity}
-                      diarySub={entry.subjects}
-                      imageFile={
-                        entry.diary_image &&
-                        `http://localhost:8081${entry.diary_image}`
-                      }
-                    />
-                  )}
-                </Dropdown.Item>
+                {user.isAdmin ? (
+                  <Suspend
+                    userID={entry.userID}
+                    firstName={entry.firstName}
+                    suspended={entry.isSuspended}
+                  ></Suspend>
+                ) : (
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      {user.isAdmin ? (
+                        <EditPostButton
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        ></EditPostButton>
+                      ) : (
+                        <EditDiaryEntryButton
+                          entryID={entry.entryID}
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        />
+                      )}
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
+                )}
                 {/* <Dropdown.Item
                   className="p-0 btn btn-light"
                   onClick={() => handleDeleteEntry(entry.entryID)}
                 >
                   Delete
                 </Dropdown.Item> */}
-                <Dropdown.Item className="p-0 btn btn-light">
-                  <DeleteButton
-                    entryID={entry.entryID}
-                    title={entry.title}
-                  ></DeleteButton>
-                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           ) : (
