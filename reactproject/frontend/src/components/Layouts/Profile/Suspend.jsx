@@ -58,7 +58,9 @@ function Suspend({ userID, firstName, suspended }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Suspend {firstName}</Modal.Title>
+          <Modal.Title>
+            <h4>Suspend {firstName}</h4>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="text-danger">

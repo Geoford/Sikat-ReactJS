@@ -306,6 +306,7 @@ const CommentSection = ({
                   className="btn-light d-flex align-items-center pt-0 pb-2"
                   id="dropdown-basic"
                   bsPrefix="custom-toggle"
+                  disabled={comment.isAdmin && !user.isAdmin}
                 >
                   <h5 className="m-0">...</h5>
                 </Dropdown.Toggle>
@@ -323,31 +324,33 @@ const CommentSection = ({
                         <ReportButton
                           commentID={comment.commentID}
                           userID={comment.userID}
-                          username={comment.username}
+                          firstName={comment.firstName}
                           entryID={entryID}
                         />
                       </Dropdown.Item>
                     ))}
 
                   {canManage && (
-                    <Dropdown.Item className="p-0 btn btn-light ">
-                      <button
-                        className="btn btn-light w-100 "
-                        onClick={() => handleDeleteComment(comment.commentID)}
-                      >
-                        Delete
-                      </button>
-                    </Dropdown.Item>
-                  )}
-                  {canManage && (
-                    <Dropdown.Item className="p-0 btn btn-light ">
-                      <button
-                        className="btn btn-light w-100"
-                        onClick={() => handleEditComment(comment)}
-                      >
-                        Edit
-                      </button>
-                    </Dropdown.Item>
+                    <>
+                      <Dropdown.Item className="p-0 btn btn-light ">
+                        <button
+                          className="btn btn-light w-100 d-flex align-items-center justify-content-center"
+                          onClick={() => handleEditComment(comment)}
+                        >
+                          <p className="m-0">Edit</p>
+                          <i className="bx bxs-edit m-0 ms-1"></i>
+                        </button>
+                      </Dropdown.Item>
+                      <Dropdown.Item className="p-0 btn btn-light ">
+                        <button
+                          className="btn btn-light w-100 d-flex align-items-center justify-content-center"
+                          onClick={() => handleDeleteComment(comment.commentID)}
+                        >
+                          <p className="m-0">Delete</p>
+                          <i className="bx bx-message-square-x m-0 ms-1"></i>
+                        </button>
+                      </Dropdown.Item>
+                    </>
                   )}
                 </Dropdown.Menu>
               </Dropdown>

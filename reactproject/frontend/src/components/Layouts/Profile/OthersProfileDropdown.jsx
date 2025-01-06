@@ -2,9 +2,11 @@ import Dropdown from "react-bootstrap/Dropdown";
 import EditPersonalDetailButton from "../../pages/PagesUser/UserProfileLayout/EditPersonalDetailButton";
 import ReportUserProfileButton from "./ReportUserProfileButton";
 import Suspend from "./Suspend";
+import ChatButton from "./ChatButton";
 
 const OthersProfileDropdown = ({
   isAdmin,
+  ownerAdmin,
   userID,
   firstName,
   toBeReported,
@@ -33,6 +35,10 @@ const OthersProfileDropdown = ({
       <Dropdown.Menu style={{ zIndex: "1" }}>
         {isAdmin ? (
           ""
+        ) : ownerAdmin ? (
+          <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
+            <ChatButton></ChatButton>
+          </Dropdown.Item>
         ) : (
           <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
             <ReportUserProfileButton

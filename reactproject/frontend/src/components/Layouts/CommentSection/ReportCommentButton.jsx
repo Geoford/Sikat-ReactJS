@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 
-function ReportCommentButton({ commentID, userID, username, entryID }) {
+function ReportCommentButton({ commentID, userID, firstName, entryID }) {
   const [show, setShow] = useState(false);
   const [selectedBehavior, setSelectedBehavior] = useState("");
   const [otherText, setOtherText] = useState("");
@@ -70,13 +70,19 @@ function ReportCommentButton({ commentID, userID, username, entryID }) {
 
   return (
     <>
-      <button className="btn btn-light w-100" onClick={handleShow}>
-        Report
+      <button
+        className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
+        onClick={handleShow}
+      >
+        <p className="m-0">Report</p>
+        <i class="bx bx-error"></i>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Report {username} Comment</Modal.Title>
+          <Modal.Title>
+            <h5>Report {firstName}'s Comment</h5>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ minHeight: "15rem" }}>
           <div>
@@ -115,13 +121,13 @@ function ReportCommentButton({ commentID, userID, username, entryID }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Cancel
+            <p className="m-0">Cancel</p>
           </Button>
           <button
             className="primaryButton py-2 rounded"
             onClick={handleSubmitReport}
           >
-            Save Changes
+            <p className="m-0">Save Changes</p>
           </button>
         </Modal.Footer>
       </Modal>
