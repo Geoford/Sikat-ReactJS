@@ -150,7 +150,7 @@ const NavBar = ({ ActiveTab }) => {
             ""
           )}
 
-          {/* <Link
+          <Link
             className={`navIcons text-light ${
               ActiveTab === "Settings" ? "active" : ""
             }`}
@@ -158,7 +158,7 @@ const NavBar = ({ ActiveTab }) => {
           >
             <i class="bx bx-cog"></i>
             <p className="navToolTip">Settings</p>
-          </Link> */}
+          </Link>
         </div>
         <div className="d-flex align-items-center gap-2 navDropdown">
           <div>

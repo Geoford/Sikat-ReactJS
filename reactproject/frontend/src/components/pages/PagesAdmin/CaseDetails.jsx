@@ -189,9 +189,17 @@ const CaseDetails = () => {
               </div>
             </div>
 
-            <div className="d-flex justify-content-end mt-2">
+            <div className="d-flex justify-content-end flex-column gap-1 mt-2">
+              {caseDetails.isAddress ? (
+                ""
+              ) : (
+                <button className="primaryButton w-100 py-2" type="submit">
+                  <p className="m-0">Mark as Addressed</p>
+                </button>
+              )}
+
               <button className="primaryButton w-100 py-2" type="submit">
-                Submit
+                <p className="m-0">Download</p>
               </button>
             </div>
           </form>

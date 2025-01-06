@@ -422,7 +422,7 @@ const DiaryEntryLayout = ({
                 {entry.anonimity === "private" ? (
                   <h5 className="m-0">
                     {entry.alias}
-                    {user.userID === entry.userID ? " (You)" : ""}
+                    {/* {user.userID === entry.userID ? " (You)" : ""} */}
                   </h5>
                 ) : (
                   <Link
