@@ -42,6 +42,20 @@ const NavBar = ({ ActiveTab }) => {
     }
   }, [navigate]);
 
+  // if (loading) {
+  //   return (
+  //     <nav
+  //       className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
+  //       style={{
+  //         position: "fixed",
+  //         top: "0",
+  //         minHeight: "4rem",
+  //         width: "100%",
+  //       }}
+  //     ></nav>
+  //   );
+  // }
+
   if (!user) return null;
 
   const RegisteredUser = "RegisteredUser";
