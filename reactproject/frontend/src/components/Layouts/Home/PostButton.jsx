@@ -113,13 +113,12 @@ function PostButton({ onEntrySaved }) {
 
     if (Object.keys(errors).length > 0) return;
 
-    // If scheduledDate exists, convert it to UTC before submitting
-    let utcScheduledDate = null;
+    let manilaScheduledDate = null;
     if (scheduledDate) {
-      utcScheduledDate = new Date(scheduledDate);
-      // Convert to UTC (removes any timezone offset that might cause issues)
-      utcScheduledDate.setMinutes(
-        utcScheduledDate.getMinutes() - utcScheduledDate.getTimezoneOffset()
+      const manilaOffset = 8 * 60; // Manila is UTC +8
+      manilaScheduledDate = new Date(scheduledDate);
+      manilaScheduledDate.setMinutes(
+        manilaScheduledDate.getMinutes() + manilaOffset
       );
     }
 
@@ -127,8 +126,8 @@ function PostButton({ onEntrySaved }) {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("userID", user?.userID);
-    if (utcScheduledDate) {
-      formData.append("scheduledDate", utcScheduledDate.toISOString()); // Send in UTC format
+    if (manilaScheduledDate) {
+      formData.append("scheduledDate", manilaScheduledDate.toISOString());
     }
     if (file) {
       formData.append("file", file);

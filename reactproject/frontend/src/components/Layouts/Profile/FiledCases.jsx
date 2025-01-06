@@ -1,11 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import axios from "axios";
 
-const FiledCases = () => {
+const FiledCases = ({ userID }) => {
   const [showModal, setShowModal] = useState(false);
+  const [filedCases, setFiledCases] = useState([]);
+
+  useEffect(() => {
+    if (userID) {
+      axios
+        .get(`http://localhost:8081/filedCases/${userID}`)
+        .then((response) => {
+          setFiledCases(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching gadify logs:", error);
+        });
+    }
+  }, [userID]);
+
+  const formatDate = (createdAt) => {
+    const entryDate = new Date(createdAt);
+    return entryDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric", // Include year if needed
+    });
+  };
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -44,19 +68,31 @@ const FiledCases = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th className="text-center align-middle" scope="row">
-                    <p className="m-0">MM/DD/YYYY</p>
-                  </th>
-                  <td className="text-center align-middle">
-                    <p className="m-0">Pending</p>
-                  </td>
-                  <td className="text-center align-middle">
-                    <button className="primaryButton">
-                      <p className="m-0">view</p>
-                    </button>
-                  </td>
-                </tr>
+                {filedCases.length > 0 ? (
+                  filedCases.map((caseItem) => (
+                    <tr key={caseItem.reportID}>
+                      <th className="text-center align-middle" scope="row">
+                        <p className="m-0">{formatDate(caseItem.created_at)}</p>
+                      </th>
+                      <td className="text-center align-middle">
+                        <p className="m-0">
+                          {caseItem.isAddress ? "Addressed" : "Pending"}
+                        </p>
+                      </td>
+                      <td className="text-center align-middle">
+                        <button className="primaryButton">
+                          <p className="m-0">View</p>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center align-middle">
+                      No filed cases available.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

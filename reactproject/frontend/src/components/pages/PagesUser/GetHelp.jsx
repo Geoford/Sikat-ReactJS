@@ -7,7 +7,10 @@ import SubjectSelection from "../../Layouts/LayoutUser/SubjectSelection";
 import axios from "axios";
 import MainLayout from "../../Layouts/MainLayout";
 
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 const GetHelp = () => {
+  const { userID } = useParams();
   const [selectedSubjects, setSelectedSubjects] = useState("");
   const [formData, setFormData] = useState({
     victimName: "",
@@ -30,15 +33,25 @@ const GetHelp = () => {
 
     if (files) {
       const file = files[0];
-      const updatedDocuments = [...formData.supportingDocuments];
-      const index = parseInt(name.split("_")[1], 10);
 
-      updatedDocuments[index] = {
-        file,
-        preview: URL.createObjectURL(file),
-      };
+      // Check if the file size exceeds 5MB (5 * 1024 * 1024 bytes)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB, setting file to null.");
+        const updatedDocuments = [...formData.supportingDocuments];
+        const index = parseInt(name.split("_")[1], 10);
+        updatedDocuments[index] = null;
+        setFormData({ ...formData, supportingDocuments: updatedDocuments });
+      } else {
+        const updatedDocuments = [...formData.supportingDocuments];
+        const index = parseInt(name.split("_")[1], 10);
 
-      setFormData({ ...formData, supportingDocuments: updatedDocuments });
+        updatedDocuments[index] = {
+          file,
+          preview: URL.createObjectURL(file),
+        };
+
+        setFormData({ ...formData, supportingDocuments: updatedDocuments });
+      }
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -70,7 +83,7 @@ const GetHelp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8081/submit-report",
+        `http://localhost:8081/submit-report/${userID}`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

@@ -29,7 +29,7 @@ const ProfileDropdown = ({ userID, isAdmin }) => {
           ""
         ) : (
           <Dropdown.Item className="p-0 px-2 btn btn-light">
-            <FiledCases></FiledCases>
+            <FiledCases userID={userID}></FiledCases>
           </Dropdown.Item>
         )}
 

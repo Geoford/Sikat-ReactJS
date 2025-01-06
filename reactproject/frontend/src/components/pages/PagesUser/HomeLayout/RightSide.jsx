@@ -232,7 +232,7 @@ const RightSide = () => {
           <p className="m-0 mb-1">
             Are you or someone you know experiencing gender-based violence?
           </p>
-          <Link to={"/GetHelp/"}>
+          <Link to={`/GetHelp/${user.userID}`}>
             <button className="secondaryButton text-decoration-underline">
               Report an Incident
             </button>

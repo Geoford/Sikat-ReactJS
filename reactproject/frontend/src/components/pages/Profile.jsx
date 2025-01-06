@@ -509,7 +509,6 @@ const Profile = () => {
                       entry={entry}
                       user={currentUser}
                       // entryFirstName={entry.firstName}
-
                       followedUsers={followedUsers}
                       handleFollowToggle={handleFollowToggle}
                       handleClick={handleClick}

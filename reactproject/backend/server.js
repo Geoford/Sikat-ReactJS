@@ -1202,15 +1202,6 @@ app.post(
 
     const isScheduled = scheduledDate ? 1 : 0;
 
-    let finalScheduledDate = null;
-    if (scheduledDate) {
-      finalScheduledDate = new Date(scheduledDate);
-
-      finalScheduledDate.setMinutes(
-        finalScheduledDate.getMinutes() - finalScheduledDate.getTimezoneOffset()
-      );
-    }
-
     const query = `
       INSERT INTO diary_entries (title, description, userID, diary_image, anonimity, scheduledDate, isScheduled)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -1221,7 +1212,7 @@ app.post(
       userID,
       diary_image,
       anonimity,
-      finalScheduledDate ? finalScheduledDate.toISOString() : null, // Store date in ISO string (UTC)
+      scheduledDate,
       isScheduled,
     ];
 
@@ -1571,7 +1562,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
         diary_entries.isScheduled = 0
         OR (
           diary_entries.isScheduled = 1
-          AND diary_entries.scheduledDate < NOW()
+          AND diary_entries.scheduledDate <  CONVERT_TZ(NOW(), '+00:00', '+08:00')
         )
       )
     `;
@@ -2387,14 +2378,14 @@ app.get("/user_profile/:userID", (req, res) => {
   });
 });
 
-app.post("/submit-report", (req, res) => {
+app.post("/submit-report/:userID", (req, res) => {
   uploadSupportingDocuments.array("supportingDocuments", 5)(req, res, (err) => {
     if (err) {
       return res
         .status(500)
         .json({ error: "File upload error: " + err.message });
     }
-
+    const { userID } = req.params;
     const {
       victimName,
       perpetratorName,
@@ -2413,13 +2404,14 @@ app.post("/submit-report", (req, res) => {
 
     const query = `
       INSERT INTO gender_based_crime_reports 
-      (victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects, isAddress) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (userID, victimName, perpetratorName, contactInfo, gender, incidentDescription, location, date, supportingDocuments, subjects, isAddress) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
       query,
       [
+        userID,
         victimName,
         perpetratorName,
         contactInfo,
@@ -3468,6 +3460,27 @@ app.get("/actvity_logs/flags/:userID", (req, res) => {
     JOIN user_table ON flagged_reports.actorID = user_table.userID
     WHERE flagged_reports.actorID = ?
     ORDER BY flagged_reports.created_at DESC
+    `,
+    [userID],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching activity logs:", err);
+        return res.status(500).send("Error fetching activity logs.");
+      }
+      res.json(results);
+    }
+  );
+});
+
+app.get("/filedCases/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  db.query(
+    `
+    SELECT *
+    FROM gender_based_crime_reports
+    WHERE gender_based_crime_reports.userID = ?
+    ORDER BY gender_based_crime_reports.created_at DESC
     `,
     [userID],
     (err, results) => {

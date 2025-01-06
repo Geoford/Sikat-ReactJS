@@ -365,7 +365,7 @@ const CenterLayout = () => {
                 .filter((entry) => {
                   const now = new Date();
                   const scheduledDate = new Date(entry.scheduledDate);
-                  // Adjust time zone for comparison (e.g., UTC+8)
+
                   const dateToBePosted = new Date(
                     now.getTime() + 8 * 60 * 60 * 1000
                   );
@@ -513,7 +513,6 @@ const CenterLayout = () => {
           .filter((entry) => {
             const now = new Date();
             const scheduledDate = new Date(entry.scheduledDate);
-            // Adjust time zone for comparison (e.g., UTC+8)
             const dateToBePosted = new Date(now.getTime() + 8 * 60 * 60 * 1000);
             return scheduledDate < dateToBePosted;
           })

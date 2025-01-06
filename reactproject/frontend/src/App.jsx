@@ -66,7 +66,7 @@ function App() {
           <Route path="/Profile/:userID" element={<Profile />} />
           <Route path="/DiaryEntries/" element={<DiaryEntries />} />
           <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
-          <Route path="/GetHelp" element={<GetHelp />} />
+          <Route path="/GetHelp/:userID" element={<GetHelp />} />
           <Route path="/Settings/:userID" element={<Settings />} />
           <Route path="/Followers" element={<Followers />} />
 
