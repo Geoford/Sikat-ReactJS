@@ -496,7 +496,12 @@ const Profile = () => {
           <div className="col-md mb-2 p-0 px-md-1">
             {entries.length > 0 ? (
               entries
-                .filter((entry) => ownProfile || entry.visibility !== "private")
+                .filter(
+                  (entry) =>
+                    ownProfile ||
+                    (entry.visibility !== "private" &&
+                      entry.anonimity !== "private")
+                )
                 .map((entry) => (
                   <div className="w-100 ">
                     <DiaryEntryLayout

@@ -481,7 +481,7 @@ const DiaryEntry = () => {
                               <>
                                 {user &&
                                   user.userID !== entry.userID &&
-                                  entry.anonymity !== "private" &&
+                                  entry.anonimity !== "private" &&
                                   entry.isAdmin !== 1 && (
                                     <div className="d-flex align-items-center gap-1">
                                       <h3
@@ -540,7 +540,7 @@ const DiaryEntry = () => {
                               <h5 className="m-0">...</h5>
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="p-2">
-                              {user.isAdmin ? (
+                              {user.isAdmin && !entry.isAdmin ? (
                                 <Suspend
                                   userID={entry.userID}
                                   firstName={entry.firstName}
@@ -575,12 +575,12 @@ const DiaryEntry = () => {
                                       />
                                     )}
                                   </Dropdown.Item>
-                                  <Dropdown.Item className="p-0 btn btn-light">
+                                  {/* <Dropdown.Item className="p-0 btn btn-light">
                                     <DeleteButton
                                       entryID={entry.entryID}
                                       title={entry.title}
                                     ></DeleteButton>
-                                  </Dropdown.Item>
+                                  </Dropdown.Item> */}
                                 </>
                               )}
                             </Dropdown.Menu>

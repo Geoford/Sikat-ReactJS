@@ -444,7 +444,7 @@ const DiaryEntryLayout = ({
                   <>
                     {user &&
                       user.userID !== entry.userID &&
-                      entry.anonymity !== "private" &&
+                      entry.anonimity !== "private" &&
                       entry.isAdmin !== 1 && (
                         <div className="d-flex align-items-center gap-1">
                           <h3
@@ -496,48 +496,62 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                {user.isAdmin ? (
-                  <Suspend
-                    userID={entry.userID}
-                    firstName={entry.firstName}
-                    suspended={entry.isSuspended}
-                  ></Suspend>
+                {user.isAdmin && !entry.userID ? (
+                  <Dropdown.Item className="p-0 btn btn-light">
+                    <Suspend
+                      userID={entry.userID}
+                      firstName={entry.firstName}
+                      suspended={entry.isSuspended}
+                    ></Suspend>
+                  </Dropdown.Item>
                 ) : (
                   <>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      {user.isAdmin ? (
-                        <EditPostButton
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        ></EditPostButton>
-                      ) : (
-                        <EditDiaryEntryButton
-                          entryID={entry.entryID}
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        />
-                      )}
-                    </Dropdown.Item>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <DeleteButton
-                        entryID={entry.entryID}
-                        title={entry.title}
-                      ></DeleteButton>
-                    </Dropdown.Item>
+                    {user.isAdmin && !entry.userID ? (
+                      <Dropdown.Item className="p-0 btn btn-light">
+                        <Suspend
+                          userID={entry.userID}
+                          firstName={entry.firstName}
+                          suspended={entry.isSuspended}
+                        ></Suspend>
+                      </Dropdown.Item>
+                    ) : (
+                      <>
+                        <Dropdown.Item className="p-0 btn btn-light">
+                          {user.isAdmin ? (
+                            <EditPostButton
+                              diaryTitle={entry.title}
+                              diaryDesc={entry.description}
+                              diaryVisib={entry.visibility}
+                              diaryAnon={entry.anonimity}
+                              diarySub={entry.subjects}
+                              imageFile={
+                                entry.diary_image &&
+                                `http://localhost:8081${entry.diary_image}`
+                              }
+                            ></EditPostButton>
+                          ) : (
+                            <EditDiaryEntryButton
+                              entryID={entry.entryID}
+                              diaryTitle={entry.title}
+                              diaryDesc={entry.description}
+                              diaryVisib={entry.visibility}
+                              diaryAnon={entry.anonimity}
+                              diarySub={entry.subjects}
+                              imageFile={
+                                entry.diary_image &&
+                                `http://localhost:8081${entry.diary_image}`
+                              }
+                            />
+                          )}
+                        </Dropdown.Item>
+                        <Dropdown.Item className="p-0 btn btn-light">
+                          <DeleteButton
+                            entryID={entry.entryID}
+                            title={entry.title}
+                          ></DeleteButton>
+                        </Dropdown.Item>
+                      </>
+                    )}
                   </>
                 )}
                 {/* <Dropdown.Item

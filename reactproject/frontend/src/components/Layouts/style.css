@@ -464,6 +464,9 @@ input.form-control:focus {
   box-shadow: none !important;
 }
 /* Styles for the options inside the select dropdown */
+.dropdown-menu {
+  z-index: 1 !important;
+}
 .dateOption {
   color: black;
   font-size: 17px;
@@ -810,6 +813,7 @@ input.form-control:focus {
     right: 0.8rem;
     top: 0.9rem;
   }
+
   .ChatButton button {
     width: clamp(3rem, 10dvw, 3rem);
     height: clamp(3rem, 10dvw, 3rem);

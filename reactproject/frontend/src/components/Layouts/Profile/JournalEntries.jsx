@@ -66,7 +66,10 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                   style={{ eight: "35vh", overflowY: "scroll" }}
                 >
                   {entries.map((entry) => {
-                    if (!ownProfile && entry.visibility === "private") {
+                    if (
+                      (!ownProfile && entry.visibility === "private") ||
+                      entry.anonimity === "private"
+                    ) {
                       return null;
                     }
                     return (
@@ -136,7 +139,10 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
             style={{ height: "35vh", overflowY: "scroll" }}
           >
             {entries.map((entry) => {
-              if (!ownProfile && entry.visibility === "private") {
+              if (
+                (!ownProfile && entry.visibility === "private") ||
+                entry.anonimity === "private"
+              ) {
                 return null;
               }
               return (
