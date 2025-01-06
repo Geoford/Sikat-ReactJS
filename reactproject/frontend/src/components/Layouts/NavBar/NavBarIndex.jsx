@@ -53,7 +53,7 @@ const NavBarIndex = ({ onNavigate, refs }) => {
             to="/Login"
             style={{ minWidth: "6rem" }}
           >
-            <button className="w-100 orangeButton px-4 py-1">
+            <button className="w-100 orangeButton px-4 py-md-1 py-lg-2">
               <p className="m-0 text-dark fw-bold">Log in</p>
             </button>
           </Link>

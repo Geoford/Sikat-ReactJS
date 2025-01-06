@@ -160,12 +160,9 @@ const IndexPage = () => {
           refs={{ Home, Events, MissionVision, About, Contacts }}
         ></NavBarIndex>
 
-        <div
-          className="mt-2 d-flex flex-column gap-5"
-          style={{ height: "100dvh" }}
-        >
+        <div className="d-flex flex-column gap-5" style={{ height: "100dvh" }}>
           {/* CAROUSEL */}
-          <div className="my-5 shadow">
+          <div className="shadow">
             <IndexCarousel images={images}></IndexCarousel>
           </div>
 
@@ -179,12 +176,12 @@ const IndexPage = () => {
               className="rounded text-light py-3"
               style={{ backgroundColor: "var(--primary)" }}
             >
-              <h1 className="m-0">Events/Announcements</h1>
+              <h3 className="m-0">Events/Announcements</h3>
             </div>
             <div className="row gap-2">
               <div
                 className="col-lg d-flex align-items-center"
-                style={{ minHeight: "clamp(20rem, 50dvw, 30rem)" }}
+                style={{ height: "clamp(20rem, 50dvw, 30rem)" }}
               >
                 <img
                   className="rounded"
@@ -290,13 +287,13 @@ const IndexPage = () => {
             style={{ backgroundColor: "white", scrollMarginTop: "6rem" }}
           >
             <div className="d-flex flex-column gap-4">
-              <h1
+              <h2
                 className="m-0 d-flex align-items-center gap-1 text-start text-light py-3 px-3 rounded"
                 style={{ backgroundColor: "var(--secondary)" }}
               >
                 <i class="bx bx-info-circle"></i>
                 About
-              </h1>
+              </h2>
               <h4
                 className="m-0 mx-3 text-secondary text-start fw-lighter"
                 style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}

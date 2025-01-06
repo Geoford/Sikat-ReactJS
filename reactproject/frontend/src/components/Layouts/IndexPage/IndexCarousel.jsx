@@ -12,10 +12,22 @@ const IndexCarousel = ({ images }) => {
   return (
     <Carousel activeIndex={index} onSelect={handleSelect}>
       {images.map((image) => (
-        <Carousel.Item key={image.id}>
-          <div className="position-relative">
-            <div className="carouselBlackFade"></div>
+        <Carousel.Item
+          className="position-relative overflow-hidden"
+          key={image.id}
+          interval={2000}
+        >
+          <div className="carouselBlackFade"></div>
+
+          <div
+            className="overflow-x-hidden"
+            style={{
+              width: "100dvw",
+              height: "clamp(30rem, 80dvw, 90dvh)",
+            }}
+          >
             <img
+              className=""
               src={
                 image && image.image_path
                   ? `http://localhost:8081${image.image_path}`
@@ -25,12 +37,29 @@ const IndexCarousel = ({ images }) => {
               style={{
                 height: "100%",
                 width: "100%",
-                objectFit: "cover",
+                objectFit: "contain",
               }}
             />
+            <div
+              className="position-absolute"
+              style={{
+                height: "130%",
+                width: "130%",
+                background: `url(http://localhost:8081${image.image_path})`,
+                filter: "blur(1rem)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                top: "-.7rem",
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: "-1",
+              }}
+            ></div>
           </div>
+
           <Carousel.Caption>
-            <h3>{image.title}</h3>
+            <h4>{image.title}</h4>
             <p>{image.description}</p>
           </Carousel.Caption>
         </Carousel.Item>
