@@ -1,15 +1,13 @@
 import DiaryEntryButton from "./DiaryEntryButton";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import axios from "axios";
 import FilterButton from "./FilterButton";
 import CenterLoader from "../../loaders/CenterLoader";
 import DiaryEntryLayout from "./DiaryEntryLayout";
 import PostButton from "./PostButton";
 import MessageModal from "../DiaryEntry/messageModal";
-import EditPostButton from "./EditPostButton";
-import DeleteButton from "../DiaryEntry/DeleteButton";
 
 const CenterLayout = () => {
   const [entries, setEntries] = useState([]);
@@ -356,148 +354,6 @@ const CenterLayout = () => {
           />
         )}
       </div>
-      {user.isAdmin ? (
-        <>
-          {/* FOR SCHEDULED POST */}
-          {entries.length === 0
-            ? ""
-            : entries
-                .filter((entry) => {
-                  const now = new Date();
-                  const scheduledDate = new Date(entry.scheduledDate);
-                  // Adjust time zone for comparison (e.g., UTC+8)
-                  const dateToBePosted = new Date(
-                    now.getTime() + 8 * 60 * 60 * 1000
-                  );
-                  return scheduledDate > dateToBePosted;
-                })
-                .map((entry) => (
-                  <>
-                    <div
-                      className="position-relative rounded shadow-sm p-3 mb-3"
-                      style={{ backgroundColor: "white", width: "100%" }}
-                    >
-                      <div className="d-flex align-items-start justify-content-between border-bottom pb-2">
-                        <div className="d-flex align-items-center gap-2 text-secondary">
-                          <Link
-                            to={`/Profile/${entry.userID}`}
-                            className="linkText rounded p-0"
-                          >
-                            <div className="profilePicture">
-                              <img
-                                src={
-                                  entry.profile_image
-                                    ? `http://localhost:8081${entry.profile_image}`
-                                    : userDefaultProfile
-                                }
-                                alt="Profile"
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </div>
-                          </Link>
-
-                          <div className="d-flex flex-column align-items-start">
-                            <div className="d-flex align-items-center justify-content-center gap-1">
-                              {entry.anonimity === "private" ? (
-                                <h5 className="m-0">
-                                  {entry.alias}
-                                  {user.userID === entry.userID ? " (You)" : ""}
-                                </h5>
-                              ) : (
-                                <Link
-                                  to={`/Profile/${entry.userID}`}
-                                  className="linkText rounded p-0"
-                                >
-                                  <h5 className="m-0 text-start">
-                                    {entry.isAdmin === 1
-                                      ? "Gender and Development"
-                                      : entry.firstName && entry.lastName
-                                      ? entry.firstName + " " + entry.lastName
-                                      : user.firstName + " " + user.lastName}
-                                  </h5>
-                                </Link>
-                              )}
-                            </div>
-                            <p
-                              className="m-0 d-flex align-items-center gap-1"
-                              style={{ fontSize: ".7rem" }}
-                            >
-                              Scheduled date: {formatDate(entry.scheduledDate)}
-                            </p>
-                          </div>
-                        </div>
-                        <div>
-                          <Dropdown>
-                            <Dropdown.Toggle
-                              className="btn-light d-flex align-items-center pt-0 pb-2"
-                              id="dropdown-basic"
-                              bsPrefix="custom-toggle"
-                            >
-                              <h5 className="m-0">...</h5>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className="p-2">
-                              <Dropdown.Item className="p-0 btn btn-light">
-                                <EditPostButton
-                                  diaryTitle={entry.title}
-                                  diaryDesc={entry.description}
-                                  diaryVisib={entry.visibility}
-                                  diaryAnon={entry.anonimity}
-                                  diarySub={entry.subjects}
-                                  imageFile={
-                                    entry.diary_image &&
-                                    `http://localhost:8081${entry.diary_image}`
-                                  }
-                                ></EditPostButton>
-                              </Dropdown.Item>
-                              <Dropdown.Item className="p-0 btn btn-light">
-                                <DeleteButton
-                                  entryID={entry.entryID}
-                                  title={entry.title}
-                                ></DeleteButton>
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </div>
-                      </div>
-                      <div
-                        className="text-start text-secondary pt-2"
-                        style={{ minHeight: "5rem" }}
-                      >
-                        <div className="d-flex gap-1 align-items-center mt-2">
-                          <div className="d-flex flex-column gap-1">
-                            <h5 className="m-0">
-                              {entry.title}
-                              {/* {user} */}
-                            </h5>
-                          </div>
-                        </div>
-
-                        <p className="m-0" style={{ whiteSpace: "pre-wrap" }}>
-                          {entry.description}
-                        </p>
-
-                        {/* Clickable Image */}
-                        {entry.diary_image && (
-                          <>
-                            <img
-                              className="DiaryImage mt-1 rounded"
-                              src={`http://localhost:8081${entry.diary_image}`}
-                              alt="Diary"
-                              style={{ cursor: "pointer", opacity: ".5" }} // Add pointer cursor
-                              onClick={() => handleShowModal(entry.entryID)} // Open modal on click
-                            />
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                ))}
-        </>
-      ) : null}
       <div className="d-flex justify-content-end">
         {user.isAdmin ? (
           <FilterButton onFilterChange={handleFilterChange} />
@@ -505,30 +361,21 @@ const CenterLayout = () => {
           <FilterButton onFilterChange={handleFilterChange} />
         )}
       </div>
-      {/* FOR POSTED DIARIES */}
       {entries.length === 0 ? (
         <p>No entries available.</p>
       ) : (
-        entries
-          .filter((entry) => {
-            const now = new Date();
-            const scheduledDate = new Date(entry.scheduledDate);
-            // Adjust time zone for comparison (e.g., UTC+8)
-            const dateToBePosted = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-            return scheduledDate < dateToBePosted;
-          })
-          .map((entry) => (
-            <DiaryEntryLayout
-              key={entry.entryID}
-              entry={entry}
-              user={user}
-              followedUsers={followedUsers}
-              handleFollowToggle={handleFollowToggle}
-              handleClick={handleClick}
-              expandButtons={expandButtons}
-              formatDate={formatDate}
-            />
-          ))
+        entries.map((entry) => (
+          <DiaryEntryLayout
+            key={entry.entryID}
+            entry={entry}
+            user={user}
+            followedUsers={followedUsers}
+            handleFollowToggle={handleFollowToggle}
+            handleClick={handleClick}
+            expandButtons={expandButtons}
+            formatDate={formatDate}
+          />
+        ))
       )}
     </div>
   );

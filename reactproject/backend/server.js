@@ -1264,17 +1264,17 @@ app.get("/entries", (req, res) => {
 
   const queryParams = [userID];
 
-  if (!scheduledDate) {
-    query += `
-      AND (
-        diary_entries.isScheduled = 0
-        OR (
-          diary_entries.isScheduled = 1
-          AND diary_entries.scheduledDate <  CONVERT_TZ(NOW(), '+00:00', '+08:00')
-        )
-      )
-    `;
-  }
+  // if (scheduledDate) {
+  //   query += `
+  //     AND (
+  //       diary_entries.isScheduled = 0
+  //       OR (
+  //         diary_entries.isScheduled = 1
+  //         AND diary_entries.scheduledDate <  CONVERT_TZ(NOW(), '+00:00', '+08:00')
+  //       )
+  //     )
+  //   `;
+  // }
 
   if (Array.isArray(filters) && filters.length > 0) {
     const filterConditions = filters.map(
