@@ -475,7 +475,10 @@ const DiaryEntryLayout = ({
                 className="m-0 d-flex align-items-center gap-1"
                 style={{ fontSize: ".7rem" }}
               >
-                {formatDate(entry.created_at)}
+                {entry.isScheduled
+                  ? formatDate(entry.scheduledDate)
+                  : formatDate(entry.created_at)}
+
                 <span className=" d-flex align-items-center">
                   {entry.visibility === "public" ? (
                     <i class="bx bx-globe "></i>

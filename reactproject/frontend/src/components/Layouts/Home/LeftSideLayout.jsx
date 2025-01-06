@@ -11,18 +11,35 @@ const LeftSideAdmin = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      fetchUserData(parsedUser.userID);
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (user && !isLoading) {
+      fetchEntries();
+    }
+  }, [user, isLoading]);
+
   const fetchUserData = async (userID) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `http://localhost:8081/fetchUser/user/${userID}`
       );
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("User not found");
       }
 
-      const data = await response.json();
+      const data = response.data;
       setUser(data);
+      setIsLoading(false);
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
@@ -42,25 +59,24 @@ const LeftSideAdmin = () => {
     }
   };
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      fetchUserData(parsedUser.userID);
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    if (user) {
-      fetchEntries();
-    }
-  }, [user]); // Fetches only when `user` is updated
-
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    const entryDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - entryDate;
+
+    if (timeDiff < 24 * 60 * 60 * 1000) {
+      return entryDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return entryDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
   };
 
   if (isLoading) {
@@ -134,9 +150,9 @@ const LeftSideAdmin = () => {
                         {entry.title}{" "}
                         <span>
                           {entry.visibility === "private" ? (
-                            <i class="bx bx-lock-alt"></i>
+                            <i className="bx bx-lock-alt"></i>
                           ) : (
-                            <i class="bx bx-globe"></i>
+                            <i className="bx bx-globe"></i>
                           )}
                         </span>
                       </p>

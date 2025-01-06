@@ -1560,8 +1560,8 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   let query = `
     SELECT diary_entries.*, user_table.*, user_profiles.*
     FROM diary_entries 
-    INNER JOIN user_table ON diary_entries.userID = user_table.userID 
-    INNER JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
+     JOIN user_table ON diary_entries.userID = user_table.userID 
+     JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
     WHERE diary_entries.userID = ?
   `;
 
@@ -1571,7 +1571,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
         diary_entries.isScheduled = 0
         OR (
           diary_entries.isScheduled = 1
-          AND diary_entries.scheduledDate < CONVERT_TZ(NOW(), '+00:00', '+08:00')
+          AND diary_entries.scheduledDate < NOW()
         )
       )
     `;
@@ -2497,15 +2497,15 @@ app.get("/reports/:reportID", (req, res) => {
 });
 
 app.post("/flags", (req, res) => {
-  const { userID, entryID, reasons, otherText } = req.body;
+  const { userID, actorID, entryID, reasons, otherText } = req.body;
 
-  if (!userID || !entryID || !reasons) {
+  if (!userID || !actorID || !entryID || !reasons) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   db.query(
-    "INSERT INTO flagged_reports (userID, entryID, reasons, other_text) VALUES (?, ?, ?, ?)",
-    [userID, entryID, reasons, otherText || null],
+    "INSERT INTO flagged_reports (userID, actorID, entryID, reasons, other_text) VALUES (?, ?, ?, ?, ?)",
+    [userID, actorID, entryID, reasons, otherText || null],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
@@ -2534,7 +2534,6 @@ app.post("/flags", (req, res) => {
       const updateQuery = `
         UPDATE diary_entries 
         SET
-        enga
         engagementCount = engagementCount + 1, 
           updated_at = CURRENT_TIMESTAMP  
         WHERE 
@@ -3410,6 +3409,73 @@ app.post("/suspendUser", (req, res) => {
         );
         res.json({ success: true });
       }
+    }
+  );
+});
+
+app.get("/actvity_logs/gadify/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  db.query(
+    `
+    SELECT gadify_actions.*, diary_entries.userID, diary_entries.title, user_table.firstName
+    FROM gadify_actions
+    JOIN diary_entries ON gadify_actions.entryID = diary_entries.entryID
+    JOIN user_table ON diary_entries.userID = user_table.userID
+    WHERE gadify_actions.userID = ?
+    ORDER BY gadify_actions.created_at DESC
+    `,
+    [userID],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching activity logs:", err);
+        return res.status(500).send("Error fetching activity logs.");
+      }
+      res.json(results);
+    }
+  );
+});
+
+app.get("/actvity_logs/comments/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  db.query(
+    `
+    SELECT comments.*, user_table.firstName
+    FROM comments
+    JOIN user_table ON comments.userID = user_table.userID
+    WHERE comments.userID = ?
+    ORDER BY comments.created_at DESC
+    `,
+    [userID],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching activity logs:", err);
+        return res.status(500).send("Error fetching activity logs.");
+      }
+      res.json(results);
+    }
+  );
+});
+
+app.get("/actvity_logs/flags/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  db.query(
+    `
+    SELECT flagged_reports.*, user_table.firstName
+    FROM flagged_reports
+    JOIN user_table ON flagged_reports.actorID = user_table.userID
+    WHERE flagged_reports.actorID = ?
+    ORDER BY flagged_reports.created_at DESC
+    `,
+    [userID],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching activity logs:", err);
+        return res.status(500).send("Error fetching activity logs.");
+      }
+      res.json(results);
     }
   );
 });

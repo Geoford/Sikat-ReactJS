@@ -77,7 +77,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
-      console.table(JSON.parse(userData));
+      // console.table(JSON.parse(userData));
     } else {
       navigate("/");
     }

@@ -468,7 +468,7 @@ const Profile = () => {
               {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
               {ownProfile ? (
                 <ProfileDropdown
-                  userID={currentUser.userID}
+                  userID={user.userID}
                   isAdmin={currentUser.isAdmin}
                 />
               ) : (

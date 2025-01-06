@@ -23,7 +23,7 @@ const ProfileDropdown = ({ userID, isAdmin }) => {
 
       <Dropdown.Menu>
         <Dropdown.Item className="p-0 px-2 btn btn-light">
-          <ActivityLogs></ActivityLogs>
+          <ActivityLogs userID={userID}></ActivityLogs>
         </Dropdown.Item>
         {isAdmin ? (
           ""
