@@ -490,6 +490,7 @@ const Profile = () => {
       <div className="container mt-2">
         <div className="row">
           <div className="col-lg-4 mb-2 p-0 px-md-1">
+            {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
             <JournalEntries userID={userID} ownProfile={ownProfile} />
           </div>
 

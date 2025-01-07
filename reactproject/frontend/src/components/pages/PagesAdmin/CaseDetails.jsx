@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import sampleImage from "../../../assets/Background.jpg"; // Example image for placeholders
+import sampleImage from "../../../assets/Background.jpg";
 import MainLayout from "../../Layouts/MainLayout";
 
 const CaseDetails = () => {
-  const { reportID } = useParams(); // Get reportID from the route parameter
+  const { reportID } = useParams();
   const [caseDetails, setCaseDetails] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +29,23 @@ const CaseDetails = () => {
         setLoading(false);
       });
   }, [reportID]);
+
+  const handleAddressed = (reportID) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to address this entry?"
+    );
+    if (confirmed) {
+      axios
+        .put(`http://localhost:8081/reports/${reportID}`)
+        .then(() => {
+          alert("The case has been addressed!");
+          fetchReports();
+        })
+        .catch((err) => {
+          setError(err.response?.data?.error || "Failed to update case report");
+        });
+    }
+  };
 
   const handleImageClick = (imageSrc) => {
     setSelectedImage(imageSrc);
@@ -292,7 +309,10 @@ const CaseDetails = () => {
               {caseDetails.isAddress ? (
                 ""
               ) : (
-                <button className="primaryButton w-100 py-2" type="submit">
+                <button
+                  className="primaryButton w-100 py-2"
+                  onClick={() => handleAddressed(reportID)}
+                >
                   <p className="m-0">Mark as Addressed</p>
                 </button>
               )}

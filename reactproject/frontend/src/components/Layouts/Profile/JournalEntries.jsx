@@ -140,9 +140,9 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
             {entries.map((entry) => {
               if (
                 !ownProfile &&
-                entry.visibility === "private"
-                // ||
-                // entry.anonimity === "private"
+                // entry.visibility === "private"
+                // // ||
+                entry.anonimity === "private"
               ) {
                 return null;
               }
