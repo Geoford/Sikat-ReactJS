@@ -2477,7 +2477,7 @@ app.put("/reports/:id", (req, res) => {
 
 app.get("/reports", (req, res) => {
   const query = `
-  SELECT * FROM gender_based_crime_reports ORDER BY created_at DESC
+  SELECT * FROM gender_based_crime_reports ORDER BY isAddress ASC, created_at DESC
 `;
 
   db.query(query, (err, results) => {

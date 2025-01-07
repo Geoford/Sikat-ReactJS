@@ -492,7 +492,11 @@ const Profile = () => {
         <div className="row">
           <div className="col-lg-4 mb-2 p-0 px-md-1">
             {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
-            <JournalEntries userID={userID} ownProfile={ownProfile} />
+            <JournalEntries
+              isAdmin={currentUser.isAdmin}
+              userID={userID}
+              ownProfile={ownProfile}
+            />
           </div>
 
           <div className="col-md mb-2 p-0 px-md-1">

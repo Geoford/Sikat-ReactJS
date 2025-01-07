@@ -12,7 +12,7 @@ export default function GenderBasedIncidents() {
   const [filter, setFilter] = useState("all"); // "all", "addressed", or "unaddressed"
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of reports per page
+  const itemsPerPage = 6; // Number of reports per page
 
   useEffect(() => {
     fetchReports();
@@ -21,15 +21,6 @@ export default function GenderBasedIncidents() {
   useEffect(() => {
     applyFilter();
   }, [filter, reports]);
-
-  useEffect(() => {
-    // Slice the filtered reports based on current page and items per page
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setFilteredReports((prevReports) =>
-      prevReports.slice(startIndex, endIndex)
-    );
-  }, [currentPage, reports, filter]);
 
   const fetchReports = () => {
     axios
@@ -48,6 +39,7 @@ export default function GenderBasedIncidents() {
     } else if (filter === "unaddressed") {
       setFilteredReports(reports.filter((r) => r.isAddress === 0));
     }
+    setCurrentPage(1); // Reset to first page when the filter changes
   };
 
   const handleAddressed = (reportID) => {
@@ -69,6 +61,11 @@ export default function GenderBasedIncidents() {
 
   // Pagination logic
   const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+  const paginatedReports = filteredReports.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -123,10 +120,12 @@ export default function GenderBasedIncidents() {
                 id="filterDropdown"
                 controlId="filterDropdown"
                 label="Case Status:"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
               >
-                <Form.Select aria-label="Floating label select example">
+                <Form.Select
+                  aria-label="Floating label select example"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
                   <option value="all">All</option>
                   <option value="unaddressed">Unaddressed Cases</option>
                   <option value="addressed">Addressed Cases</option>
@@ -164,7 +163,7 @@ export default function GenderBasedIncidents() {
                 </tr>
               </thead>
               <tbody>
-                {filteredReports.map((report) => (
+                {paginatedReports.map((report) => (
                   <tr
                     className={report.isAddress === 0 ? "table-danger" : ""}
                     key={report.reportID}

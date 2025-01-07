@@ -3,7 +3,7 @@ import { Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const RecentJournalEntries = ({ userID, ownProfile }) => {
+const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
