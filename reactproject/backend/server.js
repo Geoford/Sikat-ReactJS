@@ -1321,7 +1321,15 @@ app.get("/analytics", (req, res) => {
   let query = `
     SELECT 
       diary_entries.*,
-      user_table.*,
+       user_table.userID,
+      user_table.isAdmin,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.cvsuEmail,
+      user_table.studentNumber,
+      user_table.sex,
+      user_table.course,
+      user_table.year,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -1549,7 +1557,7 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const scheduledDate = req.query.scheduledDate === "true";
 
   let query = `
-    SELECT diary_entries.*, user_table.*, user_profiles.*
+    SELECT diary_entries.*, user_table.firstName, user_profiles.*
     FROM diary_entries 
      JOIN user_table ON diary_entries.userID = user_table.userID 
      JOIN user_profiles ON diary_entries.userID = user_profiles.userID 

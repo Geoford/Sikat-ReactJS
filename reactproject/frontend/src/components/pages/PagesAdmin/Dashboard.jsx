@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { filter } from "lodash";
 
 ChartJS.register(
   CategoryScale,
@@ -31,9 +32,14 @@ const Dashboard = () => {
   const [reportedComments, setReportedComments] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [entries, setEntries] = useState([]);
+  const [genderBasedIncidents, setGenderBasedIncidents] = useState([]);
+  const [reportedUsers, setReportedUsers] = useState([]);
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredFlags, setFilteredFlags] = useState([]);
   const [filteredReportedComments, setFilteredReportedComments] = useState([]);
+  const [filteredGenderBasedIncidents, setFilteredGenderBasedIncidents] =
+    useState([]);
+  const [filteredReportedUsers, setFilteredReportedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [timeFilter, setTimeFilter] = useState("Week");
@@ -41,23 +47,44 @@ const Dashboard = () => {
   const [weeklyEntries, setWeeklyEntries] = useState({});
   const [weeklyFlags, setWeeklyFlags] = useState({});
   const [weeklyReportedComments, setWeeklyReportedComments] = useState({});
+  const [weeklyGenderBased, setWeeklyGenderBased] = useState({});
+  const [weeklyReportedUsers, setWeeklyReportedUsers] = useState({});
+  const usersPerPage = 4;
 
   useEffect(() => {
     fetchEntries();
     fetchUsers();
     fetchFlags();
     fetchReportedComments();
+    fetchGenderBasedIncidents();
+    fetchReportedUsers();
   }, []);
 
   useEffect(() => {
     applyTimeFilter();
-  }, [entries, flags, reportedComments, timeFilter, specificDate]);
+  }, [
+    entries,
+    flags,
+    reportedComments,
+    genderBasedIncidents,
+    reportedUsers,
+    timeFilter,
+    specificDate,
+  ]);
 
   useEffect(() => {
     setWeeklyEntries(calculateWeeklyData(filteredEntries));
     setWeeklyFlags(calculateWeeklyData(filteredFlags));
     setWeeklyReportedComments(calculateWeeklyData(filteredReportedComments));
-  }, [filteredEntries, filteredFlags, filteredReportedComments]);
+    setWeeklyGenderBased(calculateWeeklyData(filteredGenderBasedIncidents));
+    setWeeklyReportedUsers(calculateWeeklyData(filteredReportedUsers));
+  }, [
+    filteredEntries,
+    filteredFlags,
+    filteredReportedComments,
+    filteredGenderBasedIncidents,
+    filteredReportedUsers,
+  ]);
 
   const calculateWeeklyData = (data) => {
     const weeklyData = {
@@ -99,17 +126,27 @@ const Dashboard = () => {
       {
         label: "Diary Entries",
         data: Object.values(calculateWeeklyData(filteredEntries)),
-        backgroundColor: "#5c0099",
+        backgroundColor: "#DA498D",
       },
       {
         label: "Flagged Diaries",
         data: Object.values(calculateWeeklyData(filteredFlags)),
-        backgroundColor: "#ff4d4d",
+        backgroundColor: "#F14A00",
       },
       {
         label: "Reported Comments",
         data: Object.values(calculateWeeklyData(filteredReportedComments)),
         backgroundColor: "#e65c00",
+      },
+      {
+        label: "Gender Based Incidents",
+        data: Object.values(calculateWeeklyData(filteredGenderBasedIncidents)),
+        backgroundColor: "#5c0099",
+      },
+      {
+        label: "Reported Users",
+        data: Object.values(calculateWeeklyData(filteredReportedUsers)),
+        backgroundColor: "#A31D1D",
       },
     ],
   };
@@ -149,8 +186,6 @@ const Dashboard = () => {
     ],
   };
 
-  const usersPerPage = 4;
-
   const fetchEntries = async () => {
     try {
       setIsLoading(true);
@@ -165,13 +200,9 @@ const Dashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/users`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data = await response.json();
-      setUsers(data);
-      setFilteredUsers(data);
+      const response = await axios.get("http://localhost:8081/users");
+      setUsers(response.data);
+      setFilteredUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -179,12 +210,8 @@ const Dashboard = () => {
 
   const fetchFlags = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/flagged`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch flags");
-      }
-      const data = await response.json();
-      setFlags(data);
+      const response = await axios.get("http://localhost:8081/flagged");
+      setFlags(response.data);
     } catch (error) {
       console.error("Error fetching flags:", error);
     }
@@ -192,14 +219,32 @@ const Dashboard = () => {
 
   const fetchReportedComments = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/getReportedComments`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch reported comments");
-      }
-      const data = await response.json();
-      setReportedComments(data);
+      const response = await axios.get(
+        "http://localhost:8081/getReportedComments"
+      );
+      setReportedComments(response.data);
     } catch (error) {
       console.error("Error fetching reported comments:", error);
+    }
+  };
+
+  const fetchGenderBasedIncidents = async () => {
+    try {
+      const response = await axios.get("http://localhost:8081/reports");
+      setGenderBasedIncidents(response.data);
+    } catch (error) {
+      console.error("Error fetching reported incidents:", error);
+    }
+  };
+
+  const fetchReportedUsers = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8081/getReportedUsers"
+      );
+      setReportedUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching reported users:", error);
     }
   };
 
@@ -233,14 +278,16 @@ const Dashboard = () => {
     setFilteredEntries(filterData(entries));
     setFilteredFlags(filterData(flags));
     setFilteredReportedComments(filterData(reportedComments));
+    setFilteredGenderBasedIncidents(filterData(genderBasedIncidents));
+    setFilteredReportedUsers(filterData(reportedUsers));
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredEntries.slice(indexOfFirstUser, indexOfLastUser);
 
   const totalPages = Math.max(
-    Math.ceil(filteredUsers.length / usersPerPage),
+    Math.ceil(filteredEntries.length / usersPerPage),
     1
   );
 
@@ -405,16 +452,33 @@ const Dashboard = () => {
                 </div>
                 <div className="d-flex justify-content-center">
                   <Pagination>
-                    {totalPages > 1 &&
-                      Array.from({ length: totalPages }, (_, index) => (
-                        <Pagination.Item
-                          key={index + 1}
-                          active={index + 1 === currentPage}
-                          onClick={() => handlePageChange(index + 1)}
-                        >
-                          {index + 1}
-                        </Pagination.Item>
-                      ))}
+                    <Pagination.First
+                      onClick={() => handlePageChange(1)}
+                      disabled={currentPage === 1}
+                    />
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <Pagination.Item
+                        key={i + 1}
+                        active={i + 1 === currentPage}
+                        onClick={() => handlePageChange(i + 1)}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                    <Pagination.Last
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={currentPage === totalPages}
+                    />
                   </Pagination>
                 </div>
               </div>
@@ -435,7 +499,7 @@ const Dashboard = () => {
                     height: "100%",
                   }}
                 >
-                  <h2 className="m-0">{flags.length}</h2>
+                  <h2 className="m-0">{filteredGenderBasedIncidents.length}</h2>
 
                   <p className="m-0">Gender-Based Incidents Report</p>
                 </div>
@@ -454,7 +518,7 @@ const Dashboard = () => {
                     height: "100%",
                   }}
                 >
-                  <h2 className="m-0">{flags.length}</h2>
+                  <h2 className="m-0">{filteredFlags.length}</h2>
 
                   <p className="m-0">Flagged Diaries</p>
                 </div>
@@ -473,7 +537,7 @@ const Dashboard = () => {
                     height: "100%",
                   }}
                 >
-                  <h2 className="m-0">{reportedComments.length}</h2>
+                  <h2 className="m-0">{filteredReportedComments.length}</h2>
 
                   <p className="m-0">Reported Comments</p>
                 </div>
@@ -492,7 +556,7 @@ const Dashboard = () => {
                     height: "100%",
                   }}
                 >
-                  <h2 className="m-0">00</h2>
+                  <h2 className="m-0">{filteredReportedUsers.length}</h2>
 
                   <p className="m-0">Reported Users</p>
                 </div>

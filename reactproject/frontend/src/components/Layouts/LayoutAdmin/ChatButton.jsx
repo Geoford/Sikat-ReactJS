@@ -41,12 +41,8 @@ const ChatButton = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`http://localhost:8081/users`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        setUsers(data);
+        const response = await axios.get("http://localhost:8081/users");
+        setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -121,19 +117,14 @@ const ChatButton = () => {
     if (newMessage.trim() === "" || !user || !selectedUser) return;
 
     try {
-      const response = await fetch(`http://localhost:8081/message`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          senderID: user.userID,
-          recipientID: selectedUser.userID,
-          message: newMessage,
-        }),
+      const response = await axios.post("http://localhost:8081/message", {
+        senderID: user.userID,
+        recipientID: selectedUser.userID,
+        message: newMessage,
       });
 
-      if (!response.ok) {
+      // Axios automatically resolves the response
+      if (response.status !== 200) {
         throw new Error("Failed to send message");
       }
 

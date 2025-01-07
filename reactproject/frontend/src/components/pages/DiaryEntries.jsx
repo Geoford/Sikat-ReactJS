@@ -54,6 +54,8 @@ const DiaryEntries = () => {
         `http://localhost:8081/fetchUserEntry/user/${user.userID}`
       );
       if (response.data.entries && Array.isArray(response.data.entries)) {
+        console.log(response.data);
+
         setEntries(response.data.entries);
       } else {
         console.error("Response data is not an array", response.data);
@@ -110,13 +112,25 @@ const DiaryEntries = () => {
 
   const findEntriesForDay = (day) => {
     return entries.filter((entry) => {
-      const entryDateParts = entry.created_at.split(" ")[0];
-      const entryDate = new Date(entryDateParts);
+      const entryDate = new Date(entry.created_at);
+      const localEntryDate = new Date(
+        entryDate.getTime() + entryDate.getTimezoneOffset() * 60000
+      );
+
+      console.log(
+        "Comparing:",
+        day,
+        localEntryDate.getDate(),
+        localEntryDate.getMonth(),
+        months.indexOf(selectedMonth),
+        localEntryDate.getFullYear(),
+        selectedYear
+      );
 
       return (
-        entryDate.getDate() === day &&
-        entryDate.getMonth() === months.indexOf(selectedMonth) &&
-        entryDate.getFullYear() === selectedYear
+        localEntryDate.getDate() === day &&
+        localEntryDate.getMonth() === months.indexOf(selectedMonth) &&
+        localEntryDate.getFullYear() === parseInt(selectedYear, 10)
       );
     });
   };

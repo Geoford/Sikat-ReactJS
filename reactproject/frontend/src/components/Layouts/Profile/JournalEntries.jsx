@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const RecentJournalEntries = ({ userID, ownProfile }) => {
   const [user, setUser] = useState(null);
@@ -10,15 +11,11 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:8081/fetchUserEntry/user/${userID}`)
+    // Axios request
+    axios
+      .get(`http://localhost:8081/fetchUserEntry/user/${userID}`)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("No entry found");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setEntries(data.entries);
+        setEntries(response.data.entries);
         setLoading(false);
       })
       .catch((err) => {
