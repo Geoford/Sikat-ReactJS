@@ -64,7 +64,9 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                 >
                   {entries.map((entry) => {
                     if (
-                      (!ownProfile && entry.visibility === "private") ||
+                      !ownProfile &&
+                      // entry.visibility === "private"
+                      // // ||
                       entry.anonimity === "private"
                     ) {
                       return null;
@@ -86,6 +88,20 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                                   ) : (
                                     <i class="bx bx-globe"></i>
                                   )}
+                                  {entry.anonimity === "private" ? (
+                                    <>
+                                      <i class="bx bxs-user position-relative">
+                                        <i
+                                          class="bx bx-question-mark position-absolute"
+                                          style={{
+                                            left: ".5rem",
+                                            fontSize:
+                                              "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                          }}
+                                        ></i>
+                                      </i>
+                                    </>
+                                  ) : null}
                                 </span>
                               </p>
                               <span
@@ -165,8 +181,14 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                             )}
                             {entry.anonimity === "private" ? (
                               <>
-                                <i class="bx bxs-user">
-                                  <i class="bx bx-question-mark"></i>
+                                <i class="bx bxs-user position-relative">
+                                  <i
+                                    class="bx bx-question-mark position-absolute"
+                                    style={{
+                                      left: ".5rem",
+                                      fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                    }}
+                                  ></i>
                                 </i>
                               </>
                             ) : null}

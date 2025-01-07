@@ -5,6 +5,7 @@ import NavBarAdmin from "./LayoutAdmin/NavBarAdmin"; // Import the admin-specifi
 import "boxicons/css/boxicons.min.css";
 
 const MainLayout = ({ children, ActiveTab }) => {
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   // State to store user data fetched from localStorage
   const [user, setUser] = useState(null);
 
@@ -23,10 +24,44 @@ const MainLayout = ({ children, ActiveTab }) => {
     }
   }, []); // Empty dependency array ensures this effect runs only once
 
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
   return (
     <div className="position-relative overflow-x-hidden" style={{ width: "" }}>
       <NavBar ActiveTab={ActiveTab} style={{ position: "sticky", top: "0" }} />
-      <div className="mt-5 pt-5 pt-lg-3">{children}</div>
+      <div className="mt-5 pt-5 pt-lg-3">
+        {children}
+        <div>
+          {isOffline && (
+            <div
+              style={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                backgroundColor: "red",
+                color: "white",
+                textAlign: "center",
+                padding: "",
+                zIndex: 1000,
+              }}
+            >
+              You are offline
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Include the background component at the bottom of the layout */}
       <Background />
