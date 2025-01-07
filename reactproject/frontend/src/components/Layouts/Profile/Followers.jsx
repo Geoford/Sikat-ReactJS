@@ -56,24 +56,29 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   </div>
 );
 
-const Followers = ({ followersCount, followingCount }) => {
+const Followers = ({ user, followersCount, followingCount }) => {
   const [showModal, setShowModal] = useState(false);
-  const [user, setUser] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const userData = localStorage.getItem("user");
+  //   if (userData) {
+  //     const parsedUser = JSON.parse(userData);
+  //     setUser(parsedUser);
+  //     fetchFollowers(parsedUser.userID);
+  //     fetchFollowedUsers(parsedUser.userID);
+  //   } else {
+  //     navigate("/");
+  //   }
+  // }, [navigate]);
+
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      fetchFollowers(parsedUser.userID);
-      fetchFollowedUsers(parsedUser.userID);
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
+    fetchFollowers(user.userID);
+    fetchFollowedUsers(user.userID);
+    console.log("userID", user.userID);
+  }, [user.userID]);
 
   const fetchFollowers = async (userID) => {
     try {
