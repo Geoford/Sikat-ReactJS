@@ -97,28 +97,22 @@ const CaseDetails = () => {
                 <th>Victim's Name</th>
                 <th>Sex</th>
                 <th>Contact Number</th>
-                <th>Preprators Name</th>
+                <th>Perpetrator's Name</th>
                 <th>Location</th>
                 <th>Date</th>
                 <th>Description</th>
               </tr>
             </thead>
             <tbody>
-              ${caseDetails
-                .map(
-                  (caseDetail) => `
-                <tr>
-                  <td>${caseDetail.victimName}</td>
-                  <td>${caseDetail.gender}</td>
-                  <td>${caseDetail.contactInfo}</td>
-                  <td>${caseDetail.perpetratorName}</td>
-                  <td>${caseDetail.location}</td>
-                  <td>${caseDetail.date}</td>
-                  <td>${caseDetail.incidentDescription}</td>
-                </tr>
-              `
-                )
-                .join("")}
+              <tr>
+                <td>${caseDetails.victimName}</td>
+                <td>${caseDetails.gender}</td>
+                <td>${caseDetails.contactInfo}</td>
+                <td>${caseDetails.perpetratorName}</td>
+                <td>${caseDetails.location}</td>
+                <td>${new Date(caseDetails.date).toLocaleDateString()}</td>
+                <td>${caseDetails.incidentDescription}</td>
+              </tr>
             </tbody>
           </table>
         </body>
@@ -134,13 +128,26 @@ const CaseDetails = () => {
       link.click();
       URL.revokeObjectURL(url);
     } else if (format === "excel") {
-      const header = ["Student No.", "Author", "Behavior", "Title"];
-      const rows = currentUsers.map((flag) => [
-        flag.studentNumber,
-        `${flag.firstName} ${flag.lastName}`,
-        flag.reasons,
-        flag.title,
-      ]);
+      const header = [
+        "Victim's Name",
+        "Sex",
+        "Contact Number",
+        "Perpetrator's Name",
+        "Location",
+        "Date",
+        "Description",
+      ];
+      const rows = [
+        [
+          caseDetails.victimName,
+          caseDetails.gender,
+          caseDetails.contactInfo,
+          caseDetails.perpetratorName,
+          caseDetails.location,
+          new Date(caseDetails.date).toLocaleDateString(),
+          caseDetails.incidentDescription,
+        ],
+      ];
 
       const csvContent = [header, ...rows]
         .map((row) => row.join(","))
@@ -151,7 +158,7 @@ const CaseDetails = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = "flagged_diaries.csv";
+      link.download = "case_details.csv";
       link.click();
       URL.revokeObjectURL(url);
     }

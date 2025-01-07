@@ -12,20 +12,17 @@ export const InactivityProvider = ({ children }) => {
     const resetTimer = () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        setIsInactive(true); // Mark user as inactive after the timeout
-      }, 30 * 60 * 1000); // 15 minutes of inactivity
+        setIsInactive(true);
+      }, 30 * 60 * 1000);
     };
 
-    // Attach event listeners to reset inactivity timer
     const events = ["mousemove", "keydown", "click"];
 
     events.forEach((event) => window.addEventListener(event, resetTimer));
 
-    // Initialize timer on load
     resetTimer();
 
     return () => {
-      // Cleanup
       events.forEach((event) => window.removeEventListener(event, resetTimer));
       clearTimeout(timeout);
     };

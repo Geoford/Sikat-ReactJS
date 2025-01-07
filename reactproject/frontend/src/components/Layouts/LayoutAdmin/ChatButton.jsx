@@ -79,7 +79,6 @@ const ChatButton = () => {
       ]);
     });
 
-    // Cleanup function
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
@@ -123,7 +122,6 @@ const ChatButton = () => {
         message: newMessage,
       });
 
-      // Axios automatically resolves the response
       if (response.status !== 200) {
         throw new Error("Failed to send message");
       }
@@ -137,10 +135,9 @@ const ChatButton = () => {
 
   const handleBackClick = () => {
     setSelectedUser(null);
-    setMessages([]); // Clear messages when going back
+    setMessages([]);
   };
 
-  // Function to filter users based on search query
   const filteredUsers = users.filter((userItem) =>
     `${userItem.firstName} ${userItem.lastName}`
       .toLowerCase()

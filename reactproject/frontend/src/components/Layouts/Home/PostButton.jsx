@@ -115,7 +115,7 @@ function PostButton({ onEntrySaved }) {
 
     let manilaScheduledDate = null;
     if (scheduledDate) {
-      const manilaOffset = 8 * 60; // Manila is UTC +8
+      const manilaOffset = 8 * 60;
       manilaScheduledDate = new Date(scheduledDate);
       manilaScheduledDate.setMinutes(
         manilaScheduledDate.getMinutes() + manilaOffset

@@ -28,69 +28,71 @@ import Dashboard from "./components/pages/PagesAdmin/Dashboard";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoute from "./components/ProtectedRoute";
-// import { InactivityProvider } from "./components/InactivityContext";
+import { InactivityProvider } from "./components/InactivityContext";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <IndexPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/Login" element={<LoginRegister />} />
-          <Route
-            path="/Login"
-            element={
-              <ProtectedRoute>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/Register"
-            element={
-              <ProtectedRoute>
-                <Register />
-              </ProtectedRoute>
-            }
-          />
-          {/* USER ROUTES */}
-          <Route path="/Home" element={<Home />} />
-          {/* <Route path="/Profile/:userID" element={<UserProfile />} /> */}
-          <Route path="/Profile/:userID" element={<Profile />} />
-          <Route path="/DiaryEntries/" element={<DiaryEntries />} />
-          <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
-          <Route path="/GetHelp/:userID" element={<GetHelp />} />
-          <Route path="/Settings/:userID" element={<Settings />} />
-          <Route path="/Followers" element={<Followers />} />
+      <InactivityProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <IndexPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/Login" element={<LoginRegister />} />
+            <Route
+              path="/Login"
+              element={
+                <ProtectedRoute>
+                  <Login />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Register"
+              element={
+                <ProtectedRoute>
+                  <Register />
+                </ProtectedRoute>
+              }
+            />
+            {/* USER ROUTES */}
+            <Route path="/Home" element={<Home />} />
+            {/* <Route path="/Profile/:userID" element={<UserProfile />} /> */}
+            <Route path="/Profile/:userID" element={<Profile />} />
+            <Route path="/DiaryEntries/" element={<DiaryEntries />} />
+            <Route path="/DiaryEntry/:entryID" element={<DiaryEntry />} />
+            <Route path="/GetHelp/:userID" element={<GetHelp />} />
+            <Route path="/Settings/:userID" element={<Settings />} />
+            <Route path="/Followers" element={<Followers />} />
 
-          <Route path="/suspended" element={<Suspended />} />
+            <Route path="/suspended" element={<Suspended />} />
 
-          {/* ADMIN ROUTES */}
-          <Route path="/Admin/Home" element={<AdminHome />} />
-          <Route
-            path="/Admin/GenderBasedIncidents"
-            element={<GenderBasedIncidents />}
-          />
-          <Route path="/Admin/Dashboard" element={<Dashboard />} />
-          <Route path="/Admin/Analytics/:activeTab" element={<Analytics />} />
-          <Route
-            path="/Admin/CaseDetails/:reportID"
-            element={<CaseDetails />}
-          />
-          {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} /> */}
-          <Route
-            path="/Admin/DiaryEntry/:entryID"
-            element={<AdminDiaryEntry />}
-          />
-        </Routes>
-      </BrowserRouter>
+            {/* ADMIN ROUTES */}
+            <Route path="/Admin/Home" element={<AdminHome />} />
+            <Route
+              path="/Admin/GenderBasedIncidents"
+              element={<GenderBasedIncidents />}
+            />
+            <Route path="/Admin/Dashboard" element={<Dashboard />} />
+            <Route path="/Admin/Analytics/:activeTab" element={<Analytics />} />
+            <Route
+              path="/Admin/CaseDetails/:reportID"
+              element={<CaseDetails />}
+            />
+            {/* <Route path="/Admin/Profile/:userID" element={<AdminProfile />} /> */}
+            <Route
+              path="/Admin/DiaryEntry/:entryID"
+              element={<AdminDiaryEntry />}
+            />
+          </Routes>
+        </BrowserRouter>
+      </InactivityProvider>
     </div>
   );
 }

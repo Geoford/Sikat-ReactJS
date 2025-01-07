@@ -153,7 +153,7 @@ const UserChatButton = () => {
       }),
     });
 
-    setNewMessage(""); // Still keep clearing the input
+    setNewMessage("");
   };
 
   const formatDate = (dateString) => {
@@ -301,7 +301,7 @@ const UserChatButton = () => {
                             fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
                           }}
                         >
-                          {formatDate(msg.created_at)}
+                          {msg.created_at ? formatDate(msg.created_at) : ""}
                         </span>
                       </p>
                     </div>

@@ -21,7 +21,10 @@ import axios from "axios";
 export default function HomeMainLayout({ isAdminPage }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // Modal state for inactivity alert
   const navigate = useNavigate();
+
+  const { isInactive } = useContext(InactivityContext);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -33,21 +36,15 @@ export default function HomeMainLayout({ isAdminPage }) {
     setIsLoading(false);
   }, [navigate]);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     axios
-  //       .post("http://localhost:8081/logout", {
-  //         userID: user.userID,
-  //       })
-  //       .then(() => {
-  //         localStorage.removeItem("user");
-  //         navigate("/Login");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error logging out due to inactivity:", error);
-  //       });
-  //   }
-  // }, [navigate, user]);
+  useEffect(() => {
+    if (isInactive) {
+      setShowModal(true); // Show modal when inactivity detected
+    }
+  }, [isInactive]);
+
+  const handleReload = () => {
+    window.location.reload(); // Reload the page after inactivity
+  };
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -109,11 +106,39 @@ export default function HomeMainLayout({ isAdminPage }) {
           </div>
         </div>
       </div>
-      {/* <div>
-        {isInactive
-          ? "You have been logged out due to inactivity"
-          : "You are active"}
-      </div> */}
+
+      {/* Modal for inactivity alert */}
+      {showModal && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{
+            display: "block",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1050,
+          }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Inactivity Alert</h5>
+              </div>
+              <div className="modal-body">
+                <p>You have been inactive. The page will be reloaded.</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleReload}
+                >
+                  Reload Page
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }

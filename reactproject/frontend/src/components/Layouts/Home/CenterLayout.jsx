@@ -366,9 +366,7 @@ const CenterLayout = () => {
                   const now = new Date();
                   const scheduledDate = new Date(entry.scheduledDate);
 
-                  const dateToBePosted = new Date(
-                    now.getTime() + 8 * 60 * 60 * 1000
-                  );
+                  const dateToBePosted = new Date();
                   return scheduledDate > dateToBePosted;
                 })
                 .map((entry) => (
@@ -513,7 +511,7 @@ const CenterLayout = () => {
           .filter((entry) => {
             const now = new Date();
             const scheduledDate = new Date(entry.scheduledDate);
-            const dateToBePosted = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+            const dateToBePosted = new Date();
             return scheduledDate < dateToBePosted;
           })
           .map((entry) => (
