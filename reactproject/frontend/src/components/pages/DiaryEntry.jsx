@@ -542,6 +542,7 @@ const DiaryEntry = () => {
                             <Dropdown.Menu className="p-2">
                               {user.isAdmin && !entry.isAdmin ? (
                                 <Suspend
+                                  entryID={entry.entryID}
                                   userID={entry.userID}
                                   firstName={entry.firstName}
                                   suspended={entry.isSuspended}

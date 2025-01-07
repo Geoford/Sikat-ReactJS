@@ -3376,7 +3376,7 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 app.post("/suspendUser", (req, res) => {
-  const { userID, reason, period } = req.body;
+  const { userID, reason, period, entryID } = req.body;
 
   const suspendUntil = new Date();
   if (period === "3 Days") suspendUntil.setDate(suspendUntil.getDate() + 3);
@@ -3407,7 +3407,30 @@ app.post("/suspendUser", (req, res) => {
             }
           }
         );
-        res.json({ success: true });
+
+        // Update flagged_reports table to set isAddress = 1 where entryID matches
+        if (entryID) {
+          db.query(
+            "UPDATE flagged_reports SET isAddress = 1 WHERE entryID = ?",
+            [entryID],
+            (updateErr) => {
+              if (updateErr) {
+                console.error(
+                  "Error updating flagged reports:",
+                  updateErr.message
+                );
+                res.status(500).json({
+                  success: false,
+                  error: "Failed to update flagged reports",
+                });
+              } else {
+                res.json({ success: true });
+              }
+            }
+          );
+        } else {
+          res.json({ success: true });
+        }
       }
     }
   );

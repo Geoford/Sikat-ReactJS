@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 
-function Suspend({ userID, firstName, suspended }) {
+function Suspend({ entryID, userID, firstName, suspended }) {
   const [show, setShow] = useState(false);
   const [reasons, setReasons] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
@@ -18,6 +18,7 @@ function Suspend({ userID, firstName, suspended }) {
         userID,
         reason: selectedReason,
         period: selectedPeriod,
+        entryID,
       });
 
       if (response.data.success) {
