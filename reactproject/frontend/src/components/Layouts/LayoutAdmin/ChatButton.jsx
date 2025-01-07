@@ -150,15 +150,24 @@ const ChatButton = () => {
     const timeDiff = now - entryDate;
 
     if (timeDiff < 24 * 60 * 60 * 1000) {
+      // If the entry is within the last 24 hours, show only the time
       return entryDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
     } else {
-      return entryDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      // For entries older than 24 hours, show both the date and time
+      return (
+        entryDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }) +
+        "  " +
+        entryDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }
   };
 

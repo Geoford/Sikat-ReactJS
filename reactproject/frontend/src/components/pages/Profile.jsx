@@ -408,6 +408,7 @@ const Profile = () => {
                 ""
               ) : (
                 <Followers
+                  user={user}
                   followersCount={user.followersCount}
                   followingCount={user.followingCount}
                 ></Followers>
@@ -508,7 +509,7 @@ const Profile = () => {
                     <DiaryEntryLayout
                       key={entry.entryID}
                       entry={entry}
-                      user={currentUser}
+                      user={user}
                       // entryFirstName={entry.firstName}
                       followedUsers={followedUsers}
                       handleFollowToggle={handleFollowToggle}
