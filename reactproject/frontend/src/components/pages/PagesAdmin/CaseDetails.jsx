@@ -65,6 +65,98 @@ const CaseDetails = () => {
     );
   }
 
+  const downloadData = (format) => {
+    if (format === "html") {
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Case Details</title>
+          <style>
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            th {
+              background-color: #f4f4f4;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Case Details</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Victim's Name</th>
+                <th>Sex</th>
+                <th>Contact Number</th>
+                <th>Preprators Name</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${caseDetails
+                .map(
+                  (caseDetail) => `
+                <tr>
+                  <td>${caseDetail.victimName}</td>
+                  <td>${caseDetail.gender}</td>
+                  <td>${caseDetail.contactInfo}</td>
+                  <td>${caseDetail.perpetratorName}</td>
+                  <td>${caseDetail.location}</td>
+                  <td>${caseDetail.date}</td>
+                  <td>${caseDetail.incidentDescription}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "case_details.html";
+      link.click();
+      URL.revokeObjectURL(url);
+    } else if (format === "excel") {
+      const header = ["Student No.", "Author", "Behavior", "Title"];
+      const rows = currentUsers.map((flag) => [
+        flag.studentNumber,
+        `${flag.firstName} ${flag.lastName}`,
+        flag.reasons,
+        flag.title,
+      ]);
+
+      const csvContent = [header, ...rows]
+        .map((row) => row.join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "flagged_diaries.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <MainLayout ActiveTab="Complaints">
       <div className="d-flex justify-content-center py-3">
@@ -198,9 +290,24 @@ const CaseDetails = () => {
                 </button>
               )}
 
-              <button className="primaryButton w-100 py-2" type="submit">
-                <p className="m-0">Download</p>
-              </button>
+              <div className="row d-flex gap-1 mt-2 px-3">
+                <div className="col p-0">
+                  <button
+                    className="w-100 primaryButton py-1 py-md-2"
+                    onClick={() => downloadData("html")}
+                  >
+                    <p className="m-0">Download as HTML</p>
+                  </button>
+                </div>
+                <div className="col p-0">
+                  <button
+                    className="w-100 primaryButton py-1 py-md-2"
+                    onClick={() => downloadData("excel")}
+                  >
+                    <p className="m-0">Download as Excel</p>
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
         </div>

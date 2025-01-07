@@ -13,33 +13,34 @@ const ImageModal = ({ showModal, handleCloseModal, diaryImage }) => {
         style={{}}
       >
         <Modal.Body
-          className="text-center p-1 position-relative"
+          className="text-center p-1"
           // style={{ maxHeight: "70vh" }}
         >
-          <div
-            className="position-absolute rounded"
-            style={{
-              right: "1rem",
-              top: "1rem",
-              backgroundColor: "rgb(242, 242, 242,.5)",
-              paddingTop: ".15rem",
-              paddingLeft: ".15rem",
-              paddingRight: ".15rem",
-            }}
-          >
-            <CloseButton onClick={handleCloseModal} style={{}} />
+          <div className="" style={{ height: "clamp(20rem, 55dvw, 38rem)" }}>
+            <img
+              src={diaryImage}
+              alt="Diary Full View"
+              className="rounded position-relative bg-light rounded-0 p-2"
+              style={{
+                height: "100%",
+                width: "100%",
+                objectFit: "contain",
+              }}
+            />
+            <div
+              className="position-absolute "
+              style={{
+                right: ".5rem",
+                top: ".5rem",
+                backgroundColor: "rgb(242, 242, 242,.5)",
+                paddingTop: ".15rem",
+                paddingLeft: ".15rem",
+                paddingRight: ".15rem",
+              }}
+            >
+              <CloseButton onClick={handleCloseModal} style={{}} />
+            </div>
           </div>
-
-          <img
-            src={diaryImage}
-            alt="Diary Full View"
-            className="rounded"
-            style={{
-              height: "clamp(20rem, 55dvw, 38rem)",
-              width: "100%",
-              objectFit: "contain",
-            }}
-          />
         </Modal.Body>
       </Modal>
     </>

@@ -168,6 +168,10 @@ select.form-select:focus {
 body > div.fade.modal.show > div > div > div {
   background-color: transparent !important;
 }
+.modal-content {
+  background-color: transparent !important;
+  border: none !important;
+}
 .DiaryImage {
   width: 100%;
 }
