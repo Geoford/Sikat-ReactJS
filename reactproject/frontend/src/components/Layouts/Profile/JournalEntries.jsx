@@ -139,8 +139,10 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
           >
             {entries.map((entry) => {
               if (
-                (!ownProfile && entry.visibility === "private") ||
-                entry.anonimity === "private"
+                !ownProfile &&
+                entry.visibility === "private"
+                // ||
+                // entry.anonimity === "private"
               ) {
                 return null;
               }
@@ -150,7 +152,7 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                   to={`/DiaryEntry/${entry.entryID}`}
                   className="rounded text-decoration-none"
                 >
-                  <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                  <div className="journalEntries d-flex flex-column rounded ps-1 mt-1 position-relative">
                     <div>
                       <div className="d-flex flex-column align-items-start p-1">
                         <p className="m-0 text-start text-secondary">
@@ -161,8 +163,39 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
                             ) : (
                               <i class="bx bx-globe"></i>
                             )}
+                            {entry.anonimity === "private" ? (
+                              <>
+                                <i class="bx bxs-user">
+                                  <i class="bx bx-question-mark"></i>
+                                </i>
+                              </>
+                            ) : null}
                           </span>
                         </p>
+                        {/* {entry.anonimity === "private" ? (
+                          <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
+                            <div className="informationToolTip accordion text-danger align-middle">
+                              <h4 className="m-0">
+                                <i class="bx bx-question-mark"></i>
+                              </h4>
+                              <p
+                                className="infToolTip rounded p-2 m-0 text-center"
+                                style={{
+                                  backgroundColor: "rgb(179, 0, 0, .7)",
+                                  width: "85%",
+                                  zIndex: "50",
+                                }}
+                              >
+                                This diary entry has been flagged by the system
+                                as potentially containing sensitive or
+                                distressing topics and may require immediate
+                                attention.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )} */}
                         <span
                           className="text-secondary"
                           style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
