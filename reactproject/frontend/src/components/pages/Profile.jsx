@@ -498,6 +498,7 @@ const Profile = () => {
               userID={userID}
               ownProfile={ownProfile}
             />
+            {/* {currentUser.isAdmin} */}
           </div>
 
           <div className="col-md mb-2 p-0 px-md-1">
@@ -505,6 +506,7 @@ const Profile = () => {
               entries
                 .filter(
                   (entry) =>
+                    currentUser.isAdmin ||
                     ownProfile ||
                     (entry.visibility !== "private" &&
                       entry.anonimity !== "private")

@@ -64,9 +64,8 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
                 >
                   {entries.map((entry) => {
                     if (
+                      !isAdmin &&
                       !ownProfile &&
-                      // entry.visibility === "private"
-                      // // ||
                       entry.anonimity === "private"
                     ) {
                       return null;
@@ -155,6 +154,7 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
           >
             {entries.map((entry) => {
               if (
+                !isAdmin &&
                 !ownProfile &&
                 // entry.visibility === "private"
                 // // ||
