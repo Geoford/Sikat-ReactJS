@@ -26,25 +26,28 @@ const NavBarIndex = ({ onNavigate, refs }) => {
         <div className="w-100 d-flex justify-content-center justify-content-lg-end align-items-center gap-4 py-2 py-md-1 py-lg-0">
           <div className="d-flex align-items-center gap-2 text-light">
             <p
-              className="navText m-0 d-none d-sm-block"
+              className="navText m-0 py-2 d-none d-sm-block"
               onClick={() => onNavigate(Home)}
             >
               Home
             </p>
-            <p className="navText m-0" onClick={() => onNavigate(Events)}>
+            <p className="navText m-0 py-2" onClick={() => onNavigate(Events)}>
               Events/Announcements
             </p>
             <p
-              className="navText m-0 d-none d-md-block"
+              className="navText m-0 py-2 d-none d-md-block"
               onClick={() => onNavigate(MissionVision)}
             >
               Mission/Vision
             </p>
-            <p className="navText m-0" onClick={() => onNavigate(About)}>
-              About
+            <p className="navText m-0 py-2" onClick={() => onNavigate(About)}>
+              About Us
             </p>
-            <p className="navText m-0" onClick={() => onNavigate(Contacts)}>
-              Contacts
+            <p
+              className="navText m-0 py-2"
+              onClick={() => onNavigate(Contacts)}
+            >
+              Contact Us
             </p>
           </div>
 
