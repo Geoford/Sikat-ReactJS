@@ -6,6 +6,7 @@ const ImageModal = ({ showModal, handleCloseModal, diaryImage }) => {
     <>
       {/* Modal */}
       <Modal
+        className="DiaryImage"
         show={showModal}
         onHide={handleCloseModal}
         centered
@@ -16,7 +17,7 @@ const ImageModal = ({ showModal, handleCloseModal, diaryImage }) => {
           className="text-center p-1"
           // style={{ maxHeight: "70vh" }}
         >
-          <div className="" style={{ height: "clamp(20rem, 55dvw, 38rem)" }}>
+          <div style={{ height: "clamp(20rem, 55dvw, 38rem)" }}>
             <img
               src={diaryImage}
               alt="Diary Full View"

@@ -140,7 +140,7 @@ const LeftSide = () => {
           {error ? (
             <p>{error}</p>
           ) : entries.length === 0 ? (
-            <p>No entries available.</p>
+            <p className="">No entries available.</p>
           ) : (
             entries.map((entry) => (
               <Link

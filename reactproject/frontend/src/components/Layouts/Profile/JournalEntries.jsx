@@ -131,7 +131,9 @@ const RecentJournalEntries = ({ userID, ownProfile }) => {
           </div>
         ) : entries.length === 0 ? (
           <div>
-            <p>No entries available.</p>
+            <p className="m-0 text-secondary mt-1 mt-xl-3">
+              No entries available.
+            </p>
           </div>
         ) : (
           <div

@@ -12,54 +12,63 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
     className="custom-scrollbar mt-2"
     style={{ height: "clamp(5rem, 12dvw, 25rem)", overflowY: "scroll" }}
   >
-    {users.map((user) => (
-      <div key={user.userID} className=" pe-1">
-        <div className="w-100 d-flex align-items-center justify-content-between gap-2">
-          <Link
-            to={`/Profile/${user.userID}`}
-            className="linkText position-relative rounded d-flex w-100 p-2"
-          >
-            <div className=" d-flex align-items-center">
-              <div className="">
-                <div className="profilePicture">
-                  <img
-                    src={
-                      user.profile_image
-                        ? `http://localhost:8081${user.profile_image}`
-                        : DefaultProfile
-                    }
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              </div>
-              <div className=" ps-0 ps-xl-2">
-                <div className="overflow-hidden followerName" style={{}}>
-                  <p className="m-0 text-start text-nowrap">
-                    {user.isAdmin === 1
-                      ? "Gender and Development"
-                      : user.firstName}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <button
-            className="secondaryButton position-absolute"
-            onClick={() => handleFollowToggle(user.userID, user.firstName)}
-            style={{ right: "2.5rem" }}
-          >
-            <p className="m-0">
-              {isFollowing(user.userID) ? "Unfollow" : "Follow"}
-            </p>
-          </button>
-        </div>
+    {users.length === 0 ? (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100%" }}
+      >
+        <p className="m-0 text-secondary">No followers</p>
       </div>
-    ))}
+    ) : (
+      users.map((user) => (
+        <div key={user.userID} className=" pe-1">
+          <div className="w-100 d-flex align-items-center justify-content-between gap-2">
+            <Link
+              to={`/Profile/${user.userID}`}
+              className="linkText position-relative rounded d-flex w-100 p-2"
+            >
+              <div className=" d-flex align-items-center">
+                <div className="">
+                  <div className="profilePicture">
+                    <img
+                      src={
+                        user.profile_image
+                          ? `http://localhost:8081${user.profile_image}`
+                          : DefaultProfile
+                      }
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className=" ps-0 ps-xl-2">
+                  <div className="overflow-hidden followerName" style={{}}>
+                    <p className="m-0 text-start text-nowrap">
+                      {user.isAdmin === 1
+                        ? "Gender and Development"
+                        : user.firstName}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+            <button
+              className="secondaryButton position-absolute"
+              onClick={() => handleFollowToggle(user.userID, user.firstName)}
+              style={{ right: "2.5rem" }}
+            >
+              <p className="m-0">
+                {isFollowing(user.userID) ? "Unfollow" : "Follow"}
+              </p>
+            </button>
+          </div>
+        </div>
+      ))
+    )}
   </div>
 );
 
@@ -240,9 +249,14 @@ const RightSide = () => {
         </div>
 
         <div className="rounded mb-2 mt-3">
-          <div className="d-flex align-items-center justify-content-start gap-1 border-top border-secondary-subtle text-secondary pt-2">
-            <i className="bx bx-group bx-sm"></i>
-            <h5 className="m-0">Followers</h5>
+          <div className="d-flex align-items-center justify-content-between gap-1 border-top border-secondary-subtle text-secondary pt-2">
+            <div className="d-flex align-items-center gap-1">
+              <i className="bx bx-group bx-sm"></i>
+              <h5 className="m-0">Followers</h5>
+            </div>
+            <Link to="/Followers" className="linkText rounded p-1">
+              <p className="m-0">View All</p>
+            </Link>
           </div>
 
           <UserList

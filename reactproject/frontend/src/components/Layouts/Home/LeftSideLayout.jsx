@@ -135,7 +135,9 @@ const LeftSideAdmin = () => {
           {error ? (
             <p className="text-danger">{error}</p>
           ) : entries.length === 0 ? (
-            <p>No entries available.</p>
+            <p className="m-0 text-secondary mt-1 mt-xl-3">
+              No entries available.
+            </p>
           ) : (
             entries.map((entry) => (
               <Link

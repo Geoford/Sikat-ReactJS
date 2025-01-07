@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
 import JournalEntries from "../Layouts/Profile/JournalEntries";
@@ -520,7 +520,16 @@ const Profile = () => {
                   </div>
                 ))
             ) : (
-              <p>No entries to display.</p>
+              <p className="m-0 text-secondary mt-1 mt-xl-3">
+                No diary entries, Post{" "}
+                <Link
+                  className="text-decoration-none"
+                  to={user && user.isAdmin ? "/Admin/Home" : "/Home"}
+                >
+                  here
+                </Link>
+                .
+              </p>
             )}
           </div>
         </div>
