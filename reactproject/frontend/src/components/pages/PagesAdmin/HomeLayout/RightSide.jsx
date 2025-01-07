@@ -35,7 +35,7 @@ const RightSide = () => {
   const fetchReportedUsers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8081/getReportedComments"
+        "http://localhost:8081/getReportedUsers"
       );
 
       if (response.data.length > 0) {
@@ -119,7 +119,7 @@ const RightSide = () => {
               reportedUsers.map((reportedUser, index) => (
                 <Link
                   key={`${reportedUser.userID}-${reportedUser.reason}-${index}`}
-                  to={`/DiaryEntry/${reportedUser.entryID}`}
+                  to={`/Profile/${reportedUser.userID}`}
                   className="text-decoration-none"
                   style={{ cursor: "pointer" }}
                 >

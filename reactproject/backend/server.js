@@ -2032,7 +2032,18 @@ app.get("/getReportedUsers", (req, res) => {
       reported_users
     JOIN user_table ON reported_users.reportedUserID = user_table.userID
   `;
-
+  //  SELECT
+  //     flagged_reports.*,
+  //     user_table.firstName,
+  //     user_table.lastName,
+  //     user_table.studentNumber,
+  //     user_table.sex,
+  //     user_profiles.profile_image,
+  //     diary_entries.title
+  //   FROM flagged_reports
+  //   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+  //   LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
+  //   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
   db.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching reported users:", err.message);
