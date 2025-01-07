@@ -2027,10 +2027,12 @@ app.get("/getReportedUsers", (req, res) => {
       reported_users.*,
       user_table.firstName,
       user_table.lastName,
-      user_table.studentNumber
+      user_table.studentNumber,
+      user_profiles.profile_image
     FROM 
       reported_users
     JOIN user_table ON reported_users.reportedUserID = user_table.userID
+    JOIN user_profiles ON reported_users.userID = user_profiles.userID
   `;
   //  SELECT
   //     flagged_reports.*,
