@@ -425,14 +425,14 @@ const Dashboard = () => {
                     </thead>
                     <tbody>
                       {filteredEntries.length > 0 ? (
-                        filteredEntries.map((entry, index) => (
+                        currentUsers.map((entry, index) => (
                           <tr key={`${entry.userID}-${index}`}>
                             <td>
                               {entry.firstName} {entry.lastName}
                             </td>
                             <td>{entry.title}</td>
-                            <td>{entry.subjects}</td>
-                            <td>0</td>
+                            <td>{entry.subjects ? entry.subjects : "N/A"}</td>
+                            <td>{entry.engagementCount}</td>
                             <td>
                               <Link to={`/DiaryEntry/${entry.entryID}`}>
                                 <button className="primaryButton">View</button>

@@ -44,7 +44,7 @@ const OthersRecentJournalEntries = ({ userID }) => {
       <div className=" p-2 text-secondary">
         <div className="d-flex justify-content-between border-bottom pt-2 px-1">
           <div>
-            <h5>Journal entries</h5>
+            <h5>Journal entriess</h5>
           </div>
           <div>
             <Link
