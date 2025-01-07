@@ -44,11 +44,14 @@ const ReportedComments = ({ userID }) => {
   return (
     <div>
       <button
-        className="btn btn-danger py-2 px-3"
+        className="btn btn-danger py-1 px-3 d-flex align-items-center"
         onClick={handleShow}
         style={{ height: "100%" }}
       >
-        <h5 className="m-0">Reported Comments: {reportedCount}</h5>
+        <i class="bx bx-message-error d-sm-none"></i>
+        <h5 className="m-0 d-none d-sm-block">
+          Reported Comments: {reportedCount}
+        </h5>
       </button>
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
