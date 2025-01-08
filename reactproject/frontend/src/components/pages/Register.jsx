@@ -21,6 +21,17 @@ export default function Register() {
     year: "",
   });
 
+  const [passwordFeedback, setPasswordFeedback] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
+
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordMatch, setPasswordMatch] = useState(null);
+
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -119,7 +130,6 @@ export default function Register() {
       setErrors(validationErrors);
 
       if (Object.keys(validationErrors).length === 0) {
-        // Validate email here before proceeding
         const isEmailValid = await validateEmail(values.cvsuEmail);
         if (isEmailValid) {
           console.log("Validation passed, sending OTP...");
@@ -159,6 +169,38 @@ export default function Register() {
       [event.target.name]: event.target.value,
     }));
   };
+
+  useEffect(() => {
+    const { password, confirmPassword } = values;
+
+    const feedback = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+    };
+
+    setPasswordFeedback(feedback);
+
+    const strengthCount = Object.values(feedback).filter(Boolean).length;
+
+    let strengthLabel;
+    if (strengthCount <= 1) {
+      strengthLabel = "Weak";
+    } else if (strengthCount === 2 || strengthCount === 3) {
+      strengthLabel = "Medium";
+    } else if (strengthCount === 4) {
+      strengthLabel = "Strong";
+    }
+
+    setPasswordStrength(strengthLabel);
+
+    if (password && confirmPassword) {
+      setPasswordMatch(password === confirmPassword);
+    } else {
+      setPasswordMatch(null);
+    }
+  }, [values.password, values.confirmPassword]);
 
   const progressPercent = step === 1 ? 0 : step === 2 ? 50 : 100;
 
@@ -333,7 +375,7 @@ export default function Register() {
                       >
                         <option value="">Course...</option>
                         <option value="Employee">
-                          Employee(Teaching Personels)
+                          Employee (Teaching Personels)
                         </option>
                         <option value="Laboratory Science of Highschool Department">
                           Laboratory Science of Highschool Department
@@ -442,29 +484,91 @@ export default function Register() {
                     className="form-control rounded"
                     value={values.username}
                     autoComplete="new-username"
+                    style={{ display: "none" }}
                   />
                 </div>
-                <div className="mb-3">
+
+                <div>
+                  <label>Password</label>
                   <input
                     type="password"
                     name="password"
-                    placeholder="Password"
-                    onChange={handleInput}
-                    className="form-control rounded"
                     value={values.password}
-                    autoComplete="new-password"
+                    onChange={handleInput}
+                    className="form-control"
+                    placeholder="Enter your password"
+                    required
                   />
+                  <div className="mt-2">
+                    <span
+                      style={{
+                        color:
+                          passwordStrength === "Weak"
+                            ? "red"
+                            : passwordStrength === "Medium"
+                            ? "orange"
+                            : "green",
+                      }}
+                    >
+                      {passwordStrength}
+                    </span>
+                  </div>
+                  <ul className="text-muted mt-2">
+                    <li
+                      style={{
+                        color: passwordFeedback.length ? "green" : "red",
+                      }}
+                    >
+                      At least 8 characters
+                    </li>
+                    <li
+                      style={{
+                        color: passwordFeedback.uppercase ? "green" : "red",
+                      }}
+                    >
+                      At least one uppercase letter
+                    </li>
+                    <li
+                      style={{
+                        color: passwordFeedback.lowercase ? "green" : "red",
+                      }}
+                    >
+                      At least one lowercase letter
+                    </li>
+                    <li
+                      style={{
+                        color: passwordFeedback.number ? "green" : "red",
+                      }}
+                    >
+                      At least one number
+                    </li>
+                  </ul>
                 </div>
-                <div className="mb-3">
+
+                {/* Confirm Password Field */}
+                <div className="mt-3">
+                  <label>Confirm Password</label>
                   <input
                     type="password"
                     name="confirmPassword"
-                    placeholder="Confirm Password"
-                    onChange={handleInput}
-                    className="form-control rounded"
                     value={values.confirmPassword}
+                    onChange={handleInput}
+                    className="form-control"
+                    placeholder="Re-enter your password"
+                    required
                   />
                 </div>
+
+                <div className="mt-2">
+                  {passwordMatch === null ? (
+                    ""
+                  ) : passwordMatch ? (
+                    <span style={{ color: "green" }}>Passwords match</span>
+                  ) : (
+                    <span style={{ color: "red" }}>Passwords do not match</span>
+                  )}
+                </div>
+
                 {/* <div className="mb-3">
                   <input
                     type="text"
