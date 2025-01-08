@@ -29,6 +29,11 @@ export default function Register() {
   const [otpError, setOtpError] = useState(""); // OTP error message
   const [resendCountdown, setResendCountdown] = useState(60); // Resend countdown
 
+  const [isStudent, setIsStudent] = useState(true);
+  const handleIsStudent = () => {
+    setIsStudent(true);
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -270,7 +275,7 @@ export default function Register() {
                         required
                       />
                     </div>
-                    <div className="col-md-5 p-0">
+                    <div className="col-md p-0">
                       <input
                         type="text"
                         name="lastName"
@@ -308,7 +313,7 @@ export default function Register() {
                         value={values.sex}
                         required
                       >
-                        <option selected>Sex...</option>
+                        <option selected>Sex</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Prefer not to say">
@@ -331,7 +336,7 @@ export default function Register() {
                         value={values.course}
                         required
                       >
-                        <option value="">Course...</option>
+                        <option value="">Course/Occupation</option>
                         <option value="Employee">
                           Employee(Teaching Personels)
                         </option>
@@ -368,7 +373,7 @@ export default function Register() {
                       </select>
                     </div>
 
-                    <div className="col-md-3 p-0">
+                    <div className="col-md-2 p-0">
                       <label className="visually-hidden" htmlFor="year">
                         Year
                       </label>
@@ -378,14 +383,13 @@ export default function Register() {
                         name="year"
                         onChange={handleInput}
                         value={values.year}
-                        required
+                        disabled={!isStudent}
                       >
                         <option value="">Year...</option>
                         <option value="1st">1st</option>
                         <option value="2nd">2nd</option>
                         <option value="3rd">3rd</option>
                         <option value="4th">4th</option>
-                        <option value="5th">5th</option>
                         <option value="N/A">N/A</option>
                       </select>
                     </div>
@@ -405,11 +409,11 @@ export default function Register() {
                         title="Please enter a valid CvSU email (e.g., johndoe@cvsu.edu.ph)"
                       />
                     </div>
-                    <div className="col-md-4 p-0">
+                    <div className="col-md p-0">
                       <input
                         type="number"
                         name="studentNumber"
-                        placeholder="Student Number (ex. 202100000)"
+                        placeholder="ID Number (ex. 202100000)"
                         onChange={handleInput}
                         className="form-control rounded"
                         value={values.studentNumber}
@@ -435,13 +439,15 @@ export default function Register() {
                 <h5>Account Security Details</h5>
                 <div className="mb-3">
                   <input
-                    type="text"
+                    type="email"
                     name="username"
-                    placeholder="Username"
+                    placeholder="Username(CvSU Email)"
                     onChange={handleInput}
                     className="form-control rounded"
                     value={values.username}
                     autoComplete="new-username"
+                    pattern="^[a-zA-Z0-9._%+-]+@cvsu\.edu\.ph$"
+                    title="Please enter a valid CvSU email (e.g., johndoe@cvsu.edu.ph)"
                   />
                 </div>
                 <div className="mb-3">

@@ -203,29 +203,41 @@ function NotificationButton() {
         className="toast-container"
       >
         {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            onClose={() =>
-              setToasts((prevToasts) =>
-                prevToasts.filter((t) => t.id !== toast.id)
-              )
+          <Link
+            className="text-decoration-none"
+            to={
+              toast.type === "follow"
+                ? `/profile/${toast.actorID}`
+                : `/DiaryEntry/${toast.entryID || ""}`
             }
-            show={toast.visible}
-            delay={5000}
-            autohide
+            onClick={() => markAsReadAndNavigate(toast.notificationID)}
           >
-            <Toast.Header>
-              <div className="w-100 d-flex justify-content-between align-items-end">
-                <p className="m-0 fw-bold">New Notification</p>
-                <p className="m-0">
-                  <span style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}>
-                    {formatDate(toast.timestamp)}
-                  </span>
-                </p>
-              </div>
-            </Toast.Header>
-            <Toast.Body>{toast.message}</Toast.Body>
-          </Toast>
+            <Toast
+              key={toast.id}
+              onClose={() =>
+                setToasts((prevToasts) =>
+                  prevToasts.filter((t) => t.id !== toast.id)
+                )
+              }
+              show={toast.visible}
+              delay={5000}
+              autohide
+            >
+              <Toast.Header>
+                <div className="w-100 d-flex justify-content-between align-items-end">
+                  <p className="m-0 fw-bold">New Notification</p>
+                  <p className="m-0">
+                    <span style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}>
+                      {formatDate(toast.timestamp)}
+                    </span>
+                  </p>
+                </div>
+              </Toast.Header>
+              <Toast.Body>
+                <p className="m-0 text-secondary">{toast.message}</p>
+              </Toast.Body>
+            </Toast>
+          </Link>
         ))}
       </div>
       <button

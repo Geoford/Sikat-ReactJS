@@ -270,7 +270,7 @@ export default function Register() {
                         required
                       />
                     </div>
-                    <div className="col-md-5 p-0">
+                    <div className="col-md p-0">
                       <input
                         type="text"
                         name="lastName"
@@ -295,7 +295,7 @@ export default function Register() {
                         required
                       />
                     </div>
-                    <div class="col-md-4 p-0">
+                    <div class="col-md p-0">
                       <label class="visually-hidden" for="sex">
                         Sex
                       </label>
@@ -405,7 +405,7 @@ export default function Register() {
                         title="Please enter a valid CvSU email (e.g., johndoe@cvsu.edu.ph)"
                       />
                     </div>
-                    <div className="col-md-4 p-0">
+                    <div className="col-md p-0">
                       <input
                         type="number"
                         name="studentNumber"

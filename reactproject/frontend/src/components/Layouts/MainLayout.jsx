@@ -6,6 +6,7 @@ import "boxicons/css/boxicons.min.css";
 
 const MainLayout = ({ children, ActiveTab }) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [showMessage, setShowMessage] = useState(false);
   // State to store user data fetched from localStorage
   const [user, setUser] = useState(null);
 
@@ -25,8 +26,17 @@ const MainLayout = ({ children, ActiveTab }) => {
   }, []); // Empty dependency array ensures this effect runs only once
 
   useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
+    const handleOnline = () => {
+      setIsOffline(false);
+      setShowMessage(true); // Show the "You are online" message
+      setTimeout(() => setShowMessage(false), 5000); // Hide after 5 seconds
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+      setShowMessage(true); // Show the "You are offline" message
+      setTimeout(() => setShowMessage(false), 5000); // Hide after 5 seconds
+    };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
@@ -43,7 +53,7 @@ const MainLayout = ({ children, ActiveTab }) => {
       <div className="mt-5 pt-5 pt-lg-3">
         {children}
         <div>
-          {isOffline && (
+          {showMessage && isOffline && (
             <div
               style={{
                 position: "fixed",
@@ -57,7 +67,24 @@ const MainLayout = ({ children, ActiveTab }) => {
                 zIndex: 1000,
               }}
             >
-              You are offline
+              Internet connection lost.
+            </div>
+          )}
+          {showMessage && !isOffline && (
+            <div
+              style={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                backgroundColor: "green",
+                color: "white",
+                textAlign: "center",
+                padding: "",
+                zIndex: 1000,
+              }}
+            >
+              You are now connected to internet.
             </div>
           )}
         </div>

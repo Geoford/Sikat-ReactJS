@@ -119,7 +119,7 @@ const ForgotPassword = () => {
 
           {step === 2 && (
             <div>
-              <p>OTP sent to {values.email}</p>
+              <p>OTP sent to your CvSU Email.</p>
               <div className="mb-3">
                 <input
                   type="number"
