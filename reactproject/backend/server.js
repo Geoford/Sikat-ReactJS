@@ -378,7 +378,6 @@ app.post("/Register", (req, res) => {
     firstName,
     lastName,
     cvsuEmail,
-    username,
     password,
     studentNumber,
     alias,
@@ -387,11 +386,12 @@ app.post("/Register", (req, res) => {
     year,
   } = req.body;
 
+  const username = cvsuEmail;
+
   if (
     !firstName ||
     !lastName ||
     !cvsuEmail ||
-    !username ||
     !password ||
     !studentNumber ||
     !sex ||

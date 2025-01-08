@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -12,6 +12,16 @@ const ForgotPassword = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const [passwordFeedback, setPasswordFeedback] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+  });
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordMatch, setPasswordMatch] = useState(null);
+
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -86,6 +96,38 @@ const ForgotPassword = () => {
     }
   };
 
+  useEffect(() => {
+    const { password, confirmPassword } = values;
+
+    const feedback = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+    };
+
+    setPasswordFeedback(feedback);
+
+    const strengthCount = Object.values(feedback).filter(Boolean).length;
+
+    let strengthLabel;
+    if (strengthCount <= 1) {
+      strengthLabel = "Weak";
+    } else if (strengthCount === 2 || strengthCount === 3) {
+      strengthLabel = "Medium";
+    } else if (strengthCount === 4) {
+      strengthLabel = "Strong";
+    }
+
+    setPasswordStrength(strengthLabel);
+
+    if (password && confirmPassword) {
+      setPasswordMatch(password === confirmPassword);
+    } else {
+      setPasswordMatch(null);
+    }
+  }, [values.password, values.confirmPassword]);
+
   return (
     <>
       <button
@@ -145,6 +187,50 @@ const ForgotPassword = () => {
                   value={values.password}
                   onChange={handleInputChange}
                 />
+                <div className="mt-2">
+                  <span
+                    style={{
+                      color:
+                        passwordStrength === "Weak"
+                          ? "red"
+                          : passwordStrength === "Medium"
+                          ? "orange"
+                          : "green",
+                    }}
+                  >
+                    {passwordStrength}
+                  </span>
+                </div>
+                <ul className="text-muted mt-2">
+                  <li
+                    style={{
+                      color: passwordFeedback.length ? "green" : "red",
+                    }}
+                  >
+                    At least 8 characters
+                  </li>
+                  <li
+                    style={{
+                      color: passwordFeedback.uppercase ? "green" : "red",
+                    }}
+                  >
+                    At least one uppercase letter
+                  </li>
+                  <li
+                    style={{
+                      color: passwordFeedback.lowercase ? "green" : "red",
+                    }}
+                  >
+                    At least one lowercase letter
+                  </li>
+                  <li
+                    style={{
+                      color: passwordFeedback.number ? "green" : "red",
+                    }}
+                  >
+                    At least one number
+                  </li>
+                </ul>
               </div>
               <div className="mb-3">
                 <input
@@ -155,6 +241,15 @@ const ForgotPassword = () => {
                   value={values.confirmPassword}
                   onChange={handleInputChange}
                 />
+                <div className="mt-2">
+                  {passwordMatch === null ? (
+                    ""
+                  ) : passwordMatch ? (
+                    <span style={{ color: "green" }}>Passwords match</span>
+                  ) : (
+                    <span style={{ color: "red" }}>Passwords do not match</span>
+                  )}
+                </div>
               </div>
             </div>
           )}
