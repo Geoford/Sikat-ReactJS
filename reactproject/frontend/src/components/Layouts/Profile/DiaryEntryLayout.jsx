@@ -56,30 +56,6 @@ const DiaryEntryLayout = ({
     setCurrentUser(storedUser);
   }, [navigate]);
 
-  // useEffect(() => {
-  //   if (!userID || !currentUser) return;
-
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:8081/fetchUser/user/${userID}`
-  //       );
-
-  //       if (!response.ok) {
-  //         throw new Error("User not found");
-  //       }
-  //       const data = await response.json();
-  //       setEntries(data);
-  //     } catch (err) {
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, [userID, currentUser]);
-
   useEffect(() => {
     if (user) {
       fetchEntries(user.userID, filters);
@@ -159,24 +135,6 @@ const DiaryEntryLayout = ({
       console.error("Error fetching diary entries:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDeleteEntry = async (entryID) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this entry?"
-    );
-    if (confirmed) {
-      try {
-        await axios.delete(`http://localhost:8081/deleteEntry/${entryID}`);
-        alert("Diary entry deleted successfully.");
-        setEntries((prevEntries) =>
-          prevEntries.filter((entry) => entry.entryID !== entryID)
-        );
-      } catch (error) {
-        console.error("Error deleting diary entry:", error);
-        alert("Failed to delete the entry.");
-      }
     }
   };
 
@@ -442,8 +400,8 @@ const DiaryEntryLayout = ({
                   ""
                 ) : (
                   <>
-                    {user &&
-                      user.userID !== entry.userID &&
+                    {!currentUser.isAdmin &&
+                      currentUser.userID !== entry.userID &&
                       entry.anonimity !== "private" &&
                       entry.isAdmin !== 1 && (
                         <div className="d-flex align-items-center gap-1">
@@ -496,24 +454,40 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                {user.isAdmin && !entry.userID ? (
-                  <Dropdown.Item className="p-0 btn btn-light">
-                    <Suspend
-                      userID={entry.userID}
-                      firstName={entry.firstName}
-                      suspended={entry.isSuspended}
-                    ></Suspend>
-                  </Dropdown.Item>
+                {currentUser.isAdmin && !entry.isAdmin ? (
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <Suspend
+                        userID={entry.userID}
+                        firstName={entry.firstName}
+                        suspended={entry.isSuspend}
+                      ></Suspend>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
                 ) : (
                   <>
                     {user.isAdmin && !entry.userID ? (
-                      <Dropdown.Item className="p-0 btn btn-light">
-                        <Suspend
-                          userID={entry.userID}
-                          firstName={entry.firstName}
-                          suspended={entry.isSuspended}
-                        ></Suspend>
-                      </Dropdown.Item>
+                      <>
+                        <Dropdown.Item className="p-0 btn btn-light">
+                          <Suspend
+                            userID={entry.userID}
+                            firstName={entry.firstName}
+                            suspended={entry.isSuspended}
+                          ></Suspend>
+                        </Dropdown.Item>
+                        <Dropdown.Item className="p-0 btn btn-light">
+                          <DeleteButton
+                            entryID={entry.entryID}
+                            title={entry.title}
+                          ></DeleteButton>
+                        </Dropdown.Item>
+                      </>
                     ) : (
                       <>
                         <Dropdown.Item className="p-0 btn btn-light">
@@ -606,10 +580,7 @@ const DiaryEntryLayout = ({
 
         <div className="d-flex gap-1 align-items-center mt-2">
           <div className="d-flex flex-column gap-1">
-            <h5 className="m-0">
-              {entry.title}
-              {/* {user} */}
-            </h5>
+            <h5 className="m-0">{entry.title}</h5>
           </div>
         </div>
 
@@ -673,7 +644,7 @@ const DiaryEntryLayout = ({
         </div>
 
         <div className="col p-0">
-          {user.isAdmin ? (
+          {currentUser.isAdmin ? (
             <ChatButton
               isAdmin={entry.isAdmin}
               userToChat={entry.userID}
@@ -684,7 +655,7 @@ const DiaryEntryLayout = ({
               isAnon={entry.anonimity}
               alias={entry.alias}
               flaggedCount={flaggedCount}
-              userID={user.userID}
+              userID={currentUser.userID}
               entryID={entry.entryID}
               entry={entry.userID}
               fromAdmin={entry.isAdmin}

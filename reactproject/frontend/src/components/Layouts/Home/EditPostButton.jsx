@@ -170,11 +170,11 @@ function EditPostButton({
   return (
     <>
       <button
-        className="btn btn-light w-100 d-flex align-items-center justify-content-center"
+        className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
         onClick={handleShow}
       >
-        <p className="m-0">Edit</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
+        <p className="m-0">Edit</p>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>

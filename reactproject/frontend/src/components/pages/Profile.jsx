@@ -517,6 +517,7 @@ const Profile = () => {
                       key={entry.entryID}
                       entry={entry}
                       user={user}
+                      currentUser={currentUser}
                       // entryFirstName={entry.firstName}
                       followedUsers={followedUsers}
                       handleFollowToggle={handleFollowToggle}
