@@ -100,6 +100,7 @@ const ActivityLogs = ({ userID }) => {
                 {gadifyLogs.map((gadify) => (
                   <Link
                     key={gadify.gadifyID}
+                    to={`/DiaryEntry/${gadify.entryID}`}
                     className="d-flex align-items-center text-decoration-none py-2 ps-3 mb-2 grayHover rounded bg-transparent"
                   >
                     <p className="m-0">
