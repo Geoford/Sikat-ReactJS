@@ -98,9 +98,10 @@ const ActivityLogs = ({ userID }) => {
                 style={{ height: "25rem" }}
               >
                 {gadifyLogs.map((gadify) => (
-                  <div
+                  <Link
                     key={gadify.gadifyID}
-                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent"
+                    to={`/DiaryEntry/${gadify.entryID}`}
+                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent linkText"
                   >
                     <p className="m-0">
                       {gadify.firstName}'s Diary - {gadify.title}{" "}
@@ -110,7 +111,7 @@ const ActivityLogs = ({ userID }) => {
                         {timeAgo(gadify.created_at)}
                       </span>
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </Tab>
@@ -120,9 +121,10 @@ const ActivityLogs = ({ userID }) => {
                 style={{ height: "25rem" }}
               >
                 {commentLogs.map((comment) => (
-                  <div
+                  <Link
                     key={comment.commentID}
-                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent"
+                    to={`/DiaryEntry/${comment.entryID}`}
+                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent linkText"
                   >
                     <p className="m-0">
                       {comment.firstName}'s Diary - {comment.text}{" "}
@@ -132,7 +134,7 @@ const ActivityLogs = ({ userID }) => {
                         {timeAgo(comment.created_at)}
                       </span>
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </Tab>
@@ -142,9 +144,10 @@ const ActivityLogs = ({ userID }) => {
                 style={{ height: "25rem" }}
               >
                 {flagLog.map((flag) => (
-                  <div
+                  <Link
                     key={flag.report_id}
-                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent"
+                    to={`/DiaryEntry/${flag.entryID}`}
+                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent linkText"
                   >
                     <p className="m-0">
                       {flag.firstName}'s Diary - {flag.reasons}{" "}
@@ -154,7 +157,7 @@ const ActivityLogs = ({ userID }) => {
                         {timeAgo(flag.created_at)}
                       </span>
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </Tab>
