@@ -1240,6 +1240,7 @@ app.get("/entries", (req, res) => {
       user_table.firstName,
       user_table.lastName,
       user_table.isAdmin,
+      user_table.isSuspended,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries

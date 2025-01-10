@@ -499,7 +499,7 @@ const Profile = () => {
               userID={userID}
               ownProfile={ownProfile}
             />
-            {/* {currentUser.isAdmin} */}
+            {/* {user.isSuspended} */}
           </div>
 
           <div className="col-md mb-2 p-0 px-md-1">
@@ -520,7 +520,7 @@ const Profile = () => {
                       user={user}
                       isGadified={entry.isGadified}
                       currentUser={currentUser}
-                      // entryFirstName={entry.firstName}
+                      suspended={user.isSuspended}
                       followedUsers={followedUsers}
                       handleFollowToggle={handleFollowToggle}
                       handleClick={handleClick}

@@ -516,6 +516,7 @@ const CenterLayout = () => {
               entry={entry}
               user={user}
               followedUsers={followedUsers}
+              suspended={entry.isSuspended}
               handleFollowToggle={handleFollowToggle}
               handleClick={handleClick}
               expandButtons={expandButtons}

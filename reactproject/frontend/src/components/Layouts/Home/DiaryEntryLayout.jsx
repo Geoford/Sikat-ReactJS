@@ -26,6 +26,7 @@ const DiaryEntryLayout = ({
   handleClick,
   expandButtons,
   formatDate,
+  suspended,
 }) => {
   const { userID } = useParams();
   const [entries, setEntries] = useState([]);
@@ -499,27 +500,37 @@ const DiaryEntryLayout = ({
                 id="dropdown-basic"
                 bsPrefix="custom-toggle"
               >
-                <h5 className="m-0">...</h5>
+                <h5 className="m-0">...{}</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
                 {currentUser.isAdmin && !entry.isAdmin ? (
-                  <Dropdown.Item className="p-0 btn btn-light">
-                    <Suspend
-                      userID={entry.userID}
-                      firstName={entry.firstName}
-                      suspended={entry.isSuspend}
-                    ></Suspend>
-                  </Dropdown.Item>
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <Suspend
+                        userID={entry.userID}
+                        firstName={entry.firstName}
+                        suspended={entry.isSuspended}
+                      ></Suspend>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
                 ) : (
                   <>
                     {user.isAdmin && !entry.userID ? (
-                      <Dropdown.Item className="p-0 btn btn-light">
-                        <Suspend
-                          userID={entry.userID}
-                          firstName={entry.firstName}
-                          suspended={entry.isSuspended}
-                        ></Suspend>
-                      </Dropdown.Item>
+                      <>
+                        <Dropdown.Item className="p-0 btn btn-light">
+                          <Suspend
+                            userID={entry.userID}
+                            firstName={entry.firstName}
+                            suspended={suspended}
+                          ></Suspend>
+                        </Dropdown.Item>
+                      </>
                     ) : (
                       <>
                         <Dropdown.Item className="p-0 btn btn-light">

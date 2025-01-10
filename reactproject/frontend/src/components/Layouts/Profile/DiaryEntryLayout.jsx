@@ -26,6 +26,7 @@ const DiaryEntryLayout = ({
   handleClick,
   expandButtons,
   formatDate,
+  suspended,
 }) => {
   const { userID } = useParams();
   const [entries, setEntries] = useState([]);
@@ -451,7 +452,7 @@ const DiaryEntryLayout = ({
                 id="dropdown-basic"
                 bsPrefix="custom-toggle"
               >
-                <h5 className="m-0">...</h5>
+                <h5 className="m-0">...{user.isSuspend}</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
                 {currentUser.isAdmin && !entry.isAdmin ? (
@@ -460,7 +461,7 @@ const DiaryEntryLayout = ({
                       <Suspend
                         userID={entry.userID}
                         firstName={entry.firstName}
-                        suspended={entry.isSuspend}
+                        suspended={suspended}
                       ></Suspend>
                     </Dropdown.Item>
                     <Dropdown.Item className="p-0 btn btn-light">
