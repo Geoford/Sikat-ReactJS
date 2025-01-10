@@ -680,7 +680,7 @@ const DiaryEntryLayout = ({
             isAnon={entry.anonimity}
             alias={entry.alias}
           />
-          {/* {user.firstName} */}
+          {/* {entry.isFlagged} */}
         </div>
 
         <div className="col p-0">

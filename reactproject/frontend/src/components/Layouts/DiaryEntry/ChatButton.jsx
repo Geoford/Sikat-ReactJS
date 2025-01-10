@@ -194,10 +194,10 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
         <button
           className="InteractButton d-flex align-items-center justify-content-center gap-2"
           onClick={handleShow}
-          disabled={isAdmin || !entry.containsAlarmingWords}
+          disabled={isAdmin || !entry.containsAlarmingWords || !entry.isFlagged}
         >
           <i class="bx bx-chat my-1"></i>
-          <p className="m-0 d-none d-xl-block">Message</p>
+          <p className="m-0 d-none d-xl-block">Message{entry.isFlagged}</p>
         </button>
       </div>
 
