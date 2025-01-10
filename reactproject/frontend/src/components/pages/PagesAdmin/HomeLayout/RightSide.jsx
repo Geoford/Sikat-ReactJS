@@ -117,41 +117,45 @@ const RightSide = () => {
             {/* WHEN CLICKED IT SHOULD DISPLAY THE COMMENT OF THE REPORTED USER */}
             {reportedUsers.length > 0 ? (
               reportedUsers.map((reportedUser, index) => (
-                <Link
-                  key={`${reportedUser.userID}-${reportedUser.reason}-${index}`}
-                  to={`/Profile/${reportedUser.userID}`}
-                  className="text-decoration-none"
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="linkText d-flex align-items-center gap-2 rounded">
-                    <div className="profilePicture">
-                      <img
-                        src={
-                          reportedUser.profile_image
-                            ? `http://localhost:8081${reportedUser.profile_image}`
-                            : DefaultProfile
-                        }
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <div className="w-75 d-flex flex-column align-items-start text-start">
-                      <p className="text-secondary m-0">
-                        {reportedUser.firstName} {reportedUser.lastName}
-                      </p>
-                      <h6 className="text-danger m-0">
-                        Reason: {reportedUser.reason}
-                      </h6>
-                      {/* <p className="text-danger m-0">
+                <>
+                  {reportedUser.isAddress ? null : (
+                    <Link
+                      key={`${reportedUser.userID}-${reportedUser.reason}-${index}`}
+                      to={`/Profile/${reportedUser.userID}`}
+                      className="text-decoration-none"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="linkText d-flex align-items-center gap-2 rounded">
+                        <div className="profilePicture">
+                          <img
+                            src={
+                              reportedUser.profile_image
+                                ? `http://localhost:8081${reportedUser.profile_image}`
+                                : DefaultProfile
+                            }
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <div className="w-75 d-flex flex-column align-items-start text-start">
+                          <p className="text-secondary m-0">
+                            {reportedUser.firstName} {reportedUser.lastName}
+                          </p>
+                          <h6 className="text-danger m-0">
+                            Reason: {reportedUser.reason}
+                          </h6>
+                          {/* <p className="text-danger m-0">
                         Reported {reportedUser.count} times
                       </p> */}
-                    </div>
-                  </div>
-                </Link>
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+                </>
               ))
             ) : (
               <p className="text-secondary">No reported users found.</p>
@@ -180,42 +184,46 @@ const RightSide = () => {
           >
             {flaggedUsers.length > 0 ? (
               flaggedUsers.map((flaggedUser, index) => (
-                <Link
-                  key={`${flaggedUser.userID}-${flaggedUser.reason}-${index}`}
-                  to={`/DiaryEntry/${flaggedUser.entryID}`}
-                  className="text-decoration-none rounded"
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="linkText d-flex align-items-center gap-2 rounded">
-                    <div className="profilePicture">
-                      <img
-                        src={
-                          flaggedUser.profile_image
-                            ? `http://localhost:8081${flaggedUser.profile_image}`
-                            : DefaultProfile
-                        }
-                        alt="Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <div className="w-75 d-flex flex-column align-items-start text-start">
-                      {/* <p className="text-secondary m-0">
-                        {flaggedUser.firstName} {flaggedUser.lastName}
-                      </p> */}
-                      <h5 className="text-secondary m-0">
-                        {flaggedUser.title}
-                      </h5>
-                      <h6 className="text-danger m-0">
-                        Reason: {flaggedUser.reasons} x{flaggedUser.count}
-                      </h6>
-                      {/* <p className="text-danger m-0">Flagged times</p> */}
-                    </div>
-                  </div>
-                </Link>
+                <>
+                  {flaggedUser.isAddress ? null : (
+                    <Link
+                      key={`${flaggedUser.userID}-${flaggedUser.reason}-${index}`}
+                      to={`/DiaryEntry/${flaggedUser.entryID}`}
+                      className="text-decoration-none rounded"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="linkText d-flex align-items-center gap-2 rounded">
+                        <div className="profilePicture">
+                          <img
+                            src={
+                              flaggedUser.profile_image
+                                ? `http://localhost:8081${flaggedUser.profile_image}`
+                                : DefaultProfile
+                            }
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <div className="w-75 d-flex flex-column align-items-start text-start">
+                          {/* <p className="text-secondary m-0">
+                          {flaggedUser.firstName} {flaggedUser.lastName}
+                        </p> */}
+                          <h5 className="text-secondary m-0">
+                            {flaggedUser.title}
+                          </h5>
+                          <h6 className="text-danger m-0">
+                            Reason: {flaggedUser.reasons} x{flaggedUser.count}
+                          </h6>
+                          {/* <p className="text-danger m-0">Flagged times</p> */}
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+                </>
               ))
             ) : (
               <p className="text-secondary">No flagged diaries found.</p>
