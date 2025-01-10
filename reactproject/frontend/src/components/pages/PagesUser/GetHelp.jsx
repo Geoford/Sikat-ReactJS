@@ -12,6 +12,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const GetHelp = () => {
   const { userID } = useParams();
   const [selectedSubjects, setSelectedSubjects] = useState("");
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     victimName: "",
     perpetratorName: "",
@@ -64,7 +65,18 @@ const GetHelp = () => {
   };
 
   const handleSubmit = async (e) => {
+    let errors = {};
     e.preventDefault();
+
+    if (!selectedSubjects || selectedSubjects.trim() === "") {
+      errors.subjects = "At least one subject must be selected.";
+    }
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
@@ -168,9 +180,14 @@ const GetHelp = () => {
               <div className="col-md-2">
                 <SubjectSelection onSubjectsChange={handleSubjectsChange} />
                 {selectedSubjects && (
-                  <div className=""> {selectedSubjects} </div>
+                  <div>
+                    <p className="m-0">{selectedSubjects}</p>
+                  </div>
                 )}
               </div>
+              {formErrors.subjects && (
+                <p className="text-danger mt-1">{formErrors.subjects}</p>
+              )}
             </div>
 
             <FloatingLabel

@@ -129,7 +129,7 @@ export default function HomeMainLayout({ isAdminPage }) {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="w-100 primaryButton"
                   onClick={handleReload}
                 >
                   Reload Page

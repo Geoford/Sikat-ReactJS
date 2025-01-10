@@ -103,6 +103,11 @@ function DiaryEntryButton({ onEntrySaved }) {
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
+
+    if (!selectedSubjects || selectedSubjects.trim() === "") {
+      errors.subjects = "At least one subject must be selected.";
+    }
+
     setFormErrors(errors);
 
     if (containsAlarmingWords(title) || containsAlarmingWords(description)) {
@@ -234,11 +239,15 @@ function DiaryEntryButton({ onEntrySaved }) {
           <div className="mt-1 d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
             {selectedSubjects && (
-              <div className="">
+              <div>
                 <p className="m-0">{selectedSubjects}</p>
               </div>
             )}
           </div>
+          {formErrors.subjects && (
+            <p className="text-danger mt-1">{formErrors.subjects}</p>
+          )}
+
           <div
             className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"
             style={{ maxHeight: "50dvh" }}

@@ -62,61 +62,68 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
                   className="my-1 px-2 custom-scrollbar"
                   style={{ eight: "35vh", overflowY: "scroll" }}
                 >
-                  {entries.map((entry) => {
-                    if (
-                      !isAdmin &&
-                      !ownProfile &&
-                      entry.anonimity === "private"
-                    ) {
-                      return null;
-                    }
-                    return (
-                      <Link
-                        key={entry.entryID}
-                        to={`/DiaryEntry/${entry.entryID}`}
-                        className="rounded text-decoration-none"
-                      >
-                        <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
-                          <div>
-                            <div className="d-flex flex-column align-items-start p-1">
-                              <p className="m-0 text-start text-secondary">
-                                {entry.title}{" "}
-                                <span>
-                                  {entry.visibility === "private" ? (
-                                    <i class="bx bx-lock-alt"></i>
-                                  ) : (
-                                    <i class="bx bx-globe"></i>
-                                  )}
-                                  {entry.anonimity === "private" ? (
-                                    <>
-                                      <i class="bx bxs-user position-relative">
-                                        <i
-                                          class="bx bx-question-mark position-absolute"
-                                          style={{
-                                            left: ".5rem",
-                                            fontSize:
-                                              "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                          }}
-                                        ></i>
-                                      </i>
-                                    </>
-                                  ) : null}
+                  {entries
+                    .filter((entry) => {
+                      const now = new Date();
+                      const scheduledDate = new Date(entry.scheduledDate);
+                      const dateToBePosted = new Date();
+                      return scheduledDate < dateToBePosted;
+                    })
+                    .map((entry) => {
+                      if (
+                        !isAdmin &&
+                        !ownProfile &&
+                        entry.anonimity === "private"
+                      ) {
+                        return null;
+                      }
+                      return (
+                        <Link
+                          key={entry.entryID}
+                          to={`/DiaryEntry/${entry.entryID}`}
+                          className="rounded text-decoration-none"
+                        >
+                          <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                            <div>
+                              <div className="d-flex flex-column align-items-start p-1">
+                                <p className="m-0 text-start text-secondary">
+                                  {entry.title}{" "}
+                                  <span>
+                                    {entry.visibility === "private" ? (
+                                      <i class="bx bx-lock-alt"></i>
+                                    ) : (
+                                      <i class="bx bx-globe"></i>
+                                    )}
+                                    {entry.anonimity === "private" ? (
+                                      <>
+                                        <i class="bx bxs-user position-relative">
+                                          <i
+                                            class="bx bx-question-mark position-absolute"
+                                            style={{
+                                              left: ".5rem",
+                                              fontSize:
+                                                "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                            }}
+                                          ></i>
+                                        </i>
+                                      </>
+                                    ) : null}
+                                  </span>
+                                </p>
+                                <span
+                                  className="text-secondary"
+                                  style={{
+                                    fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                  }}
+                                >
+                                  {formatDate(entry.created_at)}
                                 </span>
-                              </p>
-                              <span
-                                className="text-secondary"
-                                style={{
-                                  fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                }}
-                              >
-                                {formatDate(entry.created_at)}
-                              </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
+                        </Link>
+                      );
+                    })}
                 </div>
               )}
             </Accordion.Body>

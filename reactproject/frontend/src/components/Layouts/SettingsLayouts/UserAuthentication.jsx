@@ -117,20 +117,20 @@ const UserAuthentication = ({ cvsuEmail }) => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            className="primaryButton px-4 py-2"
+          <button
+            className="orangeButton px-4 py-2"
             onClick={sendOtp}
             disabled={isSendingOtp}
           >
             {isSendingOtp ? "Sending OTP..." : "Resend OTP"}
-          </Button>
-          <Button
+          </button>
+          <button
             className="primaryButton px-4 py-2"
             onClick={handleVerifyOtp}
             disabled={isVerifying}
           >
             {isVerifying ? "Verifying..." : "Verify OTP"}
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     </>

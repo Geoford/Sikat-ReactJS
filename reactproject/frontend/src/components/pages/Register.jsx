@@ -26,8 +26,16 @@ export default function Register() {
     uppercase: false,
     lowercase: false,
     number: false,
-    specialChar: false,
+    specialchar: false,
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+    setShowConfirmPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordMatch, setPasswordMatch] = useState(null);
@@ -178,6 +186,7 @@ export default function Register() {
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
       number: /[0-9]/.test(password),
+      specialchar: /[!@#$%^&*(),.?":{}|<>`~_+\-=\[\]\\;'/]/.test(password),
     };
 
     setPasswordFeedback(feedback);
@@ -490,57 +499,128 @@ export default function Register() {
 
                 <div>
                   <label>Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={values.password}
-                    onChange={handleInput}
-                    className="form-control"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <div className="mt-2">
-                    <span
+                  <div className="position-relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={values.password}
+                      onChange={handleInput}
+                      className="form-control"
+                      placeholder="Enter your password"
+                      autoComplete="new-password"
+                      required
+                    />
+
+                    <div
+                      onClick={togglePasswordVisibility}
+                      className="position-absolute d-flex justify-content-center align-items-center"
                       style={{
-                        color:
-                          passwordStrength === "Weak"
-                            ? "red"
-                            : passwordStrength === "Medium"
-                            ? "orange"
-                            : "green",
+                        width: "15px",
+                        height: "15px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        right: "15px",
+                        cursor: "pointer",
+                        zIndex: 5,
+                        color: "var(--primary_hover)",
                       }}
                     >
-                      {passwordStrength}
-                    </span>
+                      <i
+                        className={`${
+                          showPassword ? "bx bx-show-alt" : "bx bx-hide"
+                        }`}
+                        style={{ fontSize: "clamp(1.2rem, 2dvw, 1.3rem)" }}
+                      ></i>
+                    </div>
                   </div>
-                  <ul className="text-muted mt-2">
+                  <div className="">
+                    <p className="m-0">
+                      Strength:
+                      <span
+                        className="ms-2"
+                        style={{
+                          color:
+                            passwordStrength === "Weak"
+                              ? "red"
+                              : passwordStrength === "Medium"
+                              ? "orange"
+                              : "green",
+                        }}
+                      >
+                        {passwordStrength}
+                      </span>
+                    </p>
+                  </div>
+                  <ul className="text-muted list-unstyled ">
                     <li
                       style={{
                         color: passwordFeedback.length ? "green" : "red",
                       }}
                     >
-                      At least 8 characters
+                      <p className="m-0">
+                        {passwordFeedback.length ? (
+                          <i class="bx bx-check"></i>
+                        ) : (
+                          <i class="bx bx-x"></i>
+                        )}
+                        At least 8 characters
+                      </p>
                     </li>
                     <li
                       style={{
                         color: passwordFeedback.uppercase ? "green" : "red",
                       }}
                     >
-                      At least one uppercase letter
+                      <p className="m-0">
+                        {passwordFeedback.uppercase ? (
+                          <i class="bx bx-check"></i>
+                        ) : (
+                          <i class="bx bx-x"></i>
+                        )}
+                        At least one uppercase letter
+                      </p>
                     </li>
                     <li
                       style={{
                         color: passwordFeedback.lowercase ? "green" : "red",
                       }}
                     >
-                      At least one lowercase letter
+                      <p className="m-0">
+                        {passwordFeedback.lowercase ? (
+                          <i class="bx bx-check"></i>
+                        ) : (
+                          <i class="bx bx-x"></i>
+                        )}
+                        At least one lowercase letter
+                      </p>
+                    </li>
+                    <li
+                      style={{
+                        color: passwordFeedback.specialchar ? "red" : "green",
+                      }}
+                    >
+                      <p className="m-0">
+                        {passwordFeedback.specialchar ? (
+                          <i class="bx bx-x"></i>
+                        ) : (
+                          <i class="bx bx-check"></i>
+                        )}
+                        Has no special character
+                      </p>
                     </li>
                     <li
                       style={{
                         color: passwordFeedback.number ? "green" : "red",
                       }}
                     >
-                      At least one number
+                      <p className="m-0">
+                        {passwordFeedback.number ? (
+                          <i class="bx bx-check"></i>
+                        ) : (
+                          <i class="bx bx-x"></i>
+                        )}
+                        At least one number
+                      </p>
                     </li>
                   </ul>
                 </div>
@@ -549,7 +629,7 @@ export default function Register() {
                 <div className="mt-3">
                   <label>Confirm Password</label>
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     value={values.confirmPassword}
                     onChange={handleInput}
@@ -559,14 +639,18 @@ export default function Register() {
                   />
                 </div>
 
-                <div className="mt-2">
-                  {passwordMatch === null ? (
-                    ""
-                  ) : passwordMatch ? (
-                    <span style={{ color: "green" }}>Passwords match</span>
-                  ) : (
-                    <span style={{ color: "red" }}>Passwords do not match</span>
-                  )}
+                <div className="mb-2">
+                  <p className="m-0">
+                    {passwordMatch === null ? (
+                      ""
+                    ) : passwordMatch ? (
+                      <span style={{ color: "green" }}>Passwords match</span>
+                    ) : (
+                      <span style={{ color: "red" }}>
+                        Passwords do not match
+                      </span>
+                    )}
+                  </p>
                 </div>
 
                 {/* <div className="mb-3">

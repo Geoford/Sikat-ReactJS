@@ -9,16 +9,14 @@ const SubjectSelection = ({ onSubjectsChange }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown open/close
   const [filterSubjects, setFilterSubjects] = useState([]); // State for fetched filter subjects
 
-  // Fetch the filter subjects from the backend
   useEffect(() => {
     const fetchFilterSubjects = async () => {
       try {
         const response = await axios.get("http://localhost:8081/filters");
         const subjects = response.data;
 
-        // Initialize the selectedItems state based on fetched subjects
         const initialState = subjects.reduce((acc, subject) => {
-          acc[subject.subject] = false; // Set each subject to be unchecked initially
+          acc[subject.subject] = false;
           return acc;
         }, {});
         setSelectedItems(initialState);
