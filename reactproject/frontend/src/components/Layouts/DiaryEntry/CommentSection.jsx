@@ -11,6 +11,7 @@ import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "../CommentSection/ReportCommentButton";
 import Suspend from "../Profile/Suspend";
+import MessageModal from "./messageModal";
 
 const CommentSection = ({
   userID,
@@ -35,6 +36,21 @@ const CommentSection = ({
   const replyTextsRef = useRef({});
   const newCommentRef = useRef(null);
   const newReplyRef = useRef(null);
+
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -190,18 +206,25 @@ const CommentSection = ({
   }, [editComment, editCommentText, fetchComments]);
 
   const handleDeleteComment = async (commentID) => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      setLoading(true);
-      try {
-        await axios.delete(`http://localhost:8081/deleteComment/${commentID}`);
-        fetchComments(); // Refresh comments after deletion
-      } catch (error) {
-        console.error("Error deleting comment:", error);
-        setError("Failed to delete comment. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this comment?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8081/deleteComment/${commentID}`
+          );
+          fetchComments(); // Refresh comments after deletion
+          closeConfirmModal();
+        } catch (error) {
+          console.error("Error deleting comment:", error);
+          setError("Failed to delete comment. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleClose = () => {
@@ -496,6 +519,15 @@ const CommentSection = ({
             <Comment key={comment.commentID} comment={comment} />
           ))}
         </div>
+
+        <MessageModal
+          showModal={confirmModal}
+          closeModal={closeConfirmModal}
+          title={"Confirmation"}
+          message={confirmModal.message}
+          confirm={confirmModal.onConfirm}
+          needConfirm={1}
+        ></MessageModal>
 
         <FloatingLabel
           controlId="newCommentTextarea"
