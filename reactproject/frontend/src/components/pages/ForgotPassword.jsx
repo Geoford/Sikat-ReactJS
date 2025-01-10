@@ -87,7 +87,7 @@ const ForgotPassword = () => {
         password: values.password,
       });
       setSuccessMessage("Password reset successfully. You can now log in.");
-      setTimeout(handleClose, 3000); // Close modal after 3 seconds
+      setTimeout(handleClose, 3000);
     } catch (err) {
       setError(
         err.response?.data?.error ||
