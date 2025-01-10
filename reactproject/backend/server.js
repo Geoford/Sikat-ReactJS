@@ -1727,6 +1727,7 @@ app.get("/users", (req, res) => {
       user_table.userID = user_profiles.userID 
     WHERE 
       user_table.isAdmin = 0
+      ORDER BY created_at DESC
   `;
 
   db.query(query, (err, results) => {
@@ -2136,6 +2137,7 @@ app.get("/getReportedUsers", (req, res) => {
       reported_users
     JOIN user_table ON reported_users.reportedUserID = user_table.userID
     JOIN user_profiles ON reported_users.userID = user_profiles.userID
+    ORDER BY isAddress
   `;
   //  SELECT
   //     flagged_reports.*,
@@ -2239,6 +2241,7 @@ app.get("/getReportedComments", (req, res) => {
   JOIN comments ON comment_reports.commentID = comments.commentID
   JOIN user_profiles ON comment_reports.userID = user_profiles.userID
   JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+  ORDER BY isAddress
   `;
 
   db.query(query, (err, results) => {
@@ -2687,6 +2690,7 @@ app.get("/flagged", (req, res) => {
   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
   LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+  ORDER BY isAddress
 `;
 
   db.query(query, (err, results) => {

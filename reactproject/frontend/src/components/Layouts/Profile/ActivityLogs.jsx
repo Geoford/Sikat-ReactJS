@@ -100,11 +100,10 @@ const ActivityLogs = ({ userID }) => {
                 {gadifyLogs.map((gadify) => (
                   <Link
                     key={gadify.gadifyID}
-                    to={`/DiaryEntry/${gadify.entryID}`}
-                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent linkText"
+                    className="d-flex align-items-center text-decoration-none py-2 ps-3 mb-2 grayHover rounded bg-transparent"
                   >
                     <p className="m-0">
-                      {gadify.firstName}'s Diary - {gadify.title}{" "}
+                      {gadify.firstName}'s Diary - {gadify.title}
                       <span
                         style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
                       >

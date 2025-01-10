@@ -13,6 +13,7 @@ import Profile from "./components/pages/Profile";
 import GetHelp from "./components/pages/PagesUser/GetHelp";
 import Settings from "./components/pages/Settings";
 import Followers from "./components/pages/Followers";
+import UserCaseDetails from "./components/pages/PagesUser/CaseDetails";
 import Suspended from "./components/pages/PagesUser/Suspended";
 
 import LoginRegister from "./components/pages/LoginRegister";
@@ -70,6 +71,10 @@ function App() {
             <Route path="/GetHelp/:userID" element={<GetHelp />} />
             <Route path="/Settings/:userID" element={<Settings />} />
             <Route path="/Followers" element={<Followers />} />
+            <Route
+              path="/CaseDetails/:reportID"
+              element={<UserCaseDetails />}
+            />
 
             <Route path="/suspended" element={<Suspended />} />
 
