@@ -343,7 +343,7 @@ const CenterLayout = () => {
         message={confirmModal.message}
         confirm={confirmModal.onConfirm}
         needConfirm={1}
-      ></MessageModal>{" "}
+      ></MessageModal>
       <div
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}
