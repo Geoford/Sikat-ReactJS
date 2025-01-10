@@ -452,7 +452,7 @@ const DiaryEntryLayout = ({
                 id="dropdown-basic"
                 bsPrefix="custom-toggle"
               >
-                <h5 className="m-0">...{user.isSuspend}</h5>
+                <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
                 {currentUser.isAdmin && !entry.isAdmin ? (
@@ -552,7 +552,6 @@ const DiaryEntryLayout = ({
             <h6 className="text-secondary m-0 mt-2">
               <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
                 Trigger Warning: {entry.subjects}
-                {user.firstName}
               </span>
             </h6>
           )}

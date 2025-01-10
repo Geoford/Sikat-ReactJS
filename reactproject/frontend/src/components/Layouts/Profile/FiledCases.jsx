@@ -80,9 +80,11 @@ const FiledCases = ({ userID }) => {
                         </p>
                       </td>
                       <td className="text-center align-middle">
-                        <button className="primaryButton">
-                          <p className="m-0">View</p>
-                        </button>
+                        <Link to={`/CaseDetails/${caseItem.reportID}`}>
+                          <button className="primaryButton">
+                            <p className="m-0">View</p>
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))

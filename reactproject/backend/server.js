@@ -1727,6 +1727,7 @@ app.get("/users", (req, res) => {
       user_table.userID = user_profiles.userID 
     WHERE 
       user_table.isAdmin = 0
+      ORDER BY created_at DESC
   `;
 
   db.query(query, (err, results) => {
@@ -2240,6 +2241,7 @@ app.get("/getReportedComments", (req, res) => {
   JOIN comments ON comment_reports.commentID = comments.commentID
   JOIN user_profiles ON comment_reports.userID = user_profiles.userID
   JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+  ORDER BY isAddress
   `;
 
   db.query(query, (err, results) => {

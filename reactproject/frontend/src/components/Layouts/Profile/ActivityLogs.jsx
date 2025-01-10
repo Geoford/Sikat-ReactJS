@@ -98,19 +98,19 @@ const ActivityLogs = ({ userID }) => {
                 style={{ height: "25rem" }}
               >
                 {gadifyLogs.map((gadify) => (
-                  <div
+                  <Link
                     key={gadify.gadifyID}
-                    className="d-flex align-items-center py-2 ps-3 mb-2 grayHover rounded bg-transparent"
+                    className="d-flex align-items-center text-decoration-none py-2 ps-3 mb-2 grayHover rounded bg-transparent"
                   >
                     <p className="m-0">
-                      {gadify.firstName}'s Diary - {gadify.title}{" "}
+                      {gadify.firstName}'s Diary - {gadify.title}
                       <span
                         style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
                       >
                         {timeAgo(gadify.created_at)}
                       </span>
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </Tab>
