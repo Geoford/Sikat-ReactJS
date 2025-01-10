@@ -23,11 +23,11 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
       users.map((user) => (
         <div key={user.userID} className=" pe-1">
           <div className="w-100 d-flex align-items-center justify-content-between gap-2">
-            <Link
-              to={`/Profile/${user.userID}`}
-              className="linkText position-relative rounded d-flex w-100 p-2"
-            >
-              <div className=" d-flex align-items-center">
+            <div>
+              <Link
+                to={`/Profile/${user.userID}`}
+                className=" position-relative rounded d-flex w-100 p-2 text-decoration-none text-secondary d-flex align-items-center"
+              >
                 <div className="">
                   <div className="profilePicture">
                     <img
@@ -54,10 +54,10 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                     </p>
                   </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
             <button
-              className="secondaryButton position-absolute"
+              className="secondaryButton"
               onClick={() => handleFollowToggle(user.userID, user.firstName)}
               style={{ right: "2.5rem" }}
             >

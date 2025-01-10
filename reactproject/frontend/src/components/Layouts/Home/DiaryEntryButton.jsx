@@ -268,7 +268,8 @@ function DiaryEntryButton({ onEntrySaved }) {
             </InputGroup>
             <FloatingLabel
               controlId="floatingTextarea2"
-              label={`Describe your day, ${user?.firstName || "User"}!`}
+              label={`Describe your day, ${user?.firstName}!`}
+              style={{ zIndex: "0" }}
             >
               <Form.Control
                 as="textarea"

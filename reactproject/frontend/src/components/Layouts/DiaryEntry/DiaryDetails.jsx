@@ -1,6 +1,7 @@
 import React from "react";
 
 const DiaryDetails = ({
+  entry,
   isAdmin,
   entrySubject,
   containAlarmingWords,
@@ -10,14 +11,10 @@ const DiaryDetails = ({
   return (
     <div>
       <div className="d-flex alig-items-center gap-1 position-relative">
-        {entrySubject && (
+        {entry.subjects === "None(no subject or topic)" ? null : (
           <h6 className="text-secondary m-0 mt-2">
-            <span
-              style={{
-                fontSize: "clamp(0.7rem, 1dvw, .85rem)",
-              }}
-            >
-              Trigger Warning: {entrySubject}
+            <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
+              Trigger Warning: {entry.subjects}
             </span>
           </h6>
         )}

@@ -597,6 +597,7 @@ const DiaryEntry = () => {
                       style={{ height: "18dvh" }}
                     >
                       <DiaryDetails
+                        entry={entry}
                         isAdmin={user.isAdmin}
                         entrySubject={entry.subjects}
                         containAlarmingWords={entry.containsAlarmingWords}

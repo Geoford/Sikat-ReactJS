@@ -497,11 +497,7 @@ const CenterLayout = () => {
         </>
       ) : null}
       <div className="d-flex justify-content-end">
-        {user.isAdmin ? (
-          <FilterButton onFilterChange={handleFilterChange} />
-        ) : (
-          <FilterButton onFilterChange={handleFilterChange} />
-        )}
+        <FilterButton onFilterChange={handleFilterChange} />
       </div>
       {/* FOR POSTED DIARIES */}
       {entries.length === 0 ? (

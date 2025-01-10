@@ -88,24 +88,24 @@ const SubjectSelection = ({ onSubjectsChange }) => {
   return (
     <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
       <Dropdown.Toggle
-        className="border-0 d-flex align-items-center ps-0"
+        className="w-100 border d-flex align-items-center"
         variant=""
         id="dropdown-basic"
       >
-        <h6 className="m-0">Subject</h6>
+        <p className="m-0">Subject(Topic of your diary)</p>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="px-2">
+      <Dropdown.Menu className="px-2" style={{}}>
         {filterSubjects.length > 0 && (
           <>
-            <Form.Check
+            {/* <Form.Check
               type="checkbox"
-              id="all"
-              label="All"
-              name="all"
-              checked={selectedItems.all}
+              id="none"
+              label="None(If subject is N/A)"
+              name="none"
+              checked="{selectedItems.all}"
               onChange={handleCheckboxChange}
-            />
+            /> */}
             {filterSubjects.map((subject) => (
               <Form.Check
                 key={subject.subjectID}

@@ -66,10 +66,12 @@ const FilterButton = ({ onFilterChange }) => {
         variant=""
         id="dropdown-basic"
       >
-        <h6 className="m-0">Filter</h6>
+        <h6 className="m-0 d-flex align-items-center gap-1">
+          <i class="bx bx-filter-alt"></i> Filter
+        </h6>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="px-2 z-1">
+      <Dropdown.Menu className="px-2" style={{ zIndex: "1000" }}>
         {filterOptions.map((filter) => (
           <Form.Check
             key={filter.subject} // Use 'subject' for the key
@@ -81,9 +83,9 @@ const FilterButton = ({ onFilterChange }) => {
             onChange={handleCheckboxChange}
           />
         ))}
-        <button className="orangeButton w-100" onClick={applyFilters}>
+        {/* <button className="orangeButton w-100" onClick={applyFilters}>
           Apply Filters
-        </button>
+        </button> */}
       </Dropdown.Menu>
     </Dropdown>
   );
