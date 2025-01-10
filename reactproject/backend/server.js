@@ -2650,6 +2650,7 @@ app.post("/flags", (req, res) => {
       const updateQuery = `
         UPDATE diary_entries 
         SET
+        isFlagged = 1,
         engagementCount = engagementCount + 1, 
           updated_at = CURRENT_TIMESTAMP  
         WHERE 

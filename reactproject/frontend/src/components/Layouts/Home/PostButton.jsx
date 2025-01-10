@@ -71,9 +71,24 @@ function PostButton({ onEntrySaved }) {
     setAnonimity(event.target.value);
   };
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+
+    if (selectedFile && selectedFile.size > MAX_FILE_SIZE) {
+      setServerError("File size should not exceed 5MB.");
+      return;
+    }
+
+    if (selectedFile && !ALLOWED_FILE_TYPES.includes(selectedFile.type)) {
+      setServerError("Only JPEG and PNG files are allowed.");
+      return;
+    }
+
     setFile(selectedFile);
+    setServerError("");
     if (selectedFile) {
       setImagePreview(URL.createObjectURL(selectedFile));
     } else {
