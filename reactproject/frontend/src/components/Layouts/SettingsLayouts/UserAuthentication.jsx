@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import MessageModal from "../DiaryEntry/messageModal";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 const UserAuthentication = ({ cvsuEmail }) => {
   const [show, setShow] = useState(false);
@@ -74,7 +75,10 @@ const UserAuthentication = ({ cvsuEmail }) => {
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Error sending OTP. Please check your connection.");
+      setModal({
+        show: true,
+        message: `Error sending OTP. Please check your connection.`,
+      });
     } finally {
       setIsSendingOtp(false); // Reset sending state
     }
@@ -93,8 +97,13 @@ const UserAuthentication = ({ cvsuEmail }) => {
       });
 
       if (response.status === 200) {
-        setVerificationStatus("OTP verified successfully!");
-        setShow(false);
+        setTimeout(() => {
+          setShow(false);
+          setModal({
+            show: true,
+            message: `OTP verified successfully`,
+          });
+        }, 2000);
       } else {
         setVerificationStatus("OTP verification failed. Try again.");
       }
@@ -118,13 +127,12 @@ const UserAuthentication = ({ cvsuEmail }) => {
         </h5>
         <p className="m-0">Password and Security</p>
       </div>
-
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

@@ -6,6 +6,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Pagination from "react-bootstrap/Pagination";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
+import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
 
 export default function GenderBasedIncidents() {
   const [reports, setReports] = useState([]);
@@ -114,12 +115,12 @@ export default function GenderBasedIncidents() {
 
   return (
     <MainLayout ActiveTab="Complaints">
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

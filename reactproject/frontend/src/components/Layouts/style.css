@@ -792,6 +792,11 @@ input.form-control:focus {
   transform: scale(102%);
 }
 
+/* FOR TOAST */
+.toast {
+  z-index: 10000;
+}
+
 @media screen and (max-width: 1150px) {
   .followerName {
     /* display: none; */

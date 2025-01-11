@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import sampleImage from "../../../assets/Background.jpg";
 import MainLayout from "../../Layouts/MainLayout";
+import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
+import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 const CaseDetails = () => {
   const { reportID } = useParams();
@@ -12,6 +14,26 @@ const CaseDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     // Fetch case details based on reportID
@@ -31,20 +53,27 @@ const CaseDetails = () => {
   }, [reportID]);
 
   const handleAddressed = (reportID) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to address this entry?"
-    );
-    if (confirmed) {
-      axios
-        .put(`http://localhost:8081/reports/${reportID}`)
-        .then(() => {
-          alert("The case has been addressed!");
-          fetchReports();
-        })
-        .catch((err) => {
-          setError(err.response?.data?.error || "Failed to update case report");
-        });
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to mark this as address?`,
+      onConfirm: async () => {
+        axios
+          .put(`http://localhost:8081/reports/${reportID}`)
+          .then(() => {
+            setModal({
+              show: true,
+              message: `The case has been addressed.`,
+            });
+            fetchReports();
+          })
+          .catch((err) => {
+            setError(
+              err.response?.data?.error || "Failed to update case report"
+            );
+          });
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleImageClick = (imageSrc) => {
@@ -183,6 +212,20 @@ const CaseDetails = () => {
 
   return (
     <MainLayout ActiveTab="Complaints">
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
       <div className="d-flex justify-content-center py-3">
         <div
           className="rounded shadow p-3"
@@ -310,6 +353,7 @@ const CaseDetails = () => {
                 ""
               ) : (
                 <button
+                  type="button"
                   className="primaryButton w-100 py-2"
                   onClick={() => handleAddressed(reportID)}
                 >
