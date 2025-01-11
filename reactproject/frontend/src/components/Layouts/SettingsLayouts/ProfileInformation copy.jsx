@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UpdateValidation from "../../../components/pages/UpdateValidation";
 import AnonimityButton from "../../../components/Layouts/LayoutUser/AnonimityButton";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const ProfileInformation = () => {
   const [values, setValues] = useState({
@@ -18,6 +19,26 @@ const ProfileInformation = () => {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -111,6 +132,21 @@ const ProfileInformation = () => {
   return (
     <>
       <div className="container mt-4">
+        <MessageModal
+          showModal={modal}
+          closeModal={closeModal}
+          title={"Notice"}
+          message={modal.message}
+        ></MessageModal>
+        <MessageModal
+          showModal={confirmModal}
+          closeModal={closeConfirmModal}
+          title={"Confirmation"}
+          message={confirmModal.message}
+          confirm={confirmModal.onConfirm}
+          needConfirm={1}
+        ></MessageModal>
+
         <h2>Edit Profile Information</h2>
         <form onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-3">

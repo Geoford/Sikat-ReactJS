@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Pagination from "react-bootstrap/Pagination";
 import axios from "axios";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const ReportingComments = () => {
   const [reportComments, setReportComments] = useState([]);
@@ -16,6 +18,26 @@ const ReportingComments = () => {
   const [editedReportComments, setEditedReportComments] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchReportComments = async () => {
@@ -43,6 +65,10 @@ const ReportingComments = () => {
         setReportComments([...reportComments, newComment]);
         setFilteredComments([...reportComments, newComment]);
         setNewReportComments("");
+        setModal({
+          show: true,
+          message: `Comment violation added successfully.`,
+        });
       } catch (error) {
         console.error("Error adding comment report:", error);
       }
@@ -69,7 +95,10 @@ const ReportingComments = () => {
         setReportComments(updatedComments);
         setFilteredComments(updatedComments);
         setEditingReportComments(null);
-        alert("Edited Successfully.");
+        setModal({
+          show: true,
+          message: `Edited Successfully.`,
+        });
       } catch (error) {
         console.error("Error editing reports:", error);
       }
@@ -77,24 +106,30 @@ const ReportingComments = () => {
   };
 
   const handleDeleteReportComment = async (reportCommentID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this report comment?"
-    );
-    if (confirmDelete) {
-      try {
-        await axios.delete(
-          `http://localhost:8081/reportCommentDelete/${reportCommentID}`
-        );
-        const updatedComments = reportComments.filter(
-          (comment) => comment.reportCommentID !== reportCommentID
-        );
-        setReportComments(updatedComments);
-        setFilteredComments(updatedComments);
-        alert("Successfully deleted.");
-      } catch (error) {
-        console.error("Error deleting report comment:", error);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this comment violation?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8081/reportCommentDelete/${reportCommentID}`
+          );
+          const updatedComments = reportComments.filter(
+            (comment) => comment.reportCommentID !== reportCommentID
+          );
+          setReportComments(updatedComments);
+          setFilteredComments(updatedComments);
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Comment violation successfully.`,
+          });
+        } catch (error) {
+          console.error("Error deleting report comment:", error);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleSearch = (e) => {
@@ -120,6 +155,21 @@ const ReportingComments = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#ffff" }}>
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Report Comments</h4>
         <div className="informationToolTip">
@@ -133,7 +183,6 @@ const ReportingComments = () => {
           </p>
         </div>
       </div>
-
       {/* Search Filter */}
       <div className="my-3">
         <InputGroup className="mb-3">
@@ -148,7 +197,6 @@ const ReportingComments = () => {
           />
         </InputGroup>
       </div>
-
       {/* Table */}
       <div
         className="overflow-y-scroll custom-scrollbar"
@@ -227,7 +275,6 @@ const ReportingComments = () => {
           </tbody>
         </Table>
       </div>
-
       {/* Pagination */}
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
@@ -240,7 +287,6 @@ const ReportingComments = () => {
           </Pagination.Item>
         ))}
       </Pagination>
-
       {/* Add New Comment */}
       <form onSubmit={handleAddReportComments}>
         <h5 className="mt-4">Add Comment Violation</h5>

@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import MessageModal from "../../DiaryEntry/messageModal";
 
 const ReportedComment = ({ reportedComments }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -12,6 +13,26 @@ const ReportedComment = ({ reportedComments }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchReportComments = async () => {
@@ -87,23 +108,29 @@ const ReportedComment = ({ reportedComments }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAddressed = async (reportcommentID) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to mark this comment?"
-    );
-    if (confirmed) {
-      setIsLoading(true);
-      try {
-        await axios.put(
-          `http://localhost:8081/commentAddress/${reportcommentID}`
-        );
-        alert("The comment has been addressed!");
-      } catch (error) {
-        console.error("Failed to update comment:", error);
-        alert("Failed to update the comment. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to mark this comment as reviewed?`,
+      onConfirm: async () => {
+        setIsLoading(true);
+        try {
+          await axios.put(
+            `http://localhost:8081/commentAddress/${reportcommentID}`
+          );
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `The comment has been reviewed.`,
+          });
+        } catch (error) {
+          console.error("Failed to update comment:", error);
+          alert("Failed to update the comment. Please try again.");
+        } finally {
+          setIsLoading(false);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const downloadData = (format) => {
@@ -194,6 +221,21 @@ const ReportedComment = ({ reportedComments }) => {
 
   return (
     <div className="d-flex flex-column">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -362,7 +404,6 @@ const ReportedComment = ({ reportedComments }) => {
           </Pagination>
         </div>
       </div>
-
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
         <div className="col p-0">

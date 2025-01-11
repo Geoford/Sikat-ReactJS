@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Pagination from "react-bootstrap/Pagination";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const FlaggingDiaries = () => {
   const [flaggingOptions, setFlaggingOptions] = useState([]);
@@ -17,6 +19,26 @@ const FlaggingDiaries = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -53,7 +75,10 @@ const FlaggingDiaries = () => {
         const newFlag = { reason: newOption, flagID: Date.now(), count: 0 };
         setFlaggingOptions([...flaggingOptions, newFlag]);
         setFilteredOptions([...flaggingOptions, newFlag]);
-        setNewOption("");
+        setModal({
+          show: true,
+          message: `Flaggin option added successfully.`,
+        });
       } catch (error) {
         console.error("Error adding option:", error);
       }
@@ -79,6 +104,10 @@ const FlaggingDiaries = () => {
         setFlaggingOptions(updatedOptions);
         setFilteredOptions(updatedOptions);
         setEditingOption(null);
+        setModal({
+          show: true,
+          message: `Edited successfully.`,
+        });
       } catch (error) {
         console.error("Error editing option:", error);
       }
@@ -86,23 +115,30 @@ const FlaggingDiaries = () => {
   };
 
   const handleDeleteOption = (flagID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this option?"
-    );
-    if (confirmDelete) {
-      axios
-        .delete(`http://localhost:8081/flaggingDelete/${flagID}`)
-        .then(() => {
-          const updatedOptions = flaggingOptions.filter(
-            (option) => option.flagID !== flagID
-          );
-          setFlaggingOptions(updatedOptions);
-          setFilteredOptions(updatedOptions);
-        })
-        .catch((error) => {
-          console.error("Error deleting option:", error);
-        });
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this option?`,
+      onConfirm: async () => {
+        axios
+          .delete(`http://localhost:8081/flaggingDelete/${flagID}`)
+          .then(() => {
+            const updatedOptions = flaggingOptions.filter(
+              (option) => option.flagID !== flagID
+            );
+            setFlaggingOptions(updatedOptions);
+            setFilteredOptions(updatedOptions);
+            closeConfirmModal();
+            setModal({
+              show: true,
+              message: `Flagging option deleted successfully.`,
+            });
+          })
+          .catch((error) => {
+            console.error("Error deleting option:", error);
+          });
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   // Pagination calculations
@@ -124,6 +160,21 @@ const FlaggingDiaries = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Flagging Diaries</h4>
         <div className="informationToolTip">
@@ -136,7 +187,6 @@ const FlaggingDiaries = () => {
           </p>
         </div>
       </div>
-
       {/* Search Filter */}
       <div className="my-3">
         <InputGroup className="mb-3">
@@ -224,7 +274,6 @@ const FlaggingDiaries = () => {
           </tbody>
         </Table>
       </div>
-
       {/* Pagination */}
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
@@ -237,7 +286,6 @@ const FlaggingDiaries = () => {
           </Pagination.Item>
         ))}
       </Pagination>
-
       {/* Add New Option */}
       <form onSubmit={handleAddOption}>
         <h5 className="mt-4">Add Flagging Option</h5>

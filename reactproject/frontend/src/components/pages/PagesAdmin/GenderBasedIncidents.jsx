@@ -5,6 +5,7 @@ import axios from "axios";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Pagination from "react-bootstrap/Pagination";
+import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 export default function GenderBasedIncidents() {
   const [reports, setReports] = useState([]);
@@ -13,6 +14,26 @@ export default function GenderBasedIncidents() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // Number of reports per page
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     fetchReports();
@@ -43,20 +64,28 @@ export default function GenderBasedIncidents() {
   };
 
   const handleAddressed = (reportID) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to address this entry?"
-    );
-    if (confirmed) {
-      axios
-        .put(`http://localhost:8081/reports/${reportID}`)
-        .then(() => {
-          alert("The case has been addressed!");
-          fetchReports();
-        })
-        .catch((err) => {
-          setError(err.response?.data?.error || "Failed to update case report");
-        });
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to mark this as addressed?`,
+      onConfirm: async () => {
+        axios
+          .put(`http://localhost:8081/reports/${reportID}`)
+          .then(() => {
+            closeConfirmModal();
+            setModal({
+              show: true,
+              message: `The case has been addressed.`,
+            });
+            fetchReports();
+          })
+          .catch((err) => {
+            setError(
+              err.response?.data?.error || "Failed to update case report"
+            );
+          });
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   // Pagination logic
@@ -85,6 +114,21 @@ export default function GenderBasedIncidents() {
 
   return (
     <MainLayout ActiveTab="Complaints">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className="mt-0 mt-lg-2 pt-2 px-2">
         <div
           className="container rounded"
@@ -135,7 +179,7 @@ export default function GenderBasedIncidents() {
           </div>
         </div>
 
-        <div className="container mt-2 p-0  rounded  overflow-auto">
+        <div className="container mt-2 p-0  rounded overflow-auto">
           {error ? (
             <div className="alert alert-danger">{error}</div>
           ) : (
@@ -164,10 +208,7 @@ export default function GenderBasedIncidents() {
               </thead>
               <tbody>
                 {paginatedReports.map((report) => (
-                  <tr
-                    className={report.isAddress === 0 ? "table-danger" : ""}
-                    key={report.reportID}
-                  >
+                  <tr className="" key={report.reportID}>
                     <th scope="row" className="text-center align-middle">
                       <p className="m-0 mt-1 d-flex align-items-center justify-content-center gap-1">
                         <div

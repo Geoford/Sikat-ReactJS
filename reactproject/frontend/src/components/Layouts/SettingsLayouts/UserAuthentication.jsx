@@ -3,6 +3,7 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const UserAuthentication = ({ cvsuEmail }) => {
   const [show, setShow] = useState(false);
@@ -12,12 +13,35 @@ const UserAuthentication = ({ cvsuEmail }) => {
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const email = cvsuEmail;
 
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
+
   const handleClose = () => {
     if (
       !verificationStatus ||
       verificationStatus !== "OTP verified successfully!"
     ) {
-      alert("OTP Required!");
+      setModal({
+        show: true,
+        message: `OTP Required!`,
+      });
       window.location.reload();
     }
     setShow(false);
@@ -38,9 +62,15 @@ const UserAuthentication = ({ cvsuEmail }) => {
       });
 
       if (response.status === 200) {
-        alert("OTP has been sent to your CvSU email.");
+        setModal({
+          show: true,
+          message: `OTP has been sent to your CvSU email.`,
+        });
       } else {
-        alert("Failed to send OTP. Please try again.");
+        setModal({
+          show: true,
+          message: `Failed to send OTP. Please try again.`,
+        });
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
@@ -88,6 +118,21 @@ const UserAuthentication = ({ cvsuEmail }) => {
         </h5>
         <p className="m-0">Password and Security</p>
       </div>
+
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>

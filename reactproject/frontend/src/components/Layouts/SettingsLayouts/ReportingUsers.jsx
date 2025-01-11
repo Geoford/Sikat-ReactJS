@@ -6,6 +6,8 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import axios from "axios";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const ReportingUsers = () => {
   const [reportUsers, setReportUsers] = useState([]);
@@ -16,6 +18,26 @@ const ReportingUsers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchReportUsers = async () => {
@@ -39,6 +61,10 @@ const ReportingUsers = () => {
         setReportUsers([...reportUsers, newUser]);
         setFilteredReportUsers([...filteredReportUsers, newUser]);
         setNewReportUsers("");
+        setModal({
+          show: true,
+          message: `User violation added successfully.`,
+        });
       } catch (error) {
         console.error("Error adding report user:", error);
       }
@@ -65,7 +91,10 @@ const ReportingUsers = () => {
         setReportUsers(updatedUsers);
         setFilteredReportUsers(updatedUsers);
         setEditingReportUsers(null);
-        alert("Edited Successfully.");
+        setModal({
+          show: true,
+          message: `Edited successfully.`,
+        });
       } catch (error) {
         console.error("Error editing report user:", error);
       }
@@ -73,24 +102,30 @@ const ReportingUsers = () => {
   };
 
   const handleDeleteReportUser = async (reportingUserID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this report user?"
-    );
-    if (confirmDelete) {
-      try {
-        await axios.delete(
-          `http://localhost:8081/reportUsers/${reportingUserID}`
-        );
-        const updatedUsers = reportUsers.filter(
-          (user) => user.reportingUserID !== reportingUserID
-        );
-        setReportUsers(updatedUsers);
-        setFilteredReportUsers(updatedUsers);
-        alert("Successfully deleted.");
-      } catch (error) {
-        console.error("Error deleting report user:", error);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this user violation?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8081/reportUsers/${reportingUserID}`
+          );
+          const updatedUsers = reportUsers.filter(
+            (user) => user.reportingUserID !== reportingUserID
+          );
+          setReportUsers(updatedUsers);
+          setFilteredReportUsers(updatedUsers);
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `User violation deleted successfully.`,
+          });
+        } catch (error) {
+          console.error("Error deleting report user:", error);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleSearch = (e) => {
@@ -114,6 +149,21 @@ const ReportingUsers = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className="position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Reporting Users</h4>
         <div className="informationToolTip">
@@ -127,7 +177,6 @@ const ReportingUsers = () => {
           </p>
         </div>
       </div>
-
       {/* Search Filter */}
       <InputGroup className="my-3">
         <InputGroup.Text id="basic-addon1">
@@ -140,7 +189,6 @@ const ReportingUsers = () => {
           onChange={handleSearch}
         />
       </InputGroup>
-
       {/* Table */}
       <div
         className="overflow-y-scroll custom-scrollbar"
@@ -220,7 +268,6 @@ const ReportingUsers = () => {
           </tbody>
         </Table>
       </div>
-
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
           <Pagination.Item
