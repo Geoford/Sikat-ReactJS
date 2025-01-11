@@ -8,6 +8,7 @@ import axios from "axios";
 import MainLayout from "../../Layouts/MainLayout";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
+import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 const GetHelp = () => {
   const { userID } = useParams();
@@ -24,6 +25,26 @@ const GetHelp = () => {
     selectedSubjects: "",
     supportingDocuments: [null, null, null, null, null],
   });
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   const handleSubjectsChange = (subjectsText) => {
     setSelectedSubjects(subjectsText);
@@ -99,8 +120,13 @@ const GetHelp = () => {
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert(response.data.message);
-      window.location.reload();
+      setModal({
+        show: true,
+        message: `Case filed successfully.`,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2500);
     } catch (error) {
       console.error("Error submitting report:", error);
       alert("Error submitting report");
@@ -110,6 +136,14 @@ const GetHelp = () => {
   return (
     <MainLayout>
       <PreLoader />
+
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+
       <div className="d-flex justify-content-center py-3">
         <div
           className=" rounded shadow p-3 w-75"

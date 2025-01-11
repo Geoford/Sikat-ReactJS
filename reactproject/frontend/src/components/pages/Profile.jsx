@@ -12,6 +12,7 @@ import FlaggedDiaries from "../Layouts/Profile/FlaggedDiaries";
 import ReportedComments from "../Layouts/Profile/ReportedComments";
 import Followers from "../Layouts/Profile/Followers";
 import { SuspensionModal } from "../Layouts/Profile/SuspensionModal";
+import MessageModal from "../Layouts/DiaryEntry/messageModal";
 // import Suspended from "../../components/pages/PagesUser/Suspended";
 
 const Profile = () => {
@@ -28,6 +29,29 @@ const Profile = () => {
 
   const navigate = useNavigate();
   let currentUser = null;
+
+  const [modal, setModal] = useState({
+    show: false,
+    message: "",
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   try {
     currentUser = JSON.parse(localStorage.getItem("user"));
@@ -110,16 +134,29 @@ const Profile = () => {
     formData.append("file", file);
     formData.append("userID", user.userID);
 
-    axios
-      .post("http://localhost:8081/uploadProfile", formData)
-      .then((res) => {
-        console.log("Profile uploaded successfully", res.data);
-        alert("Profile uploaded successfully");
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error("Error uploading profile:", error);
-      });
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to change your profile?`,
+      onConfirm: async () => {
+        axios
+          .post("http://localhost:8081/uploadProfile", formData)
+          .then((res) => {
+            console.log("Profile uploaded successfully", res.data);
+            setConfirmModal({ show: false, message: "" });
+            setModal({
+              show: true,
+              message: `Profile uploaded successfully.`,
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          })
+          .catch((error) => {
+            console.error("Error uploading profile:", error);
+          });
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const fetchFollowedUsers = async () => {
@@ -165,18 +202,42 @@ const Profile = () => {
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow ${user.username}?`
-        );
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${user.username}?`,
+          onConfirm: async () => {
+            try {
+              await axios.delete(
+                `http://localhost:8081/unfollow/${followUserId}`,
+                {
+                  data: { followerId: currentUser.userID },
+                }
+              );
 
-        if (!confirmed) return;
+              // Update followed users list after unfollowing
+              setFollowedUsers((prev) =>
+                prev.filter((id) => id !== followUserId)
+              );
 
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: currentUser.userID },
+              // Close confirmation modal and show success modal
+              setConfirmModal({ show: false, message: "" });
+              setModal({
+                show: true,
+                message: `You have unfollowed ${user.username}.`,
+              });
+
+              // Refresh the followed users list from the backend
+              await fetchFollowedUsers(user.userID);
+            } catch (error) {
+              console.error("Error unfollowing user:", error);
+              setModal({
+                show: true,
+                message: `There was an error unfollowing ${targetUsername}.`,
+              });
+            }
+          },
+          onCancel: () => setConfirmModal({ show: false, message: "" }),
         });
-
-        setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
-        alert(`You have unfollowed user ${user.username}`);
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -191,7 +252,10 @@ const Profile = () => {
         }
 
         setFollowedUsers((prev) => [...prev, followUserId]);
-        alert(`You are now following ${user.username}`);
+        setModal({
+          show: true,
+          message: `You are now following ${user.username}.`,
+        });
 
         await axios.post(
           `http://localhost:8081/notifications/${followUserId}`,
@@ -311,6 +375,21 @@ const Profile = () => {
         className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
+        <MessageModal
+          showModal={modal}
+          closeModal={closeModal}
+          title={"Notice"}
+          message={modal.message}
+        ></MessageModal>
+        <MessageModal
+          showModal={confirmModal}
+          closeModal={closeConfirmModal}
+          title={"Notice"}
+          message={confirmModal.message}
+          confirm={confirmModal.onConfirm}
+          needConfirm={1}
+        ></MessageModal>
+
         {user.isSuspended ? (
           <SuspensionModal
             name={user.firstName}

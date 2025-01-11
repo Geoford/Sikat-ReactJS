@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import MessageModal from "../DiaryEntry/messageModal";
 
 function FlagButton({
   userID,
@@ -19,6 +20,26 @@ function FlagButton({
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
   const otherInputRef = useRef(null);
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchFlaggingOptions = async () => {
@@ -81,7 +102,11 @@ function FlagButton({
       );
 
       if (response.status === 200) {
-        alert("Flagged successfully");
+        // alert("Flagged successfully");
+        setModal({
+          show: true,
+          message: `Flagged successfully`,
+        });
         console.log("Report submitted successfully");
         updateEngagement(entryID);
         handleClose();
@@ -113,6 +138,21 @@ function FlagButton({
         <span>{flaggedCount}</span>
         <p className="m-0 d-none d-md-block">Flag</p>
       </button>
+
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>

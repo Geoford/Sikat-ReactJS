@@ -5,6 +5,7 @@ import Tabs from "react-bootstrap/Tabs";
 import MainLayout from "../Layouts/MainLayout";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import { Link, useNavigate } from "react-router-dom";
+import MessageModal from "../Layouts/DiaryEntry/messageModal";
 
 const UserList = ({ type, users, handleFollowToggle, isFollowing }) => (
   <div
@@ -49,7 +50,7 @@ const UserList = ({ type, users, handleFollowToggle, isFollowing }) => (
             </Link>
             <button
               className="primaryButton position-absolute"
-              onClick={() => handleFollowToggle(user.userID)}
+              onClick={() => handleFollowToggle(user.userID, user.firstName)}
               style={{ right: "0" }}
             >
               <p className="m-0">
@@ -68,6 +69,26 @@ const Followers = () => {
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -105,7 +126,7 @@ const Followers = () => {
     }
   };
 
-  const handleFollowToggle = async (followUserId) => {
+  const handleFollowToggle = async (followUserId, targetUsername) => {
     if (!followUserId) {
       console.error("User ID to follow/unfollow is undefined");
       return;
@@ -120,21 +141,42 @@ const Followers = () => {
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow this user?`
-        );
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${targetUsername}?`,
+          onConfirm: async () => {
+            try {
+              await axios.delete(
+                `http://localhost:8081/unfollow/${followUserId}`,
+                {
+                  data: { followerId: user.userID },
+                }
+              );
 
-        if (!confirmed) {
-          return;
-        }
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
+              // Update followed users list after unfollowing
+              setFollowedUsers((prev) =>
+                prev.filter((id) => id !== followUserId)
+              );
+
+              // Close confirmation modal and show success modal
+              setConfirmModal({ show: false, message: "" });
+              setModal({
+                show: true,
+                message: `You have unfollowed ${targetUsername}.`,
+              });
+
+              // Refresh the followed users list from the backend
+              await fetchFollowedUsers(user.userID);
+            } catch (error) {
+              console.error("Error unfollowing user:", error);
+              setModal({
+                show: true,
+                message: `There was an error unfollowing ${targetUsername}.`,
+              });
+            }
+          },
+          onCancel: () => setConfirmModal({ show: false, message: "" }),
         });
-
-        setFollowedUsers((prev) =>
-          prev.filter((u) => u.userID !== followUserId)
-        );
-        alert("You have unfollowed the user.");
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -145,11 +187,18 @@ const Followers = () => {
         const followedUserData = response.data;
 
         setFollowedUsers((prev) => [...prev, followedUserData]);
-        alert("You are now following the user.");
+        setModal({
+          show: true,
+          message: `You are now following ${targetUsername}.`,
+        });
+        // alert("You are now following the user.");
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
+      setModal({
+        show: true,
+        message: `There was an error processing your request..`,
+      });
     }
   };
 
@@ -157,6 +206,21 @@ const Followers = () => {
 
   return (
     <MainLayout ActiveTab="Followers">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div
         className="container mt-5 mt-lg-4 rounded p-3 shadow-sm"
         style={{
