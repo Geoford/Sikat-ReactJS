@@ -55,7 +55,6 @@ const FAQ = () => {
   }, []);
 
   const handleAddFaq = async (e) => {
-    // Rename handleAddFilter to handleAddFaq
     e.preventDefault();
     if (newQuestion.trim() && newAnswer.trim()) {
       try {
@@ -90,7 +89,7 @@ const FAQ = () => {
   const handleSaveEdit = async (faqID) => {
     if (editedQuestion.trim() && editedAnswer.trim()) {
       try {
-        await axios.put(`http://localhost:8081/faqEdit/${faqID}`, {
+        await axios.put(`http://localhost:8081/faqedit/${faqID}`, {
           question: editedQuestion,
           answer: editedAnswer,
         });
@@ -118,7 +117,7 @@ const FAQ = () => {
     );
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:8081/faqDelete/${faqID}`);
+        await axios.delete(`http://localhost:8081/faq/${faqID}`);
         const updatedFaqs = faqs.filter((faq) => faq.faqID !== faqID);
         setFaqs(updatedFaqs);
         setFilteredFaqs(updatedFaqs);
