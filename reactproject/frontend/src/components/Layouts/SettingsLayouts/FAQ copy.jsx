@@ -6,8 +6,6 @@ import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
-import MessageAlert from "../DiaryEntry/messageAlert";
-import MessageModal from "../DiaryEntry/messageModal";
 
 const FAQ = () => {
   const [faqs, setFaqs] = useState([]); // Rename filters to faqs
@@ -20,26 +18,6 @@ const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  const [modal, setModal] = useState({ show: false, message: "" });
-  const [confirmModal, setConfirmModal] = useState({
-    show: false,
-    message: "",
-    onConfirm: () => {},
-    onCancel: () => {},
-  });
-
-  const closeModal = () => {
-    setModal({ show: false, message: "" });
-  };
-  const closeConfirmModal = () => {
-    setConfirmModal({
-      show: false,
-      message: "",
-      onConfirm: () => {},
-      onCancel: () => {},
-    });
-  };
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -70,10 +48,6 @@ const FAQ = () => {
         setFilteredFaqs([...filteredFaqs, newFaqObj]); // Rename filteredFilters to filteredFaqs
         setNewQuestion("");
         setNewAnswer("");
-        setModal({
-          show: true,
-          message: `FAQ added successfully.`,
-        });
       } catch (error) {
         console.error("Error adding faq:", error); // Rename filter to faq
       }
@@ -102,10 +76,7 @@ const FAQ = () => {
         setFaqs(updatedFaqs);
         setFilteredFaqs(updatedFaqs);
         setEditingFaq(null);
-        setModal({
-          show: true,
-          message: `Edited successfully.`,
-        });
+        alert("Edited Successfully.");
       } catch (error) {
         console.error("Error editing faq:", error);
       }
@@ -158,20 +129,6 @@ const FAQ = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
-      <MessageAlert
-        showModal={modal}
-        closeModal={closeModal}
-        title={"Notice"}
-        message={modal.message}
-      ></MessageAlert>
-      <MessageModal
-        showModal={confirmModal}
-        closeModal={closeConfirmModal}
-        title={"Confirmation"}
-        message={confirmModal.message}
-        confirm={confirmModal.onConfirm}
-        needConfirm={1}
-      ></MessageModal>
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Frequently Asked Questions (FAQs)</h4>
         <div className="informationToolTip">

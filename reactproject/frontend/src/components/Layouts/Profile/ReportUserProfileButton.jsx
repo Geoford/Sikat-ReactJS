@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
+import MessageModal from "../DiaryEntry/messageModal";
 
 function ReportUserButton({ userID, toBeReported, reportedUserID }) {
   const [show, setShow] = useState(false);
@@ -9,6 +10,26 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [reportComments, setReportComments] = useState([]);
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   // Fetch report comments from the backend
   useEffect(() => {
@@ -53,12 +74,18 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
       });
 
       if (response.status === 200) {
-        alert("Your report has been submitted.");
+        setModal({
+          show: true,
+          message: `Your report has been submitted.`,
+        });
         handleClose(); // Close the modal after successful submission
       }
     } catch (error) {
       console.error("Error submitting report:", error);
-      alert("There was an error submitting your report.");
+      setModal({
+        show: true,
+        message: `There was an error submitting your report.`,
+      });
     }
   };
 
@@ -71,6 +98,21 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
         <i class="bx bx-error"></i>
         <p className="m-0">Report</p>
       </button>
+
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>

@@ -5,6 +5,7 @@ import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
+import MessageModal from "../../DiaryEntry/messageModal";
 
 const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -13,6 +14,26 @@ const FlaggedDiaries = ({ flags }) => {
   const [selectedSubject, setSelectedSubject] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const usersPerPage = 10;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchAlarmingWords = async () => {
@@ -74,17 +95,25 @@ const FlaggedDiaries = ({ flags }) => {
   };
 
   const handleAddressed = (report_id) => {
-    const confirmed = window.confirm("Want to address this flagged?");
-    if (confirmed) {
-      axios
-        .put(`http://localhost:8081/flaggedAddress/${report_id}`)
-        .then(() => {
-          alert("The flagged has been addressed!");
-        })
-        .catch((err) => {
-          setError(err.response?.data?.error || "Failed to update flagged");
-        });
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to address this flagged?`,
+      onConfirm: async () => {
+        axios
+          .put(`http://localhost:8081/flaggedAddress/${report_id}`)
+          .then(() => {
+            closeConfirmModal();
+            setModal({
+              show: true,
+              message: `Flagged diary has been addressed.`,
+            });
+          })
+          .catch((err) => {
+            setError(err.response?.data?.error || "Failed to update flagged");
+          });
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const downloadData = (format) => {
@@ -175,6 +204,21 @@ const FlaggedDiaries = ({ flags }) => {
 
   return (
     <div className="d-flex flex-column">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -341,7 +385,6 @@ const FlaggedDiaries = ({ flags }) => {
           </Pagination>
         </div>
       </div>
-
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
         <div className="col p-0">

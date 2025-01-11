@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import axios from "axios";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const PasswordAndSecurity = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -14,6 +15,26 @@ const PasswordAndSecurity = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -43,7 +64,10 @@ const PasswordAndSecurity = () => {
           password: newPassword,
         }
       );
-      setSuccessMessage(response.data.message);
+      setModal({
+        show: true,
+        message: `Password Updated.`,
+      });
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.error || "An error occurred.");
@@ -61,6 +85,21 @@ const PasswordAndSecurity = () => {
         minHeight: "clamp(20rem, 20vh, 30rem)",
       }}
     >
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <h5 className="border-bottom border-2 pb-2">Password and Security</h5>
       <form onSubmit={handlePasswordChange} autoComplete="off">
         <Row className="g-2 pt-2 text-start ">

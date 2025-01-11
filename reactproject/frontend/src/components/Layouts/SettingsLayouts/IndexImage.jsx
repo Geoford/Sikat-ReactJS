@@ -8,6 +8,8 @@ import Pagination from "react-bootstrap/Pagination";
 import axios from "axios";
 import sampleImage from "../../../assets/Background.jpg";
 import { Dropdown } from "react-bootstrap";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const IndexImage = () => {
   const [images, setImages] = useState([]);
@@ -17,6 +19,26 @@ const IndexImage = () => {
   const [description, setDescription] = useState("");
   const [editingImage, setEditingImage] = useState(null); // For edit mode
   const [loading, setLoading] = useState(false);
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     fetchImages();
@@ -67,38 +89,55 @@ const IndexImage = () => {
           `http://localhost:8081/api/index-images/${editingImage.index_imagesID}`,
           { title, description }
         );
-        alert("Image updated successfully!");
+        setModal({
+          show: true,
+          message: `Index image updated successfully.`,
+        });
       } else {
         await axios.post("http://localhost:8081/api/index-images", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-
-        alert("Image added successfully!");
+        setModal({
+          show: true,
+          message: `Index image added successfully.`,
+        });
       }
 
       resetForm();
       fetchImages();
     } catch (error) {
       console.error("Error saving image:", error);
-      alert("Failed to save image.");
+      setModal({
+        show: true,
+        message: `Failed to save image.`,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (index_imagesID) => {
-    if (!window.confirm("Are you sure you want to delete this image?")) return;
-
-    try {
-      await axios.delete(
-        `http://localhost:8081/index-images/${index_imagesID}`
-      );
-      alert("Image deleted successfully!");
-      fetchImages();
-    } catch (error) {
-      console.error("Error deleting image:", error);
-      alert("Failed to delete image.");
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this index image?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8081/index-images/${index_imagesID}`
+          );
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Index image deleted successfully.`,
+          });
+          fetchImages();
+        } catch (error) {
+          console.error("Error deleting image:", error);
+          alert("Failed to delete image.");
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleEdit = (image) => {
@@ -120,6 +159,21 @@ const IndexImage = () => {
 
   return (
     <div className="p-3 rounded shadow-sm" style={{ backgroundColor: "#fff" }}>
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-end pb-2 gap-1">
         <h4 className="border-2 m-0">Index Page Images</h4>
         <div className="informationToolTip">
@@ -131,10 +185,22 @@ const IndexImage = () => {
       </div>
 
       {/* Scrollable Image Section */}
-      <div className="custom-scrollbar overflow-y-scroll p-3">
+      <div
+        className="custom-scrollbar overflow-y-scroll p-3"
+        style={{ height: "clamp(15rem, 20dvw, 20rem)" }}
+      >
         {images.map((image) => (
-          <div key={image.index_imagesID} className="row mb-3">
-            <div className="col-md-4 px-0 position-relative">
+          <div
+            key={image.index_imagesID}
+            className="row d-flex justify-content-center gap-3 mb-3"
+          >
+            <div
+              className="col-md-4 px-0 position-relative"
+              style={{
+                height: "clamp(7rem, 8dvw, 8rem)",
+                width: "clamp(14rem, 15dvw, 16rem)",
+              }}
+            >
               <img
                 src={
                   image && image.image_path
@@ -145,84 +211,58 @@ const IndexImage = () => {
                 className="rounded"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
+              {/* Dropdown for Edit/Save/Delete */}
+              <Dropdown
+                className="position-absolute"
+                style={{ right: ".5rem", top: ".5rem" }}
+              >
+                <Dropdown.Toggle variant="light" bsPrefix>
+                  <h5 className="m-0 d-flex align-items-center">
+                    <i className="bx bx-dots-horizontal-rounded"></i>
+                  </h5>
+                </Dropdown.Toggle>
+                {editingImage ? (
+                  <Dropdown.Menu>
+                    <Dropdown.Item className="btn p-0 px-2" onClick={resetForm}>
+                      <button className="btn btn-light w-100">
+                        <p className="m-0">Cancel</p>
+                      </button>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="btn p-0 px-2">
+                      <button className="btn btn-light w-100">
+                        <p className="m-0">Save</p>
+                      </button>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                ) : (
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      className="btn p-0 px-2"
+                      onClick={() => handleEdit(image)}
+                    >
+                      <button className="btn btn-light w-100">
+                        <p className="m-0">Edit</p>
+                      </button>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="btn p-0 px-2">
+                      <button
+                        className="btn btn-light w-100"
+                        onClick={() => handleDelete(image.index_imagesID)}
+                      >
+                        <p className="m-0">Delete</p>
+                      </button>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                )}
+              </Dropdown>
             </div>
             <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-start">
-              <div className="d-flex flex-column gap-2">
-                <div className="d-flex align-items-center gap-1">
+              <div className="d-flex align-items-center align-items-md-start flex-column gap-2">
+                <div className="d-flex align-items-center justify-content-center justify-content-md-start gap-1">
                   {/* Title Section */}
-                  {editingImage ? (
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Sample Title"
-                        aria-label="Username"
-                        aria-describedby="basic-addon1"
-                      />
-                    </div>
-                  ) : (
-                    <h5 className="m-0">{image.title}</h5>
-                  )}
-
-                  {/* Dropdown for Edit/Save/Delete */}
-                  <Dropdown>
-                    <Dropdown.Toggle variant="light" bsPrefix>
-                      <h5 className="m-0 d-flex align-items-center">
-                        <i className="bx bx-dots-horizontal-rounded"></i>
-                      </h5>
-                    </Dropdown.Toggle>
-                    {editingImage ? (
-                      <Dropdown.Menu>
-                        <Dropdown.Item
-                          className="btn p-0 px-2"
-                          onClick={resetForm}
-                        >
-                          <button className="btn btn-light w-100">
-                            <p className="m-0">Cancel</p>
-                          </button>
-                        </Dropdown.Item>
-                        <Dropdown.Item className="btn p-0 px-2">
-                          <button className="btn btn-light w-100">
-                            <p className="m-0">Save</p>
-                          </button>
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    ) : (
-                      <Dropdown.Menu>
-                        <Dropdown.Item
-                          className="btn p-0 px-2"
-                          onClick={() => handleEdit(image)}
-                        >
-                          <button className="btn btn-light w-100">
-                            <p className="m-0">Edit</p>
-                          </button>
-                        </Dropdown.Item>
-                        <Dropdown.Item className="btn p-0 px-2">
-                          <button
-                            className="btn btn-light w-100"
-                            onClick={() => handleDelete(image.index_imagesID)}
-                          >
-                            <p className="m-0">Delete</p>
-                          </button>
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    )}
-                  </Dropdown>
+                  <h5 className="m-0">{image.title}</h5>
                 </div>
-
-                {/* Description Section */}
-                {editingImage ? (
-                  <div className="form-floating">
-                    <textarea
-                      className="form-control"
-                      placeholder="Short Description"
-                      id="floatingTextarea"
-                    ></textarea>
-                    <label htmlFor="floatingTextarea">Short Description</label>
-                  </div>
-                ) : (
-                  <p className="m-0">{image.description}</p>
-                )}
+                <p className="m-0">{image.description}</p>
               </div>
             </div>
           </div>
@@ -230,13 +270,21 @@ const IndexImage = () => {
       </div>
 
       <Form onSubmit={handleSubmit}>
-        <h5 className="mt-4">Add Index Image</h5>
+        <h5 className="mt-4">
+          {editingImage ? "Edit Index Image" : "Add Index Image"}
+        </h5>
 
         <div className="row gap-2 m-auto" style={{ width: "100%" }}>
           {/* Image Upload Section */}
-          <div className="col-md-4 px-0 position-relative">
+          <div className="col-md-4 px-0 d-flex justify-content-center position-relative">
             {imagePreview ? (
-              <div className="position-relative">
+              <div
+                className="position-relative"
+                style={{
+                  height: "clamp(6.7rem, 10dvw, 6.9rem)",
+                  width: "clamp(14rem, 19dvw, 20rem)",
+                }}
+              >
                 <img
                   className="rounded"
                   src={imagePreview}
@@ -256,7 +304,11 @@ const IndexImage = () => {
                 <label className="w-100" htmlFor="uploadPhoto">
                   <div
                     className="d-flex justify-content-center border rounded py-2 "
-                    style={{ cursor: "pointer", minHeight: "6.5rem" }}
+                    style={{
+                      cursor: "pointer",
+                      height: "clamp(6.7rem, 10dvw, 6.9rem)",
+                      width: "clamp(14rem, 19dvw, 20rem)",
+                    }}
                   >
                     <p className="m-0 d-flex align-items-center gap-1 text-secondary">
                       <i
@@ -278,7 +330,7 @@ const IndexImage = () => {
           </div>
 
           {/* Title and Description Section */}
-          <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-start">
+          <div className="col-md px-0 py-1 text-start d-flex flex-column justify-content-center">
             <div className="d-flex flex-column gap-2">
               {/* Title Input */}
               <div className="d-flex align-items-center gap-1">
@@ -312,7 +364,7 @@ const IndexImage = () => {
 
         {/* Submit Button */}
         <div className="mt-3 d-flex justify-content-end">
-          <button type="submit" className="primaryButton px-5 py-2">
+          <button type="submit" className="w-100 primaryButton px-5 py-2">
             <p className="m-0">
               {loading ? "Saving..." : editingImage ? "Update" : "Save"}
             </p>

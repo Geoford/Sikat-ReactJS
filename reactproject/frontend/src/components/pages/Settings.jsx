@@ -57,7 +57,7 @@ const Settings = () => {
 
   const navItemStyle = "shadow d-flex align-items-center gap-2";
   return (
-    <MainLayout ActiveTab="Settings">
+    <MainLayout className="position-" ActiveTab="Settings">
       <div className="container-fluid container-md mt-4 pt-2 mb-5">
         <Tab.Container id="left-tabs-example" defaultActiveKey="profile">
           <Row>

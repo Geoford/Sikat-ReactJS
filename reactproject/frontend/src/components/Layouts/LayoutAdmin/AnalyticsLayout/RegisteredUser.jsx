@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import MessageModal from "../../DiaryEntry/messageModal";
 
 const RegisteredUsers = ({ users }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -11,6 +12,26 @@ const RegisteredUsers = ({ users }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     let filtered = [...users];
@@ -158,6 +179,21 @@ const RegisteredUsers = ({ users }) => {
 
   return (
     <div className="d-flex flex-column justify-content" style={{ height: "" }}>
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div>
         <div>
           <InputGroup className="mb-3">
@@ -338,7 +374,6 @@ const RegisteredUsers = ({ users }) => {
           </Pagination>
         </div>
       </div>
-
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
         <div className="col p-0">

@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 const AlarmingWords = () => {
   const [alarmingWords, setAlarmingWords] = useState([]);
@@ -16,6 +18,26 @@ const AlarmingWords = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchAlarmingWords = async () => {
@@ -41,6 +63,10 @@ const AlarmingWords = () => {
         setAlarmingWords([...alarmingWords, response.data]);
         setFilteredAlarmingWords([...filteredAlarmingWords, response.data]);
         setNewAlarmingWord("");
+        setModal({
+          show: true,
+          message: `Alarming word added successfully.`,
+        });
       } catch (error) {
         console.error("Error adding alarming word:", error);
       }
@@ -66,7 +92,10 @@ const AlarmingWords = () => {
         setAlarmingWords(updatedWords);
         setFilteredAlarmingWords(updatedWords);
         setEditingWordID(null);
-        alert("Edited Successfully.");
+        setModal({
+          show: true,
+          message: `Edited successfully.`,
+        });
       } catch (error) {
         console.error("Error editing alarming word:", error);
       }
@@ -74,24 +103,30 @@ const AlarmingWords = () => {
   };
 
   const handleDeleteAlarmingWord = async (wordID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this alarming word?"
-    );
-    if (confirmDelete) {
-      try {
-        await axios.delete(
-          `http://localhost:8081/alarmingWordDelete/${wordID}`
-        );
-        const updatedWords = alarmingWords.filter(
-          (word) => word.wordID !== wordID
-        );
-        setAlarmingWords(updatedWords);
-        setFilteredAlarmingWords(updatedWords);
-        alert("Successfully deleted.");
-      } catch (error) {
-        console.error("Error deleting alarming word:", error);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this alarming word?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8081/alarmingWordDelete/${wordID}`
+          );
+          const updatedWords = alarmingWords.filter(
+            (word) => word.wordID !== wordID
+          );
+          setAlarmingWords(updatedWords);
+          setFilteredAlarmingWords(updatedWords);
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Alarming word deleted successfully.`,
+          });
+        } catch (error) {
+          console.error("Error deleting alarming word:", error);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleSearch = (e) => {
@@ -121,6 +156,21 @@ const AlarmingWords = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className="position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Alarming Words</h4>
         <div className="informationToolTip">
@@ -134,7 +184,6 @@ const AlarmingWords = () => {
           </p>
         </div>
       </div>
-
       {/* Search Filter */}
       <div className="my-3">
         <InputGroup className="mb-3">
@@ -149,7 +198,6 @@ const AlarmingWords = () => {
           />
         </InputGroup>
       </div>
-
       <div
         className="overflow-y-scroll custom-scrollbar"
         style={{ height: "30vh" }}
@@ -187,18 +235,20 @@ const AlarmingWords = () => {
                   </td>
                   <td>
                     {editingWordID === word.wordID ? (
-                      <div className="d-flex justify-content-evenly ">
+                      <div className="d-flex justify-content-center gap-1 ">
                         <Button
+                          className="px-3"
                           variant="success"
                           onClick={() => handleSaveEdit(word.wordID)}
                         >
-                          Save
+                          <p className="m-0">Save</p>
                         </Button>
                         <Button
+                          className="px-3"
                           variant="secondary"
                           onClick={() => setEditingWordID(null)}
                         >
-                          Cancel
+                          <p className="m-0">Cancel</p>
                         </Button>
                       </div>
                     ) : (
@@ -212,13 +262,13 @@ const AlarmingWords = () => {
                             )
                           }
                         >
-                          Edit
+                          <p className="m-0">Edit</p>
                         </button>
                         <Button
                           variant="danger"
                           onClick={() => handleDeleteAlarmingWord(word.wordID)}
                         >
-                          Delete
+                          <p className="m-0">Delete</p>
                         </Button>
                       </div>
                     )}
@@ -229,7 +279,6 @@ const AlarmingWords = () => {
           </Table>
         )}
       </div>
-
       {/* Pagination */}
       <div className="mt-3">
         <Pagination className="justify-content-center">
@@ -244,7 +293,6 @@ const AlarmingWords = () => {
           ))}
         </Pagination>
       </div>
-
       {/* Add New Alarming Word */}
       <div className="d-flex flex-column gap-2 mt-4">
         <h5>Add New Alarming Word</h5>

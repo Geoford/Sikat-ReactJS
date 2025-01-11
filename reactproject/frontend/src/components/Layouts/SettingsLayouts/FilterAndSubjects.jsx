@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
+import MessageModal from "../DiaryEntry/messageModal";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 const FilterAndSubjects = () => {
   const [filters, setFilters] = useState([]);
@@ -16,6 +18,26 @@ const FilterAndSubjects = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -39,6 +61,10 @@ const FilterAndSubjects = () => {
         setFilters([...filters, newFilterObj]);
         setFilteredFilters([...filteredFilters, newFilterObj]);
         setNewFilter("");
+        setModal({
+          show: true,
+          message: `Subject added successfully.`,
+        });
       } catch (error) {
         console.error("Error adding filter:", error);
       }
@@ -64,7 +90,10 @@ const FilterAndSubjects = () => {
         setFilters(updatedFilters);
         setFilteredFilters(updatedFilters);
         setEditingFilter(null);
-        alert("Edited Successfully.");
+        setModal({
+          show: true,
+          message: `Edited Successfully.`,
+        });
       } catch (error) {
         console.error("Error editing filter:", error);
       }
@@ -72,22 +101,28 @@ const FilterAndSubjects = () => {
   };
 
   const handleDeleteFilter = async (subjectID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this filter?"
-    );
-    if (confirmDelete) {
-      try {
-        await axios.delete(`http://localhost:8081/filterDelete/${subjectID}`);
-        const updatedFilters = filters.filter(
-          (filter) => filter.subjectID !== subjectID
-        );
-        setFilters(updatedFilters);
-        setFilteredFilters(updatedFilters);
-        alert("Successfully deleted.");
-      } catch (error) {
-        console.error("Error deleting filter:", error);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this subject?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(`http://localhost:8081/filterDelete/${subjectID}`);
+          const updatedFilters = filters.filter(
+            (filter) => filter.subjectID !== subjectID
+          );
+          setFilters(updatedFilters);
+          setFilteredFilters(updatedFilters);
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Subject deleted successfully.`,
+          });
+        } catch (error) {
+          console.error("Error deleting filter:", error);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleSearch = (e) => {
@@ -117,6 +152,21 @@ const FilterAndSubjects = () => {
         minHeight: "clamp(20rem, 80vh, 30rem)",
       }}
     >
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <div className=" position-relative border-bottom d-flex justify-content-center align-items-center pb-2 gap-1">
         <h4 className="border-2 m-0">Filter and Subjects</h4>
         <div className="informationToolTip">
@@ -144,7 +194,6 @@ const FilterAndSubjects = () => {
           />
         </InputGroup>
       </div>
-
       <div
         className="overflow-y-scroll custom-scrollbar"
         style={{ height: "30vh" }}
@@ -217,7 +266,6 @@ const FilterAndSubjects = () => {
           </tbody>
         </Table>
       </div>
-
       <Pagination className="mt-3 justify-content-center">
         {[...Array(totalPages).keys()].map((page) => (
           <Pagination.Item
