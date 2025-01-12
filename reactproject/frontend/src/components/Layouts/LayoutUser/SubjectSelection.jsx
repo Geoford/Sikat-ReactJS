@@ -92,7 +92,7 @@ const SubjectSelection = ({ onSubjectsChange }) => {
         variant=""
         id="dropdown-basic"
       >
-        <p className="m-0">Subject(Topic of your diary)</p>
+        <p className="m-0">Subject/Topic</p>
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="px-2" style={{}}>
@@ -118,9 +118,9 @@ const SubjectSelection = ({ onSubjectsChange }) => {
               />
             ))}
 
-            <button className="orangeButton w-100" onClick={handleSaveFilter}>
+            {/* <button className="orangeButton w-100" onClick={handleSaveFilter}>
               Save Filter
-            </button>
+            </button> */}
           </>
         )}
       </Dropdown.Menu>

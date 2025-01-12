@@ -112,20 +112,26 @@ const FAQ = () => {
   };
 
   const handleDeleteFaq = async (faqID) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this FAQ?"
-    );
-    if (confirmDelete) {
-      try {
-        await axios.delete(`http://localhost:8081/faq/${faqID}`);
-        const updatedFaqs = faqs.filter((faq) => faq.faqID !== faqID);
-        setFaqs(updatedFaqs);
-        setFilteredFaqs(updatedFaqs);
-        alert("Successfully deleted.");
-      } catch (error) {
-        console.error("Error deleting faq:", error);
-      }
-    }
+    setConfirmModal({
+      show: true,
+      message: `Are you sure you want to delete this FAQ?`,
+      onConfirm: async () => {
+        try {
+          await axios.delete(`http://localhost:8081/faq/${faqID}`);
+          const updatedFaqs = faqs.filter((faq) => faq.faqID !== faqID);
+          setFaqs(updatedFaqs);
+          setFilteredFaqs(updatedFaqs);
+          closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Successfully deleted.`,
+          });
+        } catch (error) {
+          console.error("Error deleting faq:", error);
+        }
+      },
+      onCancel: () => setConfirmModal({ show: false, message: "" }),
+    });
   };
 
   const handleSearch = (e) => {
@@ -246,43 +252,45 @@ const FAQ = () => {
                       <p className="m-0 mt-2">{faq.answer}</p> // Rename filter to faq
                     )}
                   </td>
-                  <td className="d-flex justify-content-center gap-1">
-                    {editingFaq === faq.faqID ? (
-                      <>
-                        <Button
-                          className="px-3"
-                          variant="primary"
-                          onClick={() => handleSaveEdit(faq.faqID)}
-                        >
-                          <p className="m-0">Save</p>
-                        </Button>
-                        <Button
-                          className="px-3"
-                          variant="secondary"
-                          onClick={() => setEditingFaq(null)}
-                        >
-                          <p className="m-0">Cancel</p>
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="px-3 primaryButton"
-                          onClick={() =>
-                            handleEditFaq(faq.faqID, faq.question, faq.answer)
-                          }
-                        >
-                          <p className="m-0">Edit</p>
-                        </button>
-                        <Button
-                          className="px-3"
-                          variant="danger"
-                          onClick={() => handleDeleteFaq(faq.faqID)}
-                        >
-                          <p className="m-0">Delete</p>
-                        </Button>
-                      </>
-                    )}
+                  <td className="align-middle">
+                    <div className="d-flex justify-content-center gap-1">
+                      {editingFaq === faq.faqID ? (
+                        <>
+                          <Button
+                            className="px-3"
+                            variant="primary"
+                            onClick={() => handleSaveEdit(faq.faqID)}
+                          >
+                            <p className="m-0">Save</p>
+                          </Button>
+                          <Button
+                            className="px-3"
+                            variant="secondary"
+                            onClick={() => setEditingFaq(null)}
+                          >
+                            <p className="m-0">Cancel</p>
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="px-3 primaryButton"
+                            onClick={() =>
+                              handleEditFaq(faq.faqID, faq.question, faq.answer)
+                            }
+                          >
+                            <p className="m-0">Edit</p>
+                          </button>
+                          <Button
+                            className="px-3"
+                            variant="danger"
+                            onClick={() => handleDeleteFaq(faq.faqID)}
+                          >
+                            <p className="m-0">Delete</p>
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )

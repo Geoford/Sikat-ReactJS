@@ -369,10 +369,10 @@ const CaseDetails = () => {
                 </button>
               )}
 
-              <div className="row d-flex gap-1 mt-2 px-3">
+              <div className="row d-flex gap-1 mt-1 px-3">
                 <div className="col p-0">
                   <button
-                    className="w-100 primaryButton py-1 py-md-2"
+                    className="w-100 primaryButton py-1 py-md-2 mx-a"
                     onClick={() => downloadData("html")}
                   >
                     <p className="m-0">Download as HTML</p>

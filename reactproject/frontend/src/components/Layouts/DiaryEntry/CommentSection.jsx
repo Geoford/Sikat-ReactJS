@@ -12,6 +12,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "../CommentSection/ReportCommentButton";
 import Suspend from "../Profile/Suspend";
 import MessageModal from "./messageModal";
+import Hide from "../Profile/Hide";
+import Reviewed from "../Profile/Reviewed";
 
 const CommentSection = ({
   userID,
@@ -334,11 +336,15 @@ const CommentSection = ({
                 <Dropdown.Menu className="p-2 ">
                   {!canManage &&
                     (user.isAdmin ? (
-                      <Suspend
-                        userID={comment.userID}
-                        firstName={comment.firstName}
-                        suspended={comment.isSuspended}
-                      />
+                      <>
+                        <Suspend
+                          userID={comment.userID}
+                          firstName={comment.firstName}
+                          suspended={comment.isSuspended}
+                        />
+                        <Reviewed />
+                        <Hide type={"comment"} />
+                      </>
                     ) : (
                       <Dropdown.Item className="p-0 btn btn-light">
                         <ReportButton

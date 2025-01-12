@@ -9,6 +9,8 @@ import MainLayout from "../../Layouts/MainLayout";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
+import { Alert } from "react-bootstrap";
+import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
 
 const GetHelp = () => {
   const { userID } = useParams();
@@ -58,7 +60,10 @@ const GetHelp = () => {
 
       // Check if the file size exceeds 5MB (5 * 1024 * 1024 bytes)
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size exceeds 5MB, setting file to null.");
+        setModal({
+          show: true,
+          message: `File size exceeds 5MB`,
+        });
         const updatedDocuments = [...formData.supportingDocuments];
         const index = parseInt(name.split("_")[1], 10);
         updatedDocuments[index] = null;
@@ -129,7 +134,10 @@ const GetHelp = () => {
       }, 2500);
     } catch (error) {
       console.error("Error submitting report:", error);
-      alert("Error submitting report");
+      setModal({
+        show: true,
+        message: `Error submitting report. Invalid file type.`,
+      });
     }
   };
 
@@ -137,12 +145,12 @@ const GetHelp = () => {
     <MainLayout>
       <PreLoader />
 
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
 
       <div className="d-flex justify-content-center py-3">
         <div
@@ -172,7 +180,7 @@ const GetHelp = () => {
             <div className="row">
               <div className="col-md input-group mb-2">
                 <input
-                  type="text"
+                  type="number"
                   className="form-control"
                   placeholder="Contact Number"
                   name="contactInfo"
@@ -199,9 +207,17 @@ const GetHelp = () => {
             </div>
 
             {/* Incident Details */}
-            <h5 className="my-2">Incident Details</h5>
+            <h5 className="my-2">
+              Incident Details{" "}
+              {formErrors.subjects && (
+                <span className="text-danger">*{formErrors.subjects}</span>
+              )}
+              {selectedSubjects && (
+                <span className="text-success">*{selectedSubjects}</span>
+              )}
+            </h5>
             <div className="row">
-              <div className="col-md input-group mb-1">
+              <div className="col-md input-group mb-1 ">
                 <input
                   type="text"
                   className="form-control"
@@ -211,17 +227,9 @@ const GetHelp = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-2">
+              <div className="col-lg-2 ps-lg-1 mb-1">
                 <SubjectSelection onSubjectsChange={handleSubjectsChange} />
-                {selectedSubjects && (
-                  <div>
-                    <p className="m-0">{selectedSubjects}</p>
-                  </div>
-                )}
               </div>
-              {formErrors.subjects && (
-                <p className="text-danger mt-1">{formErrors.subjects}</p>
-              )}
             </div>
 
             <FloatingLabel
@@ -274,8 +282,8 @@ const GetHelp = () => {
 
             <div className="d-flex flex-column justify-content-between">
               <div>
-                <h5 className="my-2">
-                  Upload Proof of Incident (Optional, Up to 5 Photos){" "}
+                <h5 className="my-2 text-center text-md-start">
+                  Upload Proof of Incident (Optional, Up to 5 Photos)
                 </h5>
                 <div className="d-flex flex-wrap gap-2 justify-content-center">
                   {formData.supportingDocuments.map((doc, index) => {
@@ -287,14 +295,20 @@ const GetHelp = () => {
                       shouldDisplayInput && (
                         <div key={index} className="mb-1">
                           {doc ? (
-                            <div className="position-relative">
+                            <div
+                              className="position-relative"
+                              style={{
+                                width: "clamp(10rem, 13dvw, 12rem)",
+                                height: "clamp(13rem, 15dvw, 15rem)",
+                              }}
+                            >
                               <img
                                 className="imagePreview"
                                 src={doc.preview}
                                 alt={`preview ${index}`}
                                 style={{
-                                  maxWidth: "200px",
-                                  maxHeight: "200px",
+                                  width: "100%",
+                                  height: "100%",
                                   objectFit: "cover",
                                   border: "1px solid #ddd",
                                   borderRadius: "4px",
@@ -302,7 +316,7 @@ const GetHelp = () => {
                               />
                               <button
                                 type="button"
-                                className="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                className="btn btn-danger btn-sm position-absolute"
                                 onClick={() => handleRemoveImage(index)}
                                 style={{
                                   width: "20px",
@@ -310,10 +324,11 @@ const GetHelp = () => {
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  fontSize: "12px",
+                                  top: ".3rem",
+                                  right: ".3rem",
                                 }}
                               >
-                                &times;
+                                x
                               </button>
                             </div>
                           ) : (
@@ -321,9 +336,9 @@ const GetHelp = () => {
                               htmlFor={`supportingDocuments_${index}`}
                               className="form-label d-flex flex-column justify-content-center align-items-center"
                               style={{
-                                width: "200px",
-                                height: "200px",
-                                border: "1px dashed #aaa",
+                                width: "clamp(10rem, 13dvw, 15rem)",
+                                height: "clamp(13rem, 15dvw, 15rem)",
+                                border: "2px dashed #aaa",
                                 borderRadius: "4px",
                                 cursor: "pointer",
                               }}

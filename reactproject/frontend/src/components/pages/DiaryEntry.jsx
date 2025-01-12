@@ -21,6 +21,8 @@ import EditPostButton from "../Layouts/Home/EditPostButton";
 import EditDiaryEntryButton from "../Layouts/Home/EditDiaryEntryButton";
 import DeleteButton from "../Layouts/DiaryEntry/DeleteButton";
 import Suspend from "../Layouts/Profile/Suspend";
+import Reviewed from "../Layouts/Profile/Reviewed";
+import Hide from "../Layouts/Profile/Hide";
 // import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
@@ -541,12 +543,21 @@ const DiaryEntry = () => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="p-2">
                               {user.isAdmin && !entry.isAdmin ? (
-                                <Suspend
-                                  entryID={entry.entryID}
-                                  userID={entry.userID}
-                                  firstName={entry.firstName}
-                                  suspended={entry.isSuspended}
-                                ></Suspend>
+                                <>
+                                  <Suspend
+                                    entryID={entry.entryID}
+                                    userID={entry.userID}
+                                    firstName={entry.firstName}
+                                    suspended={entry.isSuspended}
+                                  ></Suspend>
+                                  <Reviewed
+                                    entryID={entry.entryID}
+                                    userID={entry.userID}
+                                    firstName={entry.firstName}
+                                    suspended={entry.isSuspended}
+                                  ></Reviewed>
+                                  <Hide type={"diary"}></Hide>
+                                </>
                               ) : (
                                 <>
                                   <Dropdown.Item className="p-0 btn btn-light">
