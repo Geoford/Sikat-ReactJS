@@ -55,22 +55,28 @@ const CaseDetails = () => {
   const handleAddressed = (reportID) => {
     setConfirmModal({
       show: true,
-      message: `Are you sure you want to mark this as address?`,
+      message: `Are you sure you want to address this entry?`,
       onConfirm: async () => {
-        axios
-          .put(`http://localhost:8081/reports/${reportID}`)
-          .then(() => {
-            setModal({
-              show: true,
-              message: `The case has been addressed.`,
-            });
-            fetchReports();
-          })
-          .catch((err) => {
-            setError(
-              err.response?.data?.error || "Failed to update case report"
-            );
+        try {
+          await axios.put(`http://localhost:8081/reports/${reportID}`);
+
+          // Close the confirmation modal
+          closeConfirmModal();
+
+          // Show the addressed modal
+          setModal({
+            show: true,
+            message: `The case has been addressed.`,
           });
+
+          // Set a 2-second timer to reload the page
+          setTimeout(() => {
+            setModal({ show: false, message: "" }); // Close the modal
+            window.location.reload(); // Refresh the page
+          }, 2000); // 2000ms = 2 seconds
+        } catch (err) {
+          setError(err.response?.data?.error || "Failed to update case report");
+        }
       },
       onCancel: () => setConfirmModal({ show: false, message: "" }),
     });
@@ -353,9 +359,11 @@ const CaseDetails = () => {
                 ""
               ) : (
                 <button
-                  type="button"
                   className="primaryButton w-100 py-2"
-                  onClick={() => handleAddressed(reportID)}
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent default form submission behavior
+                    handleAddressed(reportID);
+                  }}
                 >
                   <p className="m-0">Mark as Addressed</p>
                 </button>
