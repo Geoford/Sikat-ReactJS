@@ -12,6 +12,8 @@ import Spinner from "react-bootstrap/Spinner";
 import SubjectSelection from "../LayoutUser/SubjectSelection";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
 import alarmingWords from "../AlarmingWords";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 function DiaryEntryButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -31,6 +33,27 @@ function DiaryEntryButton({ onEntrySaved }) {
   const removePreview = () => {
     setFile(null);
     setImagePreview(null);
+  };
+
+  // FOR MODAL AND TOAST
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
   };
 
   const handleSubjectsChange = (subjectsText) => {
@@ -60,9 +83,10 @@ function DiaryEntryButton({ onEntrySaved }) {
 
     if (selectedFile) {
       if (selectedFile.size > maxSize) {
-        setFileError(
-          "File size exceeds the 2MB limit. Please select a smaller file."
-        );
+        setModal({
+          show: true,
+          message: `File size exceeds the 2MB limit. Please select a smaller file.`,
+        });
         setFile(null);
         setImagePreview(null);
       } else {
@@ -121,7 +145,11 @@ function DiaryEntryButton({ onEntrySaved }) {
     if (Object.keys(errors).length > 0) return;
 
     if (!user || !user.userID) {
-      setServerError("User not authenticated. Please log in again.");
+      setModal({
+        show: true,
+        message: `User not authenticated. Please log in again.`,
+      });
+      // setServerError("User not authenticated. Please log in again.");
       return;
     }
 
@@ -158,10 +186,18 @@ function DiaryEntryButton({ onEntrySaved }) {
         if (onEntrySaved) {
           onEntrySaved();
         }
+        setModal({
+          show: true,
+          message: `Diary posted.`,
+        });
       })
       .catch((error) => {
         console.error("There was an error saving the diary entry!", error);
-        setServerError("Failed to save diary entry. Please try again.");
+        setModal({
+          show: true,
+          message: `Failed to save diary entry. Please try again.`,
+        });
+        // setServerError("Failed to save diary entry. Please try again.");
       })
       .finally(() => {
         setLoading(false);
@@ -177,6 +213,21 @@ function DiaryEntryButton({ onEntrySaved }) {
         <p className="m-0">Diary Entry</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
+
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
@@ -238,15 +289,13 @@ function DiaryEntryButton({ onEntrySaved }) {
           )}
           <div className="mt-1 d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
-            {selectedSubjects && (
-              <div>
-                <p className="m-0">{selectedSubjects}</p>
-              </div>
-            )}
+            <div className="ms-2 d-flex align-items-center">
+              {selectedSubjects && <p className="m-0">{selectedSubjects}</p>}
+              {!selectedSubjects && (
+                <p className="text-danger m-0">{formErrors.subjects}</p>
+              )}
+            </div>
           </div>
-          {formErrors.subjects && (
-            <p className="text-danger mt-1">{formErrors.subjects}</p>
-          )}
 
           <div
             className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"

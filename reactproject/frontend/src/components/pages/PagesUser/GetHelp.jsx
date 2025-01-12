@@ -209,7 +209,7 @@ const GetHelp = () => {
             {/* Incident Details */}
             <h5 className="my-2">
               Incident Details{" "}
-              {formErrors.subjects && (
+              {!selectedSubjects && (
                 <span className="text-danger">*{formErrors.subjects}</span>
               )}
               {selectedSubjects && (
