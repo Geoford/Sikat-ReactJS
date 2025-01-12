@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import MessageModal from "../../DiaryEntry/messageModal";
+import MessageAlert from "../../DiaryEntry/messageAlert";
 
 const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -107,6 +108,9 @@ const FlaggedDiaries = ({ flags }) => {
               show: true,
               message: `Flagged diary has been addressed.`,
             });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
           })
           .catch((err) => {
             setError(err.response?.data?.error || "Failed to update flagged");
@@ -204,12 +208,12 @@ const FlaggedDiaries = ({ flags }) => {
 
   return (
     <div className="d-flex flex-column">
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

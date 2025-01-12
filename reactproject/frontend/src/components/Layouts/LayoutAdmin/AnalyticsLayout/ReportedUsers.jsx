@@ -5,6 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import MessageModal from "../../DiaryEntry/messageModal";
+import MessageAlert from "../../DiaryEntry/messageAlert";
 
 const ReportedComment = ({ reportedUsers }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -116,6 +117,9 @@ const ReportedComment = ({ reportedUsers }) => {
             show: true,
             message: `The user has been reviewed.`,
           });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         } catch (error) {
           console.error("Failed to update user:", error);
           setModal({
@@ -217,12 +221,12 @@ const ReportedComment = ({ reportedUsers }) => {
 
   return (
     <div className="d-flex flex-column">
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

@@ -13,6 +13,7 @@ import ReportedComments from "../Layouts/Profile/ReportedComments";
 import Followers from "../Layouts/Profile/Followers";
 import { SuspensionModal } from "../Layouts/Profile/SuspensionModal";
 import MessageModal from "../Layouts/DiaryEntry/messageModal";
+import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
 // import Suspended from "../../components/pages/PagesUser/Suspended";
 
 const Profile = () => {
@@ -119,7 +120,10 @@ const Profile = () => {
 
     if (selectedFile) {
       if (selectedFile.size > maxSize) {
-        alert("File size exceeds the 2MB limit. Please select a smaller file.");
+        setModal({
+          show: true,
+          message: `File size exceeds the 2MB limit. Please select a smaller file.`,
+        });
         setFile(null);
       } else {
         setFile(selectedFile);
@@ -194,7 +198,10 @@ const Profile = () => {
     }
 
     if (currentUser.userID === followUserId) {
-      alert("You cannot follow yourself.");
+      setModal({
+        show: true,
+        message: `You cannot follow yourself.`,
+      });
       return;
     }
 
@@ -247,7 +254,10 @@ const Profile = () => {
         );
 
         if (response.data.message === "Already following this user") {
-          alert("You are already following this user.");
+          setModal({
+            show: true,
+            message: `You are already following this user.`,
+          });
           return;
         }
 
@@ -273,7 +283,10 @@ const Profile = () => {
       await fetchFollowedUsers(currentUser.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
-      alert("There was an error processing your request.");
+      setModal({
+        show: true,
+        message: `There was an error processing your request.`,
+      });
     }
   };
 
@@ -375,12 +388,12 @@ const Profile = () => {
         className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
-        <MessageModal
+        <MessageAlert
           showModal={modal}
           closeModal={closeModal}
           title={"Notice"}
           message={modal.message}
-        ></MessageModal>
+        ></MessageAlert>
         <MessageModal
           showModal={confirmModal}
           closeModal={closeConfirmModal}

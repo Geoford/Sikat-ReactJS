@@ -4,6 +4,7 @@ import Pagination from "react-bootstrap/Pagination";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import MessageModal from "../../DiaryEntry/messageModal";
+import MessageAlert from "../../DiaryEntry/messageAlert";
 
 const RegisteredUsers = ({ users }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -179,12 +180,12 @@ const RegisteredUsers = ({ users }) => {
 
   return (
     <div className="d-flex flex-column justify-content" style={{ height: "" }}>
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

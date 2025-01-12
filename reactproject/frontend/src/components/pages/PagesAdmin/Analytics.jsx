@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
@@ -17,6 +17,11 @@ const Analytics = () => {
   const [reportedUsers, setreportedUsers] = useState([]);
   // const [activeTab, setActiveTab] = useState("RegisteredUser");
   const { activeTab } = useParams();
+  const navigate = useNavigate();
+
+  const handleTabChange = (tab) => {
+    navigate(`/Admin/Analytics/${tab}`);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -115,6 +120,7 @@ const Analytics = () => {
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
                     eventKey="RegisteredUser"
+                    onClick={() => handleTabChange("RegisteredUser")}
                   >
                     <h5 className="m-0">
                       <i class="bx bxs-user-detail mt-1"></i>
@@ -126,6 +132,7 @@ const Analytics = () => {
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
                     eventKey="FlaggedDiaries"
+                    onClick={() => handleTabChange("FlaggedDiaries")}
                   >
                     <h5 className="m-0">
                       <i class="bx bx-message-alt-error mt-1"></i>
@@ -137,6 +144,7 @@ const Analytics = () => {
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
                     eventKey="ReportedComments"
+                    onClick={() => handleTabChange("ReportedComments")}
                   >
                     <h5 className="m-0">
                       <i class="bx bx-user-pin mt-1"></i>
@@ -148,6 +156,7 @@ const Analytics = () => {
                   <Nav.Link
                     className=" d-flex align-items-center gap-2"
                     eventKey="ReportedUsers"
+                    onClick={() => handleTabChange("ReportedUsers")}
                   >
                     <h5 className="m-0">
                       <i class="bx bx-user-pin mt-1"></i>

@@ -6,6 +6,7 @@ import DefaultProfile from "../../../../../src/assets/userDefaultProfile.png";
 import HomeDiaryDropdown from "../../../Layouts/LayoutUser/HomeDiaryDropdown";
 import SampleImage from "../../../../assets/Background.jpg";
 import MessageModal from "../../../Layouts/DiaryEntry/messageModal";
+import MessageAlert from "../../../Layouts/DiaryEntry/messageAlert";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
@@ -220,12 +221,13 @@ const RightSide = () => {
 
   return (
     <>
-      <MessageModal
+      <></>
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
 
       <MessageModal
         showModal={confirmModal}

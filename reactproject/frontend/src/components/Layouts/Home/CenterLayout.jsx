@@ -10,6 +10,7 @@ import PostButton from "./PostButton";
 import MessageModal from "../DiaryEntry/messageModal";
 import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 const CenterLayout = () => {
   const [entries, setEntries] = useState([]);
@@ -330,12 +331,12 @@ const CenterLayout = () => {
 
   return (
     <div className="p-2 px-0 mx-sm-5 mx-md-0">
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

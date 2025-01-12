@@ -2137,7 +2137,7 @@ app.get("/getReportedUsers", (req, res) => {
       reported_users
     JOIN user_table ON reported_users.reportedUserID = user_table.userID
     JOIN user_profiles ON reported_users.userID = user_profiles.userID
-    ORDER BY isAddress, created_at DESC
+    ORDER BY isAddress, created_at 
   `;
   //  SELECT
   //     flagged_reports.*,

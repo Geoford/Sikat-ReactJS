@@ -2,12 +2,33 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 function Suspend({ entryID, userID, firstName, suspended }) {
   const [show, setShow] = useState(false);
   const [reasons, setReasons] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("3 Days");
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -22,14 +43,24 @@ function Suspend({ entryID, userID, firstName, suspended }) {
       });
 
       if (response.data.success) {
-        alert("User suspended successfully.");
+        setModal({
+          show: true,
+          message: `User suspended successfully.`,
+        });
+
         handleClose();
       } else {
-        alert("Failed to suspend user.");
+        setModal({
+          show: true,
+          message: `Failed to suspend user.`,
+        });
       }
     } catch (error) {
       console.error("Error suspending user:", error);
-      alert("An error occurred while suspending the user.");
+      setModal({
+        show: true,
+        message: `An error occurred while suspending the user.`,
+      });
     }
   };
 
@@ -56,6 +87,13 @@ function Suspend({ entryID, userID, firstName, suspended }) {
         <i className="bx bx-block"></i>
         <p className="m-0">Suspend</p>
       </button>
+
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
