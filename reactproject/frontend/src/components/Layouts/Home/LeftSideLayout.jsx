@@ -148,13 +148,29 @@ const LeftSideAdmin = () => {
                 <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
                   <div>
                     <div className="d-flex flex-column align-items-start p-1">
-                      <p className="m-0 text-start text-secondary">
+                      <p className="m-0 text-center text-secondary">
                         {entry.title}{" "}
                         <span>
                           {entry.visibility === "private" ? (
-                            <i className="bx bx-lock-alt"></i>
+                            <i class="bx bx-lock-alt"></i>
                           ) : (
-                            <i className="bx bx-globe"></i>
+                            <>
+                              <i class="bx bx-globe"></i>
+                              {entry.anonimity === "private" ? (
+                                <>
+                                  <i class="bx bxs-user position-relative">
+                                    <i
+                                      class="bx bx-question-mark position-absolute"
+                                      style={{
+                                        left: ".5rem",
+                                        fontSize:
+                                          "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                      }}
+                                    ></i>
+                                  </i>
+                                </>
+                              ) : null}
+                            </>
                           )}
                         </span>
                       </p>

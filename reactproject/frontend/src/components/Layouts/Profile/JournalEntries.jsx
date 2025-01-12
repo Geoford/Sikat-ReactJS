@@ -184,21 +184,24 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
                             {entry.visibility === "private" ? (
                               <i class="bx bx-lock-alt"></i>
                             ) : (
-                              <i class="bx bx-globe"></i>
-                            )}
-                            {entry.anonimity === "private" ? (
                               <>
-                                <i class="bx bxs-user position-relative">
-                                  <i
-                                    class="bx bx-question-mark position-absolute"
-                                    style={{
-                                      left: ".5rem",
-                                      fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                    }}
-                                  ></i>
-                                </i>
+                                <i class="bx bx-globe"></i>
+                                {entry.anonimity === "private" ? (
+                                  <>
+                                    <i class="bx bxs-user position-relative">
+                                      <i
+                                        class="bx bx-question-mark position-absolute"
+                                        style={{
+                                          left: ".5rem",
+                                          fontSize:
+                                            "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                        }}
+                                      ></i>
+                                    </i>
+                                  </>
+                                ) : null}
                               </>
-                            ) : null}
+                            )}
                           </span>
                         </p>
                         {/* {entry.anonimity === "private" ? (

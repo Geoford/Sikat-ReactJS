@@ -155,7 +155,10 @@ const GetHelp = () => {
       <div className="d-flex justify-content-center py-3">
         <div
           className=" rounded shadow p-3 w-75"
-          style={{ backgroundColor: "#ffff" }}
+          style={{
+            backgroundColor: "#ffff",
+            // width: "clamp(20rem, 15dvw, 25rem)",
+          }}
         >
           <div className="border-bottom border-2">
             <h4>Complaint Form for Gender-Based Incidents</h4>

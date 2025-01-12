@@ -212,6 +212,7 @@ const DiaryEntries = () => {
                               className="w-100 d-flex align-items-center justify-content-center text-light border-0 p-0"
                               variant="transparent"
                               bsPrefix
+                              // style={{ zIndex: "10000" }}
                             >
                               <p className="m-0 my-1 mx-1 text-wrap">
                                 {entriesForDay.length}{" "}
@@ -230,21 +231,36 @@ const DiaryEntries = () => {
                               {entriesForDay.map((entry) => (
                                 <Dropdown.Item
                                   as={Link}
-                                  to={`/Admin/DiaryEntry/${entry.entryID}`}
+                                  to={`/DiaryEntry/${entry.entryID}`}
                                   key={entry.entryID}
                                   className="btn btn-light text-decoration-none"
+                                  // style={{ zIndex: "10000" }}
                                 >
-                                  <p className="m-0">
+                                  <p className="m-0 text-center text-secondary">
                                     {entry.title}{" "}
-                                    <img
-                                      src={
-                                        entry.privacy === "public"
-                                          ? publicIcon
-                                          : privateIcon
-                                      }
-                                      alt={entry.privacy}
-                                      style={{ width: "13px", height: "13px" }}
-                                    />
+                                    <span>
+                                      {entry.visibility === "private" ? (
+                                        <i class="bx bx-lock-alt"></i>
+                                      ) : (
+                                        <>
+                                          <i class="bx bx-globe"></i>
+                                          {entry.anonimity === "private" ? (
+                                            <>
+                                              <i class="bx bxs-user position-relative">
+                                                <i
+                                                  class="bx bx-question-mark position-absolute"
+                                                  style={{
+                                                    left: ".5rem",
+                                                    fontSize:
+                                                      "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                                  }}
+                                                ></i>
+                                              </i>
+                                            </>
+                                          ) : null}
+                                        </>
+                                      )}
+                                    </span>
                                   </p>
                                 </Dropdown.Item>
                               ))}
