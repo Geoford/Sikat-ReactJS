@@ -154,10 +154,10 @@ const GetHelp = () => {
 
       <div className="d-flex justify-content-center py-3">
         <div
-          className=" rounded shadow p-3 w-75"
+          className="container-fluid container-md rounded shadow p-3"
           style={{
             backgroundColor: "#ffff",
-            // width: "clamp(20rem, 15dvw, 25rem)",
+            // width: "50rem",
           }}
         >
           <div className="border-bottom border-2">

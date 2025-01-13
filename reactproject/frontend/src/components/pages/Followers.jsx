@@ -6,6 +6,7 @@ import MainLayout from "../Layouts/MainLayout";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import { Link, useNavigate } from "react-router-dom";
 import MessageModal from "../Layouts/DiaryEntry/messageModal";
+import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
 
 const UserList = ({ type, users, handleFollowToggle, isFollowing }) => (
   <div
@@ -206,12 +207,12 @@ const Followers = () => {
 
   return (
     <MainLayout ActiveTab="Followers">
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

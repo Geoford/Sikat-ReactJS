@@ -180,7 +180,10 @@ export default function GenderBasedIncidents() {
           </div>
         </div>
 
-        <div className="container mt-2 p-0  rounded overflow-auto">
+        <div
+          className="container mt-2 p-0 rounded overflow-auto"
+          style={{ minHeight: "22.7rem", backgroundColor: "#ffff" }}
+        >
           {error ? (
             <div className="alert alert-danger">{error}</div>
           ) : (

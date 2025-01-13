@@ -264,7 +264,9 @@ const DiaryEntries = () => {
           <Modal.Title>
             <h4 className="m-0">
               {selectedDay &&
-                `Entries for ${selectedDay} ${selectedMonth} ${selectedYear}`}
+                `${
+                  user.isAdmin ? "Post" : "Diary Entry"
+                } for ${selectedDay} ${selectedMonth} ${selectedYear}`}
             </h4>
           </Modal.Title>
         </Modal.Header>
@@ -272,16 +274,15 @@ const DiaryEntries = () => {
           {selectedDayEntries.map((entry) => (
             <>
               <div className="d-flex">
-                <div
-                  as={Link}
+                <Link
                   to={`/DiaryEntry/${entry.entryID}`}
                   key={entry.entryID}
                   className="w-100 btn btn-light text-decoration-none"
                   // style={{ zIndex: "10000" }}
                 >
-                  <p className="m-0 text-start text-secondary">
-                    {entry.title}{" "}
-                    <span>
+                  <p className="m-0 text-start text-secondary  d-flex align-items-center gap-1">
+                    {entry.title}
+                    <span className=" d-flex align-items-center">
                       {entry.visibility === "private" ? (
                         <i class="bx bx-lock-alt"></i>
                       ) : (
@@ -304,7 +305,7 @@ const DiaryEntries = () => {
                       )}
                     </span>
                   </p>
-                </div>
+                </Link>
               </div>
             </>
           ))}

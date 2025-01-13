@@ -341,17 +341,35 @@ const Dashboard = () => {
                   </label>
                 </div>
               </div>
-              <div className="col-md-6 mb-2">
-                <label htmlFor="specificDate" className="form-label">
-                  Select Specific Date:
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="specificDate"
-                  value={specificDate}
-                  onChange={handleDateChange}
-                />
+              <div className="col-md-6 mb-2 ">
+                <div className="row gap-1 m-auto">
+                  <div class="col-md form-floating p-0">
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="floatingPassword"
+                      placeholder="Password"
+                      value={specificDate}
+                      onChange={handleDateChange}
+                    />
+                    <label className="ms-2" for="floatingPassword">
+                      Start date:
+                    </label>
+                  </div>
+                  <div class="col-md form-floating p-0">
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="floatingPassword"
+                      placeholder="Password"
+                      value={specificDate}
+                      onChange={handleDateChange}
+                    />
+                    <label className="ms-2" for="floatingPassword">
+                      End date:
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -373,7 +391,7 @@ const Dashboard = () => {
                       <h2 className="m-0">
                         <i className="bx bx-edit"></i>
                       </h2>
-                      <p className="m-0">Diary Entries</p>
+                      <p className="m-0">New diary entries</p>
                     </div>
                     <div
                       className="d-flex align-items-center justify-content-center gap-2"
@@ -397,7 +415,7 @@ const Dashboard = () => {
                       <h2 className="m-0">
                         <i className="bx bx-user-plus"></i>
                       </h2>
-                      <p className="m-0">Users</p>
+                      <p className="m-0">New users</p>
                     </div>
                     <div
                       className="d-flex align-items-center justify-content-center gap-2"
@@ -565,14 +583,14 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="row row-cols-1 row-cols-lg-2 justify-content-center">
+      {/* <div className="row row-cols-1 row-cols-lg-2 justify-content-center">
         <div className="col">
           <Bar data={graphData} options={graphOptions} />
         </div>
         <div className="col-lg-3">
           <Doughnut data={doughnutData} />
         </div>
-      </div>
+      </div> */}
     </MainLayout>
   );
 };

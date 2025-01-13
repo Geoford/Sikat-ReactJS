@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 import CloseButton from "react-bootstrap/CloseButton";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import { useNavigate } from "react-router-dom";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
+import { first } from "lodash";
 
 const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   <div
@@ -43,7 +46,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
           </Link>
           <button
             className="primaryButton position-absolute"
-            onClick={() => handleFollowToggle(user.userID)}
+            onClick={() => handleFollowToggle(user.userID, user.firstName)}
             style={{ right: "0" }}
           >
             <p className="m-0">
@@ -61,6 +64,26 @@ const Followers = ({ user, followersCount, followingCount }) => {
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   // useEffect(() => {
   //   const userData = localStorage.getItem("user");
@@ -104,7 +127,7 @@ const Followers = ({ user, followersCount, followingCount }) => {
     }
   };
 
-  const handleFollowToggle = async (followUserId) => {
+  const handleFollowToggle = async (followUserId, firstName) => {
     if (!followUserId) {
       console.error("User ID to follow/unfollow is undefined");
       return;
@@ -119,21 +142,28 @@ const Followers = ({ user, followersCount, followingCount }) => {
 
     try {
       if (isFollowing) {
-        const confirmed = window.confirm(
-          `Are you sure you want to unfollow this user?`
-        );
+        setConfirmModal({
+          show: true,
+          message: `Are you sure you want to unfollow ${firstName}?`,
+          onConfirm: async () => {
+            await axios.delete(
+              `http://localhost:8081/unfollow/${followUserId}`,
+              {
+                data: { followerId: user.userID },
+              }
+            );
 
-        if (!confirmed) {
-          return;
-        }
-        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
-          data: { followerId: user.userID },
+            setFollowedUsers((prev) =>
+              prev.filter((u) => u.userID !== followUserId)
+            );
+            closeConfirmModal();
+            setModal({
+              show: true,
+              message: `You have unfollowed ${firstName}.`,
+            });
+          },
+          onCancel: () => setConfirmModal({ show: false, message: "" }),
         });
-
-        setFollowedUsers((prev) =>
-          prev.filter((u) => u.userID !== followUserId)
-        );
-        alert("You have unfollowed the user.");
       } else {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
@@ -144,7 +174,10 @@ const Followers = ({ user, followersCount, followingCount }) => {
         const followedUserData = response.data;
 
         setFollowedUsers((prev) => [...prev, followedUserData]);
-        alert("You are now following the user.");
+        setModal({
+          show: true,
+          message: `You are now following ${firstName}.`,
+        });
       }
     } catch (error) {
       console.error("Error toggling follow status:", error);
@@ -156,6 +189,20 @@ const Followers = ({ user, followersCount, followingCount }) => {
   const handleCLose = () => setShowModal(false);
   return (
     <div>
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
       <button className="border-0 bg-transparent p-0" onClick={handleShow}>
         <p className="m-0 mt-1 text-secondary underlinedLink">
           {followersCount} Followers - {followingCount} Following
@@ -163,10 +210,6 @@ const Followers = ({ user, followersCount, followingCount }) => {
       </button>
       <Modal show={showModal} onHide={handleCLose} centered>
         <Modal.Body className="position-relative">
-          <CloseButton
-            className="position-absolute"
-            style={{ right: "1rem", top: "1rem" }}
-          />
           <Tabs
             defaultActiveKey="Followers"
             id="uncontrolled-tab-example"
