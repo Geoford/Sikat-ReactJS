@@ -21,6 +21,9 @@ const DiaryEntries = () => {
   const showEntryModal = () => {
     setEntryModal(true);
   };
+  const hideEntryModal = () => {
+    setEntryModal(false);
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -101,21 +104,6 @@ const DiaryEntries = () => {
   const [selectedMonth, setSelectedMonth] = useState(months[currentMonthIndex]);
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [daysInMonth, setDaysInMonth] = useState([]);
-  const [selectedDayEntries, setSelectedDayEntries] = useState([]);
-  const [selectedDay, setSelectedDay] = useState(null);
-
-  const handleDayClick = (day) => {
-    const entriesForDay = findEntriesForDay(day);
-    setSelectedDay(day);
-    setSelectedDayEntries(entriesForDay);
-    setEntryModal(true);
-  };
-
-  const hideEntryModal = () => {
-    setSelectedDay(null);
-    setEntryModal(false);
-    setSelectedDayEntries([]);
-  };
 
   const getDaysInMonth = (month, year) => {
     const monthIndex = months.indexOf(month);
@@ -219,7 +207,7 @@ const DiaryEntries = () => {
                 {daysInMonth.map((day) => {
                   const entriesForDay = findEntriesForDay(day);
                   return (
-                    <div className="col-4 col-md-3 col-xl-2 p-1" key={day}>
+                    <div className="col-4 col-md-3 col-lg-2 p-1" key={day}>
                       <div
                         className="days border rounded bg-light shadow-sm p-2"
                         style={{ height: "80px" }}
@@ -229,11 +217,8 @@ const DiaryEntries = () => {
                         </div>
                         {entriesForDay.length > 0 ? (
                           <>
-                            <button
-                              className="primaryButton p-0 px-2 px-sm-4 py-2"
-                              onClick={() => handleDayClick(day)}
-                            >
-                              <h6 className="m-0 my-1 mx-2 mx-md-3">
+                            {/* <button onClick={showEntryModal}>
+                              <p className="m-0 my-1 mx-1 text-wrap">
                                 {entriesForDay.length}{" "}
                                 {user.isAdmin
                                   ? entriesForDay.length > 1
@@ -242,8 +227,100 @@ const DiaryEntries = () => {
                                   : entriesForDay.length > 1
                                   ? "Entries"
                                   : "Entry"}
-                              </h6>
+                              </p>
                             </button>
+                            <Modal show={entryModal} onHide={hideEntryModal}>
+                              <Modal.Header>
+                                <Modal.Title></Modal.Title>
+                              </Modal.Header>
+                              <Modal.Body>
+                                {entriesForDay.map((entry) => (
+                                  <Dropdown.Item
+                                    as={Link}
+                                    to={`/DiaryEntry/${entry.entryID}`}
+                                    key={entry.entryID}
+                                    className="btn btn-light text-decoration-none"
+                                    // style={{ zIndex: "10000" }}
+                                  >
+                                    <p className="m-0 text-center text-secondary">
+                                      {entry.title}{" "}
+                                      <span>
+                                        {entry.visibility === "private" ? (
+                                          <i class="bx bx-lock-alt"></i>
+                                        ) : (
+                                          <>
+                                            <i class="bx bx-globe"></i>
+                                            {entry.anonimity === "private" ? (
+                                              <>
+                                                <i class="bx bxs-user position-relative">
+                                                  <i
+                                                    class="bx bx-question-mark position-absolute"
+                                                    style={{
+                                                      left: ".5rem",
+                                                      fontSize:
+                                                        "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                                    }}
+                                                  ></i>
+                                                </i>
+                                              </>
+                                            ) : null}
+                                          </>
+                                        )}
+                                      </span>
+                                    </p>
+                                  </Dropdown.Item>
+                                ))}
+                              </Modal.Body>
+                            </Modal> */}
+                            <Dropdown className="position-relative primaryButton mx-2 mt-2 mt-lg-0 p-0 m-0 d-flex align-items-center justify-content-center">
+                              <Dropdown.Toggle
+                                className="w-100 d-flex align-items-center justify-content-center text-light border-0 p-0"
+                                variant="transparent"
+                                bsPrefix
+                                // style={{ zIndex: "10000" }}
+                              >
+                                <i className="bx bx-chevron-down d-none d-md-block"></i>
+                              </Dropdown.Toggle>
+
+                              <Dropdown.Menu className="text-center">
+                                {entriesForDay.map((entry) => (
+                                  <Dropdown.Item
+                                    as={Link}
+                                    to={`/DiaryEntry/${entry.entryID}`}
+                                    key={entry.entryID}
+                                    className="btn btn-light text-decoration-none"
+                                    // style={{ zIndex: "10000" }}
+                                  >
+                                    <p className="m-0 text-center text-secondary">
+                                      {entry.title}{" "}
+                                      <span>
+                                        {entry.visibility === "private" ? (
+                                          <i class="bx bx-lock-alt"></i>
+                                        ) : (
+                                          <>
+                                            <i class="bx bx-globe"></i>
+                                            {entry.anonimity === "private" ? (
+                                              <>
+                                                <i class="bx bxs-user position-relative">
+                                                  <i
+                                                    class="bx bx-question-mark position-absolute"
+                                                    style={{
+                                                      left: ".5rem",
+                                                      fontSize:
+                                                        "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                                    }}
+                                                  ></i>
+                                                </i>
+                                              </>
+                                            ) : null}
+                                          </>
+                                        )}
+                                      </span>
+                                    </p>
+                                  </Dropdown.Item>
+                                ))}
+                              </Dropdown.Menu>
+                            </Dropdown>
                           </>
                         ) : (
                           <p className="m-0 mt-2 mt-md-0 text-secondary fw-normal">
@@ -259,57 +336,6 @@ const DiaryEntries = () => {
           </div>
         </div>
       </div>
-      <Modal show={entryModal} onHide={hideEntryModal} centered>
-        <Modal.Header>
-          <Modal.Title>
-            <h4 className="m-0">
-              {selectedDay &&
-                `Entries for ${selectedDay} ${selectedMonth} ${selectedYear}`}
-            </h4>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedDayEntries.map((entry) => (
-            <>
-              <div className="d-flex">
-                <div
-                  as={Link}
-                  to={`/DiaryEntry/${entry.entryID}`}
-                  key={entry.entryID}
-                  className="w-100 btn btn-light text-decoration-none"
-                  // style={{ zIndex: "10000" }}
-                >
-                  <p className="m-0 text-start text-secondary">
-                    {entry.title}{" "}
-                    <span>
-                      {entry.visibility === "private" ? (
-                        <i class="bx bx-lock-alt"></i>
-                      ) : (
-                        <>
-                          <i class="bx bx-globe"></i>
-                          {entry.anonimity === "private" ? (
-                            <>
-                              <i class="bx bxs-user position-relative">
-                                <i
-                                  class="bx bx-question-mark position-absolute"
-                                  style={{
-                                    left: ".5rem",
-                                    fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                  }}
-                                ></i>
-                              </i>
-                            </>
-                          ) : null}
-                        </>
-                      )}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </>
-          ))}
-        </Modal.Body>
-      </Modal>
     </MainLayout>
   );
 };
