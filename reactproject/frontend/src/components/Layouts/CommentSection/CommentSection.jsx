@@ -540,7 +540,7 @@ const CommentSection = ({
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5>
+            <h5 className="m-0">
               Comments on {isAnon === "private" ? alias : firstName}'s Diary
             </h5>
           </Modal.Title>

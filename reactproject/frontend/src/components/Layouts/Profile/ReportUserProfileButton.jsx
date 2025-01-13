@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 import MessageModal from "../DiaryEntry/messageModal";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 function ReportUserButton({ userID, toBeReported, reportedUserID }) {
   const [show, setShow] = useState(false);
@@ -116,13 +117,17 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Report {toBeReported} </Modal.Title>
+          <Modal.Title>
+            <h4 className="m-0">Report {toBeReported}</h4>
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ minHeight: "15rem" }}>
+        <Modal.Body style={{}}>
           <div>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
-              {selectedBehavior && <h5 className="m-0">{selectedBehavior}</h5>}
+              {selectedBehavior && (
+                <h5 className="m-0 text-danger">{selectedBehavior}</h5>
+              )}
             </label>
             <div className="d-flex flex-column gap-2">
               <select
@@ -155,13 +160,13 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Cancel
+            <p className="m-0">Cancel</p>
           </Button>
           <button
             className="primaryButton py-2 rounded"
             onClick={handleSubmitReport}
           >
-            Save Changes
+            <p className="m-0">Save Changes</p>
           </button>
         </Modal.Footer>
       </Modal>

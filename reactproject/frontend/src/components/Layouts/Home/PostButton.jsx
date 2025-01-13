@@ -13,6 +13,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 function PostButton({ onEntrySaved }) {
   const [show, setShow] = useState(false);
@@ -30,6 +32,27 @@ function PostButton({ onEntrySaved }) {
   const removePreview = () => {
     setFile(null);
     setImagePreview(null);
+  };
+
+  // FOR MODAL AND TOAST
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
   };
 
   const navigate = useNavigate();
@@ -123,9 +146,12 @@ function PostButton({ onEntrySaved }) {
     if (!description) errors.description = "Description is required.";
     if (visibility === "later" && !scheduledDate) {
       errors.scheduledDate = "Please select a date and time for your post.";
+      setModal({
+        show: true,
+        message: `Please select a date and time for your post.`,
+      });
     }
     setFormErrors(errors);
-
     if (Object.keys(errors).length > 0) return;
 
     let manilaScheduledDate = null;
@@ -183,6 +209,21 @@ function PostButton({ onEntrySaved }) {
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
 
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>
+
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -190,24 +231,29 @@ function PostButton({ onEntrySaved }) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-start gap-2 border-bottom pb-2">
-            <div className="d-flex align-items-center gap-2">
-              <div className="profilePicture">
-                <img
-                  src={
-                    user?.profile_image
-                      ? `http://localhost:8081${user?.profile_image}`
-                      : userDefaultProfile
-                  }
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+          <div className="d-flex align-items-center gap-2 border-bottom pb-2">
+            <div className=" d-flex align-items-center justify-content-center gap-2">
+              <div className="col p-0">
+                <div className="profilePicture" style={{}}>
+                  <img
+                    src={
+                      user?.profile_image
+                        ? `http://localhost:8081${user?.profile_image}`
+                        : userDefaultProfile
+                    }
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
               </div>
-              <p className="m-0">{user?.username || "User"}</p>
+
+              {/* <div className="col-7">
+                <p className="m-0">{user?.username || "User"}</p>
+              </div> */}
             </div>
 
             <div className="w-100 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
@@ -230,7 +276,7 @@ function PostButton({ onEntrySaved }) {
               {visibility === "later" && (
                 <div className="col position-relative">
                   <div className="row gap-1">
-                    <div className="col-md p-0">
+                    <div className="col p-0">
                       {/* Date Picker */}
                       <DatePicker
                         selected={scheduledDate}
@@ -240,7 +286,7 @@ function PostButton({ onEntrySaved }) {
                         placeholderText="Select a Day and Month"
                       />
                     </div>
-                    <div className="col-md p-0">
+                    <div className="col p-0">
                       {/* Time Picker */}
                       <DatePicker
                         selected={scheduledDate}
@@ -250,15 +296,16 @@ function PostButton({ onEntrySaved }) {
                         showTimeSelectOnly
                         className="form-control"
                         placeholderText="Select Time"
+                        style={{}}
                       />
                     </div>
                   </div>
                   {/* Error Message */}
-                  {formErrors.scheduledDate && (
+                  {/* {formErrors.scheduledDate && (
                     <div className="text-danger mt-1">
                       {formErrors.scheduledDate}
                     </div>
-                  )}
+                  )} */}
                 </div>
               )}
             </div>
@@ -291,7 +338,11 @@ function PostButton({ onEntrySaved }) {
               </Form.Control.Feedback>
             </FloatingLabel> */}
 
-            <FloatingLabel controlId="floatingTextarea2" label="Description">
+            <FloatingLabel
+              controlId="floatingTextarea2"
+              label="Description"
+              style={{ zIndex: "0" }}
+            >
               <Form.Control
                 as="textarea"
                 placeholder="Leave a comment here"

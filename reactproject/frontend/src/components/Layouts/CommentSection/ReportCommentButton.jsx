@@ -119,14 +119,16 @@ function ReportCommentButton({ commentID, userID, firstName, entryID }) {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5>Report {firstName}'s Comment</h5>
+            <h5 className="m-0">Report {firstName}'s Comment</h5>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ minHeight: "15rem" }}>
+        <Modal.Body style={{}}>
           <div>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
-              {selectedBehavior && <h5 className="m-0">{selectedBehavior}</h5>}
+              {selectedBehavior && (
+                <h5 className="m-0 text-danger">{selectedBehavior}</h5>
+              )}
             </label>
             <div className="d-flex flex-column gap-2">
               <select
