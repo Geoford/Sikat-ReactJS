@@ -4,6 +4,8 @@ import RegisterValidation from "./RegisterValidation";
 import axios from "axios";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { Alert } from "react-bootstrap"; // Import Bootstrap Alert
+import MessageModal from "../Layouts/DiaryEntry/messageModal";
+import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
 
 export default function Register() {
   const [values, setValues] = useState({
@@ -47,6 +49,27 @@ export default function Register() {
   const [otpSent, setOtpSent] = useState(false); // OTP sent status
   const [otpError, setOtpError] = useState(""); // OTP error message
   const [resendCountdown, setResendCountdown] = useState(60); // Resend countdown
+
+  // FOR MODAL AND TOAST
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -102,6 +125,10 @@ export default function Register() {
 
     if (step === 3) {
       console.log("Verifying OTP for email:", values.cvsuEmail);
+      // setModal({
+      //   show: true,
+      //   message: `Verifying OTP for email:", ${values.cvsuEmail}`,
+      // });
 
       try {
         const response = await axios.post("http://localhost:8081/verify-otp", {
@@ -113,14 +140,28 @@ export default function Register() {
 
         if (response.data.success) {
           console.log("OTP verified successfully, registering user...");
+          setModal({
+            show: true,
+            message: `OTP verified successfully, registering user...`,
+          });
           try {
             await axios.post("http://localhost:8081/Register", values);
-            alert("Email successfully verified.");
-            navigate("/");
-            window.location.reload();
+            setModal({
+              show: true,
+              message: `OTP verified successfully, registering user...`,
+            });
+            // alert("Email successfully verified.");
+            setTimeout(() => {
+              window.location.reload();
+              // navigate("/Login");
+            }, 2000);
           } catch (err) {
             console.error("Error during registration:", err);
-            setOtpError("Registration failed. Please try again.");
+            setModal({
+              show: true,
+              message: `Registration failed. Please try again.`,
+            });
+            // setOtpError("Registration failed. Please try again.");
             setShowAlert(true);
           }
         } else {
@@ -158,15 +199,27 @@ export default function Register() {
 
   const sendOTP = async (email) => {
     console.log("Sending OTP to:", email);
+    setModal({
+      show: true,
+      message: `Sending OTP.`,
+    });
     try {
       const response = await axios.post("http://localhost:8081/send-otp", {
         email,
       });
       console.log("OTP sent response:", response.data);
       setOtpSent(true);
+      setModal({
+        show: true,
+        message: `OTP sent.`,
+      });
+      setResendCountdown(60);
     } catch (error) {
       console.error("Error sending OTP:", error);
-      setOtpError("Error sending OTP. Please try again later.");
+      setModal({
+        show: true,
+        message: `Error sending OTP. Please check your internet and try again.`,
+      });
       setShowAlert(true);
     }
   };
@@ -215,6 +268,20 @@ export default function Register() {
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center flex-column pt-2">
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
+      <MessageModal
+        showModal={confirmModal}
+        closeModal={closeConfirmModal}
+        title={"Confirmation"}
+        message={confirmModal.message}
+        confirm={confirmModal.onConfirm}
+        needConfirm={1}
+      ></MessageModal>{" "}
       <div
         className=" mb-2 mb-md-3 position-relative "
         style={{ width: "clamp(18.5rem, 80vw, 40rem)" }}
@@ -259,7 +326,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-
       <div
         className="bg-white rounded border border-secondary-subtle shadow text-start p-3 "
         style={{
@@ -652,41 +718,8 @@ export default function Register() {
                     )}
                   </p>
                 </div>
-
-                {/* <div className="mb-3">
-                  <input
-                    type="text"
-                    name="securityQuestion"
-                    placeholder="Security Question"
-                    className="form-control rounded"
-                    autoComplete="new-question"
-                  />
-                </div>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="securityAnswer"
-                    placeholder="Security Answer"
-                    className="form-control rounded"
-                    autoComplete="new-answer"
-                  />
-                </div> */}
               </div>
             )}
-
-            {/* {showAlert && Object.keys(errors).length > 0 && (
-              <Alert
-                variant="danger"
-                onClose={() => setShowAlert(false)}
-                dismissible
-              >
-                <ul className="mb-0">
-                  {Object.entries(errors).map(([key, message]) => (
-                    <li key={key}>{message}</li>
-                  ))}
-                </ul>
-              </Alert>
-            )} */}
 
             {step === 3 && (
               <div className="form-section active mb-2">
@@ -694,7 +727,8 @@ export default function Register() {
                 {otpSent ? (
                   <div>
                     <p className="m-0">
-                      An OTP has been sent to {values.cvsuEmail}
+                      An OTP has been sent to{" "}
+                      <span className="text-success">{values.cvsuEmail}</span>
                     </p>
                     <input
                       type="number"
@@ -704,7 +738,7 @@ export default function Register() {
                       onChange={handleInput}
                       value={values.OTP}
                     />
-                    {otpError && <p style={{ color: "red" }}>{otpError}</p>}
+                    {/* {otpError && <p style={{ color: "red" }}>{otpError}</p>} */}
                     <div className="text-end">
                       <button
                         onClick={(e) => {
@@ -714,8 +748,12 @@ export default function Register() {
                         className="btn btn-link"
                         disabled={resendCountdown > 0} // Disable if countdown is active
                       >
-                        <p className="m-0">Resend OTP</p>
-                        {resendCountdown > 0 && `(${resendCountdown}s)`}
+                        <p className="m-0">
+                          Resend OTP{" "}
+                          <span>
+                            {resendCountdown > 0 && `(${resendCountdown}s)`}
+                          </span>
+                        </p>
                       </button>
                     </div>
                   </div>
@@ -740,7 +778,7 @@ export default function Register() {
             </button>
 
             <button type="submit" className="w-25 primaryButton p-0">
-              <h5 className="m-0">{step === 3 ? "Submit" : "Next"}</h5>
+              <h5 className="m-0">{step === 3 ? "Register" : "Next"}</h5>
             </button>
           </div>
         </form>

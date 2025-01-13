@@ -23,6 +23,7 @@ import DeleteButton from "../Layouts/DiaryEntry/DeleteButton";
 import Suspend from "../Layouts/Profile/Suspend";
 import Reviewed from "../Layouts/Profile/Reviewed";
 import Hide from "../Layouts/Profile/Hide";
+import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
 // import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
@@ -327,12 +328,12 @@ const DiaryEntry = () => {
 
   return (
     <MainLayout>
-      <MessageModal
+      <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

@@ -3408,6 +3408,9 @@ app.put("/commentAddress/:id", (req, res) => {
 app.post("/reset-password", (req, res) => {
   const { email, password } = req.body;
 
+  if (!password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
   // Hash the password before saving
   const hashedPassword = bcrypt.hashSync(password, 10);
 

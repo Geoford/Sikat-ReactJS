@@ -8,6 +8,7 @@ import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
 const ForgotPassword = () => {
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({
     cvsuEmail: "",
     OTP: "",
@@ -82,6 +83,11 @@ const ForgotPassword = () => {
 
   const handleSendOTP = async () => {
     setError("");
+    setLoading(true);
+    // setModal({
+    //   show: true,
+    //   message: `Sending otp.`,
+    // });
     try {
       await axios.post("http://localhost:8081/send-otp", {
         email: values.cvsuEmail,
@@ -90,6 +96,8 @@ const ForgotPassword = () => {
         show: true,
         message: `OTP Sent`,
       });
+      setLoading(false);
+
       setStep(2);
     } catch (err) {
       setModal({
@@ -97,11 +105,17 @@ const ForgotPassword = () => {
         message:
           err.response?.data?.error || "Error sending OTP. Please try again.",
       });
+      setLoading(false);
     }
   };
 
   const handleVerifyOTP = async () => {
     setError("");
+    // setModal({
+    //   show: true,
+    //   message: `Verifying OTP.`,
+    // });
+    setLoading(true);
     try {
       await axios.post("http://localhost:8081/verify-otp", {
         email: values.cvsuEmail,
@@ -109,16 +123,27 @@ const ForgotPassword = () => {
       });
       setModal({
         show: true,
-        message: `OTP successfully veryfied.`,
+        message: `OTP successfully verified.`,
       });
+      setLoading(false);
       setStep(3);
     } catch (err) {
       setError(err.response?.data?.error || "Invalid OTP. Please try again.");
+      setModal({
+        show: true,
+        message: `Invalid OTP. Please try again.`,
+      });
+      setLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
-    setError("");
+    setModal({
+      show: true,
+      message: `Please input password.`,
+    });
+    setLoading(true);
+    // setError("");
     if (values.password !== values.confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -132,12 +157,15 @@ const ForgotPassword = () => {
         show: true,
         message: `Password reset successfully. You can now log in.`,
       });
+      setLoading(false);
+
       setTimeout(handleClose, 3000);
     } catch (err) {
       setError(
         err.response?.data?.error ||
           "Error resetting password. Please try again."
       );
+      setLoading(false);
     }
   };
 
@@ -254,6 +282,7 @@ const ForgotPassword = () => {
                     autoComplete="new-password"
                     value={values.password}
                     onChange={handleInputChange}
+                    required
                   />
                   <div
                     onClick={togglePasswordVisibility}
@@ -391,6 +420,7 @@ const ForgotPassword = () => {
                   className="form-control rounded"
                   value={values.confirmPassword}
                   onChange={handleInputChange}
+                  required
                 />
                 <div className="mt-2">
                   {passwordMatch === null ? (
@@ -405,10 +435,10 @@ const ForgotPassword = () => {
             </div>
           )}
 
-          {error && <div className="text-danger">{error}</div>}
+          {/* {error && <div className="text-danger">{error}</div>}
           {successMessage && (
             <div className="text-success">{successMessage}</div>
-          )}
+          )} */}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -416,12 +446,38 @@ const ForgotPassword = () => {
           </Button>
           {step === 1 && (
             <button className="primaryButton py-2" onClick={handleSendOTP}>
-              <p className="m-0">Send OTP</p>
+              <p className="m-0">
+                {loading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {" Sending OTP"}
+                  </>
+                ) : (
+                  "Send OTP"
+                )}
+              </p>
             </button>
           )}
           {step === 2 && (
             <button className="primaryButton py-2" onClick={handleVerifyOTP}>
-              <p className="m-0">Verify OTP</p>
+              <p className="m-0">
+                {loading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {" Verifying OTP"}
+                  </>
+                ) : (
+                  "Verify OTP"
+                )}
+              </p>
             </button>
           )}
           {step === 3 && (
@@ -429,7 +485,20 @@ const ForgotPassword = () => {
               className="primaryButton py-2"
               onClick={handleResetPassword}
             >
-              <p className="m-0">Reset Password</p>
+              <p className="m-0">
+                {loading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {" Resetting Password"}
+                  </>
+                ) : (
+                  "Reset Password"
+                )}
+              </p>
             </button>
           )}
         </Modal.Footer>

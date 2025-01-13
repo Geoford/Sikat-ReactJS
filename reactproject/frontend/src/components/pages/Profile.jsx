@@ -211,7 +211,7 @@ const Profile = () => {
       if (isFollowing) {
         setConfirmModal({
           show: true,
-          message: `Are you sure you want to unfollow ${user.username}?`,
+          message: `Are you sure you want to unfollow ${user.firstName}?`,
           onConfirm: async () => {
             try {
               await axios.delete(
@@ -230,7 +230,7 @@ const Profile = () => {
               setConfirmModal({ show: false, message: "" });
               setModal({
                 show: true,
-                message: `You have unfollowed ${user.username}.`,
+                message: `You have unfollowed ${user.firstName}.`,
               });
 
               // Refresh the followed users list from the backend
@@ -484,8 +484,18 @@ const Profile = () => {
             >
               <div>
                 <h4 className="m-0">
-                  {user.firstName} {user.lastName} ({user.alias || "No Alias"}){" "}
+                  {user.firstName} {user.lastName}
+                  {ownProfile ? <> ({user.alias || "No Alias"})</> : null}
                 </h4>
+                {currentUser.isAdmin ? (
+                  <>
+                    <p className="m-0 mb-1 text-secondary">
+                      {user.cvsuEmail} - {user.studentNumber}
+                    </p>
+                  </>
+                ) : (
+                  ""
+                )}
                 {currentUser.isAdmin ? (
                   <h5 className="text-danger">
                     {user.isSuspended ? "Suspended " : ""}

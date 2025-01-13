@@ -26,7 +26,7 @@ const MessageAlert = ({
           </strong>
         </Toast.Header>
         <Toast.Body>
-          <p className="m-0">{message}</p>
+          <p className="m-0 text-start">{message}</p>
         </Toast.Body>
       </Toast>
     </>
