@@ -78,50 +78,56 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
                         return null;
                       }
                       return (
-                        <Link
-                          key={entry.entryID}
-                          to={`/DiaryEntry/${entry.entryID}`}
-                          className="rounded text-decoration-none"
-                        >
-                          <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
-                            <div>
-                              <div className="d-flex flex-column align-items-start p-1">
-                                <p className="m-0 text-start text-secondary">
-                                  {entry.title}{" "}
-                                  <span>
-                                    {entry.visibility === "private" ? (
-                                      <i class="bx bx-lock-alt"></i>
-                                    ) : (
-                                      <i class="bx bx-globe"></i>
-                                    )}
-                                    {entry.anonimity === "private" ? (
-                                      <>
-                                        <i class="bx bxs-user position-relative">
-                                          <i
-                                            class="bx bx-question-mark position-absolute"
-                                            style={{
-                                              left: ".5rem",
-                                              fontSize:
-                                                "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                            }}
-                                          ></i>
-                                        </i>
-                                      </>
-                                    ) : null}
-                                  </span>
-                                </p>
-                                <span
-                                  className="text-secondary"
-                                  style={{
-                                    fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                  }}
-                                >
-                                  {formatDate(entry.created_at)}
-                                </span>
+                        <>
+                          {!ownProfile &&
+                          entry.visibility === "private" ? null : (
+                            <Link
+                              key={entry.entryID}
+                              to={`/DiaryEntry/${entry.entryID}`}
+                              className="rounded text-decoration-none"
+                            >
+                              <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
+                                <div>
+                                  <div className="d-flex flex-column align-items-start p-1">
+                                    <p className="m-0 text-start text-secondary">
+                                      {entry.title}{" "}
+                                      <span>
+                                        {entry.visibility === "private" ? (
+                                          <i class="bx bx-lock-alt"></i>
+                                        ) : (
+                                          <i class="bx bx-globe"></i>
+                                        )}
+                                        {entry.anonimity === "private" ? (
+                                          <>
+                                            <i class="bx bxs-user position-relative">
+                                              <i
+                                                class="bx bx-question-mark position-absolute"
+                                                style={{
+                                                  left: ".5rem",
+                                                  fontSize:
+                                                    "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                                }}
+                                              ></i>
+                                            </i>
+                                          </>
+                                        ) : null}
+                                      </span>
+                                    </p>
+                                    <span
+                                      className="text-secondary"
+                                      style={{
+                                        fontSize:
+                                          "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                      }}
+                                    >
+                                      {formatDate(entry.created_at)}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </Link>
+                            </Link>
+                          )}
+                        </>
                       );
                     })}
                 </div>
@@ -160,84 +166,84 @@ const RecentJournalEntries = ({ isAdmin, userID, ownProfile }) => {
             style={{ height: "35vh", overflowY: "scroll" }}
           >
             {entries.map((entry) => {
-              if (
-                !isAdmin &&
-                !ownProfile &&
-                // entry.visibility === "private"
-                // // ||
-                entry.anonimity === "private"
-              ) {
+              if (!isAdmin && !ownProfile && entry.anonimity === "private") {
                 return null;
               }
               return (
-                <Link
-                  key={entry.entryID}
-                  to={`/DiaryEntry/${entry.entryID}`}
-                  className="rounded text-decoration-none"
-                >
-                  <div className="journalEntries d-flex flex-column rounded ps-1 mt-1 position-relative">
-                    <div>
-                      <div className="d-flex flex-column align-items-start p-1">
-                        <p className="m-0 text-start text-secondary">
-                          {entry.title}{" "}
-                          <span>
-                            {entry.visibility === "private" ? (
-                              <i class="bx bx-lock-alt"></i>
-                            ) : (
-                              <>
-                                <i class="bx bx-globe"></i>
-                                {entry.anonimity === "private" ? (
+                <>
+                  {!ownProfile && entry.visibility === "private" ? null : (
+                    <Link
+                      key={entry.entryID}
+                      to={`/DiaryEntry/${entry.entryID}`}
+                      className="rounded text-decoration-none"
+                    >
+                      <div className="journalEntries d-flex flex-column rounded ps-1 mt-1 position-relative">
+                        <div>
+                          <div className="d-flex flex-column align-items-start p-1">
+                            <p className="m-0 text-start text-secondary">
+                              {entry.title}{" "}
+                              <span>
+                                {entry.visibility === "private" ? (
+                                  <i class="bx bx-lock-alt"></i>
+                                ) : (
                                   <>
-                                    <i class="bx bxs-user position-relative">
-                                      <i
-                                        class="bx bx-question-mark position-absolute"
-                                        style={{
-                                          left: ".5rem",
-                                          fontSize:
-                                            "clamp(0.6rem, 1.5dvw, 0.7rem)",
-                                        }}
-                                      ></i>
-                                    </i>
+                                    <i class="bx bx-globe"></i>
+                                    {entry.anonimity === "private" ? (
+                                      <>
+                                        <i class="bx bxs-user position-relative">
+                                          <i
+                                            class="bx bx-question-mark position-absolute"
+                                            style={{
+                                              left: ".5rem",
+                                              fontSize:
+                                                "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                                            }}
+                                          ></i>
+                                        </i>
+                                      </>
+                                    ) : null}
                                   </>
-                                ) : null}
-                              </>
-                            )}
-                          </span>
-                        </p>
-                        {/* {entry.anonimity === "private" ? (
-                          <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
-                            <div className="informationToolTip accordion text-danger align-middle">
-                              <h4 className="m-0">
-                                <i class="bx bx-question-mark"></i>
-                              </h4>
-                              <p
-                                className="infToolTip rounded p-2 m-0 text-center"
-                                style={{
-                                  backgroundColor: "rgb(179, 0, 0, .7)",
-                                  width: "85%",
-                                  zIndex: "50",
-                                }}
-                              >
-                                This diary entry has been flagged by the system
-                                as potentially containing sensitive or
-                                distressing topics and may require immediate
-                                attention.
-                              </p>
-                            </div>
+                                )}
+                              </span>
+                            </p>
+                            {/* {entry.anonimity === "private" ? (
+                        <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
+                          <div className="informationToolTip accordion text-danger align-middle">
+                            <h4 className="m-0">
+                              <i class="bx bx-question-mark"></i>
+                            </h4>
+                            <p
+                              className="infToolTip rounded p-2 m-0 text-center"
+                              style={{
+                                backgroundColor: "rgb(179, 0, 0, .7)",
+                                width: "85%",
+                                zIndex: "50",
+                              }}
+                            >
+                              This diary entry has been flagged by the system
+                              as potentially containing sensitive or
+                              distressing topics and may require immediate
+                              attention.
+                            </p>
                           </div>
-                        ) : (
-                          <></>
-                        )} */}
-                        <span
-                          className="text-secondary"
-                          style={{ fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)" }}
-                        >
-                          {formatDate(entry.created_at)}
-                        </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )} */}
+                            <span
+                              className="text-secondary"
+                              style={{
+                                fontSize: "clamp(0.6rem, 1.5dvw, 0.7rem)",
+                              }}
+                            >
+                              {formatDate(entry.created_at)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </Link>
+                    </Link>
+                  )}
+                </>
               );
             })}
           </div>

@@ -13,6 +13,7 @@ import ReportButton from "./ReportCommentButton";
 import Suspend from "../Profile/Suspend";
 import MessageModal from "../DiaryEntry/messageModal";
 import Hide from "../Profile/Hide";
+import MessageAlert from "../DiaryEntry/messageAlert";
 
 const CommentSection = ({
   userID,
@@ -39,12 +40,17 @@ const CommentSection = ({
   const newCommentRef = useRef(null);
   const newReplyRef = useRef(null);
 
+  const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
     show: false,
     message: "",
     onConfirm: () => {},
     onCancel: () => {},
   });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
   const closeConfirmModal = () => {
     setConfirmModal({
       show: false,
@@ -143,7 +149,7 @@ const CommentSection = ({
           entryID,
           profile_image: user.profile_image,
           type: "comment",
-          message: `${user.username} commented on your diary entry.`,
+          message: `${user.firstName} commented on your diary entry.`,
         })
         .catch((err) => {
           console.error("Error sending comment notification:", err);
@@ -220,6 +226,10 @@ const CommentSection = ({
           );
           fetchComments(); // Refresh comments after deletion
           closeConfirmModal();
+          setModal({
+            show: true,
+            message: `Comment Deleted.`,
+          });
         } catch (error) {
           console.error("Error deleting comment:", error);
           setError("Failed to delete comment. Please try again.");
@@ -523,6 +533,13 @@ const CommentSection = ({
         <span>{commentCount}</span>
         <p className="m-0 d-none d-md-block">Comments</p>
       </button>
+
+      <MessageAlert
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageAlert>
       <MessageModal
         showModal={confirmModal}
         closeModal={closeConfirmModal}

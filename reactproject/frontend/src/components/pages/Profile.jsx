@@ -299,7 +299,7 @@ const Profile = () => {
 
     axios
       .post(`http://localhost:8081/entry/${entryID}/gadify`, {
-        userID: user.userID,
+        userID: currentUser.userID,
       })
       .then((res) => {
         const isGadified =
@@ -318,6 +318,22 @@ const Profile = () => {
               : entry
           )
         );
+        if (isGadified && currentUser.userID !== entry.userID) {
+          axios
+            .post(`http://localhost:8081/notifications/${entry.userID}`, {
+              actorID: currentUser.userID,
+              entryID: entryID,
+              profile_image: currentUser.profile_image,
+              type: "gadify",
+              message: `${currentUser.firstName} gadified your diary entry.`,
+            })
+            .then((res) => {
+              console.log("Notification response:", res.data);
+            })
+            .catch((err) => {
+              console.error("Error sending gadify notification:", err);
+            });
+        }
       })
       .catch((err) => console.error("Error updating gadify count:", err));
   };
@@ -617,23 +633,25 @@ const Profile = () => {
                       entry.anonimity !== "private")
                 )
                 .map((entry) => (
-                  <div className="w-100 ">
-                    <DiaryEntryLayout
-                      key={entry.entryID}
-                      entry={entry}
-                      user={user}
-                      isGadified={entry.isGadified}
-                      currentUser={currentUser}
-                      suspended={user.isSuspended}
-                      followedUsers={followedUsers}
-                      handleFollowToggle={handleFollowToggle}
-                      handleClick={handleClick}
-                      expandButtons={expandButtons}
-                      formatDate={formatDate}
-                    />
-
-                    {/* {entry.firstName} */}
-                  </div>
+                  <>
+                    {!ownProfile && entry.visibility === "private" ? null : (
+                      <div className="w-100 ">
+                        <DiaryEntryLayout
+                          key={entry.entryID}
+                          entry={entry}
+                          user={user}
+                          isGadified={entry.isGadified}
+                          currentUser={currentUser}
+                          suspended={user.isSuspended}
+                          followedUsers={followedUsers}
+                          handleFollowToggle={handleFollowToggle}
+                          handleClick={handleClick}
+                          expandButtons={expandButtons}
+                          formatDate={formatDate}
+                        />
+                      </div>
+                    )}
+                  </>
                 ))
             ) : (
               <p className="m-0 text-secondary mt-1 mt-xl-3">

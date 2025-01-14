@@ -148,7 +148,7 @@ const LeftSideAdmin = () => {
                 <div className="journalEntries d-flex flex-column rounded ps-1 mt-1">
                   <div>
                     <div className="d-flex flex-column align-items-start p-1">
-                      <p className="m-0 text-center text-secondary">
+                      <p className="m-0 text-start text-secondary">
                         {entry.title}{" "}
                         <span>
                           {entry.visibility === "private" ? (

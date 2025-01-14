@@ -15,6 +15,7 @@ import MessageModal from "./messageModal";
 import Hide from "../Profile/Hide";
 import Reviewed from "../Profile/Reviewed";
 import ReviewedComment from "../Profile/ReviewedComment";
+import MessageAlert from "./messageAlert";
 
 const CommentSection = ({
   userID,
@@ -41,12 +42,17 @@ const CommentSection = ({
   const newCommentRef = useRef(null);
   const newReplyRef = useRef(null);
 
+  const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
     show: false,
     message: "",
     onConfirm: () => {},
     onCancel: () => {},
   });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
   const closeConfirmModal = () => {
     setConfirmModal({
       show: false,
@@ -156,7 +162,7 @@ const CommentSection = ({
           entryID,
           profile_image: user.profile_image,
           type: "comment",
-          message: `${user.username} commented on your diary entry.`,
+          message: `${user.firstName} commented on your diary entry.`,
         })
         .catch((err) => {
           console.error("Error sending comment notification:", err);
@@ -544,7 +550,12 @@ const CommentSection = ({
             <Comment key={comment.commentID} comment={comment} />
           ))}
         </div>
-
+        <MessageModal
+          showModal={modal}
+          closeModal={closeModal}
+          title={"Notice"}
+          message={modal.message}
+        ></MessageModal>{" "}
         <MessageModal
           showModal={confirmModal}
           closeModal={closeConfirmModal}
@@ -553,7 +564,6 @@ const CommentSection = ({
           confirm={confirmModal.onConfirm}
           needConfirm={1}
         ></MessageModal>
-
         <FloatingLabel
           controlId="newCommentTextarea"
           label={editComment ? "Edit Comment" : "Comment"}

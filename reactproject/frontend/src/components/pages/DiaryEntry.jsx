@@ -152,32 +152,48 @@ const DiaryEntry = () => {
   const handleGadify = async (entryID) => {
     if (!user) return;
 
-    try {
-      const response = await axios.post(
-        `http://localhost:8081/entry/${entryID}/gadify`,
-        {
-          userID: user.userID,
-        }
-      );
-      const isGadified =
-        response.data.message === "Gadify action recorded successfully";
+    const entry = entries.find((entry) => entry.entryID === entryID);
+    if (!entry) return;
 
-      setEntries((prevEntries) =>
-        prevEntries.map((entry) =>
-          entry.entryID === entryID
-            ? {
-                ...entry,
-                gadifyCount: isGadified
-                  ? entry.gadifyCount + 1
-                  : entry.gadifyCount - 1,
-                isGadified,
-              }
-            : entry
-        )
-      );
-    } catch (error) {
-      console.error("Error updating gadify count:", error);
-    }
+    axios
+      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
+        userID: user.userID,
+      })
+      .then((res) => {
+        const isGadified =
+          res.data.message === "Gadify action recorded successfully";
+
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.entryID === entryID
+              ? {
+                  ...entry,
+                  gadifyCount: isGadified
+                    ? entry.gadifyCount + 1
+                    : entry.gadifyCount - 1,
+                }
+              : entry
+          )
+        );
+
+        if (isGadified && user.userID !== entry.userID) {
+          axios
+            .post(`http://localhost:8081/notifications/${entry.userID}`, {
+              actorID: user.userID,
+              entryID: entryID,
+              profile_image: user.profile_image,
+              type: "gadify",
+              message: `${user.firstName} gadified your diary entry.`,
+            })
+            .then((res) => {
+              console.log("Notification response:", res.data);
+            })
+            .catch((err) => {
+              console.error("Error sending gadify notification:", err);
+            });
+        }
+      })
+      .catch((err) => console.error("Error updating gadify count:", err));
   };
 
   const handleClick = (entryID) => {

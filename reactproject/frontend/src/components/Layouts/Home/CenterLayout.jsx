@@ -172,7 +172,7 @@ const CenterLayout = () => {
               entryID: entryID,
               profile_image: user.profile_image,
               type: "gadify",
-              message: `${user.username} gadified your diary entry.`,
+              message: `${user.firstName} gadified your diary entry.`,
             })
             .then((res) => {
               console.log("Notification response:", res.data);
