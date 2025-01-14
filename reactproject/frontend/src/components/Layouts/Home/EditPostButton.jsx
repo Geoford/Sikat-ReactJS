@@ -24,6 +24,7 @@ function EditPostButton({
   diaryVisib,
   diaryAnon,
   diarySub,
+  scheduledDate,
 }) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
@@ -33,11 +34,14 @@ function EditPostButton({
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [visibility, setVisibility] = useState(
-    entry.scheduledDate ? "later" : "null"
+    scheduledDate ? "later" : "null"
   );
   const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
-  const [scheduledDate, setScheduledDate] = useState(entry.scheduledDate);
+  const [selectedDate, setSelectedDate] = useState(
+    scheduledDate ? new Date(scheduledDate) : null
+  );
+
   const [imagePreview, setImagePreview] = useState(imageFile);
   const removePreview = () => {
     setFile(null);
@@ -49,12 +53,12 @@ function EditPostButton({
   const handleChangeVisibility = (event) => {
     setVisibility(event.target.value);
     if (event.target.value === "now") {
-      setScheduledDate(null); // Reset when "Post Now" is selected
+      setSelectedDate(null);
     }
   };
 
   const handleDateChange = (date) => {
-    setScheduledDate((prevDate) => {
+    setSelectedDate((prevDate) => {
       if (!prevDate) return date;
       return new Date(
         date.getFullYear(),
@@ -67,7 +71,7 @@ function EditPostButton({
   };
 
   const handleTimeChange = (time) => {
-    setScheduledDate((prevDate) => {
+    setSelectedDate((prevDate) => {
       if (!prevDate) return time;
       return new Date(
         prevDate.getFullYear(),
@@ -109,7 +113,7 @@ function EditPostButton({
     setTitle("");
     setDescription("");
     setFile(null);
-    setScheduledDate(null);
+    setSelectedDate(null);
     setImagePreview(null);
   };
 
@@ -123,28 +127,31 @@ function EditPostButton({
     let errors = {};
     if (!title) errors.title = "Title is required.";
     if (!description) errors.description = "Description is required.";
-    if (visibility === "later" && !scheduledDate) {
+    if (visibility === "later" && !selectedDate) {
       errors.scheduledDate = "Please select a date and time for your post.";
     }
+
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) return;
 
     let utcScheduledDate = null;
-    if (scheduledDate) {
-      utcScheduledDate = new Date(scheduledDate);
+    if (selectedDate) {
+      // Use `selectedDate` instead of `scheduledDate`
+      utcScheduledDate = new Date(selectedDate);
       utcScheduledDate.setMinutes(
         utcScheduledDate.getMinutes() - utcScheduledDate.getTimezoneOffset()
       );
     }
 
-    const formData = new FormData();
+    const formData = new FormData(); // Ensure this is declared at the correct place
     formData.append("title", title);
     formData.append("description", description);
     formData.append("userID", user?.userID);
-    if (utcScheduledDate) {
+    if (selectedDate) {
       formData.append("scheduledDate", utcScheduledDate.toISOString());
     }
+
     if (file) {
       formData.append("file", file);
     }
@@ -234,25 +241,23 @@ function EditPostButton({
                     <div className="col-md p-0">
                       {/* Date Picker */}
                       <DatePicker
-                        selected={scheduledDate}
+                        selected={selectedDate}
                         onChange={handleDateChange}
                         dateFormat="MMMM d, yyyy"
                         className="form-control"
                         placeholderText="Select a Day and Month"
-                        disabled={entry.scheduledDate ? true : false}
                       />
                     </div>
                     <div className="col-md p-0">
                       {/* Time Picker */}
                       <DatePicker
-                        selected={scheduledDate}
+                        selected={selectedDate}
                         onChange={handleTimeChange}
                         dateFormat="hh:mm aa"
                         showTimeSelect
                         showTimeSelectOnly
                         className="form-control"
                         placeholderText="Select Time"
-                        disabled={entry.scheduledDate ? true : false}
                       />
                     </div>
                   </div>

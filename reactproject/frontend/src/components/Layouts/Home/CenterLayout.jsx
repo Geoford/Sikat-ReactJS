@@ -449,6 +449,7 @@ const CenterLayout = () => {
                             <Dropdown.Menu className="p-2">
                               <Dropdown.Item className="p-0 btn btn-light">
                                 <EditPostButton
+                                  entryID={entry.entryID}
                                   diaryTitle={entry.title}
                                   diaryDesc={entry.description}
                                   diaryVisib={entry.visibility}
@@ -458,6 +459,7 @@ const CenterLayout = () => {
                                     entry.diary_image &&
                                     `http://localhost:8081${entry.diary_image}`
                                   }
+                                  scheduledDate={entry.scheduledDate}
                                 ></EditPostButton>
                               </Dropdown.Item>
                               <Dropdown.Item className="p-0 btn btn-light">

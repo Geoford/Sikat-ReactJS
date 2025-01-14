@@ -1194,7 +1194,7 @@ app.put(
   },
   (req, res) => {
     const { entryID } = req.params;
-    const { title, description } = req.body;
+    const { title, description, scheduledDate } = req.body; // Include scheduledDate from the request body
     const file = req.file;
 
     if (!entryID || !title || !description) {
@@ -1210,10 +1210,10 @@ app.put(
 
     const updateQuery = `
         UPDATE diary_entries
-        SET title = ?, description = ?
-        WHERE entryID = ?
+        SET title = ?, description = ?, scheduledDate = ? 
+        WHERE entryID = ? 
       `;
-    const values = [title, description, entryID];
+    const values = [title, description, scheduledDate || null, entryID]; // Ensure scheduledDate is passed as a value
 
     db.query(updateQuery, values, (err, result) => {
       if (err) {
