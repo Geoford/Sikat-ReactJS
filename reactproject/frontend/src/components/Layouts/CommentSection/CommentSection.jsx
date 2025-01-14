@@ -289,6 +289,8 @@ const CommentSection = ({
   const Comment = React.memo(({ comment, depth = 0 }) => {
     const canManage = comment.userID === userID;
     const isAccordionOpen = openAccordions.includes(comment.commentID);
+    const ownComment = userID === comment.userID;
+
     return (
       <div
         className="position-relative"
@@ -303,21 +305,14 @@ const CommentSection = ({
         {/* Profile */}
         <div className="d-flex align-items-start flex-column gap-2 pb-2">
           <div className="w-100 d-flex align-items-center justify-content-between pe-3">
-            <Link
-              to={`/Profile/${comment.userID}`}
-              className="linkText rounded"
-            >
+            {isAnon && ownComment ? (
               <div className="d-flex align-items-center gap-2">
                 <div
                   className="profilePicture d-flex align-items-center justify-content-center"
                   style={{ zIndex: "2" }}
                 >
                   <img
-                    src={
-                      comment.profile_image
-                        ? `http://localhost:8081${comment.profile_image}`
-                        : AnonymousIcon
-                    }
+                    src={AnonymousIcon}
                     alt="Profile"
                     style={{
                       width: "100%",
@@ -327,12 +322,41 @@ const CommentSection = ({
                   />
                 </div>
                 <div className="d-flex justify-content-start flex-column">
-                  <p className="m-0 text-start">
-                    {comment.firstName} {comment.lastName}
-                  </p>
+                  <p className="m-0 text-start">{alias}</p>
                 </div>
               </div>
-            </Link>
+            ) : (
+              <Link
+                to={`/Profile/${comment.userID}`}
+                className="linkText rounded"
+              >
+                <div className="d-flex align-items-center gap-2">
+                  <div
+                    className="profilePicture d-flex align-items-center justify-content-center"
+                    style={{ zIndex: "2" }}
+                  >
+                    <img
+                      src={
+                        comment.profile_image
+                          ? `http://localhost:8081${comment.profile_image}`
+                          : AnonymousIcon
+                      }
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                  <div className="d-flex justify-content-start flex-column">
+                    <p className="m-0 text-start">
+                      {comment.firstName} {comment.lastName}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            )}
             {/* FOR COMMENT OPTIONS */}
             <div>
               <Dropdown>

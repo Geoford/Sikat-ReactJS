@@ -596,6 +596,8 @@ const Profile = () => {
               ) : (
                 <OthersProfileDropdown
                   isAdmin={currentUser.isAdmin}
+                  user={user}
+                  entry={entries}
                   ownerAdmin={user.isAdmin}
                   userID={user.userID}
                   firstName={user.firstName}

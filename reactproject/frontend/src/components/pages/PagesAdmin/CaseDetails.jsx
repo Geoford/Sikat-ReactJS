@@ -232,7 +232,7 @@ const CaseDetails = () => {
         confirm={confirmModal.onConfirm}
         needConfirm={1}
       ></MessageModal>
-      <div className="d-flex justify-content-center py-3">
+      <div className="d-flex justify-content-center py-3 mt-3 mt-md-1">
         <div
           className="rounded shadow p-3"
           style={{
@@ -260,16 +260,27 @@ const CaseDetails = () => {
           <form className="text-start" style={{ minHeight: "20rem" }}>
             <h5 className="mt-3">Victim Details</h5>
             <div className="px-2 d-flex flex-column gap-2">
-              <div className="row">
+              <div className="row gap-2">
                 <div className="col-md-7">
                   <h6 className="m-0">Name</h6>
-                  <p className="m-0 ps-2 border-bottom">
-                    {caseDetails.victimName}
+                  <p className="m-0 ps-2 border-bottom text-secondary">
+                    {caseDetails.victimName ? (
+                      caseDetails.victimName
+                    ) : (
+                      <>No Name Provided</>
+                    )}
                   </p>
                 </div>
                 <div className="col-md">
                   <h6 className="m-0">Sex</h6>
-                  <p className="m-0 ps-2 border-bottom">{caseDetails.gender}</p>
+                  <p className="m-0 ps-2 border-bottom text-secondary">
+                    {caseDetails.gender}
+                    {caseDetails.victimName ? (
+                      caseDetails.victimName
+                    ) : (
+                      <>Prefer not to say.</>
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -369,18 +380,18 @@ const CaseDetails = () => {
                 </button>
               )}
 
-              <div className="row d-flex gap-1 mt-1 px-3">
-                <div className="col p-0">
+              <div className="row d-flex gy-1">
+                <div className="col-sm pe-sm-1">
                   <button
-                    className="w-100 primaryButton py-1 py-md-2 mx-a"
+                    className="w-100 primaryButton py-2 py-md-2 mx-a"
                     onClick={() => downloadData("html")}
                   >
                     <p className="m-0">Download as HTML</p>
                   </button>
                 </div>
-                <div className="col p-0">
+                <div className="col-sm ps-sm-1">
                   <button
-                    className="w-100 primaryButton py-1 py-md-2"
+                    className="w-100 primaryButton py-2 py-md-2"
                     onClick={() => downloadData("excel")}
                   >
                     <p className="m-0">Download as Excel</p>

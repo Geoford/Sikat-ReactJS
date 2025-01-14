@@ -328,30 +328,7 @@ function EditPostButton({
                   }}
                 />
               </div>
-            ) : (
-              <div className="mt-1">
-                <label className="w-100" htmlFor="uploadPhoto">
-                  <div
-                    className="d-flex justify-content-center border rounded py-2 "
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p className="m-0 d-flex align-items-center gap-1 text-secondary">
-                      <i
-                        class="bx bx-image-add bx-sm"
-                        style={{ color: "var(--secondary)" }}
-                      ></i>
-                      Upload Photo
-                    </p>
-                  </div>
-                </label>
-                <input
-                  type="file"
-                  id="uploadPhoto"
-                  hidden
-                  onChange={handleFileChange}
-                />
-              </div>
-            )}
+            ) : null}
           </div>
         </Modal.Body>
         <Modal.Footer>

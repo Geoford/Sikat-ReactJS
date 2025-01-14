@@ -71,8 +71,7 @@ function Reviewed({ entryID, userID, firstName, suspended, entry }) {
         onClick={handleShow}
         // disabled={suspended}
       >
-        <i class="bx bx-message-alt-check"></i>{" "}
-        <p className="m-0">{entry.isReviewed ? "Reviewed" : "Not Reviewed"}</p>
+        <i class="bx bx-message-alt-check"></i> <p className="m-0">Reviewed</p>
       </button>
 
       {/* <MessageAlert
