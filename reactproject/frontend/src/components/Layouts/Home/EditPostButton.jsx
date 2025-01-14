@@ -32,10 +32,12 @@ function EditPostButton({
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [visibility, setVisibility] = useState("now");
+  const [visibility, setVisibility] = useState(
+    entry.scheduledDate ? "later" : "null"
+  );
   const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
-  const [scheduledDate, setScheduledDate] = useState(null);
+  const [scheduledDate, setScheduledDate] = useState(entry.scheduledDate);
   const [imagePreview, setImagePreview] = useState(imageFile);
   const removePreview = () => {
     setFile(null);
@@ -189,7 +191,7 @@ function EditPostButton({
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-start gap-2 border-bottom pb-2">
+          <div className="d-flex align-items-center gap-2 border-bottom pb-2">
             <div className="d-flex align-items-center gap-2">
               <div className="profilePicture">
                 <img
@@ -206,7 +208,7 @@ function EditPostButton({
                   }}
                 />
               </div>
-              <p className="m-0">{user?.username || "User"} </p>
+              {/* <p className="m-0">{user?.username || "User"} </p> */}
             </div>
 
             <div className="w-100 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
@@ -237,6 +239,7 @@ function EditPostButton({
                         dateFormat="MMMM d, yyyy"
                         className="form-control"
                         placeholderText="Select a Day and Month"
+                        disabled={entry.scheduledDate ? true : false}
                       />
                     </div>
                     <div className="col-md p-0">
@@ -249,6 +252,7 @@ function EditPostButton({
                         showTimeSelectOnly
                         className="form-control"
                         placeholderText="Select Time"
+                        disabled={entry.scheduledDate ? true : false}
                       />
                     </div>
                   </div>
@@ -318,19 +322,6 @@ function EditPostButton({
                     borderRadius: "8px",
                   }}
                 />
-                <div
-                  className="position-absolute rounded"
-                  onClick={removePreview}
-                  style={{
-                    right: "1rem",
-                    top: "1rem",
-                    backgroundColor: "rgb(242, 242, 242,.5)",
-                  }}
-                >
-                  <h4 className="m-0 d-flex justify-content-center text-dark">
-                    <i class="bx bx-x"></i>
-                  </h4>
-                </div>
               </div>
             ) : (
               <div className="mt-1">
@@ -379,10 +370,10 @@ function EditPostButton({
                     role="status"
                     aria-hidden="true"
                   />{" "}
-                  Save edit...
+                  Saving Changes
                 </>
               ) : (
-                "Publish"
+                "Save Changes"
               )}
             </p>
           </button>
