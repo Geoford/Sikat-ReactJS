@@ -536,6 +536,8 @@ const DiaryEntryLayout = ({
                         <Dropdown.Item className="p-0 btn btn-light">
                           {user.isAdmin ? (
                             <EditPostButton
+                              entry={entry}
+                              entryID={entry.entryID}
                               diaryTitle={entry.title}
                               diaryDesc={entry.description}
                               diaryVisib={entry.visibility}
@@ -548,6 +550,7 @@ const DiaryEntryLayout = ({
                             ></EditPostButton>
                           ) : (
                             <EditDiaryEntryButton
+                              entry={entry}
                               entryID={entry.entryID}
                               diaryTitle={entry.title}
                               diaryDesc={entry.description}

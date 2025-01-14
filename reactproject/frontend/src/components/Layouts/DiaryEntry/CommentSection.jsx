@@ -14,6 +14,7 @@ import Suspend from "../Profile/Suspend";
 import MessageModal from "./messageModal";
 import Hide from "../Profile/Hide";
 import Reviewed from "../Profile/Reviewed";
+import ReviewedComment from "../Profile/ReviewedComment";
 
 const CommentSection = ({
   userID,
@@ -26,6 +27,7 @@ const CommentSection = ({
   const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
   const [comments, setComments] = useState([]);
+  const [userComment, setUserComment] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -81,8 +83,21 @@ const CommentSection = ({
     }
   }, [entryID]);
 
+  const fetchUserComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/getReportedCommentsReview/${entryID}`
+      );
+      setUserComment(response.data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      setError("Failed to load comments.");
+    }
+  };
+
   useEffect(() => {
     fetchComments();
+    fetchUserComments();
   }, [fetchComments]);
 
   const nestComments = (comments) => {
@@ -338,12 +353,16 @@ const CommentSection = ({
                     (user.isAdmin ? (
                       <>
                         <Suspend
+                          entry={entry}
                           userID={comment.userID}
                           firstName={comment.firstName}
                           suspended={comment.isSuspended}
                         />
-                        <Reviewed />
-                        <Hide type={"comment"} />
+                        {/* <ReviewedComment
+                          userComment={userComment}
+                          entryID={entryID}
+                        /> */}
+                        <Hide type={"comment"} entry={entry} />
                       </>
                     ) : (
                       <Dropdown.Item className="p-0 btn btn-light">

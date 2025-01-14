@@ -14,6 +14,7 @@ import Followers from "../Layouts/Profile/Followers";
 import { SuspensionModal } from "../Layouts/Profile/SuspensionModal";
 import MessageModal from "../Layouts/DiaryEntry/messageModal";
 import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
+import BackButton from "../Layouts/Home/BackButton";
 // import Suspended from "../../components/pages/PagesUser/Suspended";
 
 const Profile = () => {
@@ -388,6 +389,7 @@ const Profile = () => {
         className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
+        <BackButton></BackButton>
         <MessageAlert
           showModal={modal}
           closeModal={closeModal}
@@ -635,14 +637,15 @@ const Profile = () => {
                 ))
             ) : (
               <p className="m-0 text-secondary mt-1 mt-xl-3">
-                No diary entries, Post{" "}
+                No diary entries.
+                {/* , Post{" "}
                 <Link
                   className="text-decoration-none"
                   to={user && user.isAdmin ? "/Admin/Home" : "/Home"}
                 >
                   here
                 </Link>
-                .
+                . */}
               </p>
             )}
           </div>

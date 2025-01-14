@@ -60,23 +60,35 @@ const ChatButton = () => {
     });
 
     const channel = pusher.subscribe(`user-${user.userID}`);
-
     const adminChannel = pusher.subscribe("admin-channel");
 
+    const updateUnreadMessages = (data) => {
+      setUsers((prevUsers) =>
+        prevUsers.map((userItem) => {
+          if (userItem.userID === data.senderID) {
+            return {
+              ...userItem,
+              unreadMessages: (userItem.unreadMessages || 0) + 1,
+            };
+          }
+          return userItem;
+        })
+      );
+    };
+
     channel.bind("message-event", function (data) {
-      if (selectedUser && data.recipientID === selectedUser.userID) {
+      if (selectedUser && data.senderID === selectedUser.userID) {
         setMessages((prevMessages) => [
           ...prevMessages,
           { senderID: data.senderID, message: data.message },
         ]);
+      } else {
+        updateUnreadMessages(data);
       }
     });
 
     adminChannel.bind("message-event", function (data) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { senderID: data.senderID, message: data.message },
-      ]);
+      updateUnreadMessages(data);
     });
 
     return () => {
@@ -103,6 +115,14 @@ const ChatButton = () => {
 
       setMessages(response.data);
       setSelectedUser(users.find((usr) => usr.userID === withUserID));
+
+      setUsers((prevUsers) =>
+        prevUsers.map((userItem) =>
+          userItem.userID === withUserID
+            ? { ...userItem, unreadMessages: 0 }
+            : userItem
+        )
+      );
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -126,7 +146,17 @@ const ChatButton = () => {
         throw new Error("Failed to send message");
       }
 
-      setNewMessage("");
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          senderID: user.userID,
+          message: newMessage,
+          created_at: new Date().toISOString(), // Add a timestamp
+        },
+      ]);
+
+      setNewMessage(""); // Clear the input field
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the latest message
     } catch (error) {
       console.error("Error sending message:", error);
       alert("Failed to send message. Please try again.");
@@ -174,8 +204,31 @@ const ChatButton = () => {
   return (
     <>
       <div className="ChatButton d-flex align-items-center justify-content-center">
-        <button className="shadow p-2" onClick={handleShow}>
-          <img src={ChatIcon} alt="" />
+        <button className="shadow p-2 position-relative" onClick={handleShow}>
+          <img src={ChatIcon} alt="Chat Icon" />
+
+          {users.some((user) => user.unreadMessages > 0) && (
+            <div
+              className="position-absolute d-flex align-items-center justify-content-center"
+              style={{
+                backgroundColor: "red",
+                height: "20px",
+                width: "20px",
+                borderRadius: "50%",
+                color: "#fff",
+                fontSize: "0.8rem",
+                transform: "translate(50%, -50%)",
+                top: ".8em",
+                left: "-1rem",
+                border: "2px solid var(--background)",
+              }}
+            >
+              {users.reduce(
+                (total, user) => total + (user.unreadMessages || 0),
+                0
+              )}
+            </div>
+          )}
           <p>
             <span className="tooltiptext" style={{ zIndex: "-2" }}>
               Messages
@@ -244,7 +297,7 @@ const ChatButton = () => {
                             {userItem.firstName} {userItem.lastName}
                           </p>
                         </div>
-                        {userItem.isActive === 1 ? (
+                        {userItem.unreadMessages > 0 ? (
                           <div
                             className="p-0 m-0 d-flex align-items-center justify-content-center"
                             style={{
@@ -253,20 +306,12 @@ const ChatButton = () => {
                               width: "15px",
                               borderRadius: "50%",
                               color: "#ffff",
+                              fontSize: "0.8rem",
                             }}
-                          ></div>
-                        ) : (
-                          <div
-                            className="p-0 m-0 d-flex align-items-center justify-content-center"
-                            style={{
-                              backgroundColor: "gray",
-                              height: "15px",
-                              width: "15px",
-                              borderRadius: "50%",
-                              color: "#ffff",
-                            }}
-                          ></div>
-                        )}
+                          >
+                            {userItem.unreadMessages}
+                          </div>
+                        ) : null}
                       </div>
                     ))}
                   </div>

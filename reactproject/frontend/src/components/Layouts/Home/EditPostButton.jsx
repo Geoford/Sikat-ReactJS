@@ -15,6 +15,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
 
 function EditPostButton({
+  entry,
+  entryID,
   onEntrySaved,
   diaryTitle,
   diaryDesc,
@@ -108,7 +110,12 @@ function EditPostButton({
     setScheduledDate(null);
     setImagePreview(null);
   };
-  const handleShow = () => setShow(true);
+
+  const handleShow = () => {
+    setTitle(diaryTitle);
+    setDescription(diaryDesc);
+    setShow(true);
+  };
 
   const handleSubmit = () => {
     let errors = {};
@@ -121,11 +128,9 @@ function EditPostButton({
 
     if (Object.keys(errors).length > 0) return;
 
-    // If scheduledDate exists, convert it to UTC before submitting
     let utcScheduledDate = null;
     if (scheduledDate) {
       utcScheduledDate = new Date(scheduledDate);
-      // Convert to UTC (removes any timezone offset that might cause issues)
       utcScheduledDate.setMinutes(
         utcScheduledDate.getMinutes() - utcScheduledDate.getTimezoneOffset()
       );
@@ -136,7 +141,7 @@ function EditPostButton({
     formData.append("description", description);
     formData.append("userID", user?.userID);
     if (utcScheduledDate) {
-      formData.append("scheduledDate", utcScheduledDate.toISOString()); // Send in UTC format
+      formData.append("scheduledDate", utcScheduledDate.toISOString());
     }
     if (file) {
       formData.append("file", file);
@@ -146,7 +151,7 @@ function EditPostButton({
     setServerError("");
 
     axios
-      .post("http://localhost:8081/entryadmin", formData, {
+      .put(`http://localhost:8081/editEntryAdmin/${entryID}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -180,7 +185,7 @@ function EditPostButton({
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Edit Post</h5>
+            <h5 className="m-0">Edit Post {entryID}</h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -201,7 +206,7 @@ function EditPostButton({
                   }}
                 />
               </div>
-              <p className="m-0">{user?.username || "User"}</p>
+              <p className="m-0">{user?.username || "User"} </p>
             </div>
 
             <div className="w-100 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
@@ -289,7 +294,7 @@ function EditPostButton({
               <Form.Control
                 as="textarea"
                 placeholder="Leave a comment here"
-                value={diaryDesc}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 isInvalid={!!formErrors.description}
                 disabled={loading}
@@ -374,7 +379,7 @@ function EditPostButton({
                     role="status"
                     aria-hidden="true"
                   />{" "}
-                  Creating Post...
+                  Save edit...
                 </>
               ) : (
                 "Publish"

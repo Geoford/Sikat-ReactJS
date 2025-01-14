@@ -455,7 +455,62 @@ const DiaryEntryLayout = ({
                 <h5 className="m-0">...</h5>
               </Dropdown.Toggle>
               <Dropdown.Menu className="p-2">
-                {currentUser.isAdmin && !entry.isAdmin ? (
+                {ownDiary ? (
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      {user.isAdmin ? (
+                        <EditPostButton
+                          entryID={entry.entryID}
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        ></EditPostButton>
+                      ) : (
+                        <EditDiaryEntryButton
+                          entryID={entry.entryID}
+                          diaryTitle={entry.title}
+                          diaryDesc={entry.description}
+                          diaryVisib={entry.visibility}
+                          diaryAnon={entry.anonimity}
+                          diarySub={entry.subjects}
+                          imageFile={
+                            entry.diary_image &&
+                            `http://localhost:8081${entry.diary_image}`
+                          }
+                        />
+                      )}
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
+                ) : (
+                  <>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <Suspend
+                        userID={entry.userID}
+                        firstName={entry.firstName}
+                        suspended={suspended}
+                      ></Suspend>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-0 btn btn-light">
+                      <DeleteButton
+                        entryID={entry.entryID}
+                        title={entry.title}
+                      ></DeleteButton>
+                    </Dropdown.Item>
+                  </>
+                )}
+                {/* {currentUser.isAdmin && !entry.isAdmin ? (
                   <>
                     <Dropdown.Item className="p-0 btn btn-light">
                       <Suspend
@@ -528,7 +583,7 @@ const DiaryEntryLayout = ({
                       </>
                     )}
                   </>
-                )}
+                )} */}
                 {/* <Dropdown.Item
                   className="p-0 btn btn-light"
                   onClick={() => handleDeleteEntry(entry.entryID)}

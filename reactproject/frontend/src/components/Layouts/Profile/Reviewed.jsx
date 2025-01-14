@@ -4,9 +4,11 @@ import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 import MessageAlert from "../DiaryEntry/messageAlert";
 
-function Reviewed({ entryID, userID, firstName, suspended }) {
+function Reviewed({ entryID, userID, firstName, suspended, entry }) {
   const [show, setShow] = useState(false);
   const [reasons, setReasons] = useState([]);
+
+  const [flags, setFlags] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("3 Days");
 
@@ -17,6 +19,23 @@ function Reviewed({ entryID, userID, firstName, suspended }) {
     onConfirm: () => {},
     onCancel: () => {},
   });
+
+  useEffect(() => {
+    const fetchFlags = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/flagged`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch flags");
+        }
+        const data = await response.json();
+        setFlags(data);
+      } catch (error) {
+        console.error("Error fetching flags:", error);
+      }
+    };
+
+    fetchFlags();
+  }, []);
 
   const closeModal = () => {
     setModal({ show: false, message: "" });
@@ -30,6 +49,17 @@ function Reviewed({ entryID, userID, firstName, suspended }) {
     });
   };
 
+  const handleReviewed = async (entryID) => {
+    try {
+      await axios.put("http://localhost:8081/reviewed", {
+        entryID,
+      });
+      alert("reviewed");
+    } catch (error) {
+      console.error("Error updating reviewed:", error);
+    }
+  };
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -37,10 +67,12 @@ function Reviewed({ entryID, userID, firstName, suspended }) {
     <>
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
+        disabled={entry.isReviewed}
         onClick={handleShow}
         // disabled={suspended}
       >
-        <i class="bx bx-message-alt-check"></i> <p className="m-0">Reviewed</p>
+        <i class="bx bx-message-alt-check"></i>{" "}
+        <p className="m-0">{entry.isReviewed ? "Reviewed" : "Not Reviewed"}</p>
       </button>
 
       {/* <MessageAlert
@@ -65,7 +97,7 @@ function Reviewed({ entryID, userID, firstName, suspended }) {
           </Button>
           <button
             className="primaryButton py-2 rounded"
-            // onClick={handleSuspend}
+            onClick={() => handleReviewed(entryID)}
           >
             <p className="m-0">Confirm</p>
           </button>

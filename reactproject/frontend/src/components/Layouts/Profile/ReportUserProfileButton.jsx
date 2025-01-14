@@ -5,7 +5,7 @@ import axios from "axios";
 import MessageModal from "../DiaryEntry/messageModal";
 import MessageAlert from "../DiaryEntry/messageAlert";
 
-function ReportUserButton({ userID, toBeReported, reportedUserID }) {
+function ReportUserButton({ userID, firstName, toBeReported, reportedUserID }) {
   const [show, setShow] = useState(false);
   const [selectedBehavior, setSelectedBehavior] = useState("");
   const [otherText, setOtherText] = useState("");
@@ -118,7 +118,7 @@ function ReportUserButton({ userID, toBeReported, reportedUserID }) {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h4 className="m-0">Report {toBeReported}</h4>
+            <h4 className="m-0">Report {firstName}</h4>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{}}>

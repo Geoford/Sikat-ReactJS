@@ -24,6 +24,7 @@ import Suspend from "../Layouts/Profile/Suspend";
 import Reviewed from "../Layouts/Profile/Reviewed";
 import Hide from "../Layouts/Profile/Hide";
 import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
+import BackButton from "../Layouts/Home/BackButton";
 // import DiaryOwnerDetails from "../Layouts/DiaryEntry/DiaryOwnerDetails";
 
 const DiaryEntry = () => {
@@ -343,9 +344,10 @@ const DiaryEntry = () => {
         needConfirm={1}
       ></MessageModal>
       <div
-        className="d-flex align-items-center justify-content-center pb-3"
+        className="d-flex align-items-center justify-content-center pb-3 mt-3"
         style={{ minHeight: "70vh" }}
       >
+        <BackButton></BackButton>
         {isLoading ? (
           <p>Loading...</p>
         ) : entries.length === 0 ? (
@@ -363,7 +365,7 @@ const DiaryEntry = () => {
                   style={{
                     width: entry.diary_image
                       ? "clamp(19rem, 80dvw, 90rem)"
-                      : "clamp(19rem, 50dvw, 40rem)",
+                      : "clamp(19rem, 85dvw, 40rem)",
                   }}
                 >
                   {entry.diary_image && (
@@ -551,19 +553,26 @@ const DiaryEntry = () => {
                                     firstName={entry.firstName}
                                     suspended={entry.isSuspended}
                                   ></Suspend>
-                                  <Reviewed
+                                  {/* <Reviewed
+                                    entry={entry}
                                     entryID={entry.entryID}
                                     userID={entry.userID}
                                     firstName={entry.firstName}
                                     suspended={entry.isSuspended}
-                                  ></Reviewed>
-                                  <Hide type={"diary"}></Hide>
+                                  ></Reviewed> */}
+                                  <Hide
+                                    type={"diary"}
+                                    entry={entry}
+                                    entryID={entry.entryID}
+                                  ></Hide>
                                 </>
                               ) : (
                                 <>
                                   <Dropdown.Item className="p-0 btn btn-light">
                                     {user.isAdmin ? (
                                       <EditPostButton
+                                        entry={entry}
+                                        entryID={entry.entryID}
                                         diaryTitle={entry.title}
                                         diaryDesc={entry.description}
                                         diaryVisib={entry.visibility}
@@ -576,6 +585,8 @@ const DiaryEntry = () => {
                                       ></EditPostButton>
                                     ) : (
                                       <EditDiaryEntryButton
+                                        entry={entry}
+                                        entryID={entry.entryID}
                                         diaryTitle={entry.title}
                                         diaryDesc={entry.description}
                                         diaryVisib={entry.visibility}

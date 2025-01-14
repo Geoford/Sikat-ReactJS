@@ -344,7 +344,7 @@ const CommentSection = ({
                           firstName={comment.firstName}
                           suspended={comment.isSuspended}
                         />
-                        <Hide type={"comment"} />
+                        {/* <Hide type={"comment"} entry={entry} /> */}
                       </>
                     ) : (
                       <Dropdown.Item className="p-0 btn btn-light">
@@ -571,6 +571,7 @@ const CommentSection = ({
           >
             <Form.Control
               as="textarea"
+              className="pe-5"
               placeholder="Leave a comment here"
               style={{ height: "clamp(4rem, 10dvw, 6rem)" }}
               value={editComment ? editCommentText : newComment}

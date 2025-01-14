@@ -54,7 +54,12 @@ select.form-select:focus {
   /* Allow it to extend beyond the viewport */
   min-height: 100vh; /* Full viewport height */
 }
-
+.backButton {
+  transition: 0.2s;
+}
+.backButton:hover {
+  transform: scale(102%);
+}
 .navbar {
   background-color: var(--primary);
   position: absolute;

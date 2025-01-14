@@ -286,7 +286,7 @@ const GetHelp = () => {
             <div className="d-flex flex-column justify-content-between">
               <div>
                 <h5 className="my-2 text-center text-md-start">
-                  Upload Proof of Incident (Optional, Up to 5 Photos)
+                  Upload Supporting Documents (Optional, Up to 5 Photos)
                 </h5>
                 <div className="d-flex flex-wrap gap-2 justify-content-center">
                   {formData.supportingDocuments.map((doc, index) => {

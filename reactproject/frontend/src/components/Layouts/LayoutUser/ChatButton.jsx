@@ -141,19 +141,31 @@ const UserChatButton = () => {
     const recipientUserID = user.isAdmin ? selectedUser : admin.userID;
     const senderUserID = user.userID;
 
-    await fetch("http://localhost:8081/message", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        senderID: senderUserID,
+    try {
+      const response = await axios.post("http://localhost:8081/message", {
+        senderID: user.userID,
         recipientID: recipientUserID,
         message: newMessage,
-      }),
-    });
+      });
 
-    setNewMessage("");
+      if (response.status !== 200) {
+        throw new Error("Failed to send message");
+      }
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          senderID: user.userID,
+          message: newMessage,
+          created_at: new Date().toISOString(), // Add a timestamp
+        },
+      ]);
+
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
+    }
   };
 
   const formatDate = (dateString) => {
@@ -282,38 +294,41 @@ const UserChatButton = () => {
                 </div>
 
                 {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`w-100 p-0 d-flex justify-content-${
-                      msg.senderID === user?.userID ? "end" : "start"
-                    }`}
-                  >
-                    <div
-                      className="rounded p-2 mt-1 text-light"
-                      style={{
-                        backgroundColor:
-                          msg.senderID === user?.userID
-                            ? "var(--secondary)"
-                            : "var(--primary)",
-                        maxWidth: "80%",
-
-                        width: "fit-content",
-                        wordWrap: "break-word",
-                        whiteSpace: "pre-wrap",
-                      }}
-                    >
-                      <p className="m-0">{msg.message}</p>
-                      <p className="m-0 text-end">
-                        <span
+                  <>
+                    {msg.created_at ? (
+                      <div
+                        key={index}
+                        className={`w-100 p-0 d-flex justify-content-${
+                          msg.senderID === user?.userID ? "end" : "start"
+                        }`}
+                      >
+                        <div
+                          className="rounded p-2 mt-1 text-light"
                           style={{
-                            fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
+                            backgroundColor:
+                              msg.senderID === user?.userID
+                                ? "var(--secondary)"
+                                : "var(--primary)",
+                            maxWidth: "80%",
+                            width: "fit-content",
+                            wordWrap: "break-word",
+                            whiteSpace: "pre-wrap",
                           }}
                         >
-                          {msg.created_at ? formatDate(msg.created_at) : ""}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+                          <p className="m-0">{msg.message}</p>
+                          <p className="m-0 text-end">
+                            <span
+                              style={{
+                                fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
+                              }}
+                            >
+                              {msg.created_at ? formatDate(msg.created_at) : ""}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
                 ))}
                 <div ref={messagesEndRef} />
               </div>

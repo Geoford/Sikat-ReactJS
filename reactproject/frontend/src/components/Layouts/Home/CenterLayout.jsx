@@ -416,7 +416,15 @@ const CenterLayout = () => {
                                       ? "Gender and Development"
                                       : entry.firstName && entry.lastName
                                       ? entry.firstName + " " + entry.lastName
-                                      : user.firstName + " " + user.lastName}
+                                      : user.firstName +
+                                        " " +
+                                        user.lastName}{" "}
+                                    <span
+                                      className=""
+                                      style={{ color: "var(--primary)" }}
+                                    >
+                                      (Scheduled Post)
+                                    </span>
                                   </h5>
                                 </Link>
                               )}

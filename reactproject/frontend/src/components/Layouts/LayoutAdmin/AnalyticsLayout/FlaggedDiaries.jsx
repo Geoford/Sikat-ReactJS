@@ -71,7 +71,23 @@ const FlaggedDiaries = ({ flags }) => {
         });
       }
 
-      setFilteredUsers(filtered);
+      // Grouping the flagged diaries by title and reasons and counting occurrences
+      const groupedFlags = filtered.reduce((acc, flag) => {
+        const key = `${flag.title}_${flag.reasons}`; // Use both title and reasons as key
+        if (!acc[key]) {
+          // Initialize the group
+          acc[key] = { ...flag, count: 1 };
+        } else {
+          // Increment the count for the same report
+          acc[key].count += 1;
+        }
+        return acc;
+      }, {});
+
+      // Convert the grouped object into an array
+      const mergedFlags = Object.values(groupedFlags);
+
+      setFilteredUsers(mergedFlags);
       setCurrentPage(1);
     };
 
@@ -295,6 +311,9 @@ const FlaggedDiaries = ({ flags }) => {
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Count</h5>
+                </th>
                 <th scope="col" className="text-center align-middle" style={{}}>
                   <h5 className="m-0">Action</h5>
                 </th>
@@ -302,8 +321,8 @@ const FlaggedDiaries = ({ flags }) => {
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (
-                currentUsers.map((flag) => (
-                  <tr key={flag.userID}>
+                currentUsers.map((flag, index) => (
+                  <tr key={index}>
                     <th scope="row" className="text-center align-middle">
                       <p className="m-0">{flag.studentNumber}</p>
                     </th>
@@ -316,7 +335,8 @@ const FlaggedDiaries = ({ flags }) => {
                     <td className="text-center align-middle">
                       <p className="m-0">{flag.title}</p>
                     </td>
-                    <td className=" text-center align-middle">
+
+                    <td className="text-center align-middle">
                       {flag.isAddress === 1 ? (
                         <p className="text-success m-0">Addressed</p>
                       ) : (
@@ -324,6 +344,12 @@ const FlaggedDiaries = ({ flags }) => {
                       )}
                     </td>
                     <td className="text-center align-middle">
+                      <p className="m-0">
+                        {flag.count} {flag.count > 1 ? "Times" : "Times"}
+                      </p>
+                    </td>
+                    <td className="text-center align-middle">
+                      {/* Display actions only for pending reports */}
                       {!flag.isAddress && (
                         <button
                           className="secondaryButton"

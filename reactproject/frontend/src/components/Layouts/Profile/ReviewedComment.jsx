@@ -3,10 +3,18 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 import MessageAlert from "../DiaryEntry/messageAlert";
-import MessageModal from "../DiaryEntry/messageModal";
 
-function Hide({ type, entry, entryID }) {
+function ReviewedComment({
+  entryID,
+  userID,
+  firstName,
+  suspended,
+  userComment,
+}) {
   const [show, setShow] = useState(false);
+  const [reasons, setReasons] = useState([]);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [selectedPeriod, setSelectedPeriod] = useState("3 Days");
 
   const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
@@ -28,22 +36,14 @@ function Hide({ type, entry, entryID }) {
     });
   };
 
-  const hideEntry = async (entryID) => {
+  const handleReviewed = async (entryID) => {
     try {
-      await axios.put("http://localhost:8081/hide", {
+      await axios.put("http://localhost:8081/reviewedComments", {
         entryID,
       });
-      handleClose();
-      setModal({
-        show: true,
-        message: `Hide ${type} successfully.`,
-      });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-      // alert("HIDE");
+      alert("reviewed");
     } catch (error) {
-      console.error("Error updating hide:", error);
+      console.error("Error updating reviewed:", error);
     }
   };
 
@@ -54,28 +54,22 @@ function Hide({ type, entry, entryID }) {
     <>
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
-        disabled={entry.isHide}
+        disabled={userComment.isReviewed}
         onClick={handleShow}
         // disabled={suspended}
       >
-        <i class="bx bxs-hide"></i>
-        <p className="m-0">Hide</p>
+        <i class="bx bx-message-alt-check"></i>{" "}
+        <p className="m-0">
+          {userComment.isReviewed ? "Reviewed" : "Not Reviewed"}
+        </p>
       </button>
 
-      <MessageModal
+      {/* <MessageAlert
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageModal>
-      <MessageModal
-        showModal={confirmModal}
-        closeModal={closeConfirmModal}
-        title={"Confirmation"}
-        message={confirmModal.message}
-        confirm={confirmModal.onConfirm}
-        needConfirm={1}
-      ></MessageModal>
+      ></MessageAlert> */}
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
@@ -84,7 +78,7 @@ function Hide({ type, entry, entryID }) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="m-0">Are you sure you want to hide this {type}?</p>
+          <p className="m-0">Are you sure you want to mark this as reviewed?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -92,7 +86,7 @@ function Hide({ type, entry, entryID }) {
           </Button>
           <button
             className="primaryButton py-2 rounded"
-            onClick={() => hideEntry(entryID)}
+            onClick={() => handleReviewed(entryID)}
           >
             <p className="m-0">Confirm</p>
           </button>
@@ -102,4 +96,4 @@ function Hide({ type, entry, entryID }) {
   );
 }
 
-export default Hide;
+export default ReviewedComment;

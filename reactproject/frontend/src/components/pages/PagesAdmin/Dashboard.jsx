@@ -49,6 +49,9 @@ const Dashboard = () => {
   const [weeklyReportedComments, setWeeklyReportedComments] = useState({});
   const [weeklyGenderBased, setWeeklyGenderBased] = useState({});
   const [weeklyReportedUsers, setWeeklyReportedUsers] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const usersPerPage = 4;
 
   useEffect(() => {
@@ -70,6 +73,8 @@ const Dashboard = () => {
     reportedUsers,
     timeFilter,
     specificDate,
+    startDate,
+    endDate,
   ]);
 
   useEffect(() => {
@@ -253,6 +258,14 @@ const Dashboard = () => {
     const filterData = (data) => {
       return data.filter((item) => {
         const date = new Date(item.created_at);
+
+        if (startDate && endDate) {
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          return date >= start && date <= end;
+        }
+
+        // If only specificDate or timeFilter is defined
         if (specificDate) {
           const selectedDate = new Date(specificDate);
           return (
@@ -275,6 +288,7 @@ const Dashboard = () => {
         }
       });
     };
+
     setFilteredEntries(filterData(entries));
     setFilteredFlags(filterData(flags));
     setFilteredReportedComments(filterData(reportedComments));
@@ -300,9 +314,14 @@ const Dashboard = () => {
     setSpecificDate("");
   };
 
-  const handleDateChange = (event) => {
-    setSpecificDate(event.target.value);
-    setTimeFilter("SpecificDate");
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+    setTimeFilter("CustomRange"); // Optional, for clarity
+  };
+
+  const handleEndDateChange = (event) => {
+    setEndDate(event.target.value);
+    setTimeFilter("CustomRange"); // Optional, for clarity
   };
 
   const AnalyticsFlaggedDiaries = "FlaggedDiaries";
@@ -341,32 +360,32 @@ const Dashboard = () => {
                   </label>
                 </div>
               </div>
-              <div className="col-md-6 mb-2 ">
+              <div className="col-md-6 mb-2">
                 <div className="row gap-1 m-auto">
-                  <div class="col-md form-floating p-0">
+                  <div className="col-md form-floating p-0">
                     <input
                       type="date"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                      value={specificDate}
-                      onChange={handleDateChange}
+                      className="form-control"
+                      id="startDate"
+                      placeholder="Start Date"
+                      value={startDate}
+                      onChange={handleStartDateChange}
                     />
-                    <label className="ms-2" for="floatingPassword">
-                      Start date:
+                    <label className="ms-2" htmlFor="startDate">
+                      Start Date:
                     </label>
                   </div>
-                  <div class="col-md form-floating p-0">
+                  <div className="col-md form-floating p-0">
                     <input
                       type="date"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                      value={specificDate}
-                      onChange={handleDateChange}
+                      className="form-control"
+                      id="endDate"
+                      placeholder="End Date"
+                      value={endDate}
+                      onChange={handleEndDateChange}
                     />
-                    <label className="ms-2" for="floatingPassword">
-                      End date:
+                    <label className="ms-2" htmlFor="endDate">
+                      End Date:
                     </label>
                   </div>
                 </div>

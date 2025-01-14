@@ -114,6 +114,7 @@ function DiaryEntryButton({ onEntrySaved }) {
     setTitle("");
     setDescription("");
     setFile(null);
+    setImagePreview(null);
     setAlarmingWordWarning("");
   };
 
@@ -312,7 +313,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                 disabled={loading}
               />
               <Form.Control.Feedback type="invalid">
-                {formErrors.title}
+                <p className="m-0">{formErrors.title}</p>
               </Form.Control.Feedback>
             </InputGroup>
             <FloatingLabel
@@ -330,7 +331,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                 disabled={loading}
               />
               <Form.Control.Feedback type="invalid">
-                {formErrors.description}
+                <p className="m-0">{formErrors.description}</p>
               </Form.Control.Feedback>
             </FloatingLabel>
             {imagePreview ? (
@@ -422,10 +423,10 @@ function DiaryEntryButton({ onEntrySaved }) {
                     role="status"
                     aria-hidden="true"
                   />{" "}
-                  Saving Changes...
+                  Posting Diary
                 </>
               ) : (
-                "Save Changes"
+                "Post Diary"
               )}
             </p>
           </button>

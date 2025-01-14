@@ -9,11 +9,14 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import SubjectSelection from "../LayoutUser/SubjectSelection";
+import EditSubjectSelection from "../LayoutUser/EditSubjectSelection";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
 import alarmingWords from "../AlarmingWords";
+import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
 function EditDiaryEntryButton({
+  entry,
   entryID,
   onEntrySaved,
   diaryTitle,
@@ -37,9 +40,25 @@ function EditDiaryEntryButton({
   const [alarmingWordWarning, setAlarmingWordWarning] = useState("");
   const [fileError, setFileError] = useState("");
   const [imagePreview, setImagePreview] = useState(imageFile);
-  const removePreview = () => {
-    setFile(null);
-    setImagePreview(null);
+
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    message: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      show: false,
+      message: "",
+      onConfirm: () => {},
+      onCancel: () => {},
+    });
   };
 
   const handleSubjectsChange = (subjectsText) => {
@@ -77,7 +96,7 @@ function EditDiaryEntryButton({
       } else {
         setFileError("");
         setFile(selectedFile);
-        setImagePreview(URL.createObjectURL(selectedFile));
+        setImagePreview(null);
       }
     }
   };
@@ -162,11 +181,16 @@ function EditDiaryEntryButton({
         setTitle("");
         setDescription("");
         setFile(null);
-        handleClose();
         if (onEntrySaved) {
-          window.location.reload();
           onEntrySaved();
         }
+        setModal({
+          show: true,
+          message: `Diary edited.`,
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       })
       .catch((error) => {
         console.error("There was an error saving the diary entry!", error);
@@ -183,6 +207,21 @@ function EditDiaryEntryButton({
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
         onClick={handleShow}
       >
+        <MessageModal
+          showModal={modal}
+          closeModal={closeModal}
+          title={"Notice"}
+          message={modal.message}
+        ></MessageModal>
+        <MessageModal
+          showModal={confirmModal}
+          closeModal={closeConfirmModal}
+          title={"Confirmation"}
+          message={confirmModal.message}
+          confirm={confirmModal.onConfirm}
+          needConfirm={1}
+        ></MessageModal>
+
         <i className="bx bxs-edit m-0 ms-1"></i>
         <p className="m-0">Edit</p>
       </button>
@@ -190,7 +229,7 @@ function EditDiaryEntryButton({
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Edit Diary {entryID}</h5>
+            <h5 className="m-0">Edit Diary </h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -245,8 +284,11 @@ function EditDiaryEntryButton({
           {alarmingWordWarning && (
             <p className="text-warning">{alarmingWordWarning}</p>
           )}
-          <div className="mt-1 d-flex align-items-center">
-            <SubjectSelection onSubjectsChange={handleSubjectsChange} />
+          <div
+            className="mt-1 d-flex align-items-center gap-1"
+            style={{ zIndex: "1" }}
+          >
+            <EditSubjectSelection onSubjectsChange={handleSubjectsChange} />
             {selectedSubjects && (
               <div className="">
                 <p className="m-0">{selectedSubjects}</p>
@@ -274,6 +316,7 @@ function EditDiaryEntryButton({
             <FloatingLabel
               controlId="floatingTextarea2"
               label={`Describe your day, ${user?.firstName || "User"}!`}
+              style={{ zIndex: "0" }}
             >
               <Form.Control
                 as="textarea"
@@ -300,7 +343,7 @@ function EditDiaryEntryButton({
                     borderRadius: "8px",
                   }}
                 />
-                <div
+                {/* <div
                   className="position-absolute rounded"
                   onClick={removePreview}
                   style={{
@@ -312,31 +355,32 @@ function EditDiaryEntryButton({
                   <h4 className="m-0 d-flex justify-content-center text-dark">
                     <i class="bx bx-x"></i>
                   </h4>
-                </div>
+                </div> */}
               </div>
             ) : (
-              <div className="mt-1">
-                <label className="w-100" htmlFor="uploadPhoto">
-                  <div
-                    className="d-flex justify-content-center border rounded py-2 "
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p className="m-0 d-flex align-items-center gap-1 text-secondary">
-                      <i
-                        class="bx bx-image-add bx-sm"
-                        style={{ color: "var(--secondary)" }}
-                      ></i>
-                      Upload Photo
-                    </p>
-                  </div>
-                </label>
-                <input
-                  type="file"
-                  id="uploadPhoto"
-                  hidden
-                  onChange={handleFileChange}
-                />
-              </div>
+              // <div className="mt-1">
+              //   <label className="w-100" htmlFor="uploadPhoto">
+              //     <div
+              //       className="d-flex justify-content-center border rounded py-2 "
+              //       style={{ cursor: "pointer" }}
+              //     >
+              //       <p className="m-0 d-flex align-items-center gap-1 text-secondary">
+              //         <i
+              //           class="bx bx-image-add bx-sm"
+              //           style={{ color: "var(--secondary)" }}
+              //         ></i>
+              //         Upload Photo
+              //       </p>
+              //     </div>
+              //   </label>
+              //   <input
+              //     type="file"
+              //     id="uploadPhoto"
+              //     hidden
+              //     onChange={handleFileChange}
+              //   />
+              // </div>
+              ""
             )}
             {/* {file && (
                 <div className="mt-2 d-flex align-items-center gap-2">

@@ -138,16 +138,6 @@ const DiaryEntries = () => {
         entryDate.getTime() + entryDate.getTimezoneOffset() * 60000
       );
 
-      console.log(
-        "Comparing:",
-        day,
-        localEntryDate.getDate(),
-        localEntryDate.getMonth(),
-        months.indexOf(selectedMonth),
-        localEntryDate.getFullYear(),
-        selectedYear
-      );
-
       return (
         localEntryDate.getDate() === day &&
         localEntryDate.getMonth() === months.indexOf(selectedMonth) &&

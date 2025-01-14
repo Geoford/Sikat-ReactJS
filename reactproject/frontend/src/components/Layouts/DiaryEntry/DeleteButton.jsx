@@ -3,6 +3,7 @@ import axios from "axios";
 import { Modal } from "react-bootstrap";
 import MessageModal from "./messageModal";
 import { useNavigate } from "react-router-dom";
+import MessageAlert from "./messageAlert";
 
 const DeleteButton = ({ entryID, title }) => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const DeleteButton = ({ entryID, title }) => {
       // Wait for the user to acknowledge the success message
       setTimeout(() => {
         // Navigate or reload page here after confirmation
-        navigate("/Home");
+        // navigate({ location });
         window.location.reload();
       }, 1500); // Delay reload for 1.5 seconds after success modal
     } catch (error) {

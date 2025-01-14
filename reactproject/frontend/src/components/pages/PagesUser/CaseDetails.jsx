@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import sampleImage from "../../../assets/Background.jpg";
 import MainLayout from "../../Layouts/MainLayout";
+import BackButton from "../../Layouts/Home/BackButton";
 
 const CaseDetails = () => {
   const { reportID } = useParams();
@@ -183,7 +184,7 @@ const CaseDetails = () => {
 
   return (
     <MainLayout ActiveTab="Complaints">
-      <div className="d-flex justify-content-center py-3">
+      <div className="d-flex justify-content-center py-3 mt-3">
         <div
           className="rounded shadow p-3"
           style={{
@@ -192,13 +193,14 @@ const CaseDetails = () => {
           }}
         >
           <div className="position-relative border-bottom border-2 d-flex align-items-end justify-content-center gap-2 pb-2">
-            <Link
+            {/* <Link
               className="position-absolute text-dark"
               style={{ left: "0" }}
               to="/Home"
             >
               <i className="bx bx-arrow-back bx-sm"></i>
-            </Link>
+            </Link> */}
+            <BackButton></BackButton>
 
             <h4 className="m-0">Case Details</h4>
             {caseDetails.isAddress === 0 ? (
@@ -266,7 +268,7 @@ const CaseDetails = () => {
 
             <div>
               <h5 className="mt-3">Proof of Incident</h5>
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap justify-content-center gap-2">
                 {caseDetails.supportingDocuments &&
                 Array.isArray(JSON.parse(caseDetails.supportingDocuments)) &&
                 JSON.parse(caseDetails.supportingDocuments).length > 0 ? (
@@ -306,7 +308,7 @@ const CaseDetails = () => {
             </div>
 
             <div className="d-flex justify-content-end flex-column gap-1 mt-2">
-              {caseDetails.isAddress ? (
+              {/* {caseDetails.isAddress ? (
                 ""
               ) : (
                 <button
@@ -315,12 +317,12 @@ const CaseDetails = () => {
                 >
                   <p className="m-0">Mark as Addressed</p>
                 </button>
-              )}
+              )} */}
 
               <div className="row d-flex gap-1 mt-1 px-3">
                 <div className="col p-0">
                   <button
-                    className="w-100 primaryButton py-1 py-md-2"
+                    className="w-100 primaryButton py-2"
                     onClick={() => downloadData("html")}
                   >
                     <p className="m-0">Download as HTML</p>
@@ -328,7 +330,7 @@ const CaseDetails = () => {
                 </div>
                 <div className="col p-0">
                   <button
-                    className="w-100 primaryButton py-1 py-md-2"
+                    className="w-100 primaryButton py-2"
                     onClick={() => downloadData("excel")}
                   >
                     <p className="m-0">Download as Excel</p>
