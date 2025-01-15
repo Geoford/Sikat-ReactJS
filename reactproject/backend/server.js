@@ -2344,6 +2344,36 @@ app.get("/getReportedUsers", (req, res) => {
   });
 });
 
+app.get("/getReportedUser/:userID", (req, res) => {
+  const userID = req.params.userID;
+  const query = `
+    SELECT
+      reported_users.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.studentNumber,
+      user_profiles.profile_image
+    FROM 
+      reported_users
+    JOIN user_table ON reported_users.reportedUserID = user_table.userID
+    JOIN user_profiles ON reported_users.userID = user_profiles.userID
+    WHERE reported_users.reportedUserID = ?
+  `;
+
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error("Error fetching reported user:", err.message);
+      return res.status(500).json({ error: "Error fetching reported user" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Reported user not found" });
+    }
+
+    res.status(200).json(results[0]);
+  });
+});
+
 app.put("/reportingUsersAddress/:id", (req, res) => {
   const reportedUsersID = req.params.id;
 
