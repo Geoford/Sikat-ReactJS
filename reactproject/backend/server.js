@@ -2210,7 +2210,7 @@ app.get("/fetchComments/:entryID", (req, res) => {
 });
 
 app.post("/comments", (req, res) => {
-  const { userID, text, entryID, replyCommentID } = req.body;
+  const { userID, text, entryID, replyCommentID, repliedUserID } = req.body;
 
   if (!text || !userID || !entryID) {
     return res
@@ -2219,7 +2219,7 @@ app.post("/comments", (req, res) => {
   }
 
   const commentQuery =
-    "INSERT INTO comments (userID, entryID, text, replyCommentID) VALUES (?, ?, ?, ?)";
+    "INSERT INTO comments (userID, entryID, text, replyCommentID, repliedUserID) VALUES (?, ?, ?, ?, ?)";
   const updateQuery = `
     UPDATE diary_entries 
     SET 
@@ -2231,11 +2231,20 @@ app.post("/comments", (req, res) => {
 
   db.query(
     commentQuery,
-    [userID, entryID, text, replyCommentID || null],
+    [
+      userID,
+      entryID,
+      text,
+      replyCommentID,
+      repliedUserID,
+      repliedUserID || null,
+    ],
     (err, results) => {
       if (err) {
-        console.error("Error posting comment:", err);
-        return res.status(500).json({ error: "Failed to post comment" });
+        console.error("Error inserting comment:", err.message);
+        return res
+          .status(500)
+          .json({ error: "Failed to post comment", details: err.message });
       }
 
       db.query(updateQuery, [entryID], (updateErr) => {
@@ -2489,13 +2498,25 @@ app.get("/getReportedCommentsReview/:entryID", (req, res) => {
 app.delete("/deleteComment/:commentID", (req, res) => {
   const commentID = req.params.commentID;
 
-  const sqlDelete = "DELETE FROM comments WHERE commentID = ?";
-  db.query(sqlDelete, [commentID], (err, result) => {
+  // First, delete any replies that are linked to this comment
+  const deleteRepliesQuery = "DELETE FROM comments WHERE replyCommentID = ?";
+  db.query(deleteRepliesQuery, [commentID], (err) => {
     if (err) {
-      console.error("Error deleting comment:", err);
-      return res.status(500).json({ error: "Failed to delete comment" });
+      console.error("Error deleting replies:", err);
+      return res.status(500).json({ error: "Failed to delete replies" });
     }
-    return res.status(200).json({ message: "Comment deleted successfully" });
+
+    // Now, delete the comment itself
+    const sqlDelete = "DELETE FROM comments WHERE commentID = ?";
+    db.query(sqlDelete, [commentID], (err, result) => {
+      if (err) {
+        console.error("Error deleting comment:", err);
+        return res.status(500).json({ error: "Failed to delete comment" });
+      }
+      return res
+        .status(200)
+        .json({ message: "Comment and its replies deleted successfully" });
+    });
   });
 });
 

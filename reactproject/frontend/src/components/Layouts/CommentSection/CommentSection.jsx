@@ -162,7 +162,7 @@ const CommentSection = ({
     replyTextsRef.current[commentID] = value;
   };
 
-  const handleSendReply = async (parentID) => {
+  const handleSendReply = async (parentID, repliedUserID) => {
     const replyText = replyTextsRef.current[parentID] || "";
     if (replyText.trim() === "") return;
 
@@ -171,11 +171,27 @@ const CommentSection = ({
       entryID,
       text: replyText,
       replyCommentID: parentID,
+      repliedUserID,
     };
 
     setLoading(true);
     try {
       await axios.post("http://localhost:8081/comments", newReplyObj);
+
+      if (repliedUserID !== userID) {
+        await axios.post(
+          `http://localhost:8081/notifications/${repliedUserID}`,
+          {
+            userID: repliedUserID,
+            actorID: userID,
+            entryID,
+            profile_image: user.profile_image,
+            type: "comment",
+            message: `${user.firstName} ${user.lastName} commented on your diary entry.`,
+          }
+        );
+      }
+
       setReplyTo(null);
       replyTextsRef.current[parentID] = "";
       fetchComments();
@@ -224,7 +240,7 @@ const CommentSection = ({
           await axios.delete(
             `http://localhost:8081/deleteComment/${commentID}`
           );
-          fetchComments(); // Refresh comments after deletion
+          fetchComments();
           closeConfirmModal();
           setModal({
             show: true,
@@ -484,7 +500,7 @@ const CommentSection = ({
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleSendReply(comment.commentID);
+                    handleSendReply(comment.commentID, comment.userID);
                   }
                 }}
               />
@@ -509,7 +525,9 @@ const CommentSection = ({
                   <i class="bx bx-x"></i>
                 </button>
                 <button
-                  onClick={() => handleSendReply(comment.commentID)}
+                  onClick={() =>
+                    handleSendReply(comment.commentID, comment.userID)
+                  }
                   className="py-2 d-flex align-items-center justify-content-center border-0"
                   style={{
                     height: "40px",
