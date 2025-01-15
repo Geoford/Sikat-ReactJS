@@ -154,7 +154,7 @@ const GetHelp = () => {
         message={modal.message}
       ></MessageAlert>
 
-      <div className="d-flex justify-content-center py-3">
+      <div className="d-flex justify-content-center py-3 mt-3 mt-md-1">
         <div
           className="container-fluid container-md rounded shadow p-3"
           style={{
@@ -240,6 +240,7 @@ const GetHelp = () => {
             <FloatingLabel
               controlId="floatingTextarea2"
               label="Description of the Incident"
+              style={{ zIndex: "0" }}
             >
               <Form.Control
                 placeholder="Description of the Incident"

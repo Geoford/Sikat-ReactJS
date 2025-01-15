@@ -71,7 +71,10 @@ const FilterButton = ({ onFilterChange }) => {
         </h6>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="px-2" style={{ zIndex: "1000" }}>
+      <Dropdown.Menu
+        className="px-2"
+        style={{ zIndex: "1000", width: "clamp(13rem, 10dvw, 18rem)" }}
+      >
         {filterOptions.map((filter) => (
           <Form.Check
             key={filter.subject} // Use 'subject' for the key
