@@ -11,6 +11,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 import { Alert } from "react-bootstrap";
 import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
+import BackButton from "../../Layouts/Home/BackButton";
 
 const GetHelp = () => {
   const { userID } = useParams();
@@ -131,7 +132,7 @@ const GetHelp = () => {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 2500);
+      }, 1500);
     } catch (error) {
       console.error("Error submitting report:", error);
       setModal({
@@ -143,6 +144,7 @@ const GetHelp = () => {
 
   return (
     <MainLayout>
+      <BackButton />
       <PreLoader />
 
       <MessageAlert

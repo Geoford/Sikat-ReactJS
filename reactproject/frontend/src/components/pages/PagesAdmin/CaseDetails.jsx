@@ -6,6 +6,7 @@ import sampleImage from "../../../assets/Background.jpg";
 import MainLayout from "../../Layouts/MainLayout";
 import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
+import BackButton from "../../Layouts/Home/BackButton";
 
 const CaseDetails = () => {
   const { reportID } = useParams();
@@ -218,6 +219,7 @@ const CaseDetails = () => {
 
   return (
     <MainLayout ActiveTab="Complaints">
+      <BackButton />
       <MessageAlert
         showModal={modal}
         closeModal={closeModal}
@@ -241,20 +243,16 @@ const CaseDetails = () => {
           }}
         >
           <div className="position-relative border-bottom border-2 d-flex align-items-end justify-content-center gap-2 pb-2">
-            <Link
-              className="position-absolute text-dark"
-              style={{ left: "0" }}
-              to="/Admin/GenderBasedIncidents"
-            >
-              <i className="bx bx-arrow-back bx-sm"></i>
-            </Link>
-
-            <h4 className="m-0">Case Details</h4>
-            {caseDetails.isAddress === 0 ? (
-              <h4 className="m-0 text-danger">(Pending)</h4>
-            ) : (
-              <h4 className="m-0 text-success">(Addressed)</h4>
-            )}
+            <h4 className="m-0">
+              Case Details{" "}
+              <span
+                className={`${
+                  caseDetails.isAddress ? "text-success" : "text-danger"
+                }`}
+              >
+                {caseDetails.isAddress ? "(Addressed)" : "(Pending)"}
+              </span>
+            </h4>
           </div>
 
           <form className="text-start" style={{ minHeight: "20rem" }}>
@@ -286,7 +284,7 @@ const CaseDetails = () => {
 
               <div>
                 <h6 className="m-0">Contact Number</h6>
-                <p className="m-0 ps-2 border-bottom">
+                <p className="m-0 ps-2 border-bottom text-secondary">
                   {caseDetails.contactInfo}
                 </p>
               </div>
@@ -297,7 +295,7 @@ const CaseDetails = () => {
               <div className="row">
                 <div className="col-md-7">
                   <h6 className="m-0">Perpetrator's Name</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {caseDetails.perpetratorName}
                   </p>
                 </div>
@@ -305,20 +303,20 @@ const CaseDetails = () => {
               <div className="row">
                 <div className="col-md-7">
                   <h6 className="m-0">Location</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {caseDetails.location}
                   </p>
                 </div>
                 <div className="col-md">
                   <h6 className="m-0">Date</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {new Date(caseDetails.date).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div>
                 <h6 className="m-0">Description</h6>
-                <p className="m-0 ps-2 pb-2 border-bottom">
+                <p className="m-0 ps-2 border-bottom text-secondary">
                   {caseDetails.incidentDescription}
                 </p>
               </div>
@@ -342,8 +340,8 @@ const CaseDetails = () => {
                           className="supportImageContainer overflow-hidden border-0"
                           style={{
                             cursor: "pointer",
-                            width: "100px",
-                            height: "100px",
+                            width: "clamp(8rem, 10vw, 10rem)",
+                            height: "clamp(8rem, 10vw, 10rem)",
                           }}
                         >
                           <img

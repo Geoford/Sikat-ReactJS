@@ -234,7 +234,7 @@ function NotificationButton() {
                 </div>
               </Toast.Header>
               <Toast.Body>
-                <p className="m-0 text-secondary">{toast.message}</p>
+                <p className="m-0 text-secondary text-start">{toast.message}</p>
               </Toast.Body>
             </Toast>
           </Link>

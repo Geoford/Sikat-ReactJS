@@ -149,7 +149,7 @@ const CommentSection = ({
           entryID,
           profile_image: user.profile_image,
           type: "comment",
-          message: `${user.firstName} commented on your diary entry.`,
+          message: `${user.firstName} ${user.lastName} commented on your diary entry.`,
         })
         .catch((err) => {
           console.error("Error sending comment notification:", err);
@@ -289,7 +289,7 @@ const CommentSection = ({
   const Comment = React.memo(({ comment, depth = 0 }) => {
     const canManage = comment.userID === userID;
     const isAccordionOpen = openAccordions.includes(comment.commentID);
-    const ownComment = userID === comment.userID;
+    const ownComment = entry === comment.userID;
 
     return (
       <div
@@ -374,6 +374,8 @@ const CommentSection = ({
                     (user.isAdmin ? (
                       <>
                         <Suspend
+                          isAnon={isAnon}
+                          alias={alias}
                           userID={comment.userID}
                           firstName={comment.firstName}
                           suspended={comment.isSuspended}
@@ -383,6 +385,9 @@ const CommentSection = ({
                     ) : (
                       <Dropdown.Item className="p-0 btn btn-light">
                         <ReportButton
+                          ownComment={ownComment}
+                          isAnon={isAnon}
+                          alias={alias}
                           commentID={comment.commentID}
                           userID={comment.userID}
                           firstName={comment.firstName}

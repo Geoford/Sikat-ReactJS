@@ -162,7 +162,7 @@ const CommentSection = ({
           entryID,
           profile_image: user.profile_image,
           type: "comment",
-          message: `${user.firstName} commented on your diary entry.`,
+          message: `${user.firstName} ${user.lastName} commented on your diary entry.`,
         })
         .catch((err) => {
           console.error("Error sending comment notification:", err);
@@ -412,7 +412,7 @@ const CommentSection = ({
         <div>
           <div className="ps-5 ms-2 d-flex align-items-center gap-2">
             <p
-              className="m-0 p-2 rounded border-2 text-secondary"
+              className="m-0 p-2 rounded border-2 text-secondary text-start"
               style={{
                 whiteSpace: "pre-wrap",
                 maxWidth: "500px",
@@ -455,6 +455,7 @@ const CommentSection = ({
             >
               <Form.Control
                 as="textarea"
+                className="pe-5 custom-scrollbar"
                 placeholder="Leave a reply here"
                 style={{ height: "80px" }}
                 onChange={(e) =>
@@ -478,11 +479,11 @@ const CommentSection = ({
                     height: "40px",
                     width: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "#ffff",
+                    backgroundColor: "rgb(255, 255, 255, .5)",
                     right: "10px",
                     bottom: "10px",
                     color: "red",
-                    fontSize: "clamp(1.2rem, 5dvw, 2rem)",
+                    fontSize: "clamp(1.4rem, 5dvw, 2rem)",
                   }}
                 >
                   <i class="bx bx-x"></i>
@@ -571,6 +572,7 @@ const CommentSection = ({
         >
           <Form.Control
             as="textarea"
+            className="pe-5"
             placeholder="Leave a comment here"
             style={{ height: "clamp(4rem, 10dvw, 6rem)" }}
             value={editComment ? editCommentText : newComment}
@@ -602,7 +604,7 @@ const CommentSection = ({
                   height: "40px",
                   width: "40px",
                   borderRadius: "50%",
-                  backgroundColor: "#ffff",
+                  backgroundColor: "rgb(255, 255, 255, .5)",
                   right: "10px",
                   bottom: "10px",
                   color: "red",

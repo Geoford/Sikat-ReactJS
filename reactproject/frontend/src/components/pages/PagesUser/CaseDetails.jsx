@@ -202,33 +202,39 @@ const CaseDetails = () => {
             </Link> */}
             <BackButton></BackButton>
 
-            <h4 className="m-0">Case Details</h4>
-            {caseDetails.isAddress === 0 ? (
-              <h4 className="m-0 text-danger">(Pending)</h4>
-            ) : (
-              <h4 className="m-0 text-success">(Addressed)</h4>
-            )}
+            <h4 className="m-0">
+              Case Details{" "}
+              <span
+                className={`${
+                  caseDetails.isAddress ? "text-success" : "text-danger"
+                }`}
+              >
+                {caseDetails.isAddress ? "(Addressed)" : "(Pending)"}
+              </span>
+            </h4>
           </div>
 
           <form className="text-start" style={{ minHeight: "20rem" }}>
             <h5 className="mt-3">Victim Details</h5>
             <div className="px-2 d-flex flex-column gap-2">
-              <div className="row">
+              <div className="row gap-1">
                 <div className="col-md-7">
                   <h6 className="m-0">Name</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {caseDetails.victimName}
                   </p>
                 </div>
                 <div className="col-md">
                   <h6 className="m-0">Sex</h6>
-                  <p className="m-0 ps-2 border-bottom">{caseDetails.gender}</p>
+                  <p className="m-0 ps-2 border-bottom text-secondary">
+                    {caseDetails.gender}
+                  </p>
                 </div>
               </div>
 
               <div>
                 <h6 className="m-0">Contact Number</h6>
-                <p className="m-0 ps-2 border-bottom">
+                <p className="m-0 ps-2 border-bottom text-secondary">
                   {caseDetails.contactInfo}
                 </p>
               </div>
@@ -239,7 +245,7 @@ const CaseDetails = () => {
               <div className="row">
                 <div className="col-md-7">
                   <h6 className="m-0">Perpetrator's Name</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {caseDetails.perpetratorName}
                   </p>
                 </div>
@@ -247,20 +253,20 @@ const CaseDetails = () => {
               <div className="row">
                 <div className="col-md-7">
                   <h6 className="m-0">Location</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {caseDetails.location}
                   </p>
                 </div>
                 <div className="col-md">
                   <h6 className="m-0">Date</h6>
-                  <p className="m-0 ps-2 border-bottom">
+                  <p className="m-0 ps-2 border-bottom text-secondary">
                     {new Date(caseDetails.date).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div>
                 <h6 className="m-0">Description</h6>
-                <p className="m-0 ps-2 pb-2 border-bottom">
+                <p className="m-0 ps-2 border-bottom text-secondary">
                   {caseDetails.incidentDescription}
                 </p>
               </div>
@@ -268,7 +274,7 @@ const CaseDetails = () => {
 
             <div>
               <h5 className="mt-3">Proof of Incident</h5>
-              <div className="d-flex flex-wrap justify-content-center gap-2">
+              <div className="d-flex flex-wrap justify-content-center justify-content-sm-start gap-2">
                 {caseDetails.supportingDocuments &&
                 Array.isArray(JSON.parse(caseDetails.supportingDocuments)) &&
                 JSON.parse(caseDetails.supportingDocuments).length > 0 ? (
@@ -284,8 +290,8 @@ const CaseDetails = () => {
                           className="supportImageContainer overflow-hidden border-0"
                           style={{
                             cursor: "pointer",
-                            width: "100px",
-                            height: "100px",
+                            width: "clamp(8rem, 10vw, 10rem)",
+                            height: "clamp(8rem, 10vw, 10rem)",
                           }}
                         >
                           <img
@@ -319,18 +325,18 @@ const CaseDetails = () => {
                 </button>
               )} */}
 
-              <div className="row d-flex gap-1 mt-1 px-3">
-                <div className="col p-0">
+              <div className="row d-flex gy-1">
+                <div className="col-sm pe-sm-1">
                   <button
-                    className="w-100 primaryButton py-2"
+                    className="w-100 primaryButton py-2 py-md-2 mx-a"
                     onClick={() => downloadData("html")}
                   >
                     <p className="m-0">Download as HTML</p>
                   </button>
                 </div>
-                <div className="col p-0">
+                <div className="col-sm ps-sm-1">
                   <button
-                    className="w-100 primaryButton py-2"
+                    className="w-100 primaryButton py-2 py-md-2"
                     onClick={() => downloadData("excel")}
                   >
                     <p className="m-0">Download as Excel</p>

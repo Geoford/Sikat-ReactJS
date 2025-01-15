@@ -5,7 +5,15 @@ import axios from "axios";
 import MessageModal from "../DiaryEntry/messageModal";
 import MessageAlert from "../DiaryEntry/messageAlert";
 
-function ReportCommentButton({ commentID, userID, firstName, entryID }) {
+function ReportCommentButton({
+  ownComment,
+  isAnon,
+  alias,
+  commentID,
+  userID,
+  firstName,
+  entryID,
+}) {
   const [show, setShow] = useState(false);
   const [selectedBehavior, setSelectedBehavior] = useState("");
   const [otherText, setOtherText] = useState("");
@@ -119,7 +127,9 @@ function ReportCommentButton({ commentID, userID, firstName, entryID }) {
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h5 className="m-0">Report {firstName}'s Comment</h5>
+            <h5 className="m-0">
+              Report {isAnon && ownComment ? alias : firstName}'s Comment
+            </h5>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{}}>

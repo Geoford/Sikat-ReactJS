@@ -276,7 +276,7 @@ const Profile = () => {
             entryID: null,
             profile_image: user.profile_image,
             type: "follow",
-            message: `${currentUser.username} has followed you.`,
+            message: `${currentUser.firstName} ${currentUser.lastName} has followed you.`,
           }
         );
       }
@@ -325,7 +325,7 @@ const Profile = () => {
               entryID: entryID,
               profile_image: currentUser.profile_image,
               type: "gadify",
-              message: `${currentUser.firstName} gadified your diary entry.`,
+              message: `${currentUser.firstName} ${currentUser.lastName} gadified your diary entry.`,
             })
             .then((res) => {
               console.log("Notification response:", res.data);
@@ -529,7 +529,7 @@ const Profile = () => {
               ) : (
                 <Followers
                   user={user}
-                  // users={user}
+                  currentUser={currentUser}
                   followersCount={user.followersCount}
                   followingCount={user.followingCount}
                 ></Followers>

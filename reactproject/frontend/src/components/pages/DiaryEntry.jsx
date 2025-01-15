@@ -183,7 +183,7 @@ const DiaryEntry = () => {
               entryID: entryID,
               profile_image: user.profile_image,
               type: "gadify",
-              message: `${user.firstName} gadified your diary entry.`,
+              message: `${user.firstName} ${user.lastName} gadified your diary entry.`,
             })
             .then((res) => {
               console.log("Notification response:", res.data);
@@ -321,7 +321,7 @@ const DiaryEntry = () => {
             entryID: null,
             profile_image: user.profile_image,
             type: "follow",
-            message: `${user.username} has followed you.`,
+            message: `${user.firstName} ${user.lastName} has followed you.`,
           }
         );
 

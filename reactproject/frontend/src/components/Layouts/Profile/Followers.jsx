@@ -59,7 +59,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
   </div>
 );
 
-const Followers = ({ user, followersCount, followingCount }) => {
+const Followers = ({ user, currentUser, followersCount, followingCount }) => {
   const [showModal, setShowModal] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);

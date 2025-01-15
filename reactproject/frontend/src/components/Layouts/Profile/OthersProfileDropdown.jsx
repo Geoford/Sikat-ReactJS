@@ -45,6 +45,7 @@ const OthersProfileDropdown = ({
         ) : (
           <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
             <ReportUserProfileButton
+              user={user}
               userID={userID}
               firstName={firstName}
               toBeReported={toBeReported}
