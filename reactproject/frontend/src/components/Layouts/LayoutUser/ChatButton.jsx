@@ -21,11 +21,13 @@ const UserChatButton = () => {
   const [admin, setAdmin] = useState(null);
   const pusherRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleClose = () => {
     setShow(false);
     setMessages([]);
     setSelectedUser(null);
+    setUnreadCount(0);
   };
 
   const handleShow = async () => {
@@ -83,19 +85,21 @@ const UserChatButton = () => {
       const channel = pusherRef.current.subscribe("chat-channel");
 
       channel.bind("message-event", (data) => {
-        if (
-          (data.recipientID === user.userID &&
-            data.senderID === selectedUser) ||
-          (data.senderID === user.userID && data.recipientID === selectedUser)
-        ) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              username: data.username || "Unknown",
-              message: data.message,
-              senderID: data.senderID,
-            },
-          ]);
+        if (data.recipientID === user.userID) {
+          setUnreadCount((prev) => prev + 1); // Increment unread count
+          if (
+            data.senderID === selectedUser ||
+            (data.senderID === user.userID && data.recipientID === selectedUser)
+          ) {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                username: data.username || "Unknown",
+                message: data.message,
+                senderID: data.senderID,
+              },
+            ]);
+          }
         }
       });
 
@@ -199,9 +203,25 @@ const UserChatButton = () => {
         <button className="shadow p-2" onClick={handleShow}>
           <img src={ChatIcon} alt="" />
           <p>
-            <span className="tooltiptext" style={{ zIndex: "-2" }}>
-              Message GAD
-            </span>
+            {unreadCount > 0 && (
+              <span
+                className="position-absolute d-flex align-items-center justify-content-center"
+                style={{
+                  backgroundColor: "red",
+                  height: "20px",
+                  width: "20px",
+                  borderRadius: "50%",
+                  color: "#fff",
+                  fontSize: "0.8rem",
+                  transform: "translate(50%, -50%)",
+                  top: ".8em",
+                  left: "-1rem",
+                  border: "2px solid var(--background)",
+                }}
+              >
+                {unreadCount}
+              </span>
+            )}
           </p>
         </button>
       </div>

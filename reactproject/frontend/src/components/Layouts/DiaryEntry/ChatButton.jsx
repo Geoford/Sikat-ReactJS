@@ -28,10 +28,6 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
   };
 
   const handleShow = () => {
-    if (userToChat) {
-      setSelectedUser(users.find((usr) => usr.userID === userToChat));
-      fetchMessagesForSelectedUser(userToChat);
-    }
     setShow(true);
   };
 
@@ -107,7 +103,6 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
   }, [user, selectedUser]);
 
   useEffect(() => {
-    // Scroll to the bottom of the messages container whenever messages change
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -122,6 +117,14 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
 
       setMessages(response.data);
       setSelectedUser(users.find((usr) => usr.userID === withUserID));
+
+      setUsers((prevUsers) =>
+        prevUsers.map((userItem) =>
+          userItem.userID === withUserID
+            ? { ...userItem, unreadMessages: 0 }
+            : userItem
+        )
+      );
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -135,23 +138,27 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
     if (newMessage.trim() === "" || !user || !selectedUser) return;
 
     try {
-      const response = await fetch(`http://localhost:8081/message`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          senderID: user.userID,
-          recipientID: selectedUser.userID,
-          message: newMessage,
-        }),
+      const response = await axios.post("http://localhost:8081/message", {
+        senderID: user.userID,
+        recipientID: selectedUser.userID,
+        message: newMessage,
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Failed to send message");
       }
 
-      setNewMessage("");
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          senderID: user.userID,
+          message: newMessage,
+          created_at: new Date().toISOString(), // Add a timestamp
+        },
+      ]);
+
+      setNewMessage(""); // Clear the input field
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the latest message
     } catch (error) {
       console.error("Error sending message:", error);
       alert("Failed to send message. Please try again.");
@@ -160,10 +167,9 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
 
   const handleBackClick = () => {
     setSelectedUser(null);
-    setMessages([]); // Clear messages when going back
+    setMessages([]);
   };
 
-  // Function to filter users based on search query
   const filteredUsers = users.filter((userItem) =>
     `${userItem.firstName} ${userItem.lastName}`
       .toLowerCase()
@@ -358,7 +364,7 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
                                 fontSize: "clamp(0.5rem, 1.5dvw, 0.6rem)",
                               }}
                             >
-                              {formatDate(msg.created_at)}
+                              {msg.created_at ? formatDate(msg.created_at) : ""}
                             </span>{" "}
                           </p>
                         </div>
