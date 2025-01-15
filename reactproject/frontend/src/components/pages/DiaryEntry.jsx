@@ -636,6 +636,7 @@ const DiaryEntry = () => {
                       style={{ height: "18dvh" }}
                     >
                       <DiaryDetails
+                        user={user}
                         entry={entry}
                         isAdmin={user.isAdmin}
                         entrySubject={entry.subjects}

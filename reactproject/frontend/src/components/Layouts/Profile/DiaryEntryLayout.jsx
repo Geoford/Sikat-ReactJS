@@ -522,7 +522,8 @@ const DiaryEntryLayout = ({
         style={{ minHeight: "5rem" }}
       >
         <div className="d-flex alig-items-center gap-1 position-relative">
-          {entry.subjects === "None(no subject or topic)" ? null : (
+          {entry.subjects === "None(no subject or topic)" ||
+          entry.subjects === null ? null : (
             <h6 className="text-secondary m-0 mt-2">
               <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
                 Trigger Warning: {entry.subjects}
@@ -531,7 +532,7 @@ const DiaryEntryLayout = ({
           )}
         </div>
 
-        <div className="d-flex gap-1 align-items-center mt-2">
+        <div className="d-flex gap-1 align-items-center mt-2 position-relative">
           <div className="d-flex flex-column gap-1">
             <h5 className="m-0">{entry.title}</h5>
           </div>

@@ -237,7 +237,7 @@ const UserChatButton = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="p-2">
                   <Dropdown.Item className="btn btn-light rounded">
-                    <Link to={"/GetHelp/"}>
+                    <Link to={`/GetHelp/${user.userID}`}>
                       <button className="secondaryButton text-decoration-underline p-0">
                         <p className="m-0">Report an Incident</p>
                       </button>

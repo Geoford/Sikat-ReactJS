@@ -597,7 +597,7 @@ const DiaryEntryLayout = ({
           )}
         </div>
 
-        <div className="d-flex gap-1 align-items-center mt-2">
+        <div className="d-flex gap-1 align-items-center mt-2 position-relative">
           <div className="d-flex flex-column gap-1">
             <h5 className="m-0">
               {entry.title}
@@ -623,9 +623,7 @@ const DiaryEntryLayout = ({
                 </p>
               </div>
             </div>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
 
         <p style={{ whiteSpace: "pre-wrap" }}>{entry.description}</p>

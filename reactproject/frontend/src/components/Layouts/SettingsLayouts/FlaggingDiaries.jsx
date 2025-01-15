@@ -75,6 +75,7 @@ const FlaggingDiaries = () => {
         const newFlag = { reason: newOption, flagID: Date.now(), count: 0 };
         setFlaggingOptions([...flaggingOptions, newFlag]);
         setFilteredOptions([...flaggingOptions, newFlag]);
+        setNewOption("");
         setModal({
           show: true,
           message: `Flaggin option added successfully.`,
@@ -218,59 +219,71 @@ const FlaggingDiaries = () => {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((option) => (
-              <tr key={option.flagID}>
-                <td>
-                  {editingOption === option.flagID ? (
-                    <Form.Control
-                      className="bg-transparent text-center border-0 border-bottom border-2"
-                      type="text"
-                      value={editedReason}
-                      onChange={(e) => setEditedReason(e.target.value)}
-                    />
-                  ) : (
-                    <p className="m-0 mt-2">{option.reason}</p>
-                  )}
-                </td>
-                <td className="d-flex justify-content-center gap-1">
-                  {editingOption === option.flagID ? (
-                    <>
-                      <Button
-                        className="px-3"
-                        variant="primary"
-                        onClick={() => handleSaveEdit(option.flagID)}
-                      >
-                        <p className="m-0">Save</p>
-                      </Button>
-                      <Button
-                        className="px-3"
-                        variant="secondary"
-                        onClick={() => setEditingOption(null)}
-                      >
-                        <p className="m-0">Cancel</p>
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="primaryButton"
-                        onClick={() =>
-                          handleEditOption(option.flagID, option.reason)
-                        }
-                      >
-                        <p className="m-0">Edit</p>
-                      </button>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleDeleteOption(option.flagID)}
-                      >
-                        <p className="m-0">Remove</p>
-                      </Button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {currentItems.length === 0 ? (
+              <>
+                <tr className="align-middle">
+                  <td colSpan={2}>
+                    <p className="m-0">No Flagging Options</p>
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <>
+                {currentItems.map((option) => (
+                  <tr key={option.flagID}>
+                    <td>
+                      {editingOption === option.flagID ? (
+                        <Form.Control
+                          className="bg-transparent text-center border-0 border-bottom border-2"
+                          type="text"
+                          value={editedReason}
+                          onChange={(e) => setEditedReason(e.target.value)}
+                        />
+                      ) : (
+                        <p className="m-0 mt-2">{option.reason}</p>
+                      )}
+                    </td>
+                    <td className="d-flex justify-content-center gap-1">
+                      {editingOption === option.flagID ? (
+                        <>
+                          <Button
+                            className="px-3"
+                            variant="primary"
+                            onClick={() => handleSaveEdit(option.flagID)}
+                          >
+                            <p className="m-0">Save</p>
+                          </Button>
+                          <Button
+                            className="px-3"
+                            variant="secondary"
+                            onClick={() => setEditingOption(null)}
+                          >
+                            <p className="m-0">Cancel</p>
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="primaryButton"
+                            onClick={() =>
+                              handleEditOption(option.flagID, option.reason)
+                            }
+                          >
+                            <p className="m-0">Edit</p>
+                          </button>
+                          <Button
+                            variant="danger"
+                            onClick={() => handleDeleteOption(option.flagID)}
+                          >
+                            <p className="m-0">Remove</p>
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </Table>
       </div>
