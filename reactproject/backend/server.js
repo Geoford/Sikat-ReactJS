@@ -1565,6 +1565,28 @@ app.put("/reviewed", (req, res) => {
   );
 });
 
+app.put("/reviewedProfile/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  if (!userID) {
+    res.status(400).send({ error: "userID ID is required" });
+    return;
+  }
+
+  db.query(
+    "UPDATE reported_users SET isReviewed = 1, isAddress = 1 WHERE userID = ?",
+    [userID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating Reviewed:", err);
+        res.status(500).send({ error: "Failed to update Reviewed" });
+      } else {
+        res.status(200).send({ message: "Reviewed updated" });
+      }
+    }
+  );
+});
+
 app.put("/reviewedComments", (req, res) => {
   const { entryID } = req.body;
 

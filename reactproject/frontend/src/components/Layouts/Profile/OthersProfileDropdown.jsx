@@ -3,7 +3,7 @@ import EditPersonalDetailButton from "../../pages/PagesUser/UserProfileLayout/Ed
 import ReportUserProfileButton from "./ReportUserProfileButton";
 import Suspend from "./Suspend";
 import ChatButton from "./ChatButton";
-import Reviewed from "./Reviewed";
+import ProfileReview from "./ProfileReview";
 
 const OthersProfileDropdown = ({
   user,
@@ -63,13 +63,7 @@ const OthersProfileDropdown = ({
               firstName={firstName}
               suspended={suspended}
             ></Suspend>
-            <Reviewed
-              entry={entry}
-              entryID={entry.entryID}
-              userID={entry.userID}
-              firstName={entry.firstName}
-              suspended={entry.isSuspended}
-            ></Reviewed>
+            <ProfileReview userID={userID}></ProfileReview>
           </Dropdown.Item>
         ) : (
           ""
