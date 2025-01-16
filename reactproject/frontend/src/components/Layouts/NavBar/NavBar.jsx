@@ -131,7 +131,7 @@ const NavBar = ({ ActiveTab }) => {
               }`}
               to="/Followers"
             >
-              <i class="bx bx-user-plus"></i>
+              <i className="bx bx-group bx-sm"></i>
               <p className="navToolTip">Followers</p>
             </Link>
           )}

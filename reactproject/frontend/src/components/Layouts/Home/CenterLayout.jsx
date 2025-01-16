@@ -330,7 +330,7 @@ const CenterLayout = () => {
   if (!user) return null;
 
   return (
-    <div className="p-2 px-0 mx-sm-5 mx-md-0">
+    <div className="p-2 px-0 mx-sm-5 mx-md-0" style={{ minHeight: "30rem" }}>
       <MessageAlert
         showModal={modal}
         closeModal={closeModal}

@@ -289,11 +289,11 @@ function EditDiaryEntryButton({
             style={{ zIndex: "1" }}
           >
             <EditSubjectSelection onSubjectsChange={handleSubjectsChange} />
-            {selectedSubjects && (
+            {/* {selectedSubjects && (
               <div className="">
                 <p className="m-0">{selectedSubjects}</p>
               </div>
-            )}
+            )} */}
           </div>
           <div
             className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"

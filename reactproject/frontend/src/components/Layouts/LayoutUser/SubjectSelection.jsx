@@ -115,6 +115,7 @@ const SubjectSelection = ({ onSubjectsChange }) => {
                 name={subject.subject}
                 checked={selectedItems[subject.subject] || false}
                 onChange={handleCheckboxChange}
+                style={{ width: "clamp(13rem, 10dvw, 18rem)" }}
               />
             ))}
 

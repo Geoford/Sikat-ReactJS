@@ -95,7 +95,7 @@ const EditSubjectSelection = ({ onSubjectsChange }) => {
         <p className="m-0">Subject/Topic</p>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="px-2" style={{}}>
+      <Dropdown.Menu className="px-2">
         {filterSubjects.length > 0 && (
           <>
             {/* <Form.Check
@@ -115,6 +115,7 @@ const EditSubjectSelection = ({ onSubjectsChange }) => {
                 name={subject.subject}
                 checked={selectedItems[subject.subject] || false}
                 onChange={handleCheckboxChange}
+                style={{ width: "clamp(13rem, 10dvw, 18rem)" }}
               />
             ))}
 

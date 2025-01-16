@@ -237,8 +237,8 @@ function DiaryEntryButton({ onEntrySaved }) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-center gap-2 border-bottom pb-2">
-            <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center justify-content-between gap-2 border-bottom pb-2">
+            <div className="w-50 d-flex align-items-center gap-2">
               <div className="profilePicture">
                 <img
                   src={
@@ -258,7 +258,7 @@ function DiaryEntryButton({ onEntrySaved }) {
                 {user?.firstName} {user?.lastName || "User"}
               </p>
             </div>
-            <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
+            <div className="w-75 row d-flex flex-column flex-md-row justify-content-center align-items-center gap-1 mx-2">
               <div class="col input-group p-0">
                 <select
                   class="form-select"
@@ -291,7 +291,7 @@ function DiaryEntryButton({ onEntrySaved }) {
           <div className="mt-1 d-flex align-items-center">
             <SubjectSelection onSubjectsChange={handleSubjectsChange} />
             <div className="ms-2 d-flex align-items-center">
-              {selectedSubjects && <p className="m-0">{selectedSubjects}</p>}
+              {/* {selectedSubjects && <p className="m-0">{selectedSubjects}</p>} */}
               {!selectedSubjects && (
                 <p className="text-danger m-0">{formErrors.subjects}</p>
               )}
