@@ -11,6 +11,7 @@ import MessageModal from "../DiaryEntry/messageModal";
 import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import MessageAlert from "../DiaryEntry/messageAlert";
+import NewUserSetUp from "../../pages/PagesUser/NewUserSetUp";
 
 const CenterLayout = () => {
   const [entries, setEntries] = useState([]);
@@ -345,6 +346,11 @@ const CenterLayout = () => {
         confirm={confirmModal.onConfirm}
         needConfirm={1}
       ></MessageModal>
+
+      {!user.isAdmin && user.isNewAccount ? (
+        <NewUserSetUp user={user}></NewUserSetUp>
+      ) : null}
+
       <div
         className="rounded shadow-sm p-3 my-1"
         style={{ backgroundColor: "white" }}

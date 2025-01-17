@@ -523,6 +523,7 @@ const DiaryEntryLayout = ({
       >
         <div className="d-flex alig-items-center gap-1 position-relative">
           {entry.subjects === "None(no subject or topic)" ||
+          entry.subjects === "General" ||
           entry.subjects === null ? null : (
             <h6 className="text-secondary m-0 mt-2">
               <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>

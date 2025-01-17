@@ -150,7 +150,7 @@ const LeftSideAdmin = () => {
                     <div className="d-flex flex-column align-items-start p-1">
                       <p className="m-0 text-start text-secondary">
                         {entry.title}{" "}
-                        <span>
+                        <span className="">
                           {entry.visibility === "private" ? (
                             <i class="bx bx-lock-alt"></i>
                           ) : (

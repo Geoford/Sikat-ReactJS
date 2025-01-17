@@ -878,7 +878,7 @@ app.post(
         });
 
         const userQuery = `
-        SELECT u.firstName, up.profile_image 
+        SELECT u.firstName, u.lastName, up.profile_image 
         FROM user_table u
         JOIN user_profiles up ON u.userID = up.userID
         WHERE u.userID = ?
@@ -895,11 +895,12 @@ app.post(
           }
 
           const userFirstName = userResults[0]?.firstName || "User";
+          const userLastName = userResults[0]?.lastName || "User";
           const userProfileImage =
             userResults[0]?.profile_image || "/default-profile.png";
 
           if (hasAlarmingWords) {
-            const notificationMessage = `A diary entry containing alarming words has been posted by user ${userFirstName}`;
+            const notificationMessage = `A diary entry containing alarming words has been posted by ${userFirstName} ${userLastName}`;
 
             const adminQuery = `SELECT userID FROM user_table WHERE isAdmin = 1`;
 
@@ -1554,6 +1555,28 @@ app.put("/reviewed", (req, res) => {
   db.query(
     "UPDATE flagged_reports SET isReviewed = 1 WHERE entryID = ?",
     [entryID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating Reviewed:", err);
+        res.status(500).send({ error: "Failed to update Reviewed" });
+      } else {
+        res.status(200).send({ message: "Reviewed updated" });
+      }
+    }
+  );
+});
+
+app.put("/isNewAccount", (req, res) => {
+  const { userID } = req.body;
+
+  if (!userID) {
+    res.status(400).send({ error: "userID ID is required" });
+    return;
+  }
+
+  db.query(
+    "UPDATE user_table SET isNewAccount = 0 WHERE userID = ?",
+    [userID],
     (err, result) => {
       if (err) {
         console.error("Error updating Reviewed:", err);

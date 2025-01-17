@@ -33,32 +33,36 @@ const SubjectSelection = ({ onSubjectsChange }) => {
     const { name, checked } = event.target;
 
     let updatedItems;
-    if (name === "all") {
+    if (name === "General") {
+      // If "General" is checked, deselect all others
       updatedItems = filterSubjects.reduce((acc, subject) => {
-        acc[subject.subject] = checked;
+        acc[subject.subject] = false;
         return acc;
       }, {});
-      updatedItems.all = checked;
+      updatedItems.General = checked; // Only "General" is selected
     } else {
-      updatedItems = { ...selectedItems, [name]: checked };
+      // If any other checkbox is selected, deselect "General"
+      updatedItems = { ...selectedItems, [name]: checked, General: false };
     }
 
     setSelectedItems(updatedItems);
 
+    // Prepare selected subjects text
     const selectedSubjectsText = [];
     filterSubjects.forEach((subject) => {
       if (updatedItems[subject.subject])
         selectedSubjectsText.push(subject.subject);
     });
 
-    if (updatedItems.other && customReason)
+    if (updatedItems.other && customReason) {
       selectedSubjectsText.push(customReason);
+    }
 
-    // If there are no subjects selected, pass null
+    // Pass the updated subjects or null if none selected
     if (selectedSubjectsText.length > 0) {
       onSubjectsChange(selectedSubjectsText.join(", "));
     } else {
-      onSubjectsChange(null); // Set to null if no subject is selected
+      onSubjectsChange(null);
     }
   };
 
@@ -100,9 +104,9 @@ const SubjectSelection = ({ onSubjectsChange }) => {
           <>
             {/* <Form.Check
               type="checkbox"
-              id="none"
-              label="None(If subject is N/A)"
-              name="none"
+              id="general"
+              label="General"
+              name="general"
               checked="{selectedItems.all}"
               onChange={handleCheckboxChange}
             /> */}

@@ -11,7 +11,7 @@ import FrequentlyAskQuestion from "./FrequentlyAskQuestion";
 import axios from "axios";
 import { Dropdown } from "react-bootstrap";
 
-const UserChatButton = () => {
+const ChatButton = () => {
   const [show, setShow] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -257,7 +257,6 @@ const UserChatButton = () => {
                   color: "#ffff",
                 }}
               ></div>
-
               <Dropdown>
                 <Dropdown.Toggle
                   className="btn-light d-flex align-items-center pt-0 pb-2"
@@ -268,7 +267,7 @@ const UserChatButton = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="p-2">
                   <Dropdown.Item className="btn btn-light rounded">
-                    <Link to={"/GetHelp/"}>
+                    <Link to={`/GetHelp/${user?.userID}`}>
                       <button className="secondaryButton text-decoration-underline p-0">
                         <p className="m-0">Report an Incident</p>
                       </button>
@@ -399,4 +398,4 @@ const UserChatButton = () => {
   );
 };
 
-export default UserChatButton;
+export default ChatButton;

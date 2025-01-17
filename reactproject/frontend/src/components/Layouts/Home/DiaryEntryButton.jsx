@@ -211,7 +211,7 @@ function DiaryEntryButton({ onEntrySaved }) {
         className="primaryButton w-100 d-flex align-items-center justify-content-center"
         onClick={handleShow}
       >
-        <p className="m-0">Diary Entry</p>
+        <p className="m-0">Post Diary</p>
         <i className="bx bxs-edit m-0 ms-1"></i>
       </button>
 
