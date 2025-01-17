@@ -42,7 +42,11 @@ const ChatButton = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://localhost:8081/users");
-        setUsers(response.data);
+        const updatedUsers = response.data.map((user) => ({
+          ...user,
+          lastMessageTime: null,
+        }));
+        setUsers(updatedUsers);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -69,6 +73,7 @@ const ChatButton = () => {
             return {
               ...userItem,
               unreadMessages: (userItem.unreadMessages || 0) + 1,
+              lastMessageTime: new Date().toISOString(),
             };
           }
           return userItem;
@@ -119,7 +124,11 @@ const ChatButton = () => {
       setUsers((prevUsers) =>
         prevUsers.map((userItem) =>
           userItem.userID === withUserID
-            ? { ...userItem, unreadMessages: 0 }
+            ? {
+                ...userItem,
+                unreadMessages: 0,
+                lastMessageTime: new Date().toISOString(),
+              }
             : userItem
         )
       );
@@ -127,6 +136,12 @@ const ChatButton = () => {
       console.error("Error fetching messages:", error);
     }
   };
+
+  const sortedUsers = [...users].sort((a, b) => {
+    const timeA = new Date(a.lastMessageTime || 0);
+    const timeB = new Date(b.lastMessageTime || 0);
+    return timeB - timeA;
+  });
 
   const handleUserClick = (userItem) => {
     fetchMessagesForSelectedUser(userItem.userID);
@@ -168,7 +183,7 @@ const ChatButton = () => {
     setMessages([]);
   };
 
-  const filteredUsers = users.filter((userItem) =>
+  const filteredUsers = sortedUsers.filter((userItem) =>
     `${userItem.firstName} ${userItem.lastName}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
@@ -180,7 +195,6 @@ const ChatButton = () => {
     const timeDiff = now - entryDate;
 
     if (timeDiff < 24 * 60 * 60 * 1000) {
-      // If the entry is within the last 24 hours, show only the time
       return entryDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
