@@ -3944,6 +3944,59 @@ app.get("/filedCases/:userID", (req, res) => {
   );
 });
 
+app.post("/saveUserFilters", (req, res) => {
+  const { userID, filters } = req.body;
+
+  if (!userID || !filters || !Array.isArray(filters)) {
+    return res.status(400).json({ error: "Invalid input data" });
+  }
+
+  const insertQuery = `
+    INSERT INTO user_filters (userID, filter)
+    VALUES (?, ?)
+  `;
+
+  let hasError = false;
+
+  filters.forEach((filter, index) => {
+    db.query(insertQuery, [userID, filter], (err) => {
+      if (err) {
+        hasError = true;
+
+        return res.status(500).json({ error: "Error saving user filters" });
+      }
+
+      if (index === filters.length - 1 && !hasError) {
+        res.status(200).json({ message: "Filters saved successfully" });
+      }
+    });
+  });
+});
+
+app.get("/getUserFilters/:userID", (req, res) => {
+  const { userID } = req.params;
+
+  if (!userID) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  const selectQuery = `
+    SELECT filter
+    FROM user_filters
+    WHERE userID = ?
+  `;
+
+  db.query(selectQuery, [userID], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Error retrieving user filters" });
+    }
+
+    // Instead of 404, return an empty array if no filters are found
+    const filters = results.map((row) => row.filter);
+    res.status(200).json({ filters: filters.length > 0 ? filters : [] });
+  });
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

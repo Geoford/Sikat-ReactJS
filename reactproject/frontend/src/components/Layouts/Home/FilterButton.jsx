@@ -1,34 +1,49 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
 import { useState, useEffect } from "react";
-import axios from "axios"; // Make sure you have axios installed for fetching data
+import axios from "axios";
 
-const FilterButton = ({ onFilterChange }) => {
+const FilterButton = ({ onFilterChange, userID }) => {
   const [selectedItems, setSelectedItems] = useState({});
   const [filterOptions, setFilterOptions] = useState([]);
 
-  // Fetch filter subjects from the backend on mount
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/filters"); // Fetch the filter subjects
+        const response = await axios.get("http://localhost:8081/filters");
         const filters = response.data;
 
-        // Initialize the selectedItems state dynamically based on fetched filters
         const initialItems = {};
         filters.forEach((filter) => {
-          initialItems[filter.subject] = false; // Initialize each filter as unchecked
+          initialItems[filter.subject] = false;
         });
 
-        setSelectedItems(initialItems);
-        setFilterOptions(filters); // Store the fetched filter subjects
+        setFilterOptions(filters);
+
+        if (userID) {
+          const userFiltersResponse = await axios.get(
+            `http://localhost:8081/getUserFilters/${userID}`
+          );
+          const savedFilters = userFiltersResponse.data.filters;
+
+          console.log("Saved filters from backend:", savedFilters);
+
+          const updatedItems = { ...initialItems };
+          savedFilters.forEach((filter) => {
+            if (updatedItems.hasOwnProperty(filter)) {
+              updatedItems[filter] = true;
+            }
+          });
+
+          setSelectedItems(updatedItems);
+        }
       } catch (err) {
         console.error("Error fetching filters:", err);
       }
     };
 
     fetchFilters();
-  }, []);
+  }, [userID]);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -36,27 +51,14 @@ const FilterButton = ({ onFilterChange }) => {
 
     setSelectedItems(updatedItems);
 
-    // Convert the selected items to a descriptive text format
     const selectedSubjectsText = [];
     filterOptions.forEach((filter) => {
-      if (updatedItems[filter.subject])
+      if (updatedItems[filter.subject]) {
         selectedSubjectsText.push(filter.subject);
+      }
     });
 
-    // Send the descriptive text to the parent component
     onFilterChange(selectedSubjectsText);
-  };
-
-  const applyFilters = () => {
-    const selectedFilters = [];
-    filterOptions.forEach((filter) => {
-      if (selectedItems[filter.subject]) selectedFilters.push(filter.subject);
-    });
-
-    console.log("Applied Filters:", JSON.stringify(selectedFilters, null, 2));
-
-    // Send the selected filters back to the parent component
-    onFilterChange(selectedFilters);
   };
 
   return (
@@ -67,7 +69,7 @@ const FilterButton = ({ onFilterChange }) => {
         id="dropdown-basic"
       >
         <h6 className="m-0 d-flex align-items-center gap-1">
-          <i class="bx bx-filter-alt"></i> Filter
+          <i className="bx bx-filter-alt"></i> Filter
         </h6>
       </Dropdown.Toggle>
 
@@ -77,18 +79,15 @@ const FilterButton = ({ onFilterChange }) => {
       >
         {filterOptions.map((filter) => (
           <Form.Check
-            key={filter.subject} // Use 'subject' for the key
+            key={filter.subject}
             type="checkbox"
-            id={filter.subject} // Use 'subject' for the id
-            label={filter.subject} // Use 'subject' for the label
-            name={filter.subject} // Use 'subject' for the name
+            id={filter.subject}
+            label={filter.subject}
+            name={filter.subject}
             checked={selectedItems[filter.subject] || false}
             onChange={handleCheckboxChange}
           />
         ))}
-        {/* <button className="orangeButton w-100" onClick={applyFilters}>
-          Apply Filters
-        </button> */}
       </Dropdown.Menu>
     </Dropdown>
   );

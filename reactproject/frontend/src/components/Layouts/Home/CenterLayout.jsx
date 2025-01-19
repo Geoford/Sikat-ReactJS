@@ -20,11 +20,7 @@ const CenterLayout = () => {
   const [activeButtons, setActiveButtons] = useState({});
   const [expandButtons, setExpandButtons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    sexualHarassment: false,
-    domesticAbuse: false,
-    genderRelated: false,
-  });
+  const [filters, setFilters] = useState({});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -514,7 +510,10 @@ const CenterLayout = () => {
         </>
       ) : null}
       <div className="d-flex justify-content-end">
-        <FilterButton onFilterChange={handleFilterChange} />
+        <FilterButton
+          onFilterChange={handleFilterChange}
+          userID={user.userID}
+        />
       </div>
       {/* FOR POSTED DIARIES */}
       {entries.length === 0 ? (

@@ -57,6 +57,26 @@ const NewUserSetUp = ({ user }) => {
     }
   };
 
+  const handleSaveFilters = async () => {
+    const selectedFilters = Object.keys(selectedItems).filter(
+      (filter) => selectedItems[filter]
+    );
+
+    if (selectedFilters.length > 0) {
+      try {
+        await axios.post("http://localhost:8081/saveUserFilters", {
+          userID: user.userID,
+          filters: selectedFilters,
+        });
+        console.log("Filters saved successfully");
+      } catch (error) {
+        console.error("Error saving filters:", error);
+      }
+    } else {
+      console.log("No filters selected.");
+    }
+  };
+
   const [step, setStep] = useState(1);
   const handleNextStep = async (userID) => {
     try {
@@ -113,15 +133,12 @@ const NewUserSetUp = ({ user }) => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {/* <button
-              className="btn btn-secondary py-2"
-              onClick={handleCloseSetup}
-            >
-              Skip
-            </button> */}
             <button
               className="primaryButton py-2 rounded"
-              onClick={() => handleNextStep(user.userID)}
+              onClick={() => {
+                handleSaveFilters();
+                handleNextStep(user.userID);
+              }}
             >
               Save
             </button>
