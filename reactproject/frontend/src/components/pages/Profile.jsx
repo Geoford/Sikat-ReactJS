@@ -528,6 +528,7 @@ const Profile = () => {
                 ""
               ) : (
                 <Followers
+                  ownProfile={ownProfile}
                   user={user}
                   currentUser={currentUser}
                   followersCount={user.followersCount}

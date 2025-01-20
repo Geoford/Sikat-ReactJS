@@ -229,11 +229,29 @@ export default function GenderBasedIncidents() {
                         <p className="m-0">{report.reportID}</p>
                       </p>
                     </th>
-                    <td className="text-center align-middle">
-                      <p className="m-0 mt-1">{report.victimName}</p>
+                    <td
+                      className={`text-center align-middle ${
+                        report.victimName ? "" : "text-secondary"
+                      }`}
+                    >
+                      <p className="m-0 mt-1">
+                        {report.victimName
+                          ? report.victimName
+                          : "Prefer not to Say"}
+                      </p>
                     </td>
-                    <td className="text-center align-middle">
-                      <p className="m-0 mt-1">{report.gender}</p>
+                    <td
+                      className={`text-center align-middle ${
+                        report.gender === "prefer not to say"
+                          ? "text-secondary"
+                          : ""
+                      }`}
+                    >
+                      <p className="m-0 mt-1">
+                        {report.gender === "prefer not to say"
+                          ? "Prefer not to Say"
+                          : report.gender}
+                      </p>
                     </td>
                     <td className="text-center align-middle">
                       <p className="m-0 mt-1">{report.location}</p>

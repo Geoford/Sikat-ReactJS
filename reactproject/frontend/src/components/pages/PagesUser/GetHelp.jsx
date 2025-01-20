@@ -206,7 +206,7 @@ const GetHelp = () => {
                   <option value="">Sex</option>
                   <option value="Male">Male</option>
                   <option value="Memale">Female</option>
-                  <option value="prefer-not-to-say">Prefer not to say</option>
+                  <option value="prefer not to say">Prefer not to say</option>
                 </Form.Select>
               </div>
             </div>

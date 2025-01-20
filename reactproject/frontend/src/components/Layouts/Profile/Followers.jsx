@@ -10,56 +10,15 @@ import { useNavigate } from "react-router-dom";
 import MessageAlert from "../DiaryEntry/messageAlert";
 import MessageModal from "../DiaryEntry/messageModal";
 import { first } from "lodash";
+import UserList from "./UserList";
 
-const UserList = ({ users, handleFollowToggle, isFollowing }) => (
-  <div
-    className="custom-scrollbar mt-2 pe-1"
-    style={{ height: "70vh", overflowY: "scroll" }}
-  >
-    {users.map((user) => (
-      <div key={user.userID} className="pb-2 pe-2 mb-2">
-        <div className="position-relative d-flex align-items-center justify-content-between gap-2">
-          <Link
-            to={`/Profile/${user.userID}`}
-            className="linkText rounded d-flex justify-content-between w-100 p-2"
-          >
-            <div className="d-flex align-items-center">
-              <div className="profilePicture">
-                <img
-                  src={
-                    user.profile_image
-                      ? `http://localhost:8081${user.profile_image}`
-                      : DefaultProfile
-                  }
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-              <p className="m-0 ms-2">
-                {user.firstName} {user.lastName}
-              </p>
-            </div>
-          </Link>
-          <button
-            className="primaryButton position-absolute"
-            onClick={() => handleFollowToggle(user.userID, user.firstName)}
-            style={{ right: "0" }}
-          >
-            <p className="m-0">
-              {isFollowing(user.userID) ? "Unfollow" : "Follow"}
-            </p>
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-const Followers = ({ user, currentUser, followersCount, followingCount }) => {
+const Followers = ({
+  ownProfile,
+  user,
+  currentUser,
+  followersCount,
+  followingCount,
+}) => {
   const [showModal, setShowModal] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
@@ -216,7 +175,7 @@ const Followers = ({ user, currentUser, followersCount, followingCount }) => {
             className="mb-3"
           >
             <Tab eventKey="Followers" title="Followers">
-              <div>
+              {/* <div>
                 <UserList
                   users={followers}
                   handleFollowToggle={handleFollowToggle}
@@ -224,16 +183,30 @@ const Followers = ({ user, currentUser, followersCount, followingCount }) => {
                     followedUsers.some((f) => f.userID === id)
                   }
                 />
-              </div>
+              </div> */}
+              <UserList
+                ownProfile={ownProfile}
+                currentUser={currentUser}
+                users={followers}
+                handleFollowToggle={handleFollowToggle}
+                isFollowing={(id) => followedUsers.some((f) => f.userID === id)}
+              ></UserList>
             </Tab>
             <Tab eventKey="Following" title="Following">
-              <div>
+              {/* <div>
                 <UserList
                   users={followedUsers}
                   handleFollowToggle={handleFollowToggle}
                   isFollowing={() => true}
                 />
-              </div>
+              </div> */}
+              <UserList
+                ownProfile={ownProfile}
+                currentUser={currentUser}
+                users={followedUsers}
+                handleFollowToggle={handleFollowToggle}
+                isFollowing={() => true}
+              ></UserList>
             </Tab>
           </Tabs>
         </Modal.Body>
