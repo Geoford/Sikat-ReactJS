@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const FilterButton = ({ onFilterChange, userID }) => {
+const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
   const [selectedItems, setSelectedItems] = useState({});
   const [filterOptions, setFilterOptions] = useState([]);
 
@@ -26,8 +26,6 @@ const FilterButton = ({ onFilterChange, userID }) => {
           );
           const savedFilters = userFiltersResponse.data.filters;
 
-          console.log("Saved filters from backend:", savedFilters);
-
           const updatedItems = { ...initialItems };
           savedFilters.forEach((filter) => {
             if (updatedItems.hasOwnProperty(filter)) {
@@ -36,6 +34,7 @@ const FilterButton = ({ onFilterChange, userID }) => {
           });
 
           setSelectedItems(updatedItems);
+          onFilterChange(savedFilters);
         }
       } catch (err) {
         console.error("Error fetching filters:", err);

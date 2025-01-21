@@ -34,11 +34,7 @@ const DiaryEntryLayout = ({
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]); // New state for comments
   const [flaggedCount, setFlaggedCount] = useState(null);
-  const [filters, setFilters] = useState({
-    sexualHarassment: false,
-    domesticAbuse: false,
-    genderRelated: false,
-  });
+  const [filters, setFilters] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
