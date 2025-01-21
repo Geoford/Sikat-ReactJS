@@ -79,6 +79,7 @@ const CaseDetailDownloadButton = ({ caseDetails }) => {
         {
           title: "Incident Details",
           content: [
+            ["Subject/s", caseDetails.subjects],
             ["Perpetrator", caseDetails.perpetratorName],
             ["Location", caseDetails.location],
             ["Date", new Date(caseDetails.date).toLocaleDateString()],
