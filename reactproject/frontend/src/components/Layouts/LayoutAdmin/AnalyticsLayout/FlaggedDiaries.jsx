@@ -7,6 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import MessageModal from "../../DiaryEntry/messageModal";
 import MessageAlert from "../../DiaryEntry/messageAlert";
+import FlaggedDiariesDownloadButton from "../../DownloadButton/FlaggedDiariesDownloadButton";
 
 const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -136,92 +137,6 @@ const FlaggedDiaries = ({ flags }) => {
     });
   };
 
-  const downloadData = (format) => {
-    if (format === "html") {
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Flagged Diaries</title>
-          <style>
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            th, td {
-              border: 1px solid #ddd;
-              padding: 8px;
-            }
-            th {
-              background-color: #f4f4f4;
-              text-align: left;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Flagged Diaries</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Student No.</th>
-                <th>Full Name</th>
-                <th>Behavior</th>
-                <th>Title</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${currentUsers
-                .map(
-                  (flag) => `
-                <tr>
-                  <td>${flag.studentNumber}</td>
-                  <td>${flag.firstName} ${flag.lastName}</td>
-                  <td>${flag.reasons}</td>
-                  <td>${flag.title}</td>
-                </tr>
-              `
-                )
-                .join("")}
-            </tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      const blob = new Blob([htmlContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "flagged_diaries.html";
-      link.click();
-      URL.revokeObjectURL(url);
-    } else if (format === "excel") {
-      const header = ["Student No.", "Author", "Behavior", "Title"];
-      const rows = currentUsers.map((flag) => [
-        flag.studentNumber,
-        `${flag.firstName} ${flag.lastName}`,
-        flag.reasons,
-        flag.title,
-      ]);
-
-      const csvContent = [header, ...rows]
-        .map((row) => row.join(","))
-        .join("\n");
-
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "flagged_diaries.csv";
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  };
-
   return (
     <div className="d-flex flex-column">
       <MessageAlert
@@ -272,16 +187,16 @@ const FlaggedDiaries = ({ flags }) => {
               }}
             >
               <tr>
-                <th scope="col" className="text-center align-middle">
+                {/* <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Student No.</h5>
-                </th>
+                </th> */}
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Author</h5>
                 </th>
                 <th
                   scope="col"
                   className="text-center align-middle"
-                  style={{ minWidth: "clamp(11rem, 50dvw, 15dvw)" }}
+                  style={{ minWidth: "10rem", maxWidth: "10rem" }}
                 >
                   <div className="d-flex align-items-center justify-content-center">
                     <select
@@ -309,12 +224,16 @@ const FlaggedDiaries = ({ flags }) => {
                   <h5 className="m-0">Diary Title</h5>
                 </th>
                 <th scope="col" className="text-center align-middle">
-                  <h5 className="m-0">Status</h5>
-                </th>
-                <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Count</h5>
                 </th>
-                <th scope="col" className="text-center align-middle" style={{}}>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Status</h5>
+                </th>
+                <th
+                  scope="col"
+                  className="text-center align-middle"
+                  style={{ minWidth: "clamp(13rem, 20dvw, 15rem)" }}
+                >
                   <h5 className="m-0">Action</h5>
                 </th>
               </tr>
@@ -323,9 +242,9 @@ const FlaggedDiaries = ({ flags }) => {
               {currentUsers.length > 0 ? (
                 currentUsers.map((flag, index) => (
                   <tr key={index}>
-                    <th scope="row" className="text-center align-middle">
+                    {/* <th scope="row" className="text-center align-middle">
                       <p className="m-0">{flag.studentNumber}</p>
-                    </th>
+                    </th> */}
                     <td className="text-center align-middle">
                       <p className="m-0">{`${flag.firstName} ${flag.lastName}`}</p>
                     </td>
@@ -337,6 +256,9 @@ const FlaggedDiaries = ({ flags }) => {
                     </td>
 
                     <td className="text-center align-middle">
+                      <p className="m-0">{flag.count}</p>
+                    </td>
+                    <td className="text-center align-middle">
                       {flag.isAddress === 1 ? (
                         <p className="text-success m-0">Addressed</p>
                       ) : (
@@ -344,15 +266,10 @@ const FlaggedDiaries = ({ flags }) => {
                       )}
                     </td>
                     <td className="text-center align-middle">
-                      <p className="m-0">
-                        {flag.count} {flag.count > 1 ? "Times" : "Times"}
-                      </p>
-                    </td>
-                    <td className="text-center align-middle">
                       {/* Display actions only for pending reports */}
                       {!flag.isAddress && (
                         <button
-                          className="secondaryButton"
+                          className="secondaryButton p-2"
                           onClick={() => handleAddressed(flag.report_id)}
                         >
                           <p className="m-0">Mark as Reviewed</p>
@@ -417,22 +334,7 @@ const FlaggedDiaries = ({ flags }) => {
       </div>
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("html")}
-          >
-            <p className="m-0">Download as HTML</p>
-          </button>
-        </div>
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("excel")}
-          >
-            <p className="m-0">Download as Excel</p>
-          </button>
-        </div>
+        <FlaggedDiariesDownloadButton currentUsers={currentUsers} />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import MessageModal from "../../DiaryEntry/messageModal";
 import MessageAlert from "../../DiaryEntry/messageAlert";
+import ReportedCommentDownloadButton from "../../DownloadButton/ReportedCommentDownloadButton";
 
 const ReportedComment = ({ reportedComments }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -137,92 +138,6 @@ const ReportedComment = ({ reportedComments }) => {
     });
   };
 
-  const downloadData = (format) => {
-    if (format === "html") {
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title> Reported User </title>
-          <style>
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            th, td {
-              border: 1px solid #ddd;
-              padding: 8px;
-            }
-            th {
-              background-color: #f4f4f4;
-              text-align: left;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Reported User</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Student No.</th>
-                <th>Full Name</th>
-                <th>Reason</th>
-                <th>Comment</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${currentUsers
-                .map(
-                  (reportedComment) => `
-                <tr>
-                  <td>${reportedComment.studentNumber}</td>
-                  <td>${reportedComment.firstName} ${reportedComment.lastName}</td>
-                  <td>${reportedComment.reason}</td>
-                  <td>${reportedComment.text}</td>
-                </tr>
-              `
-                )
-                .join("")}
-            </tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      const blob = new Blob([htmlContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "reported_users.html";
-      link.click();
-      URL.revokeObjectURL(url);
-    } else if (format === "excel") {
-      const header = ["Student No.", "Full Name", "Reason", "Comment"];
-      const rows = currentUsers.map((reportedComment) => [
-        reportedComment.studentNumber,
-        `${reportedComment.firstName} ${reportedComment.lastName}`,
-        reportedComment.reason,
-        reportedComment.text,
-      ]);
-
-      const csvContent = [header, ...rows]
-        .map((row) => row.join(","))
-        .join("\n");
-
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "reported_user.csv";
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  };
-
   return (
     <div className="d-flex flex-column">
       <MessageAlert
@@ -274,9 +189,6 @@ const ReportedComment = ({ reportedComments }) => {
             >
               <tr>
                 <th scope="col" className="text-center align-middle">
-                  <h5 className="m-0">Student No.</h5>
-                </th>
-                <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Name</h5>
                 </th>
                 <th
@@ -306,8 +218,15 @@ const ReportedComment = ({ reportedComments }) => {
                     </select>
                   </div>
                 </th>
-                <th scope="col" className="text-center align-middle">
+                <th
+                  scope="col"
+                  className="text-center align-middle"
+                  style={{ minWidth: "clamp(9rem, 50dvw, 15rem)" }}
+                >
                   <h5 className="m-0">Reported Comment</h5>
+                </th>
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Count</h5>
                 </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
@@ -321,9 +240,6 @@ const ReportedComment = ({ reportedComments }) => {
               {currentUsers.length > 0 ? (
                 currentUsers.map((reportedComment) => (
                   <tr key={reportedComment.userID}>
-                    <th scope="row" className="text-center align-middle">
-                      <p className="m-0">{reportedComment.studentNumber}</p>
-                    </th>
                     <td className="text-center align-middle">
                       <p className="m-0">{`${reportedComment.firstName} ${reportedComment.lastName}`}</p>
                     </td>
@@ -332,6 +248,9 @@ const ReportedComment = ({ reportedComments }) => {
                     </td>
                     <td className="text-center align-middle">
                       <p className="m-0">{reportedComment.text}</p>
+                    </td>
+                    <td className="text-center align-middle">
+                      <p className="m-0">00</p>
                     </td>
                     <td className="text-success text-center align-middle">
                       {reportedComment.isAddress === 1 ? (
@@ -410,22 +329,7 @@ const ReportedComment = ({ reportedComments }) => {
       </div>
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("html")}
-          >
-            <p className="m-0">Download as HTML</p>
-          </button>
-        </div>
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("excel")}
-          >
-            <p className="m-0">Download as Excel</p>
-          </button>
-        </div>
+        <ReportedCommentDownloadButton currentUsers={currentUsers} />
       </div>
     </div>
   );

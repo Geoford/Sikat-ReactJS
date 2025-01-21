@@ -199,11 +199,15 @@ export default function GenderBasedIncidents() {
                   <th scope="col" className="text-center align-middle">
                     <h5 className="m-0">Sex</h5>
                   </th>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Location</h5>
+                  <th
+                    scope="col"
+                    className="text-center align-middle"
+                    style={{ width: "clamp(15rem, 20dvw, 20rem)" }}
+                  >
+                    <h5 className="m-0">Subjects</h5>
                   </th>
                   <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Date</h5>
+                    <h5 className="m-0">Incident Date</h5>
                   </th>
                   <th scope="col" className="text-center align-middle">
                     <h5 className="m-0">Actions</h5>
@@ -235,9 +239,7 @@ export default function GenderBasedIncidents() {
                       }`}
                     >
                       <p className="m-0 mt-1">
-                        {report.victimName
-                          ? report.victimName
-                          : "Prefer not to Say"}
+                        {report.victimName ? report.victimName : "Not Provided"}
                       </p>
                     </td>
                     <td
@@ -254,7 +256,7 @@ export default function GenderBasedIncidents() {
                       </p>
                     </td>
                     <td className="text-center align-middle">
-                      <p className="m-0 mt-1">{report.location}</p>
+                      <p className="m-0 mt-1">{report.subjects}</p>
                     </td>
                     <td className="text-center align-middle">
                       <p className="m-0 mt-1">

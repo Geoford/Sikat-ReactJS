@@ -204,8 +204,8 @@ const GetHelp = () => {
                   aria-label="Default select example"
                 >
                   <option value="">Sex</option>
-                  <option value="Male">Male</option>
-                  <option value="Memale">Female</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                   <option value="prefer not to say">Prefer not to say</option>
                 </Form.Select>
               </div>

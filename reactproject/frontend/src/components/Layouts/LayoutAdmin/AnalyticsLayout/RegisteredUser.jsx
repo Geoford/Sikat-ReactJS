@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import MessageModal from "../../DiaryEntry/messageModal";
 import MessageAlert from "../../DiaryEntry/messageAlert";
+import RegisterUserDownloadButton from "../../DownloadButton/RegisterUserDownloadButton";
 
 const RegisteredUsers = ({ users }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -77,105 +78,6 @@ const RegisteredUsers = ({ users }) => {
 
   const handleNextClick = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const downloadData = (format) => {
-    if (format === "html") {
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Registered Users</title>
-          <style>
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            th, td {
-              border: 1px solid #ddd;
-              padding: 8px;
-            }
-            th {
-              background-color: #f4f4f4;
-              text-align: left;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Registered Users</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Student No.</th>
-                <th>Full Name</th>
-                <th>Sex</th>
-                <th>Course</th>
-                <th>Year</th>
-                <th>CvSU Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${filteredUsers
-                .map(
-                  (user) => `
-                <tr>
-                  <td>${user.studentNumber}</td>
-                  <td>${user.firstName} ${user.lastName}</td>
-                  <td>${user.sex}</td>
-                  <td>${user.course}</td>
-                  <td>${user.year}</td>
-                  <td>${user.cvsuEmail}</td>
-                </tr>
-              `
-                )
-                .join("")}
-            </tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      const blob = new Blob([htmlContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "registered_users.html";
-      link.click();
-      URL.revokeObjectURL(url);
-    } else if (format === "excel") {
-      const header = [
-        "Student No.",
-        "Full Name",
-        "Sex",
-        "Course",
-        "Year",
-        "CvSU Email",
-      ];
-      const rows = filteredUsers.map((user) => [
-        user.studentNumber,
-        `${user.firstName} ${user.lastName}`,
-        user.sex,
-        user.course,
-        user.year,
-        user.cvsuEmail,
-      ]);
-
-      const csvContent = [header, ...rows]
-        .map((row) => row.join(","))
-        .join("\n");
-
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "registered_users.csv";
-      link.click();
-      URL.revokeObjectURL(url);
-    }
   };
 
   return (
@@ -377,22 +279,7 @@ const RegisteredUsers = ({ users }) => {
       </div>
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("html")}
-          >
-            <p className="m-0">Download as HTML</p>
-          </button>
-        </div>
-        <div className="col p-0">
-          <button
-            className="w-100 primaryButton py-1 py-md-2"
-            onClick={() => downloadData("excel")}
-          >
-            <p className="m-0">Download as Excel</p>
-          </button>
-        </div>
+        <RegisterUserDownloadButton filteredUsers={filteredUsers} />
       </div>
     </div>
   );
