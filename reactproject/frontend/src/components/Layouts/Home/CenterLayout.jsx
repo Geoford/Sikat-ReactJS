@@ -13,6 +13,24 @@ import DeleteButton from "../DiaryEntry/DeleteButton";
 import MessageAlert from "../DiaryEntry/messageAlert";
 import NewUserSetUp from "../../pages/PagesUser/NewUserSetUp";
 
+// const getData = async (url, params = {}) => {
+//   try {
+//     const response = await axios.get(url, { params });
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response ? error.response.data : error.message);
+//   }
+// };
+
+// const postData = async (url, data) => {
+//   try {
+//     const response = await axios.post(url, data);
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response ? error.response.data : error.message);
+//   }
+// };
+
 const CenterLayout = () => {
   const [entries, setEntries] = useState([]);
   const [user, setUser] = useState(null);

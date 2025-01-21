@@ -42,14 +42,12 @@ const NewUserSetUp = ({ user }) => {
   const handleToggleChange = (subject) => {
     if (subject === "General") {
       const isGeneralSelected = !selectedItems[subject];
-      // Toggle all items based on the "General" selection
       const updatedState = Object.keys(selectedItems).reduce((acc, key) => {
         acc[key] = isGeneralSelected;
         return acc;
       }, {});
       setSelectedItems(updatedState);
     } else {
-      // Toggle individual item
       setSelectedItems((prevSelectedItems) => ({
         ...prevSelectedItems,
         [subject]: !prevSelectedItems[subject],
