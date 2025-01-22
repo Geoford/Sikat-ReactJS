@@ -345,7 +345,7 @@ const CenterLayout = () => {
   if (!user) return null;
 
   return (
-    <div className="p-2 px-0 mx-sm-5 mx-md-0" style={{ minHeight: "30rem" }}>
+    <div className="p-2 px-0 mx-sm-5 mx-md-0" style={{ minHeight: "50rem" }}>
       <MessageAlert
         showModal={modal}
         closeModal={closeModal}
@@ -527,12 +527,18 @@ const CenterLayout = () => {
                 ))}
         </>
       ) : null}
-      <div className="d-flex justify-content-end">
-        <FilterButton
-          onFilterChange={handleFilterChange}
-          userID={user.userID}
-        />
-      </div>
+      {user.isAdmin ? (
+        <>
+          <div className="py-2"></div>
+        </>
+      ) : (
+        <div className="d-flex justify-content-end">
+          <FilterButton
+            onFilterChange={handleFilterChange}
+            userID={user.userID}
+          />
+        </div>
+      )}
       {/* FOR POSTED DIARIES */}
       {entries.length === 0 ? (
         <p>No entries available.</p>

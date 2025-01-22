@@ -88,7 +88,7 @@ const EditSubjectSelection = ({ onSubjectsChange }) => {
   return (
     <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
       <Dropdown.Toggle
-        className="w-100 border d-flex align-items-center"
+        className="w-100 border d-flex align-items-center disabled"
         variant=""
         id="dropdown-basic"
       >
@@ -110,7 +110,8 @@ const EditSubjectSelection = ({ onSubjectsChange }) => {
               <Form.Check
                 key={subject.subjectID}
                 type="checkbox"
-                id={subject.subject}
+                id={`edit-
+                  ${subject.subject}`}
                 label={subject.subject}
                 name={subject.subject}
                 checked={selectedItems[subject.subject] || false}

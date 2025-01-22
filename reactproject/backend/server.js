@@ -3997,6 +3997,44 @@ app.get("/getUserFilters/:userID", (req, res) => {
   });
 });
 
+app.post("/saveUserFilterss", (req, res) => {
+  const { userID, filter } = req.body;
+
+  const insertQuery = `
+    INSERT INTO user_filters (userID, filter)
+    VALUES (?, ?)
+  `;
+
+  db.query(insertQuery, [userID, filter], (err) => {
+    if (err) {
+      return res.status(500).json({ error: "Error saving user filters" });
+    } else {
+      res.status(200).json({ message: "Filters saved successfully" });
+    }
+  });
+});
+
+app.delete("/deleteUserFilters", (req, res) => {
+  const { userID, filter } = req.body;
+
+  db.query(
+    "DELETE FROM user_filters WHERE userID = ? AND filter = ?",
+    [userID, filter],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete " });
+      } else {
+        if (result.affectedRows > 0) {
+          res.json({ message: " deleted successfully" });
+        } else {
+          res.status(404).json({ error: "filter not found" });
+        }
+      }
+    }
+  );
+});
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

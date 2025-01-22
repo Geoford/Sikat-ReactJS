@@ -1,11 +1,12 @@
 import Dropdown from "react-bootstrap/Dropdown";
-import Form from "react-bootstrap/Form";
+import { ToggleButton } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
   const [selectedItems, setSelectedItems] = useState({});
   const [filterOptions, setFilterOptions] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -44,9 +45,31 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
     fetchFilters();
   }, [userID]);
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    const updatedItems = { ...selectedItems, [name]: checked };
+  const handleToggleChange = async (subject) => {
+    const updatedItems = { ...selectedItems };
+
+    if (subject === "General") {
+      // If General is being selected, select all filters
+      if (!selectedItems["General"]) {
+        filterOptions.forEach((filter) => {
+          updatedItems[filter.subject] = true;
+        });
+      } else {
+        // If General is being deselected, deselect all filters
+        filterOptions.forEach((filter) => {
+          updatedItems[filter.subject] = false;
+        });
+      }
+    } else {
+      // Toggle individual filter
+      updatedItems[subject] = !selectedItems[subject];
+
+      // Check if all filters are selected/deselected to update General accordingly
+      const allSelected = filterOptions.every(
+        (filter) => filter.subject === "General" || updatedItems[filter.subject]
+      );
+      updatedItems["General"] = allSelected;
+    }
 
     setSelectedItems(updatedItems);
 
@@ -58,14 +81,47 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
     });
 
     onFilterChange(selectedSubjectsText);
+
+    // Update filters in the backend
+    try {
+      const promises = filterOptions.map(async (filter) => {
+        const wasSelected = selectedItems[filter.subject];
+        const isSelected = updatedItems[filter.subject];
+
+        if (wasSelected !== isSelected) {
+          if (isSelected) {
+            await axios.post(`http://localhost:8081/saveUserFilterss`, {
+              userID,
+              filter: filter.subject,
+            });
+          } else {
+            await axios.delete(`http://localhost:8081/deleteUserFilters`, {
+              data: {
+                userID,
+                filter: filter.subject,
+              },
+            });
+          }
+        }
+      });
+
+      await Promise.all(promises);
+    } catch (err) {
+      console.error("Error updating filters:", err);
+    }
+  };
+
+  const handleSaveAndClose = () => {
+    setDropdownOpen(false);
   };
 
   return (
-    <Dropdown>
+    <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
       <Dropdown.Toggle
         className="border-0 d-flex align-items-center ps-0"
         variant=""
         id="dropdown-basic"
+        onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         <h6 className="m-0 d-flex align-items-center gap-1">
           <i className="bx bx-filter-alt"></i> Filter
@@ -74,19 +130,45 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
 
       <Dropdown.Menu
         className="px-2"
-        style={{ zIndex: "1000", width: "clamp(13rem, 10dvw, 18rem)" }}
+        style={{ zIndex: "1000", width: "clamp(13rem, 15dvw, 15rem)" }}
       >
-        {filterOptions.map((filter) => (
-          <Form.Check
-            key={filter.subject}
+        <div className="fiterToggle d-flex flex-column gap-1">
+          {/* Place General filter at the top */}
+          <ToggleButton
+            key="General"
+            id="toggle-General"
             type="checkbox"
-            id={filter.subject}
-            label={filter.subject}
-            name={filter.subject}
-            checked={selectedItems[filter.subject] || false}
-            onChange={handleCheckboxChange}
-          />
-        ))}
+            checked={selectedItems["General"] || false}
+            value="General"
+            onChange={() => handleToggleChange("General")}
+            className="w-100 text-start"
+          >
+            General
+          </ToggleButton>
+
+          {/* Other filters */}
+          {filterOptions
+            .filter((filter) => filter.subject !== "General")
+            .map((filter) => (
+              <ToggleButton
+                key={filter.subject}
+                id={`toggle-${filter.subject}`}
+                type="checkbox"
+                checked={selectedItems[filter.subject] || false}
+                value={filter.subject}
+                onChange={() => handleToggleChange(filter.subject)}
+                className="w-100 text-start"
+              >
+                {filter.subject}
+              </ToggleButton>
+            ))}
+        </div>
+        <button
+          className="w-100 orangeButton py-1 mt-2"
+          onClick={handleSaveAndClose}
+        >
+          Save Filter
+        </button>
       </Dropdown.Menu>
     </Dropdown>
   );

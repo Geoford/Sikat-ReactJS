@@ -223,7 +223,7 @@ function EditDiaryEntryButton({
         ></MessageModal>
 
         <i className="bx bxs-edit m-0 ms-1"></i>
-        <p className="m-0">Edit</p>
+        <p className="m-0">Edit </p>
       </button>
 
       <Modal show={show} onHide={handleClose} centered>
@@ -289,11 +289,10 @@ function EditDiaryEntryButton({
             style={{ zIndex: "1" }}
           >
             <EditSubjectSelection onSubjectsChange={handleSubjectsChange} />
-            {/* {selectedSubjects && (
-              <div className="">
-                <p className="m-0">{selectedSubjects}</p>
-              </div>
-            )} */}
+
+            <div className="">
+              <p className="m-0 text-secondary">{diarySub}</p>
+            </div>
           </div>
           <div
             className="mt-1 pe-1 overflow-y-scroll custom-scrollbar"

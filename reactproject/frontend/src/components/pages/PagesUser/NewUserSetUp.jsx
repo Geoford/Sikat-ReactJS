@@ -14,6 +14,7 @@ const NewUserSetUp = ({ user }) => {
   const [showProfileSetUp, setShowProfileSetUp] = useState(true);
   const handleCloseProfileSetUp = () => {
     setShowProfileSetUp(false);
+    window.location.reload();
   };
 
   const [filterSubjects, setFilterSubjects] = useState([]);
@@ -114,7 +115,7 @@ const NewUserSetUp = ({ user }) => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="d-flex flex-wrap justify-content-center gap-2">
+            <div className="fiterToggle d-flex flex-wrap justify-content-center gap-2">
               {filterSubjects.map((subject) => (
                 <ToggleButton
                   key={subject.subject}
@@ -138,7 +139,7 @@ const NewUserSetUp = ({ user }) => {
                 handleNextStep(user.userID);
               }}
             >
-              Save
+              <p className="m-0">Save</p>{" "}
             </button>
           </Modal.Footer>
         </Modal>
@@ -168,13 +169,13 @@ const NewUserSetUp = ({ user }) => {
               className="btn btn-secondary py-2"
               onClick={handleCloseProfileSetUp}
             >
-              No
+              <p className="m-0">No</p>{" "}
             </button>
             <Link
               to={`/Profile/${user.userID}`}
               className="primaryButton py-2 rounded text-decoration-none"
             >
-              Yes
+              <p className="m-0">Yes</p>{" "}
             </Link>
           </Modal.Footer>
         </Modal>

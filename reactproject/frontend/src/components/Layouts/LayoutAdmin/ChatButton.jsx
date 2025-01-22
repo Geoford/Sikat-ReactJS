@@ -234,7 +234,7 @@ const ChatButton = () => {
                 transform: "translate(50%, -50%)",
                 top: ".8em",
                 left: "-1rem",
-                border: "2px solid var(--background)",
+                // border: "2px solid var(--background)",
               }}
             >
               {users.reduce(

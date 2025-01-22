@@ -801,6 +801,28 @@ input.form-control:focus {
 .toast {
   z-index: 10000;
 }
+/* FOR FILTER TOGGLE */
+.fiterToggle .btn {
+  background-color: #ffff !important;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.fiterToggle .btn:hover {
+  background-color: var(--background) !important;
+  color: var(--primary_hover) !important;
+  border-color: var(--primary_hover) !important;
+}
+.fiterToggle .btn:focus {
+  background-color: var(--primary) !important;
+}
+.fiterToggle .btn-check:checked + .btn {
+  background-color: var(--primary) !important;
+  border-color: var(--primary);
+}
+.fiterToggle .btn-check:checked + .btn:hover {
+  background-color: var(--primary_hover) !important;
+  color: #ffff !important;
+}
 
 @media screen and (max-width: 1150px) {
   .followerName {
