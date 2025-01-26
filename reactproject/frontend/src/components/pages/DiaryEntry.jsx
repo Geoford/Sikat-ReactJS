@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import anonymous from "../../assets/Anonymous.png";
+import anonymous from "../../assets/anonymous.png";
 import MainLayout from "../Layouts/MainLayout";
 import Dropdown from "react-bootstrap/Dropdown";
 // import Modal from "react-bootstrap/Modal";
