@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/react-datepicker": "^7.0.0",
     "bootstrap": "^5.3.3",
     "boxicons": "^2.1.4",
     "docx": "^9.1.1",
