@@ -2,12 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import LoginValidation from "./LoginValidation";
-import usernameIcon from "../../assets/Username.png";
-import passwordIcon from "../../assets/Password.png";
-import showIcon from "../../assets/show.png";
-import hiddenIcon from "../../assets/hidden.png";
 import logo from "../../assets/TransparentLogo.png";
-import TextLogo from "../../assets/TextLogo.png";
 import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
