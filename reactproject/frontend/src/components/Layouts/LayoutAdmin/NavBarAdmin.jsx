@@ -1,6 +1,5 @@
 import "../style.css";
-import Logo from "../../../assets/logo.jpg";
-import Notification from "../../../assets/Notification.png";
+import Logo from "../../../assets/Logo.jpg";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationButton from "../LayoutAdmin/OffCanvassNotification";
