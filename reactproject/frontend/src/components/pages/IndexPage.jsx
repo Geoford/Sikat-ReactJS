@@ -74,7 +74,7 @@ const IndexPage = () => {
     const fetchAnnouncement = async () => {
       try {
         const response = await axios.get(
-          "https://sikat-react-js-client.vercel.app:8081/announcement"
+          "https://sikat-react-js-client.vercel.app/announcement"
         );
 
         if (response.status === 200) {
@@ -94,7 +94,7 @@ const IndexPage = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          `https://sikat-react-js-client.vercel.app:8081/users`
+          `https://sikat-react-js-client.vercel.app/users`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch users");
@@ -112,7 +112,7 @@ const IndexPage = () => {
   const fetchEntries = async () => {
     try {
       const response = await axios.get(
-        "https://sikat-react-js-client.vercel.app:8081/analytics"
+        "https://sikat-react-js-client.vercel.app/analytics"
       );
       setEntries(response.data);
     } catch (error) {
@@ -122,7 +122,7 @@ const IndexPage = () => {
 
   const fetchReports = () => {
     axios
-      .get("https://sikat-react-js-client.vercel.app:8081/getAddressReports")
+      .get("https://sikat-react-js-client.vercel.app/getAddressReports")
       .then((response) => setReports(response.data))
       .catch((err) =>
         setError(err.response?.data?.error || "Failed to fetch reports")
