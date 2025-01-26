@@ -59,7 +59,7 @@ const IndexPage = () => {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8081/api/index-images"
+          "https://sikat-react-js-client.vercel.app/api/index-images"
         );
         setImages(response.data);
       } catch (error) {
@@ -73,7 +73,9 @@ const IndexPage = () => {
   useEffect(() => {
     const fetchAnnouncement = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/announcement");
+        const response = await axios.get(
+          "https://sikat-react-js-client.vercel.app:8081/announcement"
+        );
 
         if (response.status === 200) {
           setLatestAnnouncement(response.data);
@@ -91,7 +93,9 @@ const IndexPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`http://localhost:8081/users`);
+        const response = await fetch(
+          `https://sikat-react-js-client.vercel.app:8081/users`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -107,7 +111,9 @@ const IndexPage = () => {
 
   const fetchEntries = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/analytics");
+      const response = await axios.get(
+        "https://sikat-react-js-client.vercel.app:8081/analytics"
+      );
       setEntries(response.data);
     } catch (error) {
       console.error("Error fetching diary entries:", error);
@@ -116,7 +122,7 @@ const IndexPage = () => {
 
   const fetchReports = () => {
     axios
-      .get("http://localhost:8081/getAddressReports")
+      .get("https://sikat-react-js-client.vercel.app:8081/getAddressReports")
       .then((response) => setReports(response.data))
       .catch((err) =>
         setError(err.response?.data?.error || "Failed to fetch reports")
