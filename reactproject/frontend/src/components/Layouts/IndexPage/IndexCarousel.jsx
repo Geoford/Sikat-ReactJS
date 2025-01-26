@@ -3,11 +3,16 @@ import sampleImage from "../../../assets/Background.jpg";
 import Carousel from "react-bootstrap/Carousel";
 
 const IndexCarousel = ({ images }) => {
-  const [index, setIndex] = useState(0); // Track the active index
+  const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex);
   };
+
+  // Ensure images is an array and has data before trying to map
+  if (!Array.isArray(images) || images.length === 0) {
+    return <div>Loading...</div>; // Or a more appropriate fallback, e.g., empty state
+  }
 
   return (
     <Carousel activeIndex={index} onSelect={handleSelect}>
@@ -18,7 +23,6 @@ const IndexCarousel = ({ images }) => {
           interval={2000}
         >
           <div className="carouselBlackFade"></div>
-
           <div
             className="overflow-x-hidden"
             style={{
