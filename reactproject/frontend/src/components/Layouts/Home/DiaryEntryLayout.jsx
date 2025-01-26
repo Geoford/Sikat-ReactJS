@@ -2,19 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import anonymous from "../../../assets/anonymous.png";
 import userDefaultProfile from "../../../assets/userDefaultProfile.png";
-// import TransparentLogo from "../../../assets/TransparentLogo.png";
 import CommentSection from "../CommentSection/CommentSection";
 import Dropdown from "react-bootstrap/Dropdown";
-import Modal from "react-bootstrap/Modal";
-// import Button from "react-bootstrap/Button";
-import CloseButton from "react-bootstrap/CloseButton";
 import axios from "axios";
 import FlagButton from "./FlagButton";
 import ChatButton from "../DiaryEntry/ChatButton";
 import EditDiaryEntryButton from "./EditDiaryEntryButton";
 import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
-import ImageModal from "../DiaryEntry/ImageModal";
+import ImageModal from "../DiaryEntry/imageModal";
 import Suspend from "../Profile/Suspend";
 
 const DiaryEntryLayout = ({
