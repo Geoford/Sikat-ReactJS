@@ -23,11 +23,13 @@ app.use("/", (req, res) => {
 });
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USERNAME || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "sikat-ediary",
+  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
+  user: "uhklkzkl3y7lsssw" || "root",
+  password: "JHWXahYMlszMvX8Emxrp" || "",
+  database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
 });
+
+// mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
 
 const pusher = new Pusher({
   appId: "1875705",
