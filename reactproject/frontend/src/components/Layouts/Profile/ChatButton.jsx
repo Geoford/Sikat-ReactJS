@@ -2,12 +2,9 @@ import Pusher from "pusher-js";
 import { useState, useEffect, useRef } from "react";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import ChatIcon from "../../../assets/ChatIcon.png";
-import SendIcon from "../../../assets/SendIcon.png";
 import { Link, useNavigate } from "react-router-dom";
-import FrequentlyAskQuestion from "../LayOutUser/FrequentlyAskQuestion";
+import FrequentlyAskQuestion from "../LayoutUser/FrequentlyAskQuestion";
 import axios from "axios";
 import { Dropdown } from "react-bootstrap";
 
