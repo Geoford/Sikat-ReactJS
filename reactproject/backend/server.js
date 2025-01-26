@@ -2877,6 +2877,20 @@ app.put("/reports/:id", (req, res) => {
   });
 });
 
+app.get("/getAddressReports", (req, res) => {
+  const query = `
+  SELECT * FROM gender_based_crime_reports WHERE isAddress = 1 ORDER BY created_at DESC
+`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.get("/reports", (req, res) => {
   const query = `
   SELECT * FROM gender_based_crime_reports ORDER BY isAddress ASC, created_at DESC

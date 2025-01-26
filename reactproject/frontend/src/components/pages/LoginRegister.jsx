@@ -48,18 +48,26 @@ const LoginRegister = () => {
         </div>
       </nav> */}
         <div
-          className="d-flex align-items-center position-absolute  gap-1"
+          className="d-flex align-items-center position-absolute  gap-2"
           style={{ top: "20px", right: "30px" }}
         >
           <button
-            className={isLoginPage ? "btn fw-bolder" : "purpleButton fw-bolder"}
+            className={
+              isLoginPage
+                ? "btn btn-light text-dark fw-bolder"
+                : "purpleButton fw-bolder"
+            }
             onClick={handleRegisterClick}
             style={{ border: "none", width: "90px", padding: "5px" }}
           >
             <p className="m-0">Register</p>
           </button>
           <button
-            className={isLoginPage ? "purpleButton fw-bolder" : "btn fw-bolder"}
+            className={
+              isLoginPage
+                ? "purpleButton fw-bolder"
+                : "btn btn-light text-dark fw-bolder"
+            }
             onClick={handleLoginClick}
             style={{ border: "none", width: "90px", padding: "5px" }}
           >

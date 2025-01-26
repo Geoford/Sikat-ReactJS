@@ -125,7 +125,7 @@ const IndexPage = () => {
 
   const fetchReports = () => {
     axios
-      .get("http://localhost:8081/reports")
+      .get("http://localhost:8081/getAddressReports")
       .then((response) => setReports(response.data))
       .catch((err) =>
         setError(err.response?.data?.error || "Failed to fetch reports")
@@ -196,13 +196,46 @@ const IndexPage = () => {
               </div>
               <div className="col-lg d-flex flex-column align-items-center justify-content-center gap-2">
                 <h4
-                  className="m-0 px-2"
+                  className="m-0 px-2 mt-2 mt-md-0"
                   // style={{ borderBottom: ".2rem solid var(--primary)" }}
                 >
                   {latestAnnouncement.title}
                 </h4>
-                <p className="m-0 text-secondary">
-                  {latestAnnouncement.description}
+                <p
+                  className="m-0 text-secondary overflow-y-scroll"
+                  style={{ maxHeight: "clamp(12rem, 20dvw, 20rem)" }}
+                >
+                  {latestAnnouncement.description} Lorem ipsum dolor sit, amet
+                  consectetur adipisicing elit. Sed quibusdam repudiandae alias
+                  voluptatibus, facilis dolorum vero distinctio suscipit rerum
+                  vel quam facere ad voluptas corrupti animi, beatae quas ex
+                  porro asperiores. At repudiandae maiores laudantium sunt nobis
+                  similique, non, quaerat voluptatum iste assumenda veritatis
+                  voluptate provident debitis laborum a sit. Lorem ipsum dolor
+                  sit, amet consectetur adipisicing elit. Sed quibusdam
+                  repudiandae alias voluptatibus, facilis dolorum vero
+                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
+                  animi, beatae quas ex porro asperiores. At repudiandae maiores
+                  laudantium sunt nobis similique, non, quaerat voluptatum iste
+                  assumenda veritatis voluptate provident debitis laborum a sit.
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
+                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
+                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
+                  animi, beatae quas ex porro asperiores. At repudiandae maiores
+                  laudantium sunt nobis similique, non, quaerat voluptatum iste
+                  assumenda veritatis voluptate provident debitis laborum a sit.
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
+                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
+                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
+                  animi, beatae quas ex porro asperiores. At repudiandae maiores
+                  laudantium sunt nobis similique, non, quaerat voluptatum iste
+                  assumenda veritatis voluptate provident debitis laborum a sit.
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
+                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
+                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
+                  animi, beatae quas ex porro asperiores. At repudiandae maiores
+                  laudantium sunt nobis similique, non, quaerat voluptatum iste
+                  assumenda veritatis voluptate provident debitis laborum a sit.
                 </p>
               </div>
             </div>
@@ -229,7 +262,7 @@ const IndexPage = () => {
               style={{ background: "var(--primary)" }}
             >
               <h1 className="m-0">{reports.length}</h1>
-              <h5 className="m-0">Resolved Cases</h5>
+              <h5 className="m-0">Addressed Cases</h5>
             </div>
           </div>
 
