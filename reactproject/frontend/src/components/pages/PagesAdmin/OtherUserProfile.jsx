@@ -3,13 +3,9 @@ import axios from "axios";
 // import "boxicons/css/boxicons.min.css";
 import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../../assets/userDefaultProfile.png";
-import uploadProfileIcon from "../../../assets/uploadProfile.png";
 import UserPageMainLayout from "../../Layouts/LayoutUser/UserPageMainLayout";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
-import ActivityLogs from "./UserProfileLayout/ActivityLogs";
-import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
-import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
 
 const OtherUserProfile = () => {

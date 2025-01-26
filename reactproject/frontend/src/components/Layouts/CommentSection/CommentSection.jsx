@@ -5,14 +5,12 @@ import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
-import AnonymousIcon from "../../../assets/Anonymous.png";
-import Button from "react-bootstrap/Button";
+import AnonymousIcon from "../../../assets/anonymous.png";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "./ReportCommentButton";
 import Suspend from "../Profile/Suspend";
 import MessageModal from "../DiaryEntry/messageModal";
-import Hide from "../Profile/Hide";
 import MessageAlert from "../DiaryEntry/messageAlert";
 
 const CommentSection = ({

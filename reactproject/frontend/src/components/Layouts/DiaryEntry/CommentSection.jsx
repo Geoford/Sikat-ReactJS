@@ -1,21 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
-import AnonymousIcon from "../../../assets/Anonymous.png";
-import Button from "react-bootstrap/Button";
+import AnonymousIcon from "../../../assets/anonymous.png";
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReportButton from "../CommentSection/ReportCommentButton";
 import Suspend from "../Profile/Suspend";
 import MessageModal from "./messageModal";
 import Hide from "../Profile/Hide";
-import Reviewed from "../Profile/Reviewed";
-import ReviewedComment from "../Profile/ReviewedComment";
-import MessageAlert from "./messageAlert";
 
 const CommentSection = ({
   userID,
