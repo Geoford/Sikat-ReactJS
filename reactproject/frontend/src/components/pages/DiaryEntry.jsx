@@ -14,7 +14,7 @@ import CommentSection from "../Layouts/DiaryEntry/CommentSection";
 import FlagButton from "../Layouts/Home/FlagButton";
 import ChatButton from "../Layouts/DiaryEntry/ChatButton";
 import DiaryDetails from "../Layouts/DiaryEntry/DiaryDetails";
-import ImageModal from "../Layouts/DiaryEntry/ImageModal";
+import ImageModal from "../Layouts/DiaryEntry/imageModal";
 import FollowButton from "../Layouts/DiaryEntry/followButton";
 import MessageModal from "../Layouts/DiaryEntry/messageModal";
 import EditPostButton from "../Layouts/Home/EditPostButton";
