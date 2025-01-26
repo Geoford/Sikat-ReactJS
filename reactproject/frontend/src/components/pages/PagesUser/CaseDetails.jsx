@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import sampleImage from "../../../assets/Background.jpg";
 import MainLayout from "../../Layouts/MainLayout";
 import BackButton from "../../Layouts/Home/BackButton";
 import { jsPDF } from "jspdf";

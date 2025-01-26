@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import UserPageMainLayout from "../../Layouts/MainLayout";
 import { PreLoader } from "../PreLoader";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -8,8 +7,6 @@ import axios from "axios";
 import MainLayout from "../../Layouts/MainLayout";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
-import MessageModal from "../../Layouts/DiaryEntry/messageModal";
-import { Alert } from "react-bootstrap";
 import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
 import BackButton from "../../Layouts/Home/BackButton";
 

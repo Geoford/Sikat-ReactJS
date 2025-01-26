@@ -5,10 +5,7 @@ import DefaultProfile from "../../../assets/userDefaultProfile.png";
 import uploadProfileIcon from "../../../assets/uploadProfile.png";
 import MainLayout from "../../Layouts/MainLayout";
 import RecentJournalEntries from "./UserProfileLayout/JournalEntries";
-import ActivityLogs from "./UserProfileLayout/ActivityLogs";
-import FiledCases from "./UserProfileLayout/FiledCases";
 import UserDiary from "./UserProfileLayout/UserDiary";
-import EditPersonalDetailButton from "./UserProfileLayout/EditPersonalDetailButton";
 import ProfileDropdown from "../../Layouts/LayoutUser/ProfileDropdown";
 
 const UserProfile = () => {
