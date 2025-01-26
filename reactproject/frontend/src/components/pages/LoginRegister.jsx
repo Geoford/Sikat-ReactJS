@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import IndexNavBar from "../Layouts/NavBar/NavBarIndex";
 import Background from "../Layouts/Background";
 import Login from "./Login";
 import Register from "./Register";
-import Logo from "../../assets/logo.jpg";
 import BackgroundImg1 from "../../assets/LogInBackground (1).png";
 import BackgroundImg2 from "../../assets/LogInBackground (2).png";
-import { PreLoader } from "./PreLoader";
 
 const LoginRegister = () => {
   const [isLoginPage, setIsLoginPage] = useState(true); // state to track if the login page is active
