@@ -29,6 +29,7 @@ const DeleteButton = ({ entryID, title }) => {
       setTimeout(() => {
         // Navigate or reload page here after confirmation
         // navigate({ location });
+        window.location.reload();
       }, 1500); // Delay reload for 1.5 seconds after success modal
     } catch (error) {
       console.error("Error deleting diary entry:", error);

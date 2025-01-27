@@ -143,30 +143,22 @@ const Profile = () => {
       show: true,
       message: `Are you sure you want to change your profile?`,
       onConfirm: async () => {
-        try {
-          const res = await axios.post(
-            "http://localhost:8081/uploadProfile",
-            formData
-          );
-          console.log("Profile uploaded successfully", res.data);
-
-          // Assuming the response contains the updated profile image URL
-          const updatedProfileImage = res.data.profile_image;
-
-          // Update the user's profile image in the state to reflect the change
-          setUser((prevUser) => ({
-            ...prevUser,
-            profile_image: updatedProfileImage, // Update profile image in the user state
-          }));
-
-          setConfirmModal({ show: false, message: "" });
-          setModal({
-            show: true,
-            message: `Profile uploaded successfully.`,
+        axios
+          .post("http://localhost:8081/uploadProfile", formData)
+          .then((res) => {
+            console.log("Profile uploaded successfully", res.data);
+            setConfirmModal({ show: false, message: "" });
+            setModal({
+              show: true,
+              message: `Profile uploaded successfully.`,
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          })
+          .catch((error) => {
+            console.error("Error uploading profile:", error);
           });
-        } catch (error) {
-          console.error("Error uploading profile:", error);
-        }
       },
       onCancel: () => setConfirmModal({ show: false, message: "" }),
     });
