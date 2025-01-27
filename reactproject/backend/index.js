@@ -12,8 +12,13 @@ const { profile } = require("console");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
+const allowedOrigins = [
+  "https://sikat-react-js-client.vercel.app", // Original domain
+  "https://sikat-react-js-iota.vercel.app", // New domain you're requesting from
+];
+
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
