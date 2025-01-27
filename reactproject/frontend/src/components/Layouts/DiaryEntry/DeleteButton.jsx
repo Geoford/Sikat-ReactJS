@@ -25,7 +25,13 @@ const DeleteButton = ({ entryID, title }) => {
         message: "Diary entry deleted successfully.",
       });
 
-      setTimeout(() => {}, 1500);
+      setEntries((prevEntries) =>
+        prevEntries.filter((entry) => entry.entryID !== entryID)
+      );
+
+      setTimeout(() => {
+        setModal({ show: false, message: "" });
+      }, 1500);
     } catch (error) {
       console.error("Error deleting diary entry:", error);
       alert("Failed to delete the entry.");
