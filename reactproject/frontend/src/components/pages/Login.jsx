@@ -32,7 +32,7 @@ export default function Login() {
       setLoading(true);
       setServerError("");
       axios
-        .post("https://sikat-react-js-client.vercel.app/Login", values)
+        .post("http://localhost:8081/Login", values)
         .then((res) => {
           localStorage.setItem("user", JSON.stringify(res.data));
           if (res.data.isAdmin) {

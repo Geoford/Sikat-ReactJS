@@ -12,33 +12,22 @@ const { profile } = require("console");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
-const allowedOrigins = [
-  "https://sikat-react-js-client.vercel.app", // Original domain
-  "https://sikat-react-js-iota.vercel.app", // New domain you're requesting from
-];
-
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
-// app.use("/", (req, res) => {
-//   res.send({ message: "Server is running." });
-// });
-
-const db = mysql.createPool({
-  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
-  user: "uhklkzkl3y7lsssw" || "root",
-  password: "JHWXahYMlszMvX8Emxrp" || "",
-  database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  connectTimeout: 10000,
+app.use("/", (req, res) => {
+  res.send({ message: "Server is running." });
 });
 
-// mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "sikat-ediary",
+});
 
 const pusher = new Pusher({
   appId: "1875705",
@@ -48,7 +37,7 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-db.getConnection((err) => {
+db.connect((err) => {
   if (err) {
     console.error("Database connection failed: " + err.stack);
     return;
