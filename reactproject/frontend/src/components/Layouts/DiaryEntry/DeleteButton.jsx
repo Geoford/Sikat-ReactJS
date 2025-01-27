@@ -25,12 +25,7 @@ const DeleteButton = ({ entryID, title }) => {
         message: "Diary entry deleted successfully.",
       });
 
-      // Wait for the user to acknowledge the success message
-      setTimeout(() => {
-        // Navigate or reload page here after confirmation
-        // navigate({ location });
-        window.location.reload();
-      }, 1500); // Delay reload for 1.5 seconds after success modal
+      setTimeout(() => {}, 1500);
     } catch (error) {
       console.error("Error deleting diary entry:", error);
       alert("Failed to delete the entry.");
