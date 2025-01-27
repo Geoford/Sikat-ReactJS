@@ -13,7 +13,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 const allowedOrigins = [
-  "https://sikat-react-js-client.vercel.app", // Original domain
+  "https://sikat-react-js-backend.vercel.app", // Original domain
   "https://sikat-react-js-iota.vercel.app", // New domain you're requesting from
 ];
 
