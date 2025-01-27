@@ -116,13 +116,18 @@ const IndexPage = () => {
     }
   };
 
-  const fetchReports = () => {
-    axios
-      .get("https://sikat-react-js-client.vercel.app/getAddressReports")
-      .then((response) => setReports(response.data))
-      .catch((err) =>
-        setError(err.response?.data?.error || "Failed to fetch reports")
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get(
+        "https://sikat-react-js-client.vercel.app/getAddressReports"
       );
+      setReports(response.data);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.error || "Failed to fetch reports";
+      setError(errorMessage);
+      console.error("Error fetching reports:", err);
+    }
   };
 
   return (
