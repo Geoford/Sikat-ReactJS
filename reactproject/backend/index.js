@@ -33,7 +33,7 @@ const db = mysql.createPool({
   password: "JHWXahYMlszMvX8Emxrp",
   database: "bcs2fegnflyz4wws58oa",
   waitForConnections: true,
-  connectionLimit: 5, // Adjust based on your expected load
+  connectionLimit: 10, // Adjust based on your expected load
   queueLimit: 0,
 });
 
@@ -52,20 +52,10 @@ db.getConnection((err, connection) => {
     console.error("Database connection failed: " + err.stack);
     return;
   }
+  console.log("Connected to database.");
 
-  // Use the connection for your query
-  connection.query("YOUR QUERY HERE", (queryErr, results) => {
-    if (queryErr) {
-      console.error("Error executing query: ", queryErr);
-      return;
-    }
-
-    // Send the response here
-    res.json(results);
-
-    // Always release the connection after use
-    connection.release();
-  });
+  // Don't forget to release the connection after use
+  connection.release();
 });
 
 const uploadsDir = path.join(__dirname, "uploads");
@@ -1890,19 +1880,30 @@ app.get("/fetchUser/user/:id", (req, res) => {
       user_table.userID = ?
   `;
 
-  console.log("Executing Query: ", userValues); // Log the query for debugging
-
-  db.query(userValues, [userID], (err, result) => {
+  // Get a connection from the pool
+  db.getConnection((err, connection) => {
     if (err) {
-      console.error("Database error:", err);
+      console.error("Database connection failed: " + err.stack);
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // Execute the query
+    connection.query(userValues, [userID], (queryErr, results) => {
+      if (queryErr) {
+        console.error("Error executing query: ", queryErr);
+        return res.status(500).json({ message: "Error executing query" });
+      }
 
-    res.json(result[0]); // Merged result since the JOIN already includes profile data
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Send the results back as a JSON response
+      res.json(results[0]);
+
+      // Always release the connection after use
+      connection.release();
+    });
   });
 });
 
