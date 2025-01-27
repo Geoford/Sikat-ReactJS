@@ -18,10 +18,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
-app.use("/", (req, res) => {
-  res.send({ message: "Server is running." });
-});
-
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
