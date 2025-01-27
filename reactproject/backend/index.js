@@ -27,11 +27,16 @@ app.use("/uploads", express.static("uploads"));
 //   res.send({ message: "Server is running." });
 // });
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
   user: "uhklkzkl3y7lsssw" || "root",
   password: "JHWXahYMlszMvX8Emxrp" || "",
   database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 10000,
+  acquireTimeout: 10000,
 });
 
 // mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
