@@ -59,7 +59,7 @@ const IndexPage = () => {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          "sikat-react-js-iota.vercel.app/api/index-images"
+          "https://sikat-react-js-iota.vercel.app/api/index-images"
         );
         setImages(response.data);
       } catch (error) {
