@@ -13,7 +13,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 app.use(express.json());
-app.use(cors({ origin: "https://sikat-react-js-client.vercel.app" }));
+app.use(cors({ origin: "sikat-react-js-iota.vercel.app" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
