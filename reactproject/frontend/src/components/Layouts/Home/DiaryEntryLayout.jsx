@@ -508,6 +508,7 @@ const DiaryEntryLayout = ({
                       <DeleteButton
                         entryID={entry.entryID}
                         title={entry.title}
+                        onDelete={handleDeleteEntry}
                       ></DeleteButton>
                     </Dropdown.Item>
                   </>
@@ -560,6 +561,7 @@ const DiaryEntryLayout = ({
                           <DeleteButton
                             entryID={entry.entryID}
                             title={entry.title}
+                            onDelete={handleDeleteEntry}
                           ></DeleteButton>
                         </Dropdown.Item>
                       </>
