@@ -28,10 +28,10 @@ app.use("/uploads", express.static("uploads"));
 // });
 
 const db = mysql.createConnection({
-  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
-  user: "uhklkzkl3y7lsssw" || "root",
-  password: "JHWXahYMlszMvX8Emxrp" || "",
-  database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "sikat-ediary",
 });
 
 // mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
