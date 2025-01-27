@@ -36,7 +36,6 @@ const db = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   connectTimeout: 10000,
-  acquireTimeout: 10000,
 });
 
 // mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
@@ -49,7 +48,7 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-db.connect((err) => {
+db.getConnection((err) => {
   if (err) {
     console.error("Database connection failed: " + err.stack);
     return;
