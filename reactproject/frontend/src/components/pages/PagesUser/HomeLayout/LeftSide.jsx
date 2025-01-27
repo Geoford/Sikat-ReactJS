@@ -19,7 +19,9 @@ const LeftSide = () => {
     if (userData) {
       const fetchUser = JSON.parse(userData);
 
-      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+      fetch(
+        `https://sikat-react-js-client.vercel.app/fetchUser/user/${fetchUser.userID}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error("User not found");
@@ -49,7 +51,7 @@ const LeftSide = () => {
   const fetchEntries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+        `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${user.userID}`
       );
 
       if (response.data.entries && Array.isArray(response.data.entries)) {
@@ -100,7 +102,7 @@ const LeftSide = () => {
                 <img
                   src={
                     user && user.profile_image
-                      ? `http://localhost:8081${user.profile_image}`
+                      ? `https://sikat-react-js-client.vercel.app${user.profile_image}`
                       : DefaultProfile
                   }
                   alt="Profile"

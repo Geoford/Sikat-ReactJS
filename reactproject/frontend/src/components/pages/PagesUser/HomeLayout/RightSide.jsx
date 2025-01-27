@@ -34,7 +34,7 @@ const UserList = ({ users, handleFollowToggle, isFollowing }) => (
                     <img
                       src={
                         user.profile_image
-                          ? `http://localhost:8081${user.profile_image}`
+                          ? `https://sikat-react-js-client.vercel.app${user.profile_image}`
                           : DefaultProfile
                       }
                       alt="Profile"
@@ -118,7 +118,9 @@ const RightSide = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/users");
+      const response = await axios.get(
+        "https://sikat-react-js-client.vercel.app/users"
+      );
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -128,7 +130,7 @@ const RightSide = () => {
   const fetchFollowers = async (userID) => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/followers/${userID}`
+        `https://sikat-react-js-client.vercel.app/followers/${userID}`
       );
       setFollowers(response.data);
     } catch (error) {
@@ -139,7 +141,7 @@ const RightSide = () => {
   const fetchFollowedUsers = async (userID) => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/followedUsers/${userID}`
+        `https://sikat-react-js-client.vercel.app/followedUsers/${userID}`
       );
       setFollowedUsers(response.data);
       localStorage.setItem("followedUsers", JSON.stringify(response.data));
@@ -150,7 +152,9 @@ const RightSide = () => {
 
   const fetchLatestAnnouncement = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/announcement");
+      const response = await axios.get(
+        "https://sikat-react-js-client.vercel.app/announcement"
+      );
       setLatestAnnouncement(response.data);
     } catch (error) {
       console.error("Error fetching latest announcement:", error);
@@ -177,7 +181,7 @@ const RightSide = () => {
           message: `Are you sure you want to unfollow ${targetUsername}?`,
           onConfirm: async () => {
             await axios.delete(
-              `http://localhost:8081/unfollow/${followUserId}`,
+              `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
               {
                 data: { followerId: user.userID },
               }
@@ -196,7 +200,7 @@ const RightSide = () => {
         });
       } else {
         const response = await axios.post(
-          `http://localhost:8081/follow/${followUserId}`,
+          `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
           {
             followerId: user.userID,
           }
@@ -288,7 +292,7 @@ const RightSide = () => {
                 <img
                   src={
                     latestAnnouncement.diary_image
-                      ? `http://localhost:8081${latestAnnouncement.diary_image}`
+                      ? `https://sikat-react-js-client.vercel.app${latestAnnouncement.diary_image}`
                       : SampleImage
                   }
                   alt="Announcement"
