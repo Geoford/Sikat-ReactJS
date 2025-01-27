@@ -27,14 +27,11 @@ app.use("/uploads", express.static("uploads"));
 //   res.send({ message: "Server is running." });
 // });
 
-const db = mysql.createPool({
-  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com",
-  user: "uhklkzkl3y7lsssw",
-  password: "JHWXahYMlszMvX8Emxrp",
-  database: "bcs2fegnflyz4wws58oa",
-  waitForConnections: true,
-  connectionLimit: 10, // Adjust based on your expected load
-  queueLimit: 0,
+const db = mysql.createConnection({
+  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
+  user: "uhklkzkl3y7lsssw" || "root",
+  password: "JHWXahYMlszMvX8Emxrp" || "",
+  database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
 });
 
 // mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
@@ -47,15 +44,12 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-db.getConnection((err, connection) => {
+db.connect((err) => {
   if (err) {
     console.error("Database connection failed: " + err.stack);
     return;
   }
   console.log("Connected to database.");
-
-  // Don't forget to release the connection after use
-  connection.release();
 });
 
 const uploadsDir = path.join(__dirname, "uploads");
@@ -1864,46 +1858,23 @@ app.get("/gadifyStatus/:userID", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  const userValues = `
-    SELECT 
-      user_table.userID, 
-      user_table.firstName, 
-      user_table.lastName, 
-      user_table.email, 
-      user_profiles.profile_image, 
-      user_profiles.alias
-    FROM 
-      user_table
+  const userValues = `SELECT * 
+    FROM user_table
     JOIN 
-      user_profiles ON user_table.userID = user_profiles.userID 
-    WHERE 
-      user_table.userID = ?
-  `;
+    user_profiles ON user_table.userID = user_profiles.userID 
+    WHERE user_table.userID = ?`;
 
-  // Get a connection from the pool
-  db.getConnection((err, connection) => {
+  db.query(userValues, [userID], (err, result) => {
     if (err) {
-      console.error("Database connection failed: " + err.stack);
+      console.error("Database error:", err);
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    // Execute the query
-    connection.query(userValues, [userID], (queryErr, results) => {
-      if (queryErr) {
-        console.error("Error executing query: ", queryErr);
-        return res.status(500).json({ message: "Error executing query" });
-      }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-      if (results.length === 0) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Send the results back as a JSON response
-      res.json(results[0]);
-
-      // Always release the connection after use
-      connection.release();
-    });
+    res.json(result[0]); // Merged result since the JOIN already includes profile data
   });
 });
 
