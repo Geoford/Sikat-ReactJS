@@ -1874,7 +1874,6 @@ app.get("/gadifyStatus/:userID", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  // Fetching only necessary columns instead of SELECT *
   const userValues = `
     SELECT 
       user_table.userID, 
@@ -1891,6 +1890,8 @@ app.get("/fetchUser/user/:id", (req, res) => {
       user_table.userID = ?
   `;
 
+  console.log("Executing Query: ", userValues); // Log the query for debugging
+
   db.query(userValues, [userID], (err, result) => {
     if (err) {
       console.error("Database error:", err);
@@ -1901,7 +1902,7 @@ app.get("/fetchUser/user/:id", (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(result[0]); // Returning the first result (merged data from JOIN)
+    res.json(result[0]); // Merged result since the JOIN already includes profile data
   });
 });
 
