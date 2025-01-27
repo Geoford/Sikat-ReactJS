@@ -19,7 +19,9 @@ const OtherProfileDiary = ({ userID }) => {
     if (user) {
       const fetchUser = JSON.parse(user);
 
-      fetch(`http://localhost:8081/fetchUserEntry/user/${userID}`)
+      fetch(
+        `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${userID}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error("No entry found");
@@ -87,7 +89,7 @@ const OtherProfileDiary = ({ userID }) => {
                     <img
                       src={
                         entry.profile_image
-                          ? `http://localhost:8081${entry.profile_image}`
+                          ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
                           : DefaultProfile
                       }
                       alt="Profile"
@@ -107,7 +109,7 @@ const OtherProfileDiary = ({ userID }) => {
                   {entry.fileURL && (
                     <img
                       className="DiaryImage mt-1"
-                      src={`http://localhost:8081${entry.fileURL}`}
+                      src={`https://sikat-react-js-client.vercel.app${entry.fileURL}`}
                       alt="Diary"
                     />
                   )}

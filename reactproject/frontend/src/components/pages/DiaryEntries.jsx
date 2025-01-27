@@ -25,7 +25,9 @@ const DiaryEntries = () => {
     if (userData) {
       const fetchUser = JSON.parse(userData);
 
-      fetch(`http://localhost:8081/fetchUser/user/${fetchUser.userID}`)
+      fetch(
+        `https://sikat-react-js-client.vercel.app/fetchUser/user/${fetchUser.userID}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error("User not found");
@@ -54,7 +56,7 @@ const DiaryEntries = () => {
   const fetchEntries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+        `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${user.userID}`
       );
       if (response.data.entries && Array.isArray(response.data.entries)) {
         console.log(response.data);

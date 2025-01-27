@@ -102,10 +102,10 @@ const DiaryEntry = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchDiaryEntry/${entryID}`
+        `https://sikat-react-js-client.vercel.app/fetchDiaryEntry/${entryID}`
       );
       const gadifyStatusResponse = await axios.get(
-        `http://localhost:8081/gadifyStatus/${user.userID}`
+        `https://sikat-react-js-client.vercel.app/gadifyStatus/${user.userID}`
       );
 
       if (response.data && response.data.entry) {
@@ -128,7 +128,7 @@ const DiaryEntry = () => {
   const fetchComments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchComments/${entryID}`
+        `https://sikat-react-js-client.vercel.app/fetchComments/${entryID}`
       );
       setComments(response.data);
     } catch (error) {
@@ -140,7 +140,7 @@ const DiaryEntry = () => {
   const fetchFollowedUsers = async (userID) => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/followedUsers/${userID}`
+        `https://sikat-react-js-client.vercel.app/followedUsers/${userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
@@ -156,9 +156,12 @@ const DiaryEntry = () => {
     if (!entry) return;
 
     axios
-      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
-        userID: user.userID,
-      })
+      .post(
+        `https://sikat-react-js-client.vercel.app/entry/${entryID}/gadify`,
+        {
+          userID: user.userID,
+        }
+      )
       .then((res) => {
         const isGadified =
           res.data.message === "Gadify action recorded successfully";
@@ -178,13 +181,16 @@ const DiaryEntry = () => {
 
         if (isGadified && user.userID !== entry.userID) {
           axios
-            .post(`http://localhost:8081/notifications/${entry.userID}`, {
-              actorID: user.userID,
-              entryID: entryID,
-              profile_image: user.profile_image,
-              type: "gadify",
-              message: `${user.firstName} ${user.lastName} gadified your diary entry.`,
-            })
+            .post(
+              `https://sikat-react-js-client.vercel.app/notifications/${entry.userID}`,
+              {
+                actorID: user.userID,
+                entryID: entryID,
+                profile_image: user.profile_image,
+                type: "gadify",
+                message: `${user.firstName} ${user.lastName} gadified your diary entry.`,
+              }
+            )
             .then((res) => {
               console.log("Notification response:", res.data);
             })
@@ -236,7 +242,7 @@ const DiaryEntry = () => {
       const fetchFlaggedCount = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8081/flaggedCount/${entry.entryID}`
+            `https://sikat-react-js-client.vercel.app/flaggedCount/${entry.entryID}`
           );
           setFlaggedCount(response.data.flaggedCount);
         } catch (error) {
@@ -268,7 +274,7 @@ const DiaryEntry = () => {
           onConfirm: async () => {
             try {
               await axios.delete(
-                `http://localhost:8081/unfollow/${followUserId}`,
+                `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
                 {
                   data: { followerId: user.userID },
                 }
@@ -299,9 +305,12 @@ const DiaryEntry = () => {
           onCancel: () => setConfirmModal({ show: false, message: "" }),
         });
       } else {
-        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
-          followerId: user.userID,
-        });
+        await axios.post(
+          `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
+          {
+            followerId: user.userID,
+          }
+        );
 
         // Update followed users list after following
         setFollowedUsers((prev) => [...prev, followUserId]);
@@ -314,7 +323,7 @@ const DiaryEntry = () => {
 
         // Send follow notification to the followed user
         await axios.post(
-          `http://localhost:8081/notifications/${followUserId}`,
+          `https://sikat-react-js-client.vercel.app/notifications/${followUserId}`,
           {
             userID: followUserId,
             actorID: user.userID,
@@ -395,7 +404,7 @@ const DiaryEntry = () => {
                       >
                         <img
                           className="DiaryImage rounded"
-                          src={`http://localhost:8081${entry.diary_image}`}
+                          src={`https://sikat-react-js-client.vercel.app${entry.diary_image}`}
                           alt="Diary"
                           style={{
                             cursor: "pointer",
@@ -430,7 +439,7 @@ const DiaryEntry = () => {
                       alias={entry.alias}
                       anonimity={entry.anonimity}
                       visibility={entry.visibility}
-                      imageFile={`http://localhost:8081${entry.profile_image}`}
+                      imageFile={`https://sikat-react-js-client.vercel.app${entry.profile_image}`}
                       anonymousImage={anonymous}
                       defaultImage={userDefaultProfile}
                       date={formatDate()}
@@ -445,7 +454,7 @@ const DiaryEntry = () => {
                             <img
                               src={
                                 entry.isAdmin === 1
-                                  ? `http://localhost:8081${entry.profile_image}`
+                                  ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
                                   : anonymous
                               }
                               alt="Profile"
@@ -465,7 +474,7 @@ const DiaryEntry = () => {
                               <img
                                 src={
                                   entry.profile_image
-                                    ? `http://localhost:8081${entry.profile_image}`
+                                    ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
                                     : userDefaultProfile
                                 }
                                 alt="Profile"
@@ -596,7 +605,7 @@ const DiaryEntry = () => {
                                         diarySub={entry.subjects}
                                         imageFile={
                                           entry.diary_image &&
-                                          `http://localhost:8081${entry.diary_image}`
+                                          `https://sikat-react-js-client.vercel.app${entry.diary_image}`
                                         }
                                       ></EditPostButton>
                                     ) : (
@@ -610,7 +619,7 @@ const DiaryEntry = () => {
                                         diarySub={entry.subjects}
                                         imageFile={
                                           entry.diary_image &&
-                                          `http://localhost:8081${entry.diary_image}`
+                                          `https://sikat-react-js-client.vercel.app${entry.diary_image}`
                                         }
                                       />
                                     )}
@@ -652,7 +661,7 @@ const DiaryEntry = () => {
                           <ImageModal
                             showModal={showModal}
                             handleCloseModal={handleCloseModal}
-                            diaryImage={`http://localhost:8081${entry.diary_image}`}
+                            diaryImage={`https://sikat-react-js-client.vercel.app${entry.diary_image}`}
                           ></ImageModal>
                         </>
                       )}
@@ -702,7 +711,7 @@ const DiaryEntry = () => {
                         {currentUser.isAdmin ? (
                           <ChatButton
                             entry={entry}
-                            imageFile={`http://localhost:8081${entry.profile_image}`}
+                            imageFile={`https://sikat-react-js-client.vercel.app${entry.profile_image}`}
                             userToChat={entry.userID}
                           ></ChatButton>
                         ) : (

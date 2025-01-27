@@ -84,7 +84,7 @@ const DiaryEntryLayout = ({
       const fetchComments = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8081/fetchComments/${entry.entryID}`
+            `https://sikat-react-js-client.vercel.app/fetchComments/${entry.entryID}`
           );
           setComments(response.data);
         } catch (error) {
@@ -102,7 +102,7 @@ const DiaryEntryLayout = ({
       const fetchFlaggedCount = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8081/flaggedCount/${entry.entryID}`
+            `https://sikat-react-js-client.vercel.app/flaggedCount/${entry.entryID}`
           );
           const count = response.data.flaggedCount;
           setFlaggedCount(count);
@@ -119,7 +119,7 @@ const DiaryEntryLayout = ({
       const fetchComments = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8081/fetchComments/${entry.entryID}`
+            `https://sikat-react-js-client.vercel.app/fetchComments/${entry.entryID}`
           );
           setComments(response.data);
         } catch (error) {
@@ -132,12 +132,15 @@ const DiaryEntryLayout = ({
 
   const fetchEntries = async (userID, filters) => {
     try {
-      const response = await axios.get("http://localhost:8081/entries", {
-        params: { userID, filters },
-      });
+      const response = await axios.get(
+        "https://sikat-react-js-client.vercel.app/entries",
+        {
+          params: { userID, filters },
+        }
+      );
 
       const gadifyStatusResponse = await axios.get(
-        `http://localhost:8081/gadifyStatus/${userID}`
+        `https://sikat-react-js-client.vercel.app/gadifyStatus/${userID}`
       );
 
       const updatedEntries = response.data.map((entry) => {
@@ -161,7 +164,9 @@ const DiaryEntryLayout = ({
     );
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8081/deleteEntry/${entryID}`);
+        await axios.delete(
+          `https://sikat-react-js-client.vercel.app/deleteEntry/${entryID}`
+        );
         alert("Diary entry deleted successfully.");
         setEntries((prevEntries) =>
           prevEntries.filter((entry) => entry.entryID !== entryID)
@@ -175,9 +180,12 @@ const DiaryEntryLayout = ({
 
   const updateEngagement = async (entryID) => {
     try {
-      await axios.post("http://localhost:8081/updateEngagement", {
-        entryID,
-      });
+      await axios.post(
+        "https://sikat-react-js-client.vercel.app/updateEngagement",
+        {
+          entryID,
+        }
+      );
     } catch (error) {
       console.error("Error updating engagement:", error);
     }
@@ -330,7 +338,7 @@ const DiaryEntryLayout = ({
             >
               <div className="profilePicture">
                 <img
-                  src={`http://localhost:8081${entry.profile_image}`}
+                  src={`https://sikat-react-js-client.vercel.app${entry.profile_image}`}
                   alt="Profile"
                   style={{
                     width: "100%",
@@ -376,7 +384,7 @@ const DiaryEntryLayout = ({
                 <img
                   src={
                     entry.isAdmin === 1
-                      ? `http://localhost:8081${entry.profile_image}`
+                      ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
                       : anonymous
                   }
                   alt="Profile"
@@ -396,7 +404,7 @@ const DiaryEntryLayout = ({
                   <img
                     src={
                       entry.profile_image
-                        ? `http://localhost:8081${entry.profile_image}`
+                        ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
                         : userDefaultProfile
                     }
                     alt="Profile"
@@ -537,7 +545,7 @@ const DiaryEntryLayout = ({
                               diarySub={entry.subjects}
                               imageFile={
                                 entry.diary_image &&
-                                `http://localhost:8081${entry.diary_image}`
+                                `https://sikat-react-js-client.vercel.app${entry.diary_image}`
                               }
                             ></EditPostButton>
                           ) : (
@@ -551,7 +559,7 @@ const DiaryEntryLayout = ({
                               diarySub={entry.subjects}
                               imageFile={
                                 entry.diary_image &&
-                                `http://localhost:8081${entry.diary_image}`
+                                `https://sikat-react-js-client.vercel.app${entry.diary_image}`
                               }
                             />
                           )}
@@ -626,7 +634,7 @@ const DiaryEntryLayout = ({
           <>
             <img
               className="DiaryImage mt-1 rounded"
-              src={`http://localhost:8081${entry.diary_image}`}
+              src={`https://sikat-react-js-client.vercel.app${entry.diary_image}`}
               alt="Diary"
               style={{ cursor: "pointer" }} // Add pointer cursor
               onClick={() => handleShowModal(entry.entryID)} // Open modal on click
@@ -636,7 +644,7 @@ const DiaryEntryLayout = ({
             <ImageModal
               showModal={showModal}
               handleCloseModal={handleCloseModal}
-              diaryImage={`http://localhost:8081${entry.diary_image}`}
+              diaryImage={`https://sikat-react-js-client.vercel.app${entry.diary_image}`}
             ></ImageModal>
           </>
         )}

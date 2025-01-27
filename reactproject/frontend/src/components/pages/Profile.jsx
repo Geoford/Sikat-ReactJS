@@ -70,7 +70,7 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8081/fetchUser/user/${userID}`
+          `https://sikat-react-js-client.vercel.app/fetchUser/user/${userID}`
         );
         if (!response.ok) throw new Error("User not found");
         const data = await response.json();
@@ -101,7 +101,7 @@ const Profile = () => {
   const fetchEntries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+        `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${user.userID}`
       );
 
       if (response.data.entries && Array.isArray(response.data.entries)) {
@@ -144,7 +144,10 @@ const Profile = () => {
       message: `Are you sure you want to change your profile?`,
       onConfirm: async () => {
         axios
-          .post("http://localhost:8081/uploadProfile", formData)
+          .post(
+            "https://sikat-react-js-client.vercel.app/uploadProfile",
+            formData
+          )
           .then((res) => {
             console.log("Profile uploaded successfully", res.data);
             setConfirmModal({ show: false, message: "" });
@@ -171,7 +174,7 @@ const Profile = () => {
         return;
       }
       const response = await axios.get(
-        `http://localhost:8081/followedUsers/${currentUser.userID}`
+        `https://sikat-react-js-client.vercel.app/followedUsers/${currentUser.userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
@@ -184,7 +187,7 @@ const Profile = () => {
   const fetchFollowers = async (userID) => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/followers/${userID}`
+        `https://sikat-react-js-client.vercel.app/followers/${userID}`
       );
       setFollowers(response.data);
     } catch (error) {
@@ -216,7 +219,7 @@ const Profile = () => {
           onConfirm: async () => {
             try {
               await axios.delete(
-                `http://localhost:8081/unfollow/${followUserId}`,
+                `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
                 {
                   data: { followerId: currentUser.userID },
                 }
@@ -248,7 +251,7 @@ const Profile = () => {
         });
       } else {
         const response = await axios.post(
-          `http://localhost:8081/follow/${followUserId}`,
+          `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
           {
             followerId: currentUser.userID,
           }
@@ -269,7 +272,7 @@ const Profile = () => {
         });
 
         await axios.post(
-          `http://localhost:8081/notifications/${followUserId}`,
+          `https://sikat-react-js-client.vercel.app/notifications/${followUserId}`,
           {
             userID: followUserId,
             actorID: currentUser.userID,
@@ -298,9 +301,12 @@ const Profile = () => {
     if (!entry) return;
 
     axios
-      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
-        userID: currentUser.userID,
-      })
+      .post(
+        `https://sikat-react-js-client.vercel.app/entry/${entryID}/gadify`,
+        {
+          userID: currentUser.userID,
+        }
+      )
       .then((res) => {
         const isGadified =
           res.data.message === "Gadify action recorded successfully";
@@ -320,13 +326,16 @@ const Profile = () => {
         );
         if (isGadified && currentUser.userID !== entry.userID) {
           axios
-            .post(`http://localhost:8081/notifications/${entry.userID}`, {
-              actorID: currentUser.userID,
-              entryID: entryID,
-              profile_image: currentUser.profile_image,
-              type: "gadify",
-              message: `${currentUser.firstName} ${currentUser.lastName} gadified your diary entry.`,
-            })
+            .post(
+              `https://sikat-react-js-client.vercel.app/notifications/${entry.userID}`,
+              {
+                actorID: currentUser.userID,
+                entryID: entryID,
+                profile_image: currentUser.profile_image,
+                type: "gadify",
+                message: `${currentUser.firstName} ${currentUser.lastName} gadified your diary entry.`,
+              }
+            )
             .then((res) => {
               console.log("Notification response:", res.data);
             })
@@ -447,7 +456,7 @@ const Profile = () => {
               <img
                 src={
                   user && user.profile_image
-                    ? `http://localhost:8081${user.profile_image}`
+                    ? `https://sikat-react-js-client.vercel.app${user.profile_image}`
                     : DefaultProfile
                 }
                 alt="Profile"

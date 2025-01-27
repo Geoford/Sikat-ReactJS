@@ -89,7 +89,7 @@ const ForgotPassword = () => {
     //   message: `Sending otp.`,
     // });
     try {
-      await axios.post("http://localhost:8081/send-otp", {
+      await axios.post("https://sikat-react-js-client.vercel.app/send-otp", {
         email: values.cvsuEmail,
       });
       setModal({
@@ -117,7 +117,7 @@ const ForgotPassword = () => {
     // });
     setLoading(true);
     try {
-      await axios.post("http://localhost:8081/verify-otp", {
+      await axios.post("https://sikat-react-js-client.vercel.app/verify-otp", {
         email: values.cvsuEmail,
         otp: values.OTP,
       });
@@ -149,10 +149,13 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:8081/reset-password", {
-        email: values.cvsuEmail,
-        password: values.password,
-      });
+      await axios.post(
+        "https://sikat-react-js-client.vercel.app/reset-password",
+        {
+          email: values.cvsuEmail,
+          password: values.password,
+        }
+      );
       setModal({
         show: true,
         message: `Password reset successfully. You can now log in.`,

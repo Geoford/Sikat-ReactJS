@@ -68,13 +68,13 @@ function NotificationButton() {
 
       try {
         const response = await axios.get(
-          `http://localhost:8081/getnotifications/${user.userID}`
+          `https://sikat-react-js-client.vercel.app/getnotifications/${user.userID}`
         );
 
         const fetchedNotifications = response.data.map((notification) => ({
           ...notification,
           actorProfileImage: notification.actorProfileImage
-            ? `http://localhost:8081${notification.actorProfileImage}`
+            ? `https://sikat-react-js-client.vercel.app${notification.actorProfileImage}`
             : DefaultProfile,
         }));
 
@@ -127,10 +127,13 @@ function NotificationButton() {
       );
 
       axios
-        .put("http://localhost:8081/notifications/mark-as-read", {
-          userID: user.userID,
-          notificationIDs: notifications.map((n) => n.notificationID),
-        })
+        .put(
+          "https://sikat-react-js-client.vercel.app/notifications/mark-as-read",
+          {
+            userID: user.userID,
+            notificationIDs: notifications.map((n) => n.notificationID),
+          }
+        )
         .catch((error) =>
           console.error("Error marking notifications as read:", error)
         );
@@ -141,10 +144,13 @@ function NotificationButton() {
     if (!user) return;
 
     axios
-      .put("http://localhost:8081/notifications/mark-as-read", {
-        userID: user.userID,
-        notificationID,
-      })
+      .put(
+        "https://sikat-react-js-client.vercel.app/notifications/mark-as-read",
+        {
+          userID: user.userID,
+          notificationID,
+        }
+      )
       .catch((error) =>
         console.error("Error marking notification as read:", error)
       );
@@ -167,9 +173,12 @@ function NotificationButton() {
     localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
 
     try {
-      await axios.put("http://localhost:8081/notifications/mark-all-as-read", {
-        userID: user.userID,
-      });
+      await axios.put(
+        "https://sikat-react-js-client.vercel.app/notifications/mark-all-as-read",
+        {
+          userID: user.userID,
+        }
+      );
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
     }

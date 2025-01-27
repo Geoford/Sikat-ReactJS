@@ -27,7 +27,7 @@ const Settings = () => {
   const fetchUserData = async (userID) => {
     try {
       const response = await fetch(
-        `http://localhost:8081/fetchUser/user/${userID}`
+        `https://sikat-react-js-client.vercel.app/fetchUser/user/${userID}`
       );
 
       if (!response.ok) {

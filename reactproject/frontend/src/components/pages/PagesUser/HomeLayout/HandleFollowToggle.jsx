@@ -54,7 +54,7 @@ export const HandleFollowToggle = () => {
             `Are you sure you want to unfollow ${targetUsername}?`,
             async () => {
               await axios.delete(
-                `http://localhost:8081/unfollow/${followUserId}`,
+                `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
                 {
                   data: { followerId: user.userID },
                 }
@@ -69,7 +69,7 @@ export const HandleFollowToggle = () => {
           );
         } else {
           const response = await axios.post(
-            `http://localhost:8081/follow/${followUserId}`,
+            `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
             {
               followerId: user.userID,
             }
