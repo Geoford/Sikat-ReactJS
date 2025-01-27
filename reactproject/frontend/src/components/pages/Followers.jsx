@@ -33,7 +33,7 @@ const UserList = ({ type, users, handleFollowToggle, isFollowing }) => (
                   <img
                     src={
                       user.profile_image
-                        ? `https://sikat-react-js-client.vercel.app${user.profile_image}`
+                        ? `http://localhost:8081${user.profile_image}`
                         : DefaultProfile
                     }
                     alt="Profile"
@@ -106,7 +106,7 @@ const Followers = () => {
   const fetchFollowers = async (userID) => {
     try {
       const response = await axios.get(
-        `https://sikat-react-js-client.vercel.app/followers/${userID}`
+        `http://localhost:8081/followers/${userID}`
       );
       setFollowers(response.data);
     } catch (error) {
@@ -117,7 +117,7 @@ const Followers = () => {
   const fetchFollowedUsers = async (userID) => {
     try {
       const response = await axios.get(
-        `https://sikat-react-js-client.vercel.app/followedUsers/${userID}`
+        `http://localhost:8081/followedUsers/${userID}`
       );
       const followedUsersData = response.data;
       setFollowedUsers(followedUsersData);
@@ -148,7 +148,7 @@ const Followers = () => {
           onConfirm: async () => {
             try {
               await axios.delete(
-                `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
+                `http://localhost:8081/unfollow/${followUserId}`,
                 {
                   data: { followerId: user.userID },
                 }
@@ -180,7 +180,7 @@ const Followers = () => {
         });
       } else {
         const response = await axios.post(
-          `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
+          `http://localhost:8081/follow/${followUserId}`,
           {
             followerId: user.userID,
           }

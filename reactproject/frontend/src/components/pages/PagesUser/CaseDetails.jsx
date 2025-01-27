@@ -18,7 +18,7 @@ const CaseDetails = () => {
   useEffect(() => {
     // Fetch case details based on reportID
     axios
-      .get(`https://sikat-react-js-client.vercel.app/reports/${reportID}`)
+      .get(`http://localhost:8081/reports/${reportID}`)
       .then((response) => {
         console.log(response.data);
         setCaseDetails(response.data);
@@ -38,7 +38,7 @@ const CaseDetails = () => {
     );
     if (confirmed) {
       axios
-        .put(`https://sikat-react-js-client.vercel.app/reports/${reportID}`)
+        .put(`http://localhost:8081/reports/${reportID}`)
         .then(() => {
           alert("The case has been addressed!");
           fetchReports();
@@ -204,9 +204,7 @@ const CaseDetails = () => {
                       <div
                         key={index}
                         onClick={() =>
-                          handleImageClick(
-                            `https://sikat-react-js-client.vercel.app${document}`
-                          )
+                          handleImageClick(`http://localhost:8081${document}`)
                         }
                       >
                         <div
@@ -218,7 +216,7 @@ const CaseDetails = () => {
                           }}
                         >
                           <img
-                            src={`https://sikat-react-js-client.vercel.app${document}`} // Displaying the supporting document as an image
+                            src={`http://localhost:8081${document}`} // Displaying the supporting document as an image
                             alt={`Supporting Document ${index + 1}`}
                             style={{
                               width: "100%",
