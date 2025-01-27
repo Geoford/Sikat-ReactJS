@@ -33,7 +33,7 @@ const Center = () => {
   const fetchFollowedUsers = async (userID) => {
     try {
       const response = await axios.get(
-        `https://sikat-react-js-client.vercel.app/followedUsers/${userID}`
+        `http://localhost:8081/followedUsers/${userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
@@ -44,15 +44,12 @@ const Center = () => {
 
   const fetchEntries = async (userID, filters) => {
     try {
-      const response = await axios.get(
-        "https://sikat-react-js-client.vercel.app/entries",
-        {
-          params: { userID: userID, filters: filters },
-        }
-      );
+      const response = await axios.get("http://localhost:8081/entries", {
+        params: { userID: userID, filters: filters },
+      });
 
       const gadifyStatusResponse = await axios.get(
-        `https://sikat-react-js-client.vercel.app/gadifyStatus/${userID}`
+        `http://localhost:8081/gadifyStatus/${userID}`
       );
 
       const updatedEntries = response.data.map((entry) => {
@@ -98,21 +95,15 @@ const Center = () => {
 
     try {
       if (isFollowing) {
-        await axios.delete(
-          `https://sikat-react-js-client.vercel.app/unfollow/${followUserId}`,
-          {
-            data: { followerId: user.userID },
-          }
-        );
+        await axios.delete(`http://localhost:8081/unfollow/${followUserId}`, {
+          data: { followerId: user.userID },
+        });
 
         setFollowedUsers((prev) => prev.filter((id) => id !== followUserId));
       } else {
-        await axios.post(
-          `https://sikat-react-js-client.vercel.app/follow/${followUserId}`,
-          {
-            followerId: user.userID,
-          }
-        );
+        await axios.post(`http://localhost:8081/follow/${followUserId}`, {
+          followerId: user.userID,
+        });
 
         setFollowedUsers((prev) => [...prev, followUserId]);
       }
@@ -130,12 +121,9 @@ const Center = () => {
     if (!entry) return;
 
     axios
-      .post(
-        `https://sikat-react-js-client.vercel.app/entry/${entryID}/gadify`,
-        {
-          userID: user.userID,
-        }
-      )
+      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
+        userID: user.userID,
+      })
       .then((res) => {
         const isGadified =
           res.data.message === "Gadify action recorded successfully";

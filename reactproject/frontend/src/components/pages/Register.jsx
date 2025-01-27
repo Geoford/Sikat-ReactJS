@@ -91,7 +91,7 @@ export default function Register() {
   const validateEmail = async (cvsuEmail, username) => {
     try {
       const response = await axios.post(
-        "https://sikat-react-js-client.vercel.app/check-email-username",
+        "http://localhost:8081/check-email-username",
         {
           username,
           cvsuEmail,
@@ -131,13 +131,10 @@ export default function Register() {
       // });
 
       try {
-        const response = await axios.post(
-          "https://sikat-react-js-client.vercel.app/verify-otp",
-          {
-            email: values.cvsuEmail,
-            otp: values.OTP,
-          }
-        );
+        const response = await axios.post("http://localhost:8081/verify-otp", {
+          email: values.cvsuEmail,
+          otp: values.OTP,
+        });
 
         console.log("OTP verification response:", response.data);
 
@@ -148,10 +145,7 @@ export default function Register() {
             message: `OTP verified successfully, registering user...`,
           });
           try {
-            await axios.post(
-              "https://sikat-react-js-client.vercel.app/Register",
-              values
-            );
+            await axios.post("http://localhost:8081/Register", values);
             setModal({
               show: true,
               message: `OTP verified successfully, registering user...`,
@@ -210,12 +204,9 @@ export default function Register() {
       message: `Sending OTP.`,
     });
     try {
-      const response = await axios.post(
-        "https://sikat-react-js-client.vercel.app/send-otp",
-        {
-          email,
-        }
-      );
+      const response = await axios.post("http://localhost:8081/send-otp", {
+        email,
+      });
       console.log("OTP sent response:", response.data);
       setOtpSent(true);
       setModal({

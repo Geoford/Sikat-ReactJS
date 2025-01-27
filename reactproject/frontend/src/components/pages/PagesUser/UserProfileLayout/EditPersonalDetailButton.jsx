@@ -35,7 +35,7 @@ const EditPersonalDetailButton = () => {
       const fetchUserDetails = async () => {
         try {
           const response = await axios.get(
-            `https://sikat-react-js-client.vercel.app/fetchUser/user/${user.userID}`
+            `http://localhost:8081/fetchUser/user/${user.userID}`
           );
           const userDetails = response.data;
 
@@ -90,10 +90,7 @@ const EditPersonalDetailButton = () => {
       }
 
       axios
-        .put(
-          `https://sikat-react-js-client.vercel.app/EditProfile/${userID}`,
-          updatedValues
-        )
+        .put(`http://localhost:8081/EditProfile/${userID}`, updatedValues)
         .then((res) => {
           console.log("Profile updated successfully:", res);
           localStorage.setItem(

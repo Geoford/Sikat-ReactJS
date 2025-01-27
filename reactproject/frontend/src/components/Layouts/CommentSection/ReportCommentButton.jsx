@@ -45,7 +45,7 @@ function ReportCommentButton({
     const fetchReportComments = async () => {
       try {
         const response = await axios.get(
-          "https://sikat-react-js-client.vercel.app/reportComments"
+          "http://localhost:8081/reportComments"
         );
         setReportComments(response.data);
       } catch (err) {
@@ -78,7 +78,7 @@ function ReportCommentButton({
   const handleSubmitReport = async () => {
     try {
       const response = await axios.post(
-        "https://sikat-react-js-client.vercel.app/reportuserComment",
+        "http://localhost:8081/reportuserComment",
         {
           commentID,
           userID,

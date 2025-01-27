@@ -23,9 +23,7 @@ const NewUserSetUp = ({ user }) => {
   useEffect(() => {
     const fetchFilterSubjects = async () => {
       try {
-        const response = await axios.get(
-          "https://sikat-react-js-client.vercel.app/filters"
-        );
+        const response = await axios.get("http://localhost:8081/filters");
         const subjects = response.data;
 
         const initialState = subjects.reduce((acc, subject) => {
@@ -65,13 +63,10 @@ const NewUserSetUp = ({ user }) => {
 
     if (selectedFilters.length > 0) {
       try {
-        await axios.post(
-          "https://sikat-react-js-client.vercel.app/saveUserFilters",
-          {
-            userID: user.userID,
-            filters: selectedFilters,
-          }
-        );
+        await axios.post("http://localhost:8081/saveUserFilters", {
+          userID: user.userID,
+          filters: selectedFilters,
+        });
         console.log("Filters saved successfully");
       } catch (error) {
         console.error("Error saving filters:", error);
@@ -84,7 +79,7 @@ const NewUserSetUp = ({ user }) => {
   const [step, setStep] = useState(1);
   const handleNextStep = async (userID) => {
     try {
-      await axios.put("https://sikat-react-js-client.vercel.app/isNewAccount", {
+      await axios.put("http://localhost:8081/isNewAccount", {
         userID,
       });
     } catch (error) {

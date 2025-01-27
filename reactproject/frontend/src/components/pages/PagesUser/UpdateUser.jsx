@@ -44,10 +44,7 @@ export default function UpdateUser() {
     if (Object.keys(validationErrors).length === 0) {
       const userID = JSON.parse(localStorage.getItem("user")).userID;
       axios
-        .put(
-          `https://sikat-react-js-client.vercel.app/EditProfile?userID=${userID}`,
-          values
-        )
+        .put(`http://localhost:8081/EditProfile?userID=${userID}`, values)
         .then((res) => {
           localStorage.setItem(
             "user",

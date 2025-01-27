@@ -14,7 +14,7 @@ const AccountDropdown = ({ isAdmin }) => {
   const fetchUserData = async (userID) => {
     try {
       const response = await fetch(
-        `https://sikat-react-js-client.vercel.app/fetchUser/user/${userID}`
+        `http://localhost:8081/fetchUser/user/${userID}`
       );
 
       if (!response.ok) {
@@ -47,7 +47,7 @@ const AccountDropdown = ({ isAdmin }) => {
       const parsedUser = JSON.parse(userData);
 
       axios
-        .post("https://sikat-react-js-client.vercel.app/logout", {
+        .post("http://localhost:8081/logout", {
           userID: parsedUser.userID,
         })
         .then((response) => {
@@ -145,7 +145,7 @@ const AccountDropdown = ({ isAdmin }) => {
               className=" "
               src={
                 user && user.profile_image
-                  ? `https://sikat-react-js-client.vercel.app${user.profile_image}`
+                  ? `http://localhost:8081${user.profile_image}`
                   : DefaultProfile
               }
               alt="User Profile"

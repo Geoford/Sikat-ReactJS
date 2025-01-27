@@ -19,9 +19,7 @@ const UserDiary = ({ userID }) => {
     if (user) {
       const fetchUser = JSON.parse(user);
 
-      fetch(
-        `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${fetchUser.userID}`
-      )
+      fetch(`http://localhost:8081/fetchUserEntry/user/${fetchUser.userID}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("No entry found");
@@ -49,12 +47,9 @@ const UserDiary = ({ userID }) => {
     if (!entry) return;
 
     axios
-      .post(
-        `https://sikat-react-js-client.vercel.app/entry/${entryID}/gadify`,
-        {
-          userID: user.userID,
-        }
-      )
+      .post(`http://localhost:8081/entry/${entryID}/gadify`, {
+        userID: user.userID,
+      })
       .then((res) => {
         const isGadified =
           res.data.message === "Gadify action recorded successfully";
@@ -75,15 +70,12 @@ const UserDiary = ({ userID }) => {
         // Only send notification if gadified (count is incremented) and user is not the owner
         if (isGadified && user.userID !== entry.userID) {
           axios
-            .post(
-              `https://sikat-react-js-client.vercel.app/notifications/${entry.userID}`,
-              {
-                actorID: user.userID,
-                entryID: entryID,
-                type: "gadify",
-                message: `${user.username} gadified your diary entry.`,
-              }
-            )
+            .post(`http://localhost:8081/notifications/${entry.userID}`, {
+              actorID: user.userID,
+              entryID: entryID,
+              type: "gadify",
+              message: `${user.username} gadified your diary entry.`,
+            })
             .then((res) => {
               console.log("Notification response:", res.data);
             })
@@ -148,7 +140,7 @@ const UserDiary = ({ userID }) => {
                     <img
                       src={
                         entry.profile_image
-                          ? `https://sikat-react-js-client.vercel.app${entry.profile_image}`
+                          ? `http://localhost:8081${entry.profile_image}`
                           : DefaultProfile
                       }
                       alt="Profile"
@@ -168,7 +160,7 @@ const UserDiary = ({ userID }) => {
                   {entry.fileURL && (
                     <img
                       className="DiaryImage mt-1"
-                      src={`https://sikat-react-js-client.vercel.app${entry.fileURL}`}
+                      src={`http://localhost:8081${entry.fileURL}`}
                       alt="Diary"
                     />
                   )}

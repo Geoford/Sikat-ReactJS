@@ -9,9 +9,7 @@ const OthersRecentJournalEntries = ({ userID }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(
-      `https://sikat-react-js-client.vercel.app/fetchUserEntry/user/${userID}`
-    )
+    fetch(`http://localhost:8081/fetchUserEntry/user/${userID}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("No entry found");
