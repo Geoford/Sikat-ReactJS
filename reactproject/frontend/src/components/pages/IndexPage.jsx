@@ -93,14 +93,10 @@ const IndexPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `https://sikat-react-js-client.vercel.app/users`
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        setUsers(data);
+        setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
