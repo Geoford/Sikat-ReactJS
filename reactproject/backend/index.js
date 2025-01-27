@@ -27,11 +27,14 @@ app.use("/uploads", express.static("uploads"));
 //   res.send({ message: "Server is running." });
 // });
 
-const db = mysql.createConnection({
-  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com" || "localhost",
-  user: "uhklkzkl3y7lsssw" || "root",
-  password: "JHWXahYMlszMvX8Emxrp" || "",
-  database: "bcs2fegnflyz4wws58oa" || "sikat-ediary",
+const db = mysql.createPool({
+  host: "bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com",
+  user: "uhklkzkl3y7lsssw",
+  password: "JHWXahYMlszMvX8Emxrp",
+  database: "bcs2fegnflyz4wws58oa",
+  waitForConnections: true,
+  connectionLimit: 5, // Adjust based on your expected load
+  queueLimit: 0,
 });
 
 // mysql://uhklkzkl3y7lsssw:JHWXahYMlszMvX8Emxrp@bcs2fegnflyz4wws58oa-mysql.services.clever-cloud.com:3306/bcs2fegnflyz4wws58oa
@@ -44,12 +47,25 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
     console.error("Database connection failed: " + err.stack);
     return;
   }
-  console.log("Connected to database.");
+
+  // Use the connection for your query
+  connection.query("YOUR QUERY HERE", (queryErr, results) => {
+    if (queryErr) {
+      console.error("Error executing query: ", queryErr);
+      return;
+    }
+
+    // Send the response here
+    res.json(results);
+
+    // Always release the connection after use
+    connection.release();
+  });
 });
 
 const uploadsDir = path.join(__dirname, "uploads");
@@ -1858,11 +1874,22 @@ app.get("/gadifyStatus/:userID", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  const userValues = `SELECT * 
-    FROM user_table
+  // Fetching only necessary columns instead of SELECT *
+  const userValues = `
+    SELECT 
+      user_table.userID, 
+      user_table.firstName, 
+      user_table.lastName, 
+      user_table.email, 
+      user_profiles.profile_image, 
+      user_profiles.alias
+    FROM 
+      user_table
     JOIN 
-    user_profiles ON user_table.userID = user_profiles.userID 
-    WHERE user_table.userID = ?`;
+      user_profiles ON user_table.userID = user_profiles.userID 
+    WHERE 
+      user_table.userID = ?
+  `;
 
   db.query(userValues, [userID], (err, result) => {
     if (err) {
@@ -1874,7 +1901,7 @@ app.get("/fetchUser/user/:id", (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(result[0]); // Merged result since the JOIN already includes profile data
+    res.json(result[0]); // Returning the first result (merged data from JOIN)
   });
 });
 
