@@ -218,9 +218,9 @@ const ReportedComment = ({ reportedUsers }) => {
                     </select>
                   </div>
                 </th>
-                <th scope="col" className="text-center align-middle">
+                {/* <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Count</h5>
-                </th>
+                </th> */}
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
@@ -242,9 +242,9 @@ const ReportedComment = ({ reportedUsers }) => {
                     <td className="text-center align-middle">
                       <p className="m-0">{reportedUser.reason}</p>
                     </td>
-                    <td className="text-center align-middle">
+                    {/* <td className="text-center align-middle">
                       <p className="m-0">00</p>
-                    </td>
+                    </td> */}
                     <td className="text-success text-center align-middle">
                       {reportedUser.isAddress === 1 ? (
                         <p className="text-success m-0">Addressed</p>

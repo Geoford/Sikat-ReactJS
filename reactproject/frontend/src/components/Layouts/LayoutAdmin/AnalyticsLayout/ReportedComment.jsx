@@ -225,9 +225,9 @@ const ReportedComment = ({ reportedComments }) => {
                 >
                   <h5 className="m-0">Reported Comment</h5>
                 </th>
-                <th scope="col" className="text-center align-middle">
+                {/* <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Count</h5>
-                </th>
+                </th> */}
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
@@ -249,9 +249,9 @@ const ReportedComment = ({ reportedComments }) => {
                     <td className="text-center align-middle">
                       <p className="m-0">{reportedComment.text}</p>
                     </td>
-                    <td className="text-center align-middle">
+                    {/* <td className="text-center align-middle">
                       <p className="m-0">00</p>
-                    </td>
+                    </td> */}
                     <td className="text-success text-center align-middle">
                       {reportedComment.isAddress === 1 ? (
                         <p className="text-success m-0">Addressed</p>

@@ -1334,6 +1334,7 @@ app.get("/entries", (req, res) => {
     diary_entries.isHide != 1 AND 
     (diary_entries.visibility = 'public' 
       OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
+       OR (user_table.isAdmin = 1)
   `;
 
   const queryParams = [userID];

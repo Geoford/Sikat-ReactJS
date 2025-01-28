@@ -162,9 +162,9 @@ const PasswordAndSecurity = () => {
                 </p>
               </div>
             </Form.Floating>
+            {errorMessage && <p className="text-danger m-0">{errorMessage}</p>}
           </Col>
         </Row>
-        {errorMessage && <p className="text-danger mt-2">{errorMessage}</p>}
         {successMessage && (
           <p className="text-success mt-2">{successMessage}</p>
         )}

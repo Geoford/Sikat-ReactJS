@@ -595,17 +595,23 @@ const Profile = () => {
                   isAdmin={currentUser.isAdmin}
                 />
               ) : (
-                <OthersProfileDropdown
-                  isAdmin={currentUser.isAdmin}
-                  user={user}
-                  entry={entries}
-                  ownerAdmin={user.isAdmin}
-                  userID={user.userID}
-                  firstName={user.firstName}
-                  reportedUserID={user.userID}
-                  toBeReported={user.username}
-                  suspended={user.isSuspended}
-                />
+                <>
+                  {user.isAdmin ? (
+                    ""
+                  ) : (
+                    <OthersProfileDropdown
+                      isAdmin={currentUser.isAdmin}
+                      user={user}
+                      entry={entries}
+                      ownerAdmin={user.isAdmin}
+                      userID={user.userID}
+                      firstName={user.firstName}
+                      reportedUserID={user.userID}
+                      toBeReported={user.username}
+                      suspended={user.isSuspended}
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

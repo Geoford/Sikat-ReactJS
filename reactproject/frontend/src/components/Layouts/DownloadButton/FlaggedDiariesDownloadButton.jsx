@@ -69,9 +69,10 @@ const FlaggedDiariesDownloadButton = ({ currentUsers }) => {
         // Data cells
         for (let j = 0; j < rows.length; j++) {
           const dataCell = XLSX.utils.encode_cell({ r: j + 1, c: i });
-          if (!ws[dataCell].s) {
-            ws[dataCell].s = cellStyle;
+          if (!ws[dataCell]) {
+            ws[dataCell] = {}; // Ensure the cell exists
           }
+          ws[dataCell].s = cellStyle;
         }
       }
 

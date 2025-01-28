@@ -1,17 +1,17 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import LeftSide from "../../pages/PagesUser/HomeLayout/LeftSide";
-import Center from "../../pages/PagesUser/HomeLayout/Center";
+// import LeftSide from "../../pages/PagesUser/HomeLayout/LeftSide";
+// import Center from "../../pages/PagesUser/HomeLayout/Center";
 import RightSide from "../../pages/PagesUser/HomeLayout/RightSide";
 
-import AdminLeftSide from "../../pages/PagesAdmin/HomeLayout/LeftSide";
-import AdminCenter from "../../pages/PagesAdmin/HomeLayout/Center";
+// import AdminLeftSide from "../../pages/PagesAdmin/HomeLayout/LeftSide";
+// import AdminCenter from "../../pages/PagesAdmin/HomeLayout/Center";
 import AdminRightSide from "../../pages/PagesAdmin/HomeLayout/RightSide";
 
 import MainLayout from "../MainLayout";
-import ChatButton from "../LayoutUser/ChatButton";
-import AdminChatButton from "../LayoutAdmin/ChatButton";
+// import ChatButton from "../LayoutUser/ChatButton";
+// import AdminChatButton from "../LayoutAdmin/ChatButton";
 import CenterLayout from "./CenterLayout";
 import LeftSideLayout from "./LeftSideLayout";
 
@@ -52,8 +52,6 @@ export default function HomeMainLayout({ isAdminPage }) {
     <MainLayout ActiveTab="Home">
       <div className="overflow-x-hidden">
         <div className="row mt-3 px-3">
-          <div>{isAdminPage ? <AdminChatButton /> : <ChatButton />}</div>
-
           {/* Left Side Component */}
           <div
             className="position-fixed col-md d-none d-lg-block"

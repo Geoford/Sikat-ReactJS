@@ -434,7 +434,7 @@ const Dashboard = () => {
                       <h2 className="m-0">
                         <i className="bx bx-user-plus"></i>
                       </h2>
-                      <p className="m-0">New users</p>
+                      <p className="m-0">Users</p>
                     </div>
                     <div
                       className="d-flex align-items-center justify-content-center gap-2"

@@ -3,6 +3,8 @@ import NavBar from "./NavBar/NavBar"; // Import the regular user navigation bar
 import Background from "./Background"; // Import the background component
 import NavBarAdmin from "./LayoutAdmin/NavBarAdmin"; // Import the admin-specific navigation bar
 import "boxicons/css/boxicons.min.css";
+import ChatButton from "./LayoutUser/ChatButton";
+import AdminChatButton from "./LayoutAdmin/ChatButton";
 
 const MainLayout = ({ children, ActiveTab }) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -50,6 +52,7 @@ const MainLayout = ({ children, ActiveTab }) => {
   return (
     <div className="position-relative overflow-x-hidden" style={{ width: "" }}>
       <NavBar ActiveTab={ActiveTab} style={{ position: "sticky", top: "0" }} />
+      <div>{user?.isAdmin ? <AdminChatButton /> : <ChatButton />}</div>
       <div className="mt-5 pt-5 pt-lg-3">
         {children}
         <div>

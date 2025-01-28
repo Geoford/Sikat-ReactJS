@@ -4,10 +4,10 @@ import Pusher from "pusher-js";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import ChatIcon from "../../../assets/ChatIcon.png";
-import SendIcon from "../../../assets/SendIcon.png";
+// import ChatIcon from "../../../assets/ChatIcon.png";
+// import SendIcon from "../../../assets/SendIcon.png";
 import DefaultProfile from "../../../assets/anonymous.png";
 import axios from "axios";
 
@@ -32,10 +32,11 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
   };
 
   useEffect(() => {
-    if (userToChat) {
-      fetchMessagesForSelectedUser(userToChat);
+    if (userToChat && users.length > 0) {
+      const foundUser = users.find((usr) => usr.userID === userToChat);
+      setSelectedUser(foundUser || null);
     }
-  }, [userToChat]);
+  }, [userToChat, users]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -76,7 +77,11 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
     const adminChannel = pusher.subscribe("admin-channel");
 
     channel.bind("message-event", function (data) {
-      if (selectedUser && data.recipientID === selectedUser.userID) {
+      if (
+        selectedUser &&
+        data.recipientID === selectedUser.userID &&
+        data.senderID !== user.userID // Ignore your own messages
+      ) {
         setMessages((prevMessages) => [
           ...prevMessages,
           { senderID: data.senderID, message: data.message },
@@ -110,7 +115,7 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
     try {
       const response = await axios.get("http://localhost:8081/messages", {
         params: {
-          userID: user.userID,
+          userID: user?.userID,
           withUserID: withUserID,
         },
       });
@@ -303,13 +308,13 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
                 style={{ minHeight: "clamp(400px, 30vh, 500px)" }}
               >
                 <div className="py-0 d-flex align-items-center gap-2">
-                  <div
+                  {/* <div
                     className="d-flex align-items-center"
                     onClick={handleBackClick}
                     style={{ cursor: "pointer" }}
                   >
                     <i className="bx bx-arrow-back"></i>
-                  </div>
+                  </div> */}
 
                   <Link
                     to={`/Profile/${userToChat}`}

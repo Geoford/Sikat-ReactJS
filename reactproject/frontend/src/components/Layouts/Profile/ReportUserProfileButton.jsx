@@ -152,9 +152,9 @@ function ReportUserButton({
                     {comment.reason}
                   </option>
                 ))}
-                <option value="Others">Others</option>
+                {/* <option value="Others">Others</option> */}
               </select>
-              {isOtherSelected && (
+              {/* {isOtherSelected && (
                 <input
                   type="text"
                   className="form-control mt-2"
@@ -162,7 +162,7 @@ function ReportUserButton({
                   value={otherText}
                   onChange={handleOtherTextChange}
                 />
-              )}
+              )} */}
             </div>
           </div>
         </Modal.Body>
@@ -174,7 +174,7 @@ function ReportUserButton({
             className="primaryButton py-2 rounded"
             onClick={handleSubmitReport}
           >
-            <p className="m-0">Save Changes</p>
+            <p className="m-0">Report User</p>
           </button>
         </Modal.Footer>
       </Modal>

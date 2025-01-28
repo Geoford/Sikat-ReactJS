@@ -187,7 +187,7 @@ function FlagButton({
                   </label>
                 </label>
               ))}
-              <label className="border rounded p-2">
+              {/* <label className="border rounded p-2">
                 <input
                   type="checkbox"
                   id="others"
@@ -197,8 +197,8 @@ function FlagButton({
                 <label className="ms-1" htmlFor="others">
                   <p className="m-0"> Others:</p>
                 </label>
-              </label>
-              {isOtherSelected && (
+              </label> */}
+              {/* {isOtherSelected && (
                 <input
                   type="text"
                   className="form-control mt-1"
@@ -207,7 +207,7 @@ function FlagButton({
                   onChange={(e) => setOtherText(e.target.value)}
                   ref={otherInputRef} // Attach the ref to the input field
                 />
-              )}
+              )} */}
             </div>
           </div>
         </Modal.Body>
@@ -216,7 +216,7 @@ function FlagButton({
             <p className="m-0"> Cancel</p>
           </Button>
           <button className="primaryButton py-2 rounded" onClick={handleSubmit}>
-            <p className="m-0">Submit</p>
+            <p className="m-0">Flag</p>
           </button>
         </Modal.Footer>
       </Modal>
