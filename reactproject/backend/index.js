@@ -213,8 +213,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "ndendi00@gmail.com",
-    pass: "kbhjlreosquqajjl",
+    user: "sikatediary@gmail.com",
+    pass: "cgggyvzfnwgedpfj",
   },
 });
 
@@ -227,7 +227,7 @@ app.post("/send-otp", async (req, res) => {
 
   try {
     let info = await transporter.sendMail({
-      from: "ndendi00@gmail.com",
+      from: "sikatediary@gmail.com",
       to: email,
       subject: "One-Time Password (OTP) from SIKAT eDiary",
       text: `Your OTP is: ${otp}`,
@@ -297,8 +297,20 @@ app.post("/send-otp", async (req, res) => {
                   This OTP is valid for only one minute. Please use it immediately and
                   keep it confidential. Do not share it with anyone.
                 </p>
-                <img src="https://cldup.com/D72zpdwI-i.gif" alt="Animated GIF" />
-              </td>
+                  <div
+            style="
+              background-color: #5c0099;
+              border-radius: 0.5rem;
+              padding: 1rem 0 1rem 0;
+            "
+          >
+            <img
+              src="https://i.postimg.cc/HsFH9HCs/TextLogo.png"
+              alt="Animated GIF"
+              style="height: 60%; width: 60%; object-fit: cover"
+            />
+          </div>              
+          </td>
             </tr>
             <tr>
               <td class="footer">
@@ -470,7 +482,7 @@ app.post("/Register", (req, res) => {
         Promise.all(followQueries)
           .then(() => {
             const mailOptions = {
-              from: "ndendi00@gmail.com",
+              from: "sikatediary@gmail.com",
               to: cvsuEmail,
               subject: "Your OTP Code",
               text: `Your OTP code is: ${otp}`,

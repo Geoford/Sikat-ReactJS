@@ -194,40 +194,10 @@ const IndexPage = () => {
                   {latestAnnouncement.title}
                 </h4>
                 <p
-                  className="m-0 text-secondary overflow-y-scroll"
+                  className="m-0 text-secondary overflow-y-scroll custom-scrollbar"
                   style={{ maxHeight: "clamp(12rem, 20dvw, 20rem)" }}
                 >
-                  {latestAnnouncement.description} Lorem ipsum dolor sit, amet
-                  consectetur adipisicing elit. Sed quibusdam repudiandae alias
-                  voluptatibus, facilis dolorum vero distinctio suscipit rerum
-                  vel quam facere ad voluptas corrupti animi, beatae quas ex
-                  porro asperiores. At repudiandae maiores laudantium sunt nobis
-                  similique, non, quaerat voluptatum iste assumenda veritatis
-                  voluptate provident debitis laborum a sit. Lorem ipsum dolor
-                  sit, amet consectetur adipisicing elit. Sed quibusdam
-                  repudiandae alias voluptatibus, facilis dolorum vero
-                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
-                  animi, beatae quas ex porro asperiores. At repudiandae maiores
-                  laudantium sunt nobis similique, non, quaerat voluptatum iste
-                  assumenda veritatis voluptate provident debitis laborum a sit.
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
-                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
-                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
-                  animi, beatae quas ex porro asperiores. At repudiandae maiores
-                  laudantium sunt nobis similique, non, quaerat voluptatum iste
-                  assumenda veritatis voluptate provident debitis laborum a sit.
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
-                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
-                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
-                  animi, beatae quas ex porro asperiores. At repudiandae maiores
-                  laudantium sunt nobis similique, non, quaerat voluptatum iste
-                  assumenda veritatis voluptate provident debitis laborum a sit.
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed
-                  quibusdam repudiandae alias voluptatibus, facilis dolorum vero
-                  distinctio suscipit rerum vel quam facere ad voluptas corrupti
-                  animi, beatae quas ex porro asperiores. At repudiandae maiores
-                  laudantium sunt nobis similique, non, quaerat voluptatum iste
-                  assumenda veritatis voluptate provident debitis laborum a sit.
+                  {latestAnnouncement.description}
                 </p>
               </div>
             </div>
