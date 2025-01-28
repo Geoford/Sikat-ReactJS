@@ -72,7 +72,8 @@ const ReportedComment = ({ reportedUsers }) => {
               .includes(searchQuery.toLowerCase()) ||
             reportedUser.reason
               .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+              .includes(searchQuery.toLowerCase()) ||
+            reportedUser.studentNumber.toString().includes(searchQuery)
         );
       }
 

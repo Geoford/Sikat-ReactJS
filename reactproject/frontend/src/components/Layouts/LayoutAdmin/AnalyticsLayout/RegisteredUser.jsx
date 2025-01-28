@@ -54,7 +54,8 @@ const RegisteredUsers = ({ users }) => {
           user.lastName.toLowerCase().includes(lowerCaseQuery) ||
           user.course.toLowerCase().includes(lowerCaseQuery) ||
           user.sex.toLowerCase() === lowerCaseQuery ||
-          user.year.toLowerCase().includes(lowerCaseQuery)
+          user.year.toLowerCase().includes(lowerCaseQuery) ||
+          user.studentNumber.toString().includes(lowerCaseQuery)
       );
     }
 
