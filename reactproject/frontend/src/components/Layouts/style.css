@@ -432,31 +432,10 @@ body > div.fade.modal.show > div > div > div {
     transform: translateX(0); /* Move to the original position */
   }
 }
-.fade-start {
-  animation: fadestart 0.5s ease-out forwards; /* Animation properties */
-}
-@keyframes fadestart {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.fade-out {
-  animation: fadeout 0.5s ease-out forwards; /* Animation properties */
-}
-@keyframes fadeout {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
+
 .fade-up {
   opacity: 0; /* Initially hidden */
-  animation: fadeup 0.5s ease-out forwards; /* Animation properties */
+  animation: fade 0.5s ease-out forwards; /* Animation properties */
 }
 @keyframes fade {
   0% {

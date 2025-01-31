@@ -12,6 +12,7 @@ import EditPostButton from "./EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import MessageAlert from "../DiaryEntry/messageAlert";
 import NewUserSetUp from "../../pages/PagesUser/NewUserSetUp";
+import FilterButtonAdmin from "./FilterButtonAdmin";
 
 // const getData = async (url, params = {}) => {
 //   try {
@@ -529,7 +530,12 @@ const CenterLayout = () => {
       ) : null}
       {user.isAdmin ? (
         <>
-          <div className="py-2"></div>
+          <div className="d-flex justify-content-end">
+            <FilterButtonAdmin
+              onFilterChange={handleFilterChange}
+              userID={user.userID}
+            />
+          </div>
         </>
       ) : (
         <div className="d-flex justify-content-end">
