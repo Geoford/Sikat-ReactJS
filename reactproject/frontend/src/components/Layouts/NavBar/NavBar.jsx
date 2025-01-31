@@ -73,7 +73,7 @@ const NavBar = ({ ActiveTab }) => {
             </Link>
           </div>
           <div className="TextLogo d-flex align-items-center">
-            <Link to={user && user.isAdmin ? "/Admin/Home" : "/Home"}>
+            <Link to={user.isAdmin ? "/Admin/Home" : "/Home"}>
               <img src={TextLogo} alt="" style={{ height: "2.5rem" }} />
             </Link>
           </div>
@@ -97,7 +97,7 @@ const NavBar = ({ ActiveTab }) => {
             <p className="navToolTip">Home</p>
           </Link>
 
-          {user && user.isAdmin ? (
+          {user.isAdmin == 1 ? (
             <Link
               className={`navIcons text-light ${
                 ActiveTab === "Dashboard" ? "active" : ""
@@ -150,7 +150,7 @@ const NavBar = ({ ActiveTab }) => {
             ""
           )}
 
-          {user && user.isAdmin ? (
+          {user && user.isAdmin == 1 ? (
             <Link
               className={`navIcons text-light ${
                 ActiveTab === "Complaints" ? "active" : ""

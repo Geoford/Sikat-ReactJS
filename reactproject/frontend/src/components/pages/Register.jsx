@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegisterValidation from "./RegisterValidation";
 import axios from "axios";
-import ProgressBar from "react-bootstrap/ProgressBar";
+// import ProgressBar from "react-bootstrap/ProgressBar";
 import { Alert } from "react-bootstrap"; // Import Bootstrap Alert
 import MessageModal from "../Layouts/DiaryEntry/messageModal";
 import MessageAlert from "../Layouts/DiaryEntry/messageAlert";
+import ProgressBarLayout from "../Layouts/Registration/ProgressBarLayout";
+import Step1 from "../Layouts/Registration/Step1";
+import Step2 from "../Layouts/Registration/Step2";
+import Step3 from "../Layouts/Registration/Step3";
 
 export default function Register() {
   const [values, setValues] = useState({
@@ -22,25 +26,6 @@ export default function Register() {
     course: "",
     year: "",
   });
-
-  const [passwordFeedback, setPasswordFeedback] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    specialchar: false,
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-    setShowConfirmPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [passwordMatch, setPasswordMatch] = useState(null);
 
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -231,38 +216,17 @@ export default function Register() {
     }));
   };
 
+  const [courses, setCourses] = useState([]);
   useEffect(() => {
-    const { password, confirmPassword } = values;
-
-    const feedback = {
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /[0-9]/.test(password),
-      specialchar: /[!@#$%^&*(),.?":{}|<>`~_+\-=\[\]\\;'/]/.test(password),
-    };
-
-    setPasswordFeedback(feedback);
-
-    const strengthCount = Object.values(feedback).filter(Boolean).length;
-
-    let strengthLabel;
-    if (strengthCount <= 1) {
-      strengthLabel = "Weak";
-    } else if (strengthCount === 2 || strengthCount === 3) {
-      strengthLabel = "Medium";
-    } else if (strengthCount === 4) {
-      strengthLabel = "Strong";
-    }
-
-    setPasswordStrength(strengthLabel);
-
-    if (password && confirmPassword) {
-      setPasswordMatch(password === confirmPassword);
-    } else {
-      setPasswordMatch(null);
-    }
-  }, [values.password, values.confirmPassword]);
+    axios
+      .get("http://localhost:8081/getCourses")
+      .then((response) => {
+        setCourses(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+      });
+  }, []);
 
   const progressPercent = step === 1 ? 0 : step === 2 ? 50 : 100;
 
@@ -281,51 +245,11 @@ export default function Register() {
         message={confirmModal.message}
         confirm={confirmModal.onConfirm}
         needConfirm={1}
-      ></MessageModal>{" "}
-      <div
-        className=" mb-2 mb-md-3 position-relative "
-        style={{ width: "clamp(18.5rem, 80vw, 40rem)" }}
-      >
-        <div
-          className="position-absolute w-100"
-          style={{ top: "50%", transform: "translateY(-50%)", zIndex: "-1" }}
-        >
-          <ProgressBar
-            now={progressPercent}
-            className="custom-progress-bar border"
-            animated
-          />
-        </div>
-        <div className="d-flex justify-content-between">
-          <div
-            className={`stepsIndicator ${step === 1 ? "active" : ""}`}
-            style={{
-              backgroundColor: step >= 1 ? "var(--primary)" : "lightgray",
-              color: step >= 1 ? "#ffff" : "gray",
-            }}
-          >
-            <h5>1</h5>
-          </div>
-          <div
-            className={`stepsIndicator ${step === 2 ? "active" : ""}`}
-            style={{
-              backgroundColor: step >= 2 ? "var(--primary)" : "lightgray",
-              color: step >= 2 ? "#ffff" : "gray",
-            }}
-          >
-            <h5>2</h5>
-          </div>
-          <div
-            className={`stepsIndicator ${step === 3 ? "active" : ""}`}
-            style={{
-              backgroundColor: step === 3 ? "var(--primary)" : "lightgray",
-              color: step >= 3 ? "#ffff" : "gray",
-            }}
-          >
-            <h5>3</h5>
-          </div>
-        </div>
-      </div>
+      ></MessageModal>
+
+      {/* FOR PROGRESS BAR */}
+      <ProgressBarLayout step={step} progressPercent={progressPercent} />
+
       <div
         className="bg-white rounded border border-secondary-subtle shadow text-start p-3 "
         style={{
@@ -369,356 +293,20 @@ export default function Register() {
 
             {/* Personal Details - Step 1 */}
             {step === 1 && (
-              <div
-                className={`form-section active`}
-                style={{ transition: "all 0.5s ease-in-out" }}
-              >
-                <h5>Personal Details</h5>
-                <div className="d-flex flex-column gap-1 gap-md-2 mb-2">
-                  <div className="row gap-1 gap-md-2 px-3">
-                    <div className="col-md p-0">
-                      <input
-                        type="text"
-                        name="firstName"
-                        placeholder="First name"
-                        onChange={handleInput}
-                        className="form-control rounded"
-                        value={values.firstName}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-5 p-0">
-                      <input
-                        type="text"
-                        name="lastName"
-                        placeholder="Last name"
-                        onChange={handleInput}
-                        className="form-control rounded"
-                        value={values.lastName}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="row gap-1 gap-md-2 px-3">
-                    <div className="col-md p-0">
-                      <input
-                        type="text"
-                        name="alias"
-                        placeholder="Alias (for anonymity purposes)"
-                        onChange={handleInput}
-                        className="form-control rounded"
-                        value={values.alias}
-                        required
-                      />
-                    </div>
-                    <div class="col-md-4 p-0">
-                      <label class="visually-hidden" for="sex">
-                        Sex
-                      </label>
-                      <select
-                        class="form-select"
-                        id="sex"
-                        className="form-select"
-                        name="sex"
-                        onChange={handleInput}
-                        value={values.sex}
-                        required
-                      >
-                        <option selected>Sex...</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Prefer not to say">
-                          Prefer not to say
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="row gap-1 gap-md-2 px-3">
-                    <div className="col-md p-0">
-                      <label className="visually-hidden" htmlFor="course">
-                        Course
-                      </label>
-                      <select
-                        class="form-select"
-                        id="course"
-                        name="course"
-                        onChange={handleInput}
-                        value={values.course}
-                        required
-                      >
-                        <option value="">Course...</option>
-                        <option value="Employee">
-                          Employee (Teaching Personels)
-                        </option>
-                        <option value="Laboratory Science of Highschool Department">
-                          Laboratory Science of Highschool Department
-                        </option>
-                        <option value="BS Hospitality Management">
-                          BS Hospitality Management
-                        </option>
-                        <option value="BS Business Management">
-                          BS Business Management
-                        </option>
-                        <option value="BS Industrial Technology">
-                          BS Industrial Technology
-                        </option>
-                        <option value="B Secondary Education">
-                          B Secondary Education
-                        </option>
-                        <option value="BS Computer Engineering">
-                          BS Computer Engineering
-                        </option>
-                        <option value="BS Electrical Engineering">
-                          BS Electrical Engineering
-                        </option>
-                        <option value="BS Computer Science">
-                          BS Computer Science
-                        </option>
-                        <option value="BS Information Technology">
-                          BS Information Technology
-                        </option>
-                        <option value="B Technical-Vocational Teacher Education">
-                          B Technical-Vocational Teacher Education
-                        </option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-3 p-0">
-                      <label className="visually-hidden" htmlFor="year">
-                        Year
-                      </label>
-                      <select
-                        class="form-select"
-                        id="year"
-                        name="year"
-                        onChange={handleInput}
-                        value={values.year}
-                        required
-                      >
-                        <option value="">Year...</option>
-                        <option value="1st">1st</option>
-                        <option value="2nd">2nd</option>
-                        <option value="3rd">3rd</option>
-                        <option value="4th">4th</option>
-                        <option value="5th">5th</option>
-                        <option value="N/A">N/A</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="row gap-1 gap-md-2 px-3">
-                    <div className="col-md p-0">
-                      <input
-                        type="email"
-                        name="cvsuEmail"
-                        placeholder="CvSU Email (ex. johndoe@cvsu.edu.ph)"
-                        onChange={handleInput}
-                        className="form-control rounded"
-                        value={values.cvsuEmail}
-                        required
-                        pattern="^[a-zA-Z0-9._%+-]+@cvsu\.edu\.ph$"
-                        title="Please enter a valid CvSU email (e.g., johndoe@cvsu.edu.ph)"
-                      />
-                    </div>
-                    <div className="col-md-4 p-0">
-                      <input
-                        type="number"
-                        name="studentNumber"
-                        placeholder="Student Number (ex. 202100000)"
-                        onChange={handleInput}
-                        className="form-control rounded"
-                        value={values.studentNumber}
-                        min="100000000"
-                        max="999999999"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <>
+                <Step1
+                  values={values}
+                  handleInput={handleInput}
+                  courses={courses}
+                />
+              </>
             )}
 
             {/* Account Details - Step 2 */}
             {step === 2 && (
-              <div
-                className={`form-section active`}
-                style={{
-                  transform: `translateX(0)`,
-                  transition: "all 0.5s ease-in-out",
-                }}
-              >
-                <h5>Account Security Details</h5>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    onChange={handleInput}
-                    className="form-control rounded"
-                    value={values.username}
-                    autoComplete="new-username"
-                    style={{ display: "none" }}
-                  />
-                </div>
-
-                <div>
-                  <label>Password</label>
-                  <div className="position-relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={values.password}
-                      onChange={handleInput}
-                      className="form-control"
-                      placeholder="Enter your password"
-                      autoComplete="new-password"
-                      required
-                    />
-
-                    <div
-                      onClick={togglePasswordVisibility}
-                      className="position-absolute d-flex justify-content-center align-items-center"
-                      style={{
-                        width: "15px",
-                        height: "15px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        right: "15px",
-                        cursor: "pointer",
-                        zIndex: 5,
-                        color: "var(--primary_hover)",
-                      }}
-                    >
-                      <i
-                        className={`${
-                          showPassword ? "bx bx-show-alt" : "bx bx-hide"
-                        }`}
-                        style={{ fontSize: "clamp(1.2rem, 2dvw, 1.3rem)" }}
-                      ></i>
-                    </div>
-                  </div>
-                  <div className="">
-                    <p className="m-0">
-                      Strength:
-                      <span
-                        className="ms-2"
-                        style={{
-                          color:
-                            passwordStrength === "Weak"
-                              ? "red"
-                              : passwordStrength === "Medium"
-                              ? "orange"
-                              : "green",
-                        }}
-                      >
-                        {passwordStrength}
-                      </span>
-                    </p>
-                  </div>
-                  <ul className="text-muted list-unstyled ">
-                    <li
-                      style={{
-                        color: passwordFeedback.length ? "green" : "red",
-                      }}
-                    >
-                      <p className="m-0">
-                        {passwordFeedback.length ? (
-                          <i class="bx bx-check"></i>
-                        ) : (
-                          <i class="bx bx-x"></i>
-                        )}
-                        At least 8 characters
-                      </p>
-                    </li>
-                    <li
-                      style={{
-                        color: passwordFeedback.uppercase ? "green" : "red",
-                      }}
-                    >
-                      <p className="m-0">
-                        {passwordFeedback.uppercase ? (
-                          <i class="bx bx-check"></i>
-                        ) : (
-                          <i class="bx bx-x"></i>
-                        )}
-                        At least one uppercase letter
-                      </p>
-                    </li>
-                    <li
-                      style={{
-                        color: passwordFeedback.lowercase ? "green" : "red",
-                      }}
-                    >
-                      <p className="m-0">
-                        {passwordFeedback.lowercase ? (
-                          <i class="bx bx-check"></i>
-                        ) : (
-                          <i class="bx bx-x"></i>
-                        )}
-                        At least one lowercase letter
-                      </p>
-                    </li>
-                    <li
-                      style={{
-                        color: passwordFeedback.specialchar ? "red" : "green",
-                      }}
-                    >
-                      <p className="m-0">
-                        {passwordFeedback.specialchar ? (
-                          <i class="bx bx-x"></i>
-                        ) : (
-                          <i class="bx bx-check"></i>
-                        )}
-                        Has no special character
-                      </p>
-                    </li>
-                    <li
-                      style={{
-                        color: passwordFeedback.number ? "green" : "red",
-                      }}
-                    >
-                      <p className="m-0">
-                        {passwordFeedback.number ? (
-                          <i class="bx bx-check"></i>
-                        ) : (
-                          <i class="bx bx-x"></i>
-                        )}
-                        At least one number
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Confirm Password Field */}
-                <div className="mt-3">
-                  <label>Confirm Password</label>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={values.confirmPassword}
-                    onChange={handleInput}
-                    className="form-control"
-                    placeholder="Re-enter your password"
-                    required
-                  />
-                </div>
-
-                <div className="mb-2">
-                  <p className="m-0">
-                    {passwordMatch === null ? (
-                      ""
-                    ) : passwordMatch ? (
-                      <span style={{ color: "green" }}>Passwords match</span>
-                    ) : (
-                      <span style={{ color: "red" }}>
-                        Passwords do not match
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
+              <>
+                <Step2 values={values} handleInput={handleInput} />
+              </>
             )}
 
             {step === 3 && (

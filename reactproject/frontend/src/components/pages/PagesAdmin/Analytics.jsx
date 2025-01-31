@@ -9,6 +9,7 @@ import RegisteredUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/Registere
 import FlaggedDiaries from "../../Layouts/LayoutAdmin/AnalyticsLayout/FlaggedDiaries";
 import ReportedComment from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedComment";
 import ReportedUsers from "../../Layouts/LayoutAdmin/AnalyticsLayout/ReportedUsers";
+import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +19,39 @@ const Analytics = () => {
   // const [activeTab, setActiveTab] = useState("RegisteredUser");
   const { activeTab } = useParams();
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+  const redirect = () => {
+    navigate("/Home");
+  };
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+
+      if (!parsedUser.isAdmin) {
+        setModal({
+          show: true,
+          message: `Permission Denied: You are not authorized to access this page.`,
+        });
+        setTimeout(() => {
+          redirect();
+        }, 1500);
+      }
+    } else {
+      navigate("/");
+    }
+
+    setIsLoading(false);
+  }, [navigate]);
 
   const handleTabChange = (tab) => {
     navigate(`/Admin/Analytics/${tab}`);
@@ -96,6 +130,12 @@ const Analytics = () => {
 
   return (
     <MainLayout ActiveTab="Analytics">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>
       <div className="mt-0 mt-lg-2 pt-2 px-2">
         <div
           className="container rounded shadow"

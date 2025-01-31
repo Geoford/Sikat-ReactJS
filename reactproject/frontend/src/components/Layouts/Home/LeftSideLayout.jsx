@@ -112,7 +112,12 @@ const LeftSideAdmin = () => {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
-          <h5 className="m-0 mt-1 text-light">{user.firstName}</h5>
+          <h5 className="m-0 mt-1 text-light">
+            {user.firstName}{" "}
+            {user.departmentMod ? (
+              <>{user.isAdmin === 1 ? "(Admin)" : "(Moderator)"}</>
+            ) : null}
+          </h5>
         </div>
       </Link>
 

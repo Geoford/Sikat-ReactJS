@@ -163,41 +163,26 @@ const AccountDropdown = ({ isAdmin }) => {
               to={`/Profile/${user.userID}`}
             >
               <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-                {isAdmin ? (
-                  <p className="m-0">Admin Account</p>
-                ) : (
-                  <p className="m-0">Account</p>
-                )}
+                <p className="m-0">Account</p>
                 <i class="bx bx-user"></i>
               </button>
             </Link>
           </Dropdown.Item>
         )}
-        {/* <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
-          <Link className="text-decoration-none text-dark" to="/DiaryEntries">
-            <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-              <p className="m-0">
-                {isAdmin ? "Post/Announcements" : "Diary Entries"}
-              </p>{" "}
-              <i class="bx bx-edit"></i>
-            </button>
-          </Link>
-        </Dropdown.Item> */}
-        {/* {isAdmin ? (
+
+        {isAdmin === 1 ? (
           <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
             <Link
               className="text-decoration-none text-dark"
-              to="/Admin/Analytics"
+              to="/Admin/Manage-Moderators"
             >
               <button className="w-100 btn btn-light d-flex align-items-center justify-content-end gap-2">
-                <p className="m-0">Analytics</p>
+                <p className="m-0">Moderators</p>
                 <i class="bx bx-chart"></i>
               </button>
             </Link>
           </Dropdown.Item>
-        ) : (
-          ""
-        )} */}
+        ) : null}
 
         <Dropdown.Item className="dropdownItem w-100 btn text-end p-0">
           <Link

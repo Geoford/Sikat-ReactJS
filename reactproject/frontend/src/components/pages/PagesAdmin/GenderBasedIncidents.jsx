@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../../Layouts/MainLayout";
 import axios from "axios";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -15,6 +15,7 @@ export default function GenderBasedIncidents() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // Number of reports per page
+  const navigate = useNavigate();
 
   const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
@@ -35,6 +36,33 @@ export default function GenderBasedIncidents() {
       onCancel: () => {},
     });
   };
+
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+
+      if (parsedUser.isAdmin !== 1) {
+        setModal({
+          show: true,
+          message: `Permission Denied: You are not authorized to access this page.`,
+        });
+        setTimeout(() => {
+          parsedUser.isAdmin === 2
+            ? navigate("/Admin/Home")
+            : navigate("/Home");
+        }, 1500);
+      }
+    } else {
+      navigate("/");
+    }
+
+    setIsLoading(false);
+  }, [navigate]);
 
   useEffect(() => {
     fetchReports();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import MainLayout from "../../Layouts/MainLayout";
 import axios from "axios";
@@ -15,6 +15,7 @@ import {
   Legend,
 } from "chart.js";
 import { filter } from "lodash";
+import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 ChartJS.register(
   CategoryScale,
@@ -53,6 +54,38 @@ const Dashboard = () => {
   const [endDate, setEndDate] = useState("");
 
   const usersPerPage = 4;
+
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const [modal, setModal] = useState({ show: false, message: "" });
+  const closeModal = () => {
+    setModal({ show: false, message: "" });
+  };
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+
+      if (parsedUser.isAdmin !== 1) {
+        setModal({
+          show: true,
+          message: `Permission Denied: You are not authorized to access this page.`,
+        });
+        setTimeout(() => {
+          parsedUser.isAdmin === 2
+            ? navigate("/Admin/Home")
+            : navigate("/Home");
+        }, 1500);
+      }
+    } else {
+      navigate("/");
+    }
+
+    setIsLoading(false);
+  }, [navigate]);
 
   useEffect(() => {
     fetchEntries();
@@ -330,6 +363,12 @@ const Dashboard = () => {
 
   return (
     <MainLayout ActiveTab="Dashboard">
+      <MessageModal
+        showModal={modal}
+        closeModal={closeModal}
+        title={"Notice"}
+        message={modal.message}
+      ></MessageModal>{" "}
       <div className="mt-2 mt-lg-3 pt-2 px-2">
         <div
           className="container rounded mt-4 mt-lg-0 p-4 shadow-sm mb-5"

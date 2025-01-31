@@ -279,7 +279,7 @@ const ChatButton = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {user?.isAdmin ? (
+          {user?.isAdmin == 1 ? (
             <div>
               <ul>
                 {allUsers.map((usr) => (

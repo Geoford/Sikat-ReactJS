@@ -237,6 +237,17 @@ body > div.fade.modal.show > div > div > div {
 .orangeButton:hover {
   background-color: var(--secondary_hover);
 }
+.grayButton {
+  background-color: #808080;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+  transition: 0.3s;
+  color: white;
+}
+.grayButton:hover {
+  background-color: #666666;
+}
 .InteractButton {
   width: 100%;
   background-color: #ffff;
@@ -394,25 +405,60 @@ body > div.fade.modal.show > div > div > div {
   }
 }
 .fade-left {
-  opacity: 0; /* Initially hidden */
-  animation: fadeleft 1s ease-out forwards; /* Animation properties */
+  /* opacity: 0; */
+  animation: fadeleft 0.4s ease-out forwards; /* Animation properties */
 }
 @keyframes fadeleft {
   0% {
     opacity: 0;
-    transform: translateX(-90px); /* Start slightly below */
+    transform: translateX(-100%); /* Start slightly below */
   }
   100% {
     opacity: 1;
     transform: translateX(0); /* Move to the original position */
   }
 }
-
+.fade-right {
+  /* opacity: 0;  */
+  animation: faderight 0.4s ease-out forwards; /* Animation properties */
+}
+@keyframes faderight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Move to the original position */
+  }
+}
+.fade-start {
+  animation: fadestart 0.5s ease-out forwards; /* Animation properties */
+}
+@keyframes fadestart {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.fade-out {
+  animation: fadeout 0.5s ease-out forwards; /* Animation properties */
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .fade-up {
   opacity: 0; /* Initially hidden */
   animation: fadeup 0.5s ease-out forwards; /* Animation properties */
 }
-@keyframes fadeup {
+@keyframes fade {
   0% {
     opacity: 0;
     transform: translateY(90px); /* Start slightly below */

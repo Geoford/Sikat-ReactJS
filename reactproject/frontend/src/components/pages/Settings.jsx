@@ -86,7 +86,7 @@ const Settings = () => {
                     ></UserAuthentication>
                   </Nav.Link>
                 </Nav.Item>
-                {user && user.isAdmin ? (
+                {user.isAdmin == 1 ? (
                   <>
                     <h5 className="m-0 text-start my-2">Manage System</h5>
                     <Nav.Item>

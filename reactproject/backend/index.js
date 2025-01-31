@@ -512,6 +512,36 @@ app.post("/Register", (req, res) => {
   });
 });
 
+app.get("/getCourses", (req, res) => {
+  db.query("SELECT * FROM courses", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/fetchDepartments", (req, res) => {
+  db.query("SELECT * FROM course_department", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/fetchDepartmentModerators", (req, res) => {
+  const query =
+    "SELECT cd.*, ut.firstName, ut.lastName, up.*  FROM course_department cd JOIN user_table ut ON cd.departmentID = ut.departmentID JOIN user_profiles up ON ut.userID = up.userID";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
 app.get("/verify-email/:token", (req, res) => {
   const { token } = req.params;
 

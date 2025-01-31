@@ -52,7 +52,7 @@ const MainLayout = ({ children, ActiveTab }) => {
   return (
     <div className="position-relative overflow-x-hidden" style={{ width: "" }}>
       <NavBar ActiveTab={ActiveTab} style={{ position: "sticky", top: "0" }} />
-      <div>{user?.isAdmin ? <AdminChatButton /> : <ChatButton />}</div>
+      <div>{user?.isAdmin == 1 ? <AdminChatButton /> : <ChatButton />}</div>
       <div className="mt-5 pt-5 pt-lg-3">
         {children}
         <div>

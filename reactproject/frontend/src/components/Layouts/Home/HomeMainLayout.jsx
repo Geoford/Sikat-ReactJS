@@ -18,7 +18,7 @@ import LeftSideLayout from "./LeftSideLayout";
 import { InactivityContext } from "../../../components/InactivityContext";
 import axios from "axios";
 
-export default function HomeMainLayout({ isAdminPage }) {
+export default function HomeMainLayout({}) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false); // Modal state for inactivity alert
@@ -100,7 +100,7 @@ export default function HomeMainLayout({ isAdminPage }) {
               width: "25%",
             }}
           >
-            {isAdminPage ? <AdminRightSide /> : <RightSide />}
+            {user?.isAdmin ? <AdminRightSide /> : <RightSide />}
           </div>
         </div>
       </div>

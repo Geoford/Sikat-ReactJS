@@ -20,6 +20,7 @@ import LoginRegister from "./components/pages/LoginRegister";
 
 // ADMIN
 import AdminHome from "./components/pages/PagesAdmin/AdminHome";
+import ModeratorManagement from "./components/pages/PagesAdmin/ModeratorManagement";
 import GenderBasedIncidents from "./components/pages/PagesAdmin/GenderBasedIncidents";
 import Analytics from "./components/pages/PagesAdmin/Analytics";
 import CaseDetails from "./components/pages/PagesAdmin/CaseDetails";
@@ -85,6 +86,10 @@ function App() {
               element={<GenderBasedIncidents />}
             />
             <Route path="/Admin/Dashboard" element={<Dashboard />} />
+            <Route
+              path="/Admin/Manage-Moderators"
+              element={<ModeratorManagement />}
+            />
             <Route path="/Admin/Analytics/:activeTab" element={<Analytics />} />
             <Route
               path="/Admin/CaseDetails/:reportID"
