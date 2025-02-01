@@ -17,7 +17,6 @@ import {
 import { filter } from "lodash";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 import Reports from "../../Layouts/LayoutAdmin/Dashboard/Reports";
-import UserDiaryEntryReports from "../../Layouts/LayoutAdmin/Dashboard/UserDiaryEntryReports";
 
 ChartJS.register(
   CategoryScale,
@@ -164,16 +163,54 @@ const Dashboard = () => {
     ],
     datasets: [
       {
-        label: " New diary entries",
+        label: "Diary Entries",
         data: Object.values(calculateWeeklyData(filteredEntries)),
+        backgroundColor: "#DA498D",
+      },
+      {
+        label: "Flagged Diaries",
+        data: Object.values(calculateWeeklyData(filteredFlags)),
+        backgroundColor: "#F14A00",
+      },
+      {
+        label: "Reported Comments",
+        data: Object.values(calculateWeeklyData(filteredReportedComments)),
+        backgroundColor: "#e65c00",
+      },
+      {
+        label: "Gender Based Incidents",
+        data: Object.values(calculateWeeklyData(filteredGenderBasedIncidents)),
         backgroundColor: "#5c0099",
       },
       {
-        label: "New Users",
-        data: Object.values(calculateWeeklyData(filteredUsers)),
-        backgroundColor: "#ffb31a",
+        label: "Reported Users",
+        data: Object.values(calculateWeeklyData(filteredReportedUsers)),
+        backgroundColor: "#A31D1D",
       },
     ],
+  };
+
+  const graphOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Data this week (Mon-Sun)",
+      },
+    },
+    scales: {
+      y: {
+        ticks: {
+          stepSize: 1,
+          callback: function (value) {
+            return Math.floor(value);
+          },
+        },
+      },
+    },
   };
 
   const doughnutData = {
@@ -287,7 +324,6 @@ const Dashboard = () => {
     };
 
     setFilteredEntries(filterData(entries));
-    setFilteredUsers(filterData(users));
     setFilteredFlags(filterData(flags));
     setFilteredReportedComments(filterData(reportedComments));
     setFilteredGenderBasedIncidents(filterData(genderBasedIncidents));
@@ -310,21 +346,15 @@ const Dashboard = () => {
   const handleTimeFilterChange = (event) => {
     setTimeFilter(event.target.value);
     setSpecificDate("");
-    setStartDate("");
-    setEndDate("");
   };
 
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
-    setTimeFilter("");
-    setSpecificDate("");
     setTimeFilter("CustomRange"); // Optional, for clarity
   };
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
-    setTimeFilter("");
-    setSpecificDate("");
     setTimeFilter("CustomRange"); // Optional, for clarity
   };
 
@@ -340,19 +370,19 @@ const Dashboard = () => {
         title={"Notice"}
         message={modal.message}
       ></MessageModal>{" "}
-      <div className="px-2 mt-4 mt-sm-2">
+      <div className="mt-2 mt-lg-3 pt-2 px-2">
         <div
-          className="container rounded p-4 shadow-sm "
+          className="container rounded mt-4 mt-lg-0 p-4 shadow-sm mb-5"
           style={{
             width: "",
-            minHeight: "55vh",
+            minHeight: "65vh",
             backgroundColor: "#ffff",
           }}
         >
           <h2 className="border-bottom border-2 pb-2">Dashboard</h2>
           <div>
-            <div className="row gap-1 m-auto">
-              <div className="col-md mb-2 px-0">
+            <div className="row">
+              <div className="col-md-6 mb-2">
                 <div className="form-floating">
                   <select
                     className="form-select"
@@ -360,7 +390,6 @@ const Dashboard = () => {
                     value={timeFilter}
                     onChange={handleTimeFilterChange}
                   >
-                    <option value="">Choices...</option>
                     <option value="Day">Day</option>
                     <option value="Week">Week</option>
                     <option value="Month">Month</option>
@@ -371,7 +400,7 @@ const Dashboard = () => {
                   </label>
                 </div>
               </div>
-              <div className="col-md mb-2 px-0">
+              <div className="col-md-6 mb-2">
                 <div className="row gap-1 m-auto">
                   <div className="col-md form-floating p-0">
                     <input
@@ -403,11 +432,135 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <UserDiaryEntryReports
-              graphData={graphData}
-              filteredEntries={filteredEntries}
-              filteredUsers={filteredUsers}
-            />
+            <div className="row gy-2 px-1">
+              <div className="col-lg-3 d-flex flex-column gap-2">
+                <div className="row gap-2 px-2">
+                  <div
+                    className="col-sm col-lg-12 border rounded shadow-sm overflow-hidden px-0"
+                    style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
+                  >
+                    <div
+                      className="text-light d-flex justify-content-center align-items-center gap-2"
+                      style={{
+                        background:
+                          "linear-gradient(to right, var(--primary_light), var(--primary))",
+                        height: "clamp(2.5rem, 5dvw, 4rem)",
+                      }}
+                    >
+                      <h2 className="m-0">
+                        <i className="bx bx-edit"></i>
+                      </h2>
+                      <p className="m-0">New diary entries</p>
+                    </div>
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      style={{ height: "5rem" }}
+                    >
+                      <h2 className="m-0">{filteredEntries.length}</h2>
+                    </div>
+                  </div>
+                  <div
+                    className="col border rounded shadow-sm overflow-hidden px-0"
+                    style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
+                  >
+                    <div
+                      className="text-light d-flex justify-content-center align-items-center gap-2"
+                      style={{
+                        background:
+                          "linear-gradient(to right, var(--secondary), var(--secondary_hover))",
+                        height: "clamp(2.5rem, 5dvw, 4rem)",
+                      }}
+                    >
+                      <h2 className="m-0">
+                        <i className="bx bx-user-plus"></i>
+                      </h2>
+                      <p className="m-0">Users</p>
+                    </div>
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      style={{ height: "5rem" }}
+                    >
+                      <h2 className="m-0">{users.length}</h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md ">
+                <div
+                  className="overflow-y-scroll custom-scrollbar pe-1 mb-2"
+                  style={{ height: "18rem" }}
+                >
+                  <table className="table rounded">
+                    <thead>
+                      <tr>
+                        <th scope="col">Author</th>
+                        <th scope="col">Diary Title</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Engagements</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEntries.length > 0 ? (
+                        currentUsers.map((entry, index) => (
+                          <tr key={`${entry.userID}-${index}`}>
+                            <td>
+                              {entry.firstName} {entry.lastName}
+                            </td>
+                            <td>{entry.title}</td>
+                            <td>{entry.subjects ? entry.subjects : "N/A"}</td>
+                            <td>{entry.engagementCount}</td>
+                            <td>
+                              <Link to={`/DiaryEntry/${entry.entryID}`}>
+                                <button className="primaryButton">View</button>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            No Diary Entries Available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="d-flex justify-content-center">
+                  <Pagination>
+                    <Pagination.First
+                      onClick={() => handlePageChange(1)}
+                      disabled={currentPage === 1}
+                    />
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <Pagination.Item
+                        key={i + 1}
+                        active={i + 1 === currentPage}
+                        onClick={() => handlePageChange(i + 1)}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                    <Pagination.Last
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={currentPage === totalPages}
+                    />
+                  </Pagination>
+                </div>
+              </div>
+            </div>
+
             <Reports
               filteredGenderBasedIncidents={filteredGenderBasedIncidents}
               filteredFlags={filteredFlags}
@@ -415,6 +568,14 @@ const Dashboard = () => {
               filteredReportedUsers={filteredReportedUsers}
             />
           </div>
+        </div>
+      </div>
+      <div className="row row-cols-1 row-cols-lg-2 justify-content-center">
+        <div className="col">
+          <Bar data={graphData} options={graphOptions} />
+        </div>
+        <div className="col-lg-3">
+          <Doughnut data={doughnutData} />
         </div>
       </div>
     </MainLayout>
