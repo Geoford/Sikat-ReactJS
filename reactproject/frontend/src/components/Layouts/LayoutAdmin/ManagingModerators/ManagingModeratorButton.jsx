@@ -38,7 +38,10 @@ const ManagingModeratorButton = ({
         >
           {addingModerator ? (
             <div className={addingModerator ? "fade-right" : "fade-left"}>
-              <AddingModeratorForm departmentID={departmentID} />
+              <AddingModeratorForm
+                departmentID={departmentID}
+                departmentName={departmentName}
+              />
             </div>
           ) : (
             <div className={addingModerator ? "fade-right" : "fade-left"}>

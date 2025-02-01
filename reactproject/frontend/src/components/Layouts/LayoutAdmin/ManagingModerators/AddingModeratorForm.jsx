@@ -1,55 +1,68 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const AddingModeratorForm = () => {
+const AddingModeratorForm = ({ departmentID, departmentName }) => {
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/users")
+      .then((response) => setUsers(response.data))
+      .catch((error) => console.error("Error fetching users:", error));
+  }, []);
+
+  const handleSave = () => {
+    if (!selectedUser) {
+      alert("Please select a user.");
+      return;
+    }
+
+    axios
+      .post("http://localhost:8081/assignModerator", {
+        userID: selectedUser.userID,
+        departmentID,
+        departmentName,
+      })
+      .then((response) => {
+        alert(response.data.message);
+        setSelectedUser(null);
+      })
+      .catch((error) => {
+        console.error("Error assigning moderator:", error);
+        alert("Failed to assign moderator.");
+      });
+  };
+
   return (
     <div>
-      <h5 className="m-0 mb-2">Add new Moderator</h5>
-      <form className="d-flex flex-column gap-1">
-        <div class="form-floating">
-          <input
-            type="text"
-            class="form-control"
-            id="firstName"
-            name="mod-firstName"
-            placeholder="First Name"
-            autoComplete="new-firstName"
-          />
-          <label for="floatingInput">First Name</label>
-        </div>
-        <div class="form-floating">
-          <input
-            type="text"
-            class="form-control"
-            id="lastName"
-            name="mod-lastName"
-            placeholder="Last Name"
-            autoComplete="new-lastName"
-          />
-          <label for="floatingInput">Last Name</label>
-        </div>
-        <div class="form-floating">
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="mod-email"
-            placeholder="name@example.com"
-            autoComplete="new-email"
-          />
-          <label for="floatingInput">Email address</label>
-        </div>
-        <div class="form-floating">
-          <input
-            type="password"
-            class="form-control"
-            id="floatingPassword"
-            email="mod-password"
-            placeholder="Password"
-            autoComplete="new-password"
-          />
-          <label for="floatingPassword">Password</label>
-        </div>
-      </form>
+      <h5>Select User to Assign as Moderator</h5>
+      <ul className="list-group">
+        {users.map((user) => (
+          <li
+            key={user.userID}
+            className={`list-group-item d-flex justify-content-between align-items-center ${
+              selectedUser?.userID === user.userID ? "active text-white" : ""
+            }`}
+          >
+            {user.firstName} {user.lastName}
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => setSelectedUser(user)}
+            >
+              {selectedUser?.userID === user.userID ? "Selected" : "Select"}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <button
+        className="btn btn-success mt-3"
+        onClick={handleSave}
+        disabled={!selectedUser}
+      >
+        Save
+      </button>
     </div>
   );
 };
