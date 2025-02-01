@@ -226,8 +226,12 @@ function PostButton({ onEntrySaved }) {
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
+          <Modal.Title className="w-100 d-flex align-items-center justify-content-between">
             <h5 className="m-0">Create New Post</h5>
+            <Form className="d-flex align-items-center justify-content-end gap-2">
+              <h5 className="m-0">Announcement</h5>
+              <Form.Check type="switch" id="custom-switch" />
+            </Form>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -411,9 +415,13 @@ function PostButton({ onEntrySaved }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose} disabled={loading}>
+          <button
+            className="grayButton py-2"
+            onClick={handleClose}
+            disabled={loading}
+          >
             <p className="m-0">Close</p>
-          </Button>
+          </button>
           <button
             className="orangeButton py-2 px-3"
             variant="primary"

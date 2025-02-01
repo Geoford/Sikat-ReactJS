@@ -144,6 +144,28 @@ const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
             className="w-100 text-start"
           >
             General
+          </ToggleButton>{" "}
+          <ToggleButton
+            key="Flagged Diaries"
+            id="toggle-Flagged Diaries"
+            type="checkbox"
+            checked={selectedItems["Flagged Diaries"] || false}
+            value="Flagged Diaries"
+            onChange={() => handleToggleChange("Flagged Diaries")}
+            className="w-100 text-start"
+          >
+            Flagged Diaries
+          </ToggleButton>{" "}
+          <ToggleButton
+            key="With Alarming Words"
+            id="toggle-With Alarming Words"
+            type="checkbox"
+            checked={selectedItems["With Alarming Words"] || false}
+            value="With Alarming Words"
+            onChange={() => handleToggleChange("With Alarming Words")}
+            className="w-100 text-start"
+          >
+            With Alarming Words
           </ToggleButton>
         </div>
         <button

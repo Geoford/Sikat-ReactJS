@@ -460,6 +460,19 @@ body > div.fade.modal.show > div > div > div {
   opacity: 0;
 }
 
+/* FOR SWITCH */
+.form-switch input {
+}
+.form-switch input:focus {
+  box-shadow: none;
+  border-color: lightgray !important;
+  /* --bs-form-switch-bg: gray !important; */
+}
+.form-switch input:checked {
+  background-color: var(--primary);
+  border-color: lightgray !important;
+}
+
 /* FOR REMOVING BLUE BORDER ON INPUTS */
 input.form-control:focus {
   outline: 1px solid lightgray;
