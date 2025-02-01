@@ -7,6 +7,8 @@ import Form from "react-bootstrap/Form";
 import Pagination from "react-bootstrap/Pagination";
 import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
+import ReportTable from "../../Layouts/LayoutAdmin/GenderBasedIncidents/ReportTable";
+import { Doughnut } from "react-chartjs-2";
 
 export default function GenderBasedIncidents() {
   const [reports, setReports] = useState([]);
@@ -14,9 +16,7 @@ export default function GenderBasedIncidents() {
   const [filter, setFilter] = useState("all"); // "all", "addressed", or "unaddressed"
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // Number of reports per page
   const navigate = useNavigate();
-
   const [modal, setModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({
     show: false,
@@ -117,29 +117,34 @@ export default function GenderBasedIncidents() {
     });
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
-  const paginatedReports = filteredReports.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const AddressStatusDonut = {
+    labels: ["Awaiting", "Addressed"],
+    datasets: [
+      {
+        data: [
+          reports.filter((r) => !r.isAddress).length,
+          reports.filter((r) => r.isAddress).length,
+        ],
+        backgroundColor: ["#ffff", "#00994d"],
+        borderColor: ["#ffff"],
+        borderWidth: 2,
+      },
+    ],
   };
 
-  let items = [];
-  for (let number = 1; number <= totalPages; number++) {
-    items.push(
-      <Pagination.Item
-        key={number}
-        active={number === currentPage}
-        onClick={() => handlePageChange(number)}
-      >
-        {number}
-      </Pagination.Item>
-    );
-  }
+  const options = {
+    responsive: true, // Ensures the chart resizes with the container
+    maintainAspectRatio: false, // Allows you to control height & width manually
+    plugins: {
+      legend: {
+        display: false, // Hide legend labels
+      },
+      tooltip: {
+        enabled: true, // Show tooltips on hover
+        position: "nearest",
+      },
+    },
+  };
 
   return (
     <MainLayout ActiveTab="Complaints">
@@ -170,24 +175,62 @@ export default function GenderBasedIncidents() {
 
         <div className="container mt-2">
           <div className="row gap-1">
-            <div className="col-md-4 d-flex p-0 gap-2">
+            <div className="col-md-3 p-0 gap-2">
               <div
-                className="w-50 rounded p-3"
-                style={{ backgroundColor: "#ffff" }}
+                className=" rounded shadow-sm p-2 py-3"
+                style={{ backgroundColor: "#00994d", height: "11em" }}
               >
-                <h5 className="m-0">Awaiting Review</h5>
-                <h4 className="m-0 mt-1">
-                  {reports.filter((r) => !r.isAddress).length}
-                </h4>
-              </div>
-              <div className="w-50 bg-success rounded text-light p-3">
-                <h5 className="m-0">Addressed</h5>
-                <h4 className="m-0 mt-1">
-                  {reports.filter((r) => r.isAddress).length}
-                </h4>
+                <div
+                  className="position-relative text-light"
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    objectFit: "cover",
+                    zIndex: "0",
+                  }}
+                >
+                  <Doughnut
+                    className="overflow-visible"
+                    data={AddressStatusDonut}
+                    options={options}
+                  />
+                  <h3
+                    className="m-0 position-absolute "
+                    style={{
+                      left: "50%",
+                      top: "50%",
+                      transform: "translate(-50%, -50%)",
+                      // color: "var(--primary)",
+                      zIndex: "-1",
+                    }}
+                  >
+                    {reports.filter((r) => !r.isAddress).length +
+                      reports.filter((r) => r.isAddress).length}
+                  </h3>
+                </div>
               </div>
             </div>
-            <div className="col p-0 d-flex align-items-">
+            <div className="col p-0 d-flex gap-1 flex-column">
+              <div className="row gap-1 m-auto w-100 ">
+                <div
+                  className="col d-flex flex-column align-items-center justify-content-center rounded shadow-sm text-light"
+                  style={{ backgroundColor: "#00994d", height: "7rem" }}
+                >
+                  <h4 className="">Addressed</h4>
+                  <h2 className="m-0">
+                    {reports.filter((r) => r.isAddress).length}
+                  </h2>{" "}
+                </div>
+                <div
+                  className="col d-flex flex-column align-items-center justify-content-center rounded shadow-sm text-dark"
+                  style={{ backgroundColor: "#ffff" }}
+                >
+                  <h4 className="">Awaiting Review</h4>
+                  <h2 className="m-0">
+                    {reports.filter((r) => !r.isAddress).length}
+                  </h2>
+                </div>
+              </div>
               <FloatingLabel
                 className="w-100"
                 id="filterDropdown"
@@ -208,122 +251,13 @@ export default function GenderBasedIncidents() {
           </div>
         </div>
 
-        <div
-          className="container mt-2 p-0 rounded overflow-auto"
-          style={{ minHeight: "22.7rem", backgroundColor: "#ffff" }}
-        >
-          {error ? (
-            <div className="alert alert-danger">{error}</div>
-          ) : (
-            <table className="table m-0">
-              <thead>
-                <tr>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Case #</h5>
-                  </th>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Victim's Name</h5>
-                  </th>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Sex</h5>
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-center align-middle"
-                    style={{ width: "clamp(15rem, 20dvw, 20rem)" }}
-                  >
-                    <h5 className="m-0">Subjects</h5>
-                  </th>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Incident Date</h5>
-                  </th>
-                  <th scope="col" className="text-center align-middle">
-                    <h5 className="m-0">Actions</h5>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedReports.map((report) => (
-                  <tr className="" key={report.reportID}>
-                    <th scope="row" className="text-center align-middle">
-                      <p className="m-0 mt-1 d-flex align-items-center justify-content-center gap-1">
-                        <div
-                          className={`p-0 m-0 d-flex align-items-center justify-content-center ${
-                            report.isAddress === 0 ? "bg-danger" : "bg-success"
-                          }`}
-                          style={{
-                            height: ".6rem",
-                            width: ".6rem",
-                            borderRadius: "50%",
-                            color: "#dc143c",
-                          }}
-                        ></div>
-                        <p className="m-0">{report.reportID}</p>
-                      </p>
-                    </th>
-                    <td
-                      className={`text-center align-middle ${
-                        report.victimName ? "" : "text-secondary"
-                      }`}
-                    >
-                      <p className="m-0 mt-1">
-                        {report.victimName ? report.victimName : "Not Provided"}
-                      </p>
-                    </td>
-                    <td
-                      className={`text-center align-middle ${
-                        report.gender === "prefer not to say"
-                          ? "text-secondary"
-                          : ""
-                      }`}
-                    >
-                      <p className="m-0 mt-1">
-                        {report.gender === "prefer not to say"
-                          ? "Prefer not to Say"
-                          : report.gender}
-                      </p>
-                    </td>
-                    <td className="text-center align-middle">
-                      <p className="m-0 mt-1">{report.subjects}</p>
-                    </td>
-                    <td className="text-center align-middle">
-                      <p className="m-0 mt-1">
-                        {new Date(report.date).toLocaleDateString()}
-                      </p>
-                    </td>
-                    <td
-                      className="text-center align-middle"
-                      style={{ height: "100%" }}
-                    >
-                      <div className="d-flex align-items-center justify-content-center gap-1">
-                        {!report.isAddress && (
-                          <button
-                            className="btn btn-success text-light"
-                            onClick={() => handleAddressed(report.reportID)}
-                          >
-                            <p className="m-0">Mark as Addressed</p>
-                          </button>
-                        )}
-                        <Link to={`/Admin/CaseDetails/${report.reportID}`}>
-                          <button
-                            className="primaryButton rounded text-light py-2"
-                            style={{ height: "100" }}
-                          >
-                            <p className="m-0">View Details</p>
-                          </button>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        <div className="container d-flex justify-content-center mt-3">
-          <Pagination size="sm">{items}</Pagination>
-        </div>
+        <ReportTable
+          handleAddressed={handleAddressed}
+          filteredReports={filteredReports} // <-- Pass filtered reports
+          currentPage={currentPage} // <-- Pass current page
+          setCurrentPage={setCurrentPage} // <-- Pass setCurrentPage function
+          error={error}
+        />
       </div>
     </MainLayout>
   );

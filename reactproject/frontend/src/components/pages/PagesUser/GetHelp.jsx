@@ -11,6 +11,7 @@ import MessageAlert from "../../Layouts/DiaryEntry/messageAlert";
 import BackButton from "../../Layouts/Home/BackButton";
 
 const GetHelp = () => {
+  const navigate = useNavigate();
   const { userID } = useParams();
   const [selectedSubjects, setSelectedSubjects] = useState("");
   const [formErrors, setFormErrors] = useState({});
@@ -128,8 +129,8 @@ const GetHelp = () => {
         message: `Case filed successfully.`,
       });
       setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+        navigate("/Home");
+      }, 2000);
     } catch (error) {
       console.error("Error submitting report:", error);
       setModal({
@@ -142,7 +143,7 @@ const GetHelp = () => {
   return (
     <MainLayout>
       <BackButton />
-      <PreLoader />
+      {/* <PreLoader /> */}
 
       <MessageAlert
         showModal={modal}

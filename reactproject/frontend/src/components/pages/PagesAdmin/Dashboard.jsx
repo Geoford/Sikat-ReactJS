@@ -328,10 +328,6 @@ const Dashboard = () => {
     setTimeFilter("CustomRange"); // Optional, for clarity
   };
 
-  const AnalyticsFlaggedDiaries = "FlaggedDiaries";
-  const AnalyticsReportedComments = "ReportedComments";
-  const AnalyticsReportedUsers = "ReportedUsers";
-
   return (
     <MainLayout ActiveTab="Dashboard">
       <MessageModal
@@ -342,7 +338,7 @@ const Dashboard = () => {
       ></MessageModal>{" "}
       <div className="px-2 mt-4 mt-sm-2">
         <div
-          className="container rounded p-4 shadow-sm "
+          className="container rounded p-4 mt-3 shadow-sm "
           style={{
             width: "",
             minHeight: "55vh",
