@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [filteredReportedUsers, setFilteredReportedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [timeFilter, setTimeFilter] = useState("Week");
+  const [timeFilter, setTimeFilter] = useState("Month");
   const [specificDate, setSpecificDate] = useState("");
   const [weeklyEntries, setWeeklyEntries] = useState({});
   const [weeklyFlags, setWeeklyFlags] = useState({});
