@@ -531,8 +531,22 @@ app.get("/fetchDepartments", (req, res) => {
 });
 
 app.get("/fetchDepartmentModerators", (req, res) => {
-  const query =
-    "SELECT cd.*, ut.firstName, ut.lastName, up.*  FROM course_department cd JOIN user_table ut ON cd.departmentID = ut.departmentID JOIN user_profiles up ON ut.userID = up.userID";
+  const query = `
+    SELECT 
+      course_department.departmentID, 
+      course_department.DepartmentName, 
+      user_table.userID, 
+      user_table.firstName, 
+      user_table.lastName, 
+      user_profiles.profile_image, 
+      user_profiles.bio
+    FROM 
+      course_department
+    JOIN 
+      user_table ON course_department.departmentID = user_table.departmentID
+    JOIN 
+      user_profiles ON user_table.userID = user_profiles.userID
+  `;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -4093,6 +4107,31 @@ app.delete("/deleteUserFilters", (req, res) => {
           res.status(404).json({ error: "filter not found" });
         }
       }
+    }
+  );
+});
+
+app.post("/assignModerator", (req, res) => {
+  const { userID, departmentID, departmentName } = req.body;
+
+  if (!userID || !departmentID || !departmentName) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
+  const updateQuery = `
+    UPDATE user_table 
+    SET departmentID = ?, departmentMod = ?, isAdmin = 2 
+    WHERE userID = ?
+  `;
+
+  db.query(
+    updateQuery,
+    [departmentID, departmentName, userID],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: "Moderator assigned successfully!", result });
     }
   );
 });
