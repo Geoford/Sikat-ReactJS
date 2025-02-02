@@ -16,7 +16,6 @@ const Analytics = () => {
   const [flags, setFlags] = useState([]);
   const [reportedComments, setReportedComments] = useState([]);
   const [reportedUsers, setreportedUsers] = useState([]);
-  // const [activeTab, setActiveTab] = useState("RegisteredUser");
   const { activeTab } = useParams();
   const navigate = useNavigate();
 
