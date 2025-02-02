@@ -31,10 +31,10 @@ const UserDiaryEntryReports = ({
   };
   return (
     <div className="row align-items-center gy-2 px-1">
-      <div className="col-lg-3 d-flex flex-column gap-2">
+      <div className="col-md d-flex flex-column">
         <div className="row gap-2 px-2">
           <div
-            className="col-sm col-lg-12 border rounded shadow-sm overflow-hidden px-0"
+            className="col-md-12 border rounded shadow-sm overflow-hidden px-0"
             style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
           >
             <div
@@ -58,7 +58,7 @@ const UserDiaryEntryReports = ({
             </div>
           </div>
           <div
-            className="col border rounded shadow-sm overflow-hidden px-0"
+            className="col-md-12 border rounded shadow-sm overflow-hidden px-0"
             style={{ height: "clamp(8rem, 20dvw, 9rem)" }}
           >
             <div
@@ -83,8 +83,8 @@ const UserDiaryEntryReports = ({
           </div>
         </div>
       </div>
-      <div className="col">
-        <div className="w-100">
+      <div className="col-md-9">
+        <div className="">
           <Bar data={graphData} options={graphOptions} height={300} />
         </div>
       </div>
