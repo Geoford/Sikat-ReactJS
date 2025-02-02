@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Col from "react-bootstrap/Col";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
@@ -18,7 +19,6 @@ const Analytics = () => {
   const [reportedUsers, setreportedUsers] = useState([]);
   const { activeTab } = useParams();
   const navigate = useNavigate();
-
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [modal, setModal] = useState({ show: false, message: "" });
@@ -57,75 +57,55 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchAnalyticsData = async () => {
       try {
-        const response = await fetch(`http://localhost:8081/users`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
+        if (!user || !user.departmentID) {
+          throw new Error("Department ID is required");
         }
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
 
-    fetchUsers();
-  }, []);
+        // Fetching users
+        const usersEndpoint =
+          user.isAdmin === 2 && user.departmentID
+            ? `http://localhost:8081/userAnalytics?departmentID=${user.departmentID}`
+            : "http://localhost:8081/users";
+        const usersResponse = await axios.get(usersEndpoint);
+        setUsers(usersResponse.data);
 
-  useEffect(() => {
-    const fetchFlags = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/flagged`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch flags");
-        }
-        const data = await response.json();
-        setFlags(data);
-      } catch (error) {
-        console.error("Error fetching flags:", error);
-      }
-    };
+        // Fetching flagged diaries
+        const flagsEndpoint =
+          user.isAdmin === 2
+            ? `http://localhost:8081/flaggedAnalytics?departmentID=${user.departmentID}`
+            : `http://localhost:8081/flagged?departmentID=${user.departmentID}`;
+        const flagsResponse = await axios.get(flagsEndpoint);
+        setFlags(flagsResponse.data);
 
-    fetchFlags();
-  }, []);
-
-  useEffect(() => {
-    const fetchReportedComments = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8081/getReportedComments`
+        // Fetching reported comments
+        const reportedCommentsEndpoint =
+          user.isAdmin === 2
+            ? `http://localhost:8081/getReportedCommentsAnalytics?departmentID=${user.departmentID}`
+            : `http://localhost:8081/getReportedComments?departmentID=${user.departmentID}`;
+        const reportedCommentsResponse = await axios.get(
+          reportedCommentsEndpoint
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch reported comments");
-        }
-        const data = await response.json();
-        setReportedComments(data);
+        setReportedComments(reportedCommentsResponse.data);
+
+        // Fetching reported users
+        const reportedUsersEndpoint =
+          user.isAdmin === 2
+            ? `http://localhost:8081/getReportedUsersAnalytics?departmentID=${user.departmentID}`
+            : `http://localhost:8081/getReportedUsers?departmentID=${user.departmentID}`;
+        const reportedUsersResponse = await fetch(reportedUsersEndpoint);
+        const reportedUsersData = await reportedUsersResponse.json();
+        setreportedUsers(reportedUsersData);
       } catch (error) {
-        console.error("Error fetching reported comments:", error);
+        console.error("Error fetching analytics data:", error);
       }
     };
 
-    fetchReportedComments();
-  }, []);
-
-  useEffect(() => {
-    const fetchReportedUsers = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/getReportedUsers`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch reported users");
-        }
-        const data = await response.json();
-        setreportedUsers(data);
-        console.log("Error fetching reported comments:", data);
-      } catch (error) {
-        console.error("Error fetching reported comments:", error);
-      }
-    };
-
-    fetchReportedUsers();
-  }, []);
+    if (user) {
+      fetchAnalyticsData();
+    }
+  }, [user]);
 
   return (
     <MainLayout ActiveTab="Analytics">

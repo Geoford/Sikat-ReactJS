@@ -645,6 +645,7 @@ app.post("/Login", (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         isAdmin: user.isAdmin,
+        departmentID: user.departmentID,
         profile_image: user.profile_image,
       });
     });
@@ -1842,6 +1843,25 @@ app.get("/users", (req, res) => {
   });
 });
 
+app.get("/userAnalytics", (req, res) => {
+  const departmentID = req.query.departmentID;
+
+  let query = `
+    SELECT u.*
+    FROM user_table u
+    JOIN course_department c ON u.departmentID = c.departmentID
+    WHERE u.departmentID = ?
+  `;
+
+  db.query(query, [departmentID], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.json(results);
+  });
+});
+
 app.get("/admin", (req, res) => {
   db.query(
     `
@@ -2251,19 +2271,40 @@ app.get("/getReportedUsers", (req, res) => {
     JOIN user_profiles ON reported_users.userID = user_profiles.userID
     ORDER BY isAddress, created_at 
   `;
-  //  SELECT
-  //     flagged_reports.*,
-  //     user_table.firstName,
-  //     user_table.lastName,
-  //     user_table.studentNumber,
-  //     user_table.sex,
-  //     user_profiles.profile_image,
-  //     diary_entries.title
-  //   FROM flagged_reports
-  //   LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-  //   LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
-  //   LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+
   db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reported users:", err.message);
+      return res.status(500).json({ error: "Error fetching reported users" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/getReportedUsersAnalytics", (req, res) => {
+  const { departmentID } = req.query;
+
+  // Check if departmentID is provided
+  if (!departmentID) {
+    return res.status(400).json({ error: "Department ID is required" });
+  }
+
+  const query = `
+    SELECT
+      reported_users.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.studentNumber,
+      user_profiles.profile_image
+    FROM 
+      reported_users
+    JOIN user_table ON reported_users.reportedUserID = user_table.userID
+    JOIN user_profiles ON reported_users.userID = user_profiles.userID
+    WHERE user_table.departmentID = ?
+    ORDER BY isAddress, created_at 
+  `;
+
+  db.query(query, [departmentID], (err, results) => {
     if (err) {
       console.error("Error fetching reported users:", err.message);
       return res.status(500).json({ error: "Error fetching reported users" });
@@ -2387,6 +2428,43 @@ app.get("/getReportedComments", (req, res) => {
   `;
 
   db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reported comments:", err.message);
+      return res
+        .status(500)
+        .json({ error: "Error fetching reported comments" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/getReportedCommentsAnalytics", (req, res) => {
+  const departmentID = req.query.departmentID;
+
+  if (!departmentID) {
+    return res.status(400).json({ error: "Department ID is required" });
+  }
+
+  const query = `
+    SELECT
+      comment_reports.*,
+      comments.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.studentNumber,
+      user_profiles.profile_image,
+      diary_entries.*
+    FROM 
+      comment_reports
+    JOIN user_table ON comment_reports.userID = user_table.userID
+    JOIN comments ON comment_reports.commentID = comments.commentID
+    JOIN user_profiles ON comment_reports.userID = user_profiles.userID
+    JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+    WHERE user_table.departmentID = ?
+    ORDER BY isAddress
+  `;
+
+  db.query(query, [departmentID], (err, results) => {
     if (err) {
       console.error("Error fetching reported comments:", err.message);
       return res
@@ -2887,6 +2965,39 @@ app.get("/flagged", (req, res) => {
 `;
 
   db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching reports:", err.message);
+      return res.status(500).json({ error: "Error fetching flagged reports" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/flaggedAnalytics", (req, res) => {
+  const departmentID = req.query.departmentID;
+
+  if (!departmentID) {
+    return res.status(400).json({ error: "Department ID is required" });
+  }
+
+  const query = `
+    SELECT 
+      flagged_reports.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.studentNumber,
+      user_table.sex,
+      user_profiles.profile_image,
+      diary_entries.title
+    FROM flagged_reports
+    LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
+    LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
+    LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+    WHERE user_table.departmentID = ?  -- Filter by departmentID
+    ORDER BY isAddress, flagged_reports.created_at DESC
+  `;
+
+  db.query(query, [departmentID], (err, results) => {
     if (err) {
       console.error("Error fetching reports:", err.message);
       return res.status(500).json({ error: "Error fetching flagged reports" });
