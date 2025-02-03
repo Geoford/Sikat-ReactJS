@@ -11,7 +11,6 @@ import FlaggedDiariesDownloadButton from "../../DownloadButton/FlaggedDiariesDow
 
 const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [flaggedDiaryReasons, setFlaggedDiaryReasons] = useState([]);
   const [alarmingWords, setAlarmingWords] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubject, setSelectedSubject] = useState("All");
@@ -51,22 +50,6 @@ const FlaggedDiaries = ({ flags }) => {
     };
 
     fetchAlarmingWords();
-  }, []);
-
-  useEffect(() => {
-    const fetchFlaggedReasons = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8081/fetchFlaggedDiaryReasons"
-        );
-        console.log("API Response:", response.data);
-        setFlaggedDiaryReasons(response.data);
-      } catch (error) {
-        console.error("Error fetching alarming words:", error);
-      }
-    };
-
-    fetchFlaggedReasons();
   }, []);
 
   useEffect(() => {
@@ -129,13 +112,13 @@ const FlaggedDiaries = ({ flags }) => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const handleAddressed = (entryID) => {
+  const handleAddressed = (report_id) => {
     setConfirmModal({
       show: true,
       message: `Are you sure you want to address this flagged?`,
       onConfirm: async () => {
         axios
-          .put(`http://localhost:8081/flaggedAddress/${entryID}`)
+          .put(`http://localhost:8081/flaggedAddress/${report_id}`)
           .then(() => {
             closeConfirmModal();
             setModal({
@@ -266,35 +249,14 @@ const FlaggedDiaries = ({ flags }) => {
                       <p className="m-0">{`${flag.firstName} ${flag.lastName}`}</p>
                     </td>
                     <td className="text-center align-middle">
-                      {flaggedDiaryReasons && flaggedDiaryReasons.length > 0 ? (
-                        Object.entries(
-                          flaggedDiaryReasons
-                            .filter(
-                              (flaggedReason) =>
-                                flaggedReason.entryID === flag.entryID
-                            )
-                            .reduce((count, flaggedReason) => {
-                              count[flaggedReason.reason] =
-                                (count[flaggedReason.reason] || 0) + 1;
-                              return count;
-                            }, {})
-                        ).map(([reason, count]) => (
-                          <div key={reason}>
-                            <p className="m-0">
-                              {reason} x{count}
-                            </p>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="m-0">No reason available</p>
-                      )}
+                      <p className="m-0">{flag.reasons}</p>
                     </td>
                     <td className="text-center align-middle">
                       <p className="m-0">{flag.title}</p>
                     </td>
 
                     <td className="text-center align-middle">
-                      <p className="m-0">{flag.flagCount}</p>
+                      <p className="m-0">{flag.count}</p>
                     </td>
                     <td className="text-center align-middle">
                       {flag.isAddress === 1 ? (
@@ -308,7 +270,7 @@ const FlaggedDiaries = ({ flags }) => {
                       {!flag.isAddress && (
                         <button
                           className="secondaryButton p-2"
-                          onClick={() => handleAddressed(flag.entryID)}
+                          onClick={() => handleAddressed(flag.report_id)}
                         >
                           <p className="m-0">Mark as Reviewed</p>
                         </button>

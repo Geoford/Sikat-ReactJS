@@ -7,7 +7,7 @@ const RightSide = () => {
     const [user, setUser] = useState(null);
     const [reports, setReports] = useState([]);
     const [reportedUsers, setReportedUsers] = useState([]);
-    const [flaggedU, setFlaggedU] = useState([]);
+    const [flaggedUsers, setFlaggedUsers] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -72,7 +72,7 @@ const RightSide = () => {
                     }
                 });
 
-                setFlaggedU(Object.values(flagCount));
+                setFlaggedUsers(Object.values(flagCount));
             } else {
                 console.warn("No flagged diaries found in response data.");
             }
@@ -192,13 +192,13 @@ const RightSide = () => {
                         className="w-100 custom-scrollbar mt-2 pe-1"
                         style={{ height: "40vh", overflowY: "scroll" }}
                     >
-                        {flaggedU.length > 0 ? (
-                            flaggedU.map((flagged, index) => (
+                        {flaggedUsers.length > 0 ? (
+                            flaggedUsers.map((flaggedUser, index) => (
                                 <>
-                                    {flagged.isAddress ? null : (
+                                    {flaggedUser.isAddress ? null : (
                                         <Link
-                                            key={`${flagged.userID}-${flagged.reason}-${index}`}
-                                            to={`/DiaryEntry/${flagged.entryID}`}
+                                            key={`${flaggedUser.userID}-${flaggedUser.reason}-${index}`}
+                                            to={`/DiaryEntry/${flaggedUser.entryID}`}
                                             className="text-decoration-none rounded"
                                             style={{ cursor: "pointer" }}
                                         >
@@ -206,8 +206,8 @@ const RightSide = () => {
                                                 <div className="profilePicture">
                                                     <img
                                                         src={
-                                                            flagged.profile_image
-                                                                ? `http://localhost:8081${flagged.profile_image}`
+                                                            flaggedUser.profile_image
+                                                                ? `http://localhost:8081${flaggedUser.profile_image}`
                                                                 : DefaultProfile
                                                         }
                                                         alt="Profile"
@@ -220,15 +220,15 @@ const RightSide = () => {
                                                 </div>
                                                 <div className="w-75 d-flex flex-column align-items-start text-start">
                                                     {/* <p className="text-secondary m-0">
-                          {flagged.firstName} {flagged.lastName}
+                          {flaggedUser.firstName} {flaggedUser.lastName}
                         </p> */}
                                                     <h5 className="text-secondary m-0">
-                                                        {flagged.title}
+                                                        {flaggedUser.title}
                                                     </h5>
                                                     <h6 className="text-danger m-0">
                                                         Reason:{" "}
-                                                        {flagged.reasons} x
-                                                        {flagged.flagCount}
+                                                        {flaggedUser.reasons} x
+                                                        {flaggedUser.count}
                                                     </h6>
                                                     {/* <p className="text-danger m-0">Flagged times</p> */}
                                                 </div>
