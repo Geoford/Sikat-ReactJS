@@ -2887,15 +2887,15 @@ app.get("/reports/:reportID", (req, res) => {
 });
 
 app.post("/flags", (req, res) => {
-  const { userID, actorID, entryID, reasons, otherText } = req.body;
+  const { userID, entryID, reason } = req.body;
 
-  if (!userID || !actorID || !entryID || !reasons) {
+  if (!entryID || !reason) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   db.query(
-    "INSERT INTO flagged_reports (userID, actorID, entryID, reasons, other_text) VALUES (?, ?, ?, ?, ?)",
-    [userID, actorID, entryID, reasons, otherText || null],
+    "INSERT INTO flagged_reports (userID, entryID, reason) VALUES (?, ?, ?)",
+    [userID, entryID, reason],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
@@ -2904,27 +2904,11 @@ app.post("/flags", (req, res) => {
           .json({ message: "Error submitting report", error: error.message });
       }
 
-      const behaviorArray = reasons.split(", ").map((b) => b.trim());
-
-      behaviorArray.forEach((reason) => {
-        db.query(
-          "UPDATE flagging_options SET count = count + 1 WHERE reason = ?",
-          [reason],
-          (updateError) => {
-            if (updateError) {
-              console.error(
-                `Error updating count for reason: ${reason}`,
-                updateError
-              );
-            }
-          }
-        );
-      });
-
       const updateQuery = `
         UPDATE diary_entries 
         SET
         isFlagged = 1,
+        flagCount = flagCount + 1,
         engagementCount = engagementCount + 1, 
           updated_at = CURRENT_TIMESTAMP  
         WHERE 
@@ -2946,22 +2930,88 @@ app.post("/flags", (req, res) => {
     }
   );
 });
+// app.post("/flags", (req, res) => {
+//   const { userID, actorID, entryID, reasons, otherText } = req.body;
 
+//   if (!userID || !actorID || !entryID || !reasons) {
+//     return res.status(400).json({ message: "Missing required fields" });
+//   }
+
+//   db.query(
+//     "INSERT INTO flagged_reports (userID, actorID, entryID, reasons, other_text) VALUES (?, ?, ?, ?, ?)",
+//     [userID, actorID, entryID, reasons, otherText || null],
+//     (error, results) => {
+//       if (error) {
+//         console.error("Error saving report:", error);
+//         return res
+//           .status(500)
+//           .json({ message: "Error submitting report", error: error.message });
+//       }
+
+//       const behaviorArray = reasons.split(", ").map((b) => b.trim());
+
+//       behaviorArray.forEach((reason) => {
+//         db.query(
+//           "UPDATE flagging_options SET count = count + 1 WHERE reason = ?",
+//           [reason],
+//           (updateError) => {
+//             if (updateError) {
+//               console.error(
+//                 `Error updating count for reason: ${reason}`,
+//                 updateError
+//               );
+//             }
+//           }
+//         );
+//       });
+
+//       const updateQuery = `
+//         UPDATE diary_entries
+//         SET
+//         isFlagged = 1,
+//         engagementCount = engagementCount + 1,
+//           updated_at = CURRENT_TIMESTAMP
+//         WHERE
+//           entryID = ?
+//       `;
+
+//       db.query(updateQuery, [entryID], (updateError) => {
+//         if (updateError) {
+//           console.error("Error updating diary entry timestamp:", updateError);
+//           return res.status(500).json({
+//             message: "Report submitted, but failed to update timestamp",
+//           });
+//         }
+
+//         res.status(200).json({
+//           message: "Report submitted and counts updated successfully",
+//         });
+//       });
+//     }
+//   );
+// });
+
+app.get("/fetchFlaggedDiaryReasons", (req, res) => {
+  db.query("SELECT * FROM flagged_reports ", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
+  });
+});
 app.get("/flagged", (req, res) => {
   const query = `
   SELECT 
-    flagged_reports.*,
-    user_table.firstName,
-    user_table.lastName,
-    user_table.studentNumber,
-    user_table.sex,
-    user_profiles.profile_image,
-    diary_entries.title
-  FROM flagged_reports
-  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-  LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
-  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
-  ORDER BY isAddress, created_at DESC
+    diary_entries.*,
+    user_table.*,
+    user_profiles.profile_image
+  FROM diary_entries
+  LEFT JOIN user_table ON diary_entries.userID = user_table.userID
+  LEFT JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+  WHERE diary_entries.isFlagged = 1
+  ORDER BY diary_entries.isAddress, diary_entries.flagCount DESC ;
 `;
 
   db.query(query, (err, results) => {
@@ -3673,9 +3723,9 @@ app.put("/flaggedAddress/:id", (req, res) => {
   const report_id = req.params.id;
 
   const query = `
-    UPDATE flagged_reports
-    SET isAddress = true
-    WHERE report_id = ?
+    UPDATE diary_entries
+    SET isAddress = 1
+    WHERE entryID = ?
   `;
 
   db.query(query, [report_id], (err, result) => {
