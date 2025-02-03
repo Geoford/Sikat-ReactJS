@@ -15,7 +15,7 @@ function FlagButton({
   fromAdmin,
 }) {
   const [show, setShow] = useState(false);
-  const [selectedReason, setSelectedReason] = useState([]);
+  const [selectedReasons, setSelectedReasons] = useState([]);
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
@@ -57,23 +57,12 @@ function FlagButton({
 
   const handleClose = () => {
     setShow(false);
-    setSelectedReason([]);
+    setSelectedReasons([]);
     setOtherText("");
     setIsOtherSelected(false);
   };
 
   const handleShow = () => setShow(true);
-
-  const handleRadioChange = (event) => {
-    const { value } = event.target;
-    setSelectedReason(value);
-    setIsOtherSelected(value === "others");
-    if (value === "others") {
-      setTimeout(() => {
-        otherInputRef.current?.focus();
-      }, 0);
-    }
-  };
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -88,7 +77,7 @@ function FlagButton({
       }
     }
 
-    setSelectedReason((prevSelected) =>
+    setSelectedReasons((prevSelected) =>
       checked
         ? [...prevSelected, value]
         : prevSelected.filter((reason) => reason !== value)
@@ -98,10 +87,10 @@ function FlagButton({
   const handleSubmit = async () => {
     const reportData = {
       userID: entry,
-      // actorID: userID,
+      actorID: userID,
       entryID,
-      reason: selectedReason,
-      // otherText: isOtherSelected ? otherText : null,
+      reasons: selectedReasons.join(", "),
+      otherText: isOtherSelected ? otherText : null,
     };
 
     console.log("Submitting report data:", reportData);
@@ -177,8 +166,8 @@ function FlagButton({
           <div style={{ height: "clamp(17rem ,30dvw ,20rem)" }}>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
-              {selectedReason.length > 0 && (
-                <h5 className="m-0">{selectedReason}</h5>
+              {selectedReasons.length > 0 && (
+                <h5 className="m-0">{selectedReasons.join(", ")}</h5>
               )}
             </label>
             <div
@@ -188,12 +177,10 @@ function FlagButton({
               {flaggingOptions.map((option) => (
                 <label className="border rounded p-2" key={option.flagID}>
                   <input
-                    type="radio"
-                    name="flagReason"
+                    type="checkbox"
                     id={option.flagID}
                     value={option.reason}
-                    onChange={handleRadioChange}
-                    checked={selectedReason === option.reason}
+                    onChange={handleCheckboxChange}
                   />
                   <label className="ms-1" htmlFor={option.flagID}>
                     <p className="m-0">{option.reason}</p>
