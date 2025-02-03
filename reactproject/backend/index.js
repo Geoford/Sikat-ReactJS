@@ -1391,7 +1391,7 @@ app.get("/entries", (req, res) => {
     diary_entries.isHide != 1 AND 
     (diary_entries.visibility = 'public' 
       OR (diary_entries.visibility = 'private' AND diary_entries.userID = ?))
-       OR (user_table.isAdmin = 1)
+       
   `;
 
   const queryParams = [userID];
@@ -1409,12 +1409,28 @@ app.get("/entries", (req, res) => {
   }
 
   if (Array.isArray(filters) && filters.length > 0) {
-    const filterConditions = filters.map(
-      () => `LOWER(diary_entries.subjects) LIKE ?`
-    );
-    query += ` AND (${filterConditions.join(" OR ")})`;
+    const filterConditions = [];
 
-    queryParams.push(...filters.map((filter) => `%${filter.toLowerCase()}%`));
+    filters.forEach((filter) => {
+      const lowerFilter = filter.toLowerCase(); // Convert once for consistency
+
+      if (lowerFilter === "flagged diaries") {
+        // All lowercase
+        filterConditions.push(`diary_entries.isFlagged = 1`);
+      } else if (lowerFilter === "with alarming words") {
+        // All lowercase
+        filterConditions.push(`diary_entries.containsAlarmingWords = 1`);
+      } else if (lowerFilter !== "general") {
+        filterConditions.push(`LOWER(diary_entries.subjects) LIKE ?`);
+        queryParams.push(`%${lowerFilter}%`);
+      }
+    });
+
+    if (filterConditions.length > 0) {
+      query += ` AND (${filterConditions.join(" OR ")})`;
+    }
+
+    console.log("Filter conditions:", filterConditions); // This should now log correctly
   }
 
   query += ` 
@@ -3129,9 +3145,9 @@ app.get("/flagged", (req, res) => {
     user_profiles.profile_image,
     diary_entries.title
   FROM flagged_reports
-  LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-  LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
-  LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
+   JOIN user_table ON flagged_reports.userID = user_table.userID
+   JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
+   JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
   ORDER BY isAddress, created_at DESC
 `;
 
@@ -3483,6 +3499,17 @@ app.post("/filters", (req, res) => {
 
 app.get("/filters", (req, res) => {
   db.query("SELECT * FROM filter_subjects", (err, results) => {
+    if (err) {
+      console.error("Error fetching filters:", err);
+      res.status(500).json({ error: "Failed to retrieve filters" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get("/adminFilters", (req, res) => {
+  db.query("SELECT * FROM admin_filter", (err, results) => {
     if (err) {
       console.error("Error fetching filters:", err);
       res.status(500).json({ error: "Failed to retrieve filters" });
