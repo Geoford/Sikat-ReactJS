@@ -35,6 +35,7 @@ const Analytics = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
+      console.log("Parsed User Data:", parsedUser);
 
       if (!parsedUser.isAdmin) {
         setModal({
@@ -59,7 +60,7 @@ const Analytics = () => {
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       try {
-        if (!user || !user.departmentID) {
+        if (!user) {
           throw new Error("Department ID is required");
         }
 
