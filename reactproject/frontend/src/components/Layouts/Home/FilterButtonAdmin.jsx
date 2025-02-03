@@ -3,20 +3,21 @@ import { ToggleButton } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
+const FilterButtonAdmin = ({ onFilterChange, userID }) => {
   const [selectedItems, setSelectedItems] = useState({});
   const [filterOptions, setFilterOptions] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/filters");
+        const response = await axios.get("http://localhost:8081/adminFilters");
         const filters = response.data;
 
         const initialItems = {};
         filters.forEach((filter) => {
-          initialItems[filter.subject] = false;
+          initialItems[filter.adminFilterSubject] = false;
         });
 
         setFilterOptions(filters);
@@ -45,60 +46,58 @@ const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
     fetchFilters();
   }, [userID]);
 
-  const handleToggleChange = async (subject) => {
+  const handleToggleChange = async (adminFilterSubject) => {
     const updatedItems = { ...selectedItems };
 
-    if (subject === "General") {
-      // If General is being selected, select all filters
+    if (adminFilterSubject === "General") {
       if (!selectedItems["General"]) {
         filterOptions.forEach((filter) => {
-          updatedItems[filter.subject] = true;
+          updatedItems[filter.adminFilterSubject] = true;
         });
       } else {
-        // If General is being deselected, deselect all filters
         filterOptions.forEach((filter) => {
-          updatedItems[filter.subject] = false;
+          updatedItems[filter.adminFilterSubject] = false;
         });
       }
     } else {
-      // Toggle individual filter
-      updatedItems[subject] = !selectedItems[subject];
+      updatedItems[adminFilterSubject] = !selectedItems[adminFilterSubject];
 
-      // Check if all filters are selected/deselected to update General accordingly
       const allSelected = filterOptions.every(
-        (filter) => filter.subject === "General" || updatedItems[filter.subject]
+        (filter) =>
+          filter.adminFilterSubject === "General" ||
+          updatedItems[filter.adminFilterSubject]
       );
       updatedItems["General"] = allSelected;
     }
 
     setSelectedItems(updatedItems);
 
-    const selectedSubjectsText = [];
+    const selectedadminFilterSubjectsText = [];
     filterOptions.forEach((filter) => {
-      if (updatedItems[filter.subject]) {
-        selectedSubjectsText.push(filter.subject);
+      if (updatedItems[filter.adminFilterSubject]) {
+        selectedadminFilterSubjectsText.push(filter.adminFilterSubject);
       }
     });
 
-    onFilterChange(selectedSubjectsText);
+    onFilterChange(selectedadminFilterSubjectsText);
 
     // Update filters in the backend
     try {
       const promises = filterOptions.map(async (filter) => {
-        const wasSelected = selectedItems[filter.subject];
-        const isSelected = updatedItems[filter.subject];
+        const wasSelected = selectedItems[filter.adminFilterSubject];
+        const isSelected = updatedItems[filter.adminFilterSubject];
 
         if (wasSelected !== isSelected) {
           if (isSelected) {
             await axios.post(`http://localhost:8081/saveUserFilterss`, {
               userID,
-              filter: filter.subject,
+              filter: filter.adminFilterSubject,
             });
           } else {
             await axios.delete(`http://localhost:8081/deleteUserFilters`, {
               data: {
                 userID,
-                filter: filter.subject,
+                filter: filter.adminFilterSubject,
               },
             });
           }
@@ -109,6 +108,8 @@ const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
     } catch (err) {
       console.error("Error updating filters:", err);
     }
+
+    setHasChanges(true); // Mark that there are changes
   };
 
   const handleSaveAndClose = () => {
@@ -132,8 +133,7 @@ const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
         className="px-2"
         style={{ zIndex: "1000", width: "clamp(13rem, 15dvw, 15rem)" }}
       >
-        <div className="fiterToggle d-flex flex-column gap-1">
-          {/* Place General filter at the top */}
+        <div className="filterToggle d-flex flex-column gap-1">
           <ToggleButton
             key="General"
             id="toggle-General"
@@ -142,35 +142,34 @@ const FilterButtonAdmin = ({ onFilterChange, userID, initialFilters }) => {
             value="General"
             onChange={() => handleToggleChange("General")}
             className="w-100 text-start"
+            aria-checked={selectedItems["General"] || false}
+            aria-label="Toggle General filter"
           >
             General
-          </ToggleButton>{" "}
-          <ToggleButton
-            key="Flagged Diaries"
-            id="toggle-Flagged Diaries"
-            type="checkbox"
-            checked={selectedItems["Flagged Diaries"] || false}
-            value="Flagged Diaries"
-            onChange={() => handleToggleChange("Flagged Diaries")}
-            className="w-100 text-start"
-          >
-            Flagged Diaries
-          </ToggleButton>{" "}
-          <ToggleButton
-            key="With Alarming Words"
-            id="toggle-With Alarming Words"
-            type="checkbox"
-            checked={selectedItems["With Alarming Words"] || false}
-            value="With Alarming Words"
-            onChange={() => handleToggleChange("With Alarming Words")}
-            className="w-100 text-start"
-          >
-            With Alarming Words
           </ToggleButton>
+
+          {filterOptions
+            .filter((filter) => filter.adminFilterSubject !== "General")
+            .map((filter) => (
+              <ToggleButton
+                key={filter.adminFilterSubject}
+                id={`toggle-${filter.adminFilterSubject}`}
+                type="checkbox"
+                checked={selectedItems[filter.adminFilterSubject] || false}
+                value={filter.adminFilterSubject}
+                onChange={() => handleToggleChange(filter.adminFilterSubject)}
+                className="w-100 text-start"
+                aria-checked={selectedItems[filter.adminFilterSubject] || false}
+                aria-label={`Toggle ${filter.adminFilterSubject} filter`}
+              >
+                {filter.adminFilterSubject}
+              </ToggleButton>
+            ))}
         </div>
         <button
           className="w-100 orangeButton py-1 mt-2"
           onClick={handleSaveAndClose}
+          disabled={!hasChanges}
         >
           Save Filter
         </button>

@@ -80,7 +80,7 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
       }
     });
 
-    onFilterChange(selectedSubjectsText);
+    onFilterChange(selectedSubjectsText); // Make sure this gets called with the correct array
 
     // Update filters in the backend
     try {
