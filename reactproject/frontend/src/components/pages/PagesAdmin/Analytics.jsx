@@ -75,7 +75,7 @@ const Analytics = () => {
         const flagsEndpoint =
           user.isAdmin === 2
             ? `http://localhost:8081/flaggedAnalytics?departmentID=${user.departmentID}`
-            : `http://localhost:8081/flagged?departmentID=${user.departmentID}`;
+            : `http://localhost:8081/flagged`;
         const flagsResponse = await axios.get(flagsEndpoint);
         setFlags(flagsResponse.data);
 
@@ -83,7 +83,7 @@ const Analytics = () => {
         const reportedCommentsEndpoint =
           user.isAdmin === 2
             ? `http://localhost:8081/getReportedCommentsAnalytics?departmentID=${user.departmentID}`
-            : `http://localhost:8081/getReportedComments?departmentID=${user.departmentID}`;
+            : `http://localhost:8081/getReportedComments`;
         const reportedCommentsResponse = await axios.get(
           reportedCommentsEndpoint
         );
@@ -93,7 +93,7 @@ const Analytics = () => {
         const reportedUsersEndpoint =
           user.isAdmin === 2
             ? `http://localhost:8081/getReportedUsersAnalytics?departmentID=${user.departmentID}`
-            : `http://localhost:8081/getReportedUsers?departmentID=${user.departmentID}`;
+            : `http://localhost:8081/getReportedUsers`;
         const reportedUsersResponse = await fetch(reportedUsersEndpoint);
         const reportedUsersData = await reportedUsersResponse.json();
         setreportedUsers(reportedUsersData);
