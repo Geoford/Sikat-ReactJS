@@ -1,7 +1,30 @@
 import React from "react";
 import * as XLSX from "xlsx-js-style";
 
-const ReportedCommentDownloadButton = ({ currentUsers }) => {
+const ReportedCommentDownloadButton = ({
+  currentUsers,
+  commentReportReasons,
+}) => {
+  const getCommentReasonsText = (reportedComment) => {
+    if (!commentReportReasons || commentReportReasons.length === 0) {
+      return "No reason available";
+    }
+
+    const reasonCounts = commentReportReasons
+      .filter(
+        (commentReportReason) =>
+          commentReportReason.commentID === reportedComment.commentID
+      )
+      .reduce((count, commentReportReason) => {
+        count[commentReportReason.reason] =
+          (count[commentReportReason.reason] || 0) + 1;
+        return count;
+      }, {});
+
+    return Object.entries(reasonCounts)
+      .map(([reason, count]) => `${reason} x${count}`)
+      .join(",\n");
+  };
   const downloadData = (format) => {
     if (format === "excel") {
       // Define headers with styling
@@ -11,7 +34,7 @@ const ReportedCommentDownloadButton = ({ currentUsers }) => {
       const rows = currentUsers.map((reportedComment) => [
         reportedComment.studentNumber,
         `${reportedComment.firstName} ${reportedComment.lastName}`,
-        reportedComment.reason,
+        getCommentReasonsText(reportedComment),
         reportedComment.text,
       ]);
 
@@ -70,9 +93,8 @@ const ReportedCommentDownloadButton = ({ currentUsers }) => {
         // Data cells
         for (let j = 0; j < rows.length; j++) {
           const dataCell = XLSX.utils.encode_cell({ r: j + 1, c: i });
-          if (!ws[dataCell].s) {
-            ws[dataCell].s = cellStyle;
-          }
+          ws[dataCell] = ws[dataCell] || {}; // Ensure the cell exists
+          ws[dataCell].s = cellStyle;
         }
       }
 

@@ -74,10 +74,8 @@ function ReportUserButton({
   const handleSubmitReport = async () => {
     try {
       const response = await axios.post("http://localhost:8081/reportingUser", {
-        userID,
         reportedUserID,
         reason: selectedBehavior,
-        otherText: isOtherSelected ? otherText : null,
       });
 
       if (response.status === 200) {

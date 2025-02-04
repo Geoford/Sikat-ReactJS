@@ -176,18 +176,6 @@ const Dashboard = () => {
     ],
   };
 
-  const doughnutData = {
-    labels: ["Total Entries", "Total Users"],
-    datasets: [
-      {
-        data: [filteredEntries.length, users.length],
-        backgroundColor: ["#5c0099", "#0099cc"],
-        borderColor: ["#5c0099", "#0099cc"],
-        borderWidth: 1,
-      },
-    ],
-  };
-
   const fetchEntries = async () => {
     try {
       setIsLoading(true);
@@ -222,7 +210,7 @@ const Dashboard = () => {
   const fetchReportedComments = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8081/getReportedComments"
+        "http://localhost:8081/analyticsReportedComments"
       );
       setReportedComments(response.data);
     } catch (error) {
@@ -242,7 +230,7 @@ const Dashboard = () => {
   const fetchReportedUsers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8081/getReportedUsers"
+        "http://localhost:8081/analyticsReportedUsers"
       );
       setReportedUsers(response.data);
     } catch (error) {

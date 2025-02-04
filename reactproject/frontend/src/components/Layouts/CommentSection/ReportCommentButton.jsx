@@ -84,7 +84,6 @@ function ReportCommentButton({
           userID,
           entryID,
           reason: selectedBehavior,
-          otherText: isOtherSelected ? otherText : null,
         }
       );
 

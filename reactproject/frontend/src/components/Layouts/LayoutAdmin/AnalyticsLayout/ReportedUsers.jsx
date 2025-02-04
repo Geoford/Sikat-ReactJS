@@ -11,6 +11,7 @@ import ReportedUsersDownloadButton from "../../DownloadButton/ReportedUsersDownl
 const ReportedComment = ({ reportedUsers }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [option, setOption] = useState([]);
+  const [reportUserReasons, setReportUserReasons] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,6 +51,21 @@ const ReportedComment = ({ reportedUsers }) => {
   }, []);
 
   useEffect(() => {
+    const fetchReportUserReasons = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/fetchReportedUserReasons"
+        );
+        setReportUserReasons(response.data);
+      } catch (error) {
+        console.error("Error fetching alarming words:", error);
+      }
+    };
+
+    fetchReportUserReasons();
+  }, []);
+
+  useEffect(() => {
     const applyFilter = () => {
       let filtered = reportedUsers;
 
@@ -68,9 +84,6 @@ const ReportedComment = ({ reportedUsers }) => {
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
             reportedUser.lastName
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            reportedUser.reason
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
             reportedUser.studentNumber.toString().includes(searchQuery)
@@ -104,7 +117,7 @@ const ReportedComment = ({ reportedUsers }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddressed = async (reportedUsersID) => {
+  const handleAddressed = async (userID) => {
     setConfirmModal({
       show: true,
       message: `Are you sure you want to mark this user as reviewed?`,
@@ -112,7 +125,7 @@ const ReportedComment = ({ reportedUsers }) => {
         setIsLoading(true);
         try {
           await axios.put(
-            `http://localhost:8081/reportingUsersAddress/${reportedUsersID}`
+            `http://localhost:8081/reportingUsersAddress/${userID}`
           );
           closeConfirmModal();
           setModal({
@@ -160,7 +173,7 @@ const ReportedComment = ({ reportedUsers }) => {
               <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search name, student number"
+              placeholder="Search student name or number"
               aria-label="Search"
               aria-describedby="basic-addon1"
               value={searchQuery}
@@ -197,31 +210,14 @@ const ReportedComment = ({ reportedUsers }) => {
                   className="text-center align-middle ps-3 ps-lg-5"
                   style={{ minWidth: "clamp(9rem, 50dvw, 15rem)" }}
                 >
-                  <div className="d-flex align-items-center justify-content-center">
-                    <select
-                      value={selectedSubject}
-                      onChange={(e) => setSelectedSubject(e.target.value)}
-                      className="form-select border-0 fw-bold text-center"
-                      style={{
-                        maxWidth: "max-content",
-                      }}
-                    >
-                      <option value="All">Violation(All)</option>
-                      {option.map((word, index) => (
-                        <option
-                          key={index}
-                          className="text-break"
-                          value={word.reason || word.title}
-                        >
-                          {word.reason || word.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <h5 className="m-0">Violation/s</h5>
                 </th>
                 {/* <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Count</h5>
                 </th> */}
+                <th scope="col" className="text-center align-middle">
+                  <h5 className="m-0">Count</h5>
+                </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Status</h5>
                 </th>
@@ -241,30 +237,52 @@ const ReportedComment = ({ reportedUsers }) => {
                       <p className="m-0">{`${reportedUser.firstName} ${reportedUser.lastName}`}</p>
                     </td>
                     <td className="text-center align-middle">
-                      <p className="m-0">{reportedUser.reason}</p>
+                      <p className="m-0">
+                        {reportUserReasons && reportUserReasons.length > 0 ? (
+                          Object.entries(
+                            reportUserReasons
+                              .filter(
+                                (reportUserReason) =>
+                                  reportUserReason.userID ===
+                                  reportedUser.userID
+                              )
+                              .reduce((count, reportUserReason) => {
+                                count[reportUserReason.reason] =
+                                  (count[reportUserReason.reason] || 0) + 1;
+                                return count;
+                              }, {})
+                          ).map(([reason, count]) => (
+                            <div key={reason}>
+                              <p className="m-0">
+                                {reason} x{count}
+                              </p>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="m-0">No reason available</p>
+                        )}
+                      </p>
                     </td>
-                    {/* <td className="text-center align-middle">
-                      <p className="m-0">00</p>
-                    </td> */}
+                    <td scope="" className="text-center align-middle">
+                      <p className="m-0">{reportedUser.reportCount}</p>
+                    </td>
                     <td className="text-success text-center align-middle">
-                      {reportedUser.isAddress === 1 ? (
+                      {reportedUser.isReviewed === 1 ? (
                         <p className="text-success m-0">Addressed</p>
                       ) : (
                         <p className="text-danger m-0">Pending</p>
                       )}
                     </td>
                     <td className="text-center align-middle">
-                      {!reportedUser.isAddress && (
+                      {!reportedUser.isReviewed && (
                         <button
                           className="secondaryButton"
-                          onClick={() =>
-                            handleAddressed(reportedUser.reportedUsersID)
-                          }
+                          onClick={() => handleAddressed(reportedUser.userID)}
                         >
                           <p className="m-0">Mark as Reviewed</p>
                         </button>
                       )}
-                      <Link to={`/Profile/${reportedUser.reportedUserID}`}>
+                      <Link to={`/Profile/${reportedUser.userID}`}>
                         <button className="primaryButton">
                           <p className="m-0">Check</p>
                         </button>
@@ -323,7 +341,10 @@ const ReportedComment = ({ reportedUsers }) => {
       </div>
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
-        <ReportedUsersDownloadButton currentUsers={currentUsers} />
+        <ReportedUsersDownloadButton
+          currentUsers={currentUsers}
+          reportUserReasons={reportUserReasons}
+        />
       </div>
     </div>
   );

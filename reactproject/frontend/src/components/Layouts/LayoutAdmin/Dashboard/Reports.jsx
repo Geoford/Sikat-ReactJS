@@ -9,9 +9,19 @@ const Reports = ({
   filteredReportedUsers,
 }) => {
   const GenderBaseIncidentsTotal = filteredGenderBasedIncidents.length;
-  const FlaggedDiariesTotal = filteredFlags.length;
-  const ReportedCommentsTotal = filteredReportedComments.length;
-  const ReportedUsersTotal = filteredReportedUsers.length;
+
+  const uniqueEntryIDs = new Set(filteredFlags.map((flag) => flag.entryID));
+  const FlaggedDiariesTotal = uniqueEntryIDs.size;
+
+  const uniqueCommentIDs = new Set(
+    filteredReportedComments.map((comment) => comment.commentID)
+  );
+  const ReportedCommentsTotal = uniqueCommentIDs.size;
+
+  const uniqueReportedUserIDs = new Set(
+    filteredReportedUsers.map((user) => user.userID)
+  );
+  const ReportedUsersTotal = uniqueReportedUserIDs.size;
   const TotalData =
     GenderBaseIncidentsTotal +
     FlaggedDiariesTotal +
@@ -29,19 +39,9 @@ const Reports = ({
       },
     ],
   };
-  //   const FlaggedDiariesDonut = {
-  //     labels: ["Filed Reports", "Other Reports"],
-  //     datasets: [
-  //       {
-  //         data: [FlaggedDiariesTotal, TotalData - FlaggedDiariesTotal],
-  //         backgroundColor: ["#ff3333", "#ffff"],
-  //         borderColor: ["#ffff"],
-  //         borderWidth: 2,
-  //       },
-  //     ],
-  //   };
-  const DonutData = (total) => ({
-    labels: ["Filed Reports", "Other Reports"],
+
+  const DonutData = (total, tooltip) => ({
+    labels: [tooltip, "Other Reports"],
     datasets: [
       {
         data: [total, TotalData - total],
@@ -132,7 +132,7 @@ const Reports = ({
           >
             <Doughnut
               className="overflow-visible"
-              data={DonutData(FlaggedDiariesTotal)}
+              data={DonutData(FlaggedDiariesTotal, "Flagged Diaries")}
               options={options}
             />
             <h3
@@ -178,7 +178,7 @@ const Reports = ({
           >
             <Doughnut
               className="overflow-visible"
-              data={DonutData(ReportedCommentsTotal)}
+              data={DonutData(ReportedCommentsTotal, "Reported Comments")}
               options={options}
             />
             <h3
@@ -224,7 +224,7 @@ const Reports = ({
           >
             <Doughnut
               className="overflow-visible"
-              data={DonutData(ReportedUsersTotal)}
+              data={DonutData(ReportedUsersTotal, "Reported Users")}
               options={options}
             />
             <h3

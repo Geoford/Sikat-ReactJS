@@ -11,6 +11,7 @@ import FlaggedDiariesDownloadButton from "../../DownloadButton/FlaggedDiariesDow
 
 const FlaggedDiaries = ({ flags }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [flaggedDiaryReasons, setFlaggedDiaryReasons] = useState([]);
   const [alarmingWords, setAlarmingWords] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubject, setSelectedSubject] = useState("All");
@@ -38,6 +39,22 @@ const FlaggedDiaries = ({ flags }) => {
   };
 
   useEffect(() => {
+    const fetchFlaggedReasons = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/fetchFlaggedDiaryReasons"
+        );
+        console.log("API Response:", response.data);
+        setFlaggedDiaryReasons(response.data);
+      } catch (error) {
+        console.error("Error fetching alarming words:", error);
+      }
+    };
+
+    fetchFlaggedReasons();
+  }, []);
+
+  useEffect(() => {
     const fetchAlarmingWords = async () => {
       try {
         const response = await axios.get(
@@ -59,7 +76,7 @@ const FlaggedDiaries = ({ flags }) => {
       // Apply subject filter
       if (selectedSubject !== "All") {
         filtered = filtered.filter((flag) =>
-          flag.reasons.toLowerCase().includes(selectedSubject.toLowerCase())
+          flag.reason.toLowerCase().includes(selectedSubject.toLowerCase())
         );
       }
 
@@ -112,13 +129,13 @@ const FlaggedDiaries = ({ flags }) => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const handleAddressed = (report_id) => {
+  const handleAddressed = (entryID) => {
     setConfirmModal({
       show: true,
       message: `Are you sure you want to address this flagged?`,
       onConfirm: async () => {
         axios
-          .put(`http://localhost:8081/flaggedAddress/${report_id}`)
+          .put(`http://localhost:8081/flaggedAddress/${entryID}`)
           .then(() => {
             closeConfirmModal();
             setModal({
@@ -135,6 +152,23 @@ const FlaggedDiaries = ({ flags }) => {
       },
       onCancel: () => setConfirmModal({ show: false, message: "" }),
     });
+  };
+
+  const getFlaggedReasonsText = (flaggedDiaryReasons, flag) => {
+    if (!flaggedDiaryReasons || flaggedDiaryReasons.length === 0) {
+      return "No reason available";
+    }
+
+    const reasonCounts = flaggedDiaryReasons
+      .filter((flaggedReason) => flaggedReason.entryID === flag.entryID)
+      .reduce((count, flaggedReason) => {
+        count[flaggedReason.reason] = (count[flaggedReason.reason] || 0) + 1;
+        return count;
+      }, {});
+
+    return Object.entries(reasonCounts)
+      .map(([reason, count]) => `${reason} x${count}`)
+      .join(", ");
   };
 
   return (
@@ -161,7 +195,7 @@ const FlaggedDiaries = ({ flags }) => {
               <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search by name, student number, behaviors, or title"
+              placeholder="Search by author or diary title"
               aria-label="Search"
               aria-describedby="basic-addon1"
               value={searchTerm}
@@ -198,27 +232,7 @@ const FlaggedDiaries = ({ flags }) => {
                   className="text-center align-middle"
                   style={{ minWidth: "10rem", maxWidth: "10rem" }}
                 >
-                  <div className="d-flex align-items-center justify-content-center">
-                    <select
-                      className="form-select border-0 fw-bold text-center"
-                      style={{
-                        maxWidth: "max-content",
-                      }}
-                      value={selectedSubject}
-                      onChange={(e) => setSelectedSubject(e.target.value)}
-                    >
-                      <option value="All">Reason(All)</option>
-                      {alarmingWords.map((word, index) => (
-                        <option
-                          key={index}
-                          className="text-break"
-                          value={word.reason || word.title}
-                        >
-                          {word.reason || word.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <h5 className="m-0">Reason/s</h5>
                 </th>
                 <th scope="col" className="text-center align-middle">
                   <h5 className="m-0">Diary Title</h5>
@@ -249,14 +263,38 @@ const FlaggedDiaries = ({ flags }) => {
                       <p className="m-0">{`${flag.firstName} ${flag.lastName}`}</p>
                     </td>
                     <td className="text-center align-middle">
-                      <p className="m-0">{flag.reasons}</p>
+                      <p className="m-0">
+                        {flaggedDiaryReasons &&
+                        flaggedDiaryReasons.length > 0 ? (
+                          Object.entries(
+                            flaggedDiaryReasons
+                              .filter(
+                                (flaggedReason) =>
+                                  flaggedReason.entryID === flag.entryID
+                              )
+                              .reduce((count, flaggedReason) => {
+                                count[flaggedReason.reason] =
+                                  (count[flaggedReason.reason] || 0) + 1;
+                                return count;
+                              }, {})
+                          ).map(([reason, count]) => (
+                            <div key={reason}>
+                              <p className="m-0">
+                                {reason} x{count}
+                              </p>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="m-0">No reason available</p>
+                        )}
+                      </p>
                     </td>
                     <td className="text-center align-middle">
                       <p className="m-0">{flag.title}</p>
                     </td>
 
                     <td className="text-center align-middle">
-                      <p className="m-0">{flag.count}</p>
+                      <p className="m-0">{flag.flagCount}</p>
                     </td>
                     <td className="text-center align-middle">
                       {flag.isAddress === 1 ? (
@@ -270,7 +308,7 @@ const FlaggedDiaries = ({ flags }) => {
                       {!flag.isAddress && (
                         <button
                           className="secondaryButton p-2"
-                          onClick={() => handleAddressed(flag.report_id)}
+                          onClick={() => handleAddressed(flag.entryID)}
                         >
                           <p className="m-0">Mark as Reviewed</p>
                         </button>
@@ -334,7 +372,10 @@ const FlaggedDiaries = ({ flags }) => {
       </div>
       {/* Download Button */}
       <div className="row d-flex gap-1 mt-2 px-3">
-        <FlaggedDiariesDownloadButton currentUsers={currentUsers} />
+        <FlaggedDiariesDownloadButton
+          currentUsers={currentUsers}
+          flaggedDiaryReasons={flaggedDiaryReasons}
+        />
       </div>
     </div>
   );

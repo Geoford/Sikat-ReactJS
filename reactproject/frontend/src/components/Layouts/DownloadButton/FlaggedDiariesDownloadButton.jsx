@@ -1,7 +1,26 @@
 import React from "react";
 import * as XLSX from "xlsx-js-style";
 
-const FlaggedDiariesDownloadButton = ({ currentUsers }) => {
+const FlaggedDiariesDownloadButton = ({
+  currentUsers,
+  flaggedDiaryReasons,
+}) => {
+  const getFlaggedReasonsText = (flag) => {
+    if (!flaggedDiaryReasons || flaggedDiaryReasons.length === 0) {
+      return "No reason available";
+    }
+
+    const reasonCounts = flaggedDiaryReasons
+      .filter((flaggedReason) => flaggedReason.entryID === flag.entryID)
+      .reduce((count, flaggedReason) => {
+        count[flaggedReason.reason] = (count[flaggedReason.reason] || 0) + 1;
+        return count;
+      }, {});
+
+    return Object.entries(reasonCounts)
+      .map(([reason, count]) => `${reason} x${count}`)
+      .join(",\n");
+  };
   const downloadData = (format) => {
     if (format === "excel") {
       // Define headers with styling
@@ -11,7 +30,7 @@ const FlaggedDiariesDownloadButton = ({ currentUsers }) => {
       const rows = currentUsers.map((flag) => [
         `${flag.firstName} ${flag.lastName}`,
         flag.title,
-        flag.reasons,
+        getFlaggedReasonsText(flag),
       ]);
 
       // Create worksheet

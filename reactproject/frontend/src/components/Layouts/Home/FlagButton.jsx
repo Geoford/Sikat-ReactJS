@@ -15,7 +15,7 @@ function FlagButton({
   fromAdmin,
 }) {
   const [show, setShow] = useState(false);
-  const [selectedReasons, setSelectedReasons] = useState([]);
+  const [selectedReason, setSelectedReason] = useState([]);
   const [otherText, setOtherText] = useState("");
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [flaggingOptions, setFlaggingOptions] = useState([]);
@@ -57,7 +57,7 @@ function FlagButton({
 
   const handleClose = () => {
     setShow(false);
-    setSelectedReasons([]);
+    setSelectedReason([]);
     setOtherText("");
     setIsOtherSelected(false);
   };
@@ -77,7 +77,7 @@ function FlagButton({
       }
     }
 
-    setSelectedReasons((prevSelected) =>
+    setSelectedReason((prevSelected) =>
       checked
         ? [...prevSelected, value]
         : prevSelected.filter((reason) => reason !== value)
@@ -87,10 +87,8 @@ function FlagButton({
   const handleSubmit = async () => {
     const reportData = {
       userID: entry,
-      actorID: userID,
       entryID,
-      reasons: selectedReasons.join(", "),
-      otherText: isOtherSelected ? otherText : null,
+      reason: selectedReason,
     };
 
     console.log("Submitting report data:", reportData);
@@ -166,8 +164,8 @@ function FlagButton({
           <div style={{ height: "clamp(17rem ,30dvw ,20rem)" }}>
             <label className="d-flex gap-2 mb-3">
               <h5 className="m-0">Reason: </h5>
-              {selectedReasons.length > 0 && (
-                <h5 className="m-0">{selectedReasons.join(", ")}</h5>
+              {selectedReason.length > 0 && (
+                <h5 className="m-0">{selectedReason}</h5>
               )}
             </label>
             <div
@@ -175,39 +173,21 @@ function FlagButton({
               style={{ overflowY: "scroll", height: "90%" }}
             >
               {flaggingOptions.map((option) => (
-                <label className="border rounded p-2" key={option.flagID}>
+                <label
+                  className="border rounded p-2 d-flex align-items-center"
+                  key={option.flagID}
+                >
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="flaggingOptions" // Ensures only one selection
                     id={option.flagID}
                     value={option.reason}
                     onChange={handleCheckboxChange}
+                    className="me-2"
                   />
-                  <label className="ms-1" htmlFor={option.flagID}>
-                    <p className="m-0">{option.reason}</p>
-                  </label>
+                  <p className="m-0">{option.reason}</p>
                 </label>
               ))}
-              {/* <label className="border rounded p-2">
-                <input
-                  type="checkbox"
-                  id="others"
-                  value="others"
-                  onChange={handleCheckboxChange}
-                />
-                <label className="ms-1" htmlFor="others">
-                  <p className="m-0"> Others:</p>
-                </label>
-              </label> */}
-              {/* {isOtherSelected && (
-                <input
-                  type="text"
-                  className="form-control mt-1"
-                  placeholder="Please specify"
-                  value={otherText}
-                  onChange={(e) => setOtherText(e.target.value)}
-                  ref={otherInputRef} // Attach the ref to the input field
-                />
-              )} */}
             </div>
           </div>
         </Modal.Body>

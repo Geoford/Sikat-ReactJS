@@ -1,7 +1,27 @@
 import React from "react";
 import * as XLSX from "xlsx-js-style";
 
-const ReportedUsersDownloadButton = ({ currentUsers }) => {
+const ReportedUsersDownloadButton = ({ currentUsers, reportUserReasons }) => {
+  const getUserReasonsText = (reportedUser) => {
+    if (!reportUserReasons || reportUserReasons.length === 0) {
+      return "No reason available";
+    }
+
+    const reasonCounts = reportUserReasons
+      .filter(
+        (reportUserReason) => reportUserReason.userID === reportedUser.userID
+      )
+      .reduce((count, reportUserReason) => {
+        count[reportUserReason.reason] =
+          (count[reportUserReason.reason] || 0) + 1;
+        return count;
+      }, {});
+
+    return Object.entries(reasonCounts)
+      .map(([reason, count]) => `${reason} x${count}`)
+      .join(",\n");
+  };
+
   const downloadData = (format) => {
     if (format === "excel") {
       // Define headers with styling
@@ -11,8 +31,8 @@ const ReportedUsersDownloadButton = ({ currentUsers }) => {
       const rows = currentUsers.map((reportedUser) => [
         reportedUser.studentNumber,
         `${reportedUser.firstName} ${reportedUser.lastName}`,
-        reportedUser.reason,
-        reportedUser.studentNumber,
+        getUserReasonsText(reportedUser),
+        reportedUser.reportCount,
       ]);
 
       // Create worksheet
@@ -70,9 +90,8 @@ const ReportedUsersDownloadButton = ({ currentUsers }) => {
         // Data cells
         for (let j = 0; j < rows.length; j++) {
           const dataCell = XLSX.utils.encode_cell({ r: j + 1, c: i });
-          if (!ws[dataCell].s) {
-            ws[dataCell].s = cellStyle;
-          }
+          ws[dataCell] = ws[dataCell] || {}; // Ensure the cell exists
+          ws[dataCell].s = cellStyle;
         }
       }
 

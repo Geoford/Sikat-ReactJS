@@ -1714,15 +1714,73 @@ app.put("/reviewedComments", (req, res) => {
 app.get("/analytics", (req, res) => {
   let query = `
     SELECT 
-      diary_entries.*,
-       user_table.*,
-       user_profiles.profile_image,
-       user_profiles.alias
+      diary_entries.*
     FROM diary_entries
     JOIN user_table ON diary_entries.userID = user_table.userID
     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     WHERE diary_entries.visibility = 'public' AND user_table.isAdmin = 0
     ORDER BY diary_entries.created_at DESC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching diary entries:", err.message);
+      return res.status(500).json({ error: "Error fetching diary entries" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+// app.get("/analytics", (req, res) => {
+//   let query = `
+//     SELECT
+//       diary_entries.*,
+//        user_table.*,
+//        user_profiles.profile_image,
+//        user_profiles.alias
+//     FROM diary_entries
+//     JOIN user_table ON diary_entries.userID = user_table.userID
+//     JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+//     WHERE diary_entries.visibility = 'public' AND user_table.isAdmin = 0
+//     ORDER BY diary_entries.created_at DESC
+//   `;
+
+//   db.query(query, (err, results) => {
+//     if (err) {
+//       console.error("Error fetching diary entries:", err.message);
+//       return res.status(500).json({ error: "Error fetching diary entries" });
+//     }
+//     res.status(200).json(results);
+//   });
+// });
+
+app.get("/analyticsReportedComments", (req, res) => {
+  let query = `
+    SELECT 
+      comments.commentID,
+      comment_reports.created_at
+    FROM comments
+    JOIN comment_reports ON comments.commentID = comment_reports.commentID
+    WHERE comments.isReported = 1
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching diary entries:", err.message);
+      return res.status(500).json({ error: "Error fetching diary entries" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.get("/analyticsReportedUsers", (req, res) => {
+  let query = `
+    SELECT 
+      user_table.userID,
+      reporting_users.created_at
+    FROM user_table
+    JOIN reporting_users ON user_table.userID = reporting_users.userID
+    WHERE user_table.isReported = 1
   `;
 
   db.query(query, (err, results) => {
@@ -2400,16 +2458,16 @@ app.post("/comments", (req, res) => {
 });
 
 app.post("/reportingUser", (req, res) => {
-  const { reportedUserID, userID, reason } = req.body;
+  const { reportedUserID, reason } = req.body;
 
-  if (!userID || !reason) {
+  if (!reportedUserID || !reason) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   // Insert the report into the comment_reports table
   db.query(
-    "INSERT INTO reported_users (userID, reportedUserID, reason, isAddress) VALUES (?,?,?,?)",
-    [userID, reportedUserID, reason, false],
+    "INSERT INTO reporting_users (UserID, reason) VALUES (?,?)",
+    [reportedUserID, reason],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
@@ -2423,8 +2481,11 @@ app.post("/reportingUser", (req, res) => {
       // Update the count for each reason
       reasonArray.forEach((reasonItem) => {
         db.query(
-          "UPDATE reporting_users SET count = count + 1 WHERE reason = ?",
-          [reasonItem],
+          `UPDATE user_table 
+          SET reportCount = reportCount + 1,
+          isReported =  1 
+          WHERE userID = ?`,
+          [reportedUserID],
           (updateError) => {
             if (updateError) {
               console.error(
@@ -2447,16 +2508,13 @@ app.post("/reportingUser", (req, res) => {
 app.get("/getReportedUsers", (req, res) => {
   const query = `
     SELECT
-      reported_users.*,
-      user_table.firstName,
-      user_table.lastName,
-      user_table.studentNumber,
+      user_table.*,
       user_profiles.profile_image
     FROM 
-      reported_users
-    JOIN user_table ON reported_users.reportedUserID = user_table.userID
-    JOIN user_profiles ON reported_users.userID = user_profiles.userID
-    ORDER BY isAddress, created_at 
+      user_table
+    JOIN user_profiles ON user_table.userID = user_profiles.userID
+    WHERE user_table.isReported = 1
+    ORDER BY user_table.isReviewed, user_table.reportCount DESC;
   `;
 
   db.query(query, (err, results) => {
@@ -2465,6 +2523,17 @@ app.get("/getReportedUsers", (req, res) => {
       return res.status(500).json({ error: "Error fetching reported users" });
     }
     res.status(200).json(results);
+  });
+});
+
+app.get("/fetchReportedUserReasons", (req, res) => {
+  db.query("SELECT * FROM reporting_users ", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
   });
 });
 
@@ -2531,15 +2600,15 @@ app.get("/getReportedUser/:userID", (req, res) => {
 });
 
 app.put("/reportingUsersAddress/:id", (req, res) => {
-  const reportedUsersID = req.params.id;
+  const userID = req.params.id;
 
   const query = `
-    UPDATE reported_users
-    SET isAddress = true
-    WHERE reportedUsersID = ?
+    UPDATE user_table
+    SET isReviewed = 1
+    WHERE userID = ?
   `;
 
-  db.query(query, [reportedUsersID], (err, result) => {
+  db.query(query, [userID], (err, result) => {
     if (err) {
       console.error("Error updating report status:", err.message);
       return res.status(500).json({ error: "Failed to update report" });
@@ -2551,7 +2620,7 @@ app.put("/reportingUsersAddress/:id", (req, res) => {
 });
 
 app.post("/reportuserComment", (req, res) => {
-  const { commentID, userID, entryID, reason, otherText } = req.body;
+  const { commentID, userID, entryID, reason } = req.body;
 
   if (!commentID || !userID || !reason) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -2559,8 +2628,8 @@ app.post("/reportuserComment", (req, res) => {
 
   // Insert the report into the comment_reports table
   db.query(
-    "INSERT INTO comment_reports (commentID, userID, entryID, reason, otherText) VALUES (?, ?, ?, ?, ?)",
-    [commentID, userID, entryID, reason, otherText || null],
+    "INSERT INTO comment_reports (commentID, userID, entryID, reason) VALUES (?, ?, ?, ?)",
+    [commentID, userID, entryID, reason],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
@@ -2571,21 +2640,21 @@ app.post("/reportuserComment", (req, res) => {
 
       const reasonArray = reason.split(", ").map((r) => r.trim());
 
-      // Update the count for each reason
-      reasonArray.forEach((reasonItem) => {
-        db.query(
-          "UPDATE report_comments SET count = count + 1 WHERE reason = ?",
-          [reasonItem],
-          (updateError) => {
-            if (updateError) {
-              console.error(
-                `Error updating count for reason: ${reasonItem}`,
-                updateError
-              );
-            }
+      db.query(
+        `UPDATE comments 
+        SET reportCount = reportCount + 1,
+        isReported =  1 
+        WHERE commentID = ?`,
+        [commentID],
+        (updateError) => {
+          if (updateError) {
+            console.error(
+              `Error updating count for reason: ${error}`,
+              updateError
+            );
           }
-        );
-      });
+        }
+      );
 
       // Send response once the main report is saved
       res
@@ -2595,23 +2664,28 @@ app.post("/reportuserComment", (req, res) => {
   );
 });
 
+app.get("/fetchReportedCommentReasons", (req, res) => {
+  db.query("SELECT * FROM comment_reports ", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 app.get("/getReportedComments", (req, res) => {
   const query = `
-  SELECT
-    comment_reports.*,
-    comments.*,
-    user_table.firstName,
-    user_table.lastName,
-    user_table.studentNumber,
-    user_profiles.profile_image,
-    diary_entries.*
-  FROM 
-    comment_reports
-  JOIN user_table ON comment_reports.userID = user_table.userID
-  JOIN comments ON comment_reports.commentID = comments.commentID
-  JOIN user_profiles ON comment_reports.userID = user_profiles.userID
-  JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
-  ORDER BY isAddress
+  SELECT 
+  comments.*,
+  user_table.firstName,
+  user_table.lastName,
+  user_table.studentNumber
+  FROM comments
+  JOIN user_table ON comments.userID = user_table.userID
+  WHERE comments.isReported = 1
+  ORDER BY comments.isReviewed, comments.reportCount DESC ;
   `;
 
   db.query(query, (err, results) => {
@@ -2662,36 +2736,36 @@ app.get("/getReportedCommentsAnalytics", (req, res) => {
   });
 });
 
-app.get("/getReportedComments/:userID", (req, res) => {
-  const { userID } = req.params;
+// app.get("/getReportedComments/:userID", (req, res) => {
+//   const { userID } = req.params;
 
-  const query = `
-  SELECT
-    comment_reports.*,
-    comments.*,
-    user_table.firstName,
-    user_table.lastName,
-    user_table.studentNumber,
-    user_profiles.profile_image,
-    diary_entries.*
-  FROM 
-    comment_reports
-  JOIN user_table ON comment_reports.userID = user_table.userID
-  JOIN comments ON comment_reports.commentID = comments.commentID
-  JOIN user_profiles ON comment_reports.userID = user_profiles.userID
-  JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
-  WHERE comment_reports.userID = ?`;
+//   const query = `
+//   SELECT
+//     comment_reports.*,
+//     comments.*,
+//     user_table.firstName,
+//     user_table.lastName,
+//     user_table.studentNumber,
+//     user_profiles.profile_image,
+//     diary_entries.*
+//   FROM
+//     comment_reports
+//   JOIN user_table ON comment_reports.userID = user_table.userID
+//   JOIN comments ON comment_reports.commentID = comments.commentID
+//   JOIN user_profiles ON comment_reports.userID = user_profiles.userID
+//   JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
+//   WHERE comment_reports.userID = ?`;
 
-  db.query(query, [userID], (err, results) => {
-    if (err) {
-      console.error("Error fetching reported comments:", err.message);
-      return res
-        .status(500)
-        .json({ error: "Error fetching reported comments" });
-    }
-    res.status(200).json(results);
-  });
-});
+//   db.query(query, [userID], (err, results) => {
+//     if (err) {
+//       console.error("Error fetching reported comments:", err.message);
+//       return res
+//         .status(500)
+//         .json({ error: "Error fetching reported comments" });
+//     }
+//     res.status(200).json(results);
+//   });
+// });
 
 app.get("/getReportedCommentsReview/:entryID", (req, res) => {
   const { entryID } = req.params;
@@ -3074,15 +3148,15 @@ app.get("/reports/:reportID", (req, res) => {
 });
 
 app.post("/flags", (req, res) => {
-  const { userID, actorID, entryID, reasons, otherText } = req.body;
+  const { userID, entryID, reason } = req.body;
 
-  if (!userID || !actorID || !entryID || !reasons) {
+  if (!userID || !entryID || !reason) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   db.query(
-    "INSERT INTO flagged_reports (userID, actorID, entryID, reasons, other_text) VALUES (?, ?, ?, ?, ?)",
-    [userID, actorID, entryID, reasons, otherText || null],
+    "INSERT INTO flagged_reports (userID, entryID, reason) VALUES ( ?, ?, ?)",
+    [userID, entryID, reason],
     (error, results) => {
       if (error) {
         console.error("Error saving report:", error);
@@ -3091,28 +3165,12 @@ app.post("/flags", (req, res) => {
           .json({ message: "Error submitting report", error: error.message });
       }
 
-      const behaviorArray = reasons.split(", ").map((b) => b.trim());
-
-      behaviorArray.forEach((reason) => {
-        db.query(
-          "UPDATE flagging_options SET count = count + 1 WHERE reason = ?",
-          [reason],
-          (updateError) => {
-            if (updateError) {
-              console.error(
-                `Error updating count for reason: ${reason}`,
-                updateError
-              );
-            }
-          }
-        );
-      });
-
       const updateQuery = `
         UPDATE diary_entries 
         SET
         isFlagged = 1,
         engagementCount = engagementCount + 1, 
+        flagCount = flagCount + 1, 
           updated_at = CURRENT_TIMESTAMP  
         WHERE 
           entryID = ?
@@ -3134,21 +3192,34 @@ app.post("/flags", (req, res) => {
   );
 });
 
+app.get("/fetchFlaggedDiaryReasons", (req, res) => {
+  db.query("SELECT * FROM flagged_reports ", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 app.get("/flagged", (req, res) => {
   const query = `
-  SELECT 
-    flagged_reports.*,
-    user_table.firstName,
-    user_table.lastName,
-    user_table.studentNumber,
-    user_table.sex,
-    user_profiles.profile_image,
-    diary_entries.title
-  FROM flagged_reports
-   JOIN user_table ON flagged_reports.userID = user_table.userID
-   JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
-   JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
-  ORDER BY isAddress, created_at DESC
+   SELECT 
+    diary_entries.entryID,
+    diary_entries.title,
+    diary_entries.isFlagged,
+    diary_entries.flagCount,
+    diary_entries.isAddress,
+    user_table.*,
+    flagged_reports.created_at,
+    user_profiles.profile_image
+  FROM diary_entries
+  LEFT JOIN user_table ON diary_entries.userID = user_table.userID
+  LEFT JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+  LEFT JOIN flagged_reports ON diary_entries.entryID = flagged_reports.entryID
+  WHERE diary_entries.isFlagged = 1
+  ORDER BY diary_entries.isAddress, diary_entries.flagCount DESC ;
 `;
 
   db.query(query, (err, results) => {
@@ -3868,15 +3939,15 @@ app.delete("/faq/:faqID", (req, res) => {
 });
 
 app.put("/flaggedAddress/:id", (req, res) => {
-  const report_id = req.params.id;
+  const entryID = req.params.id;
 
   const query = `
-    UPDATE flagged_reports
-    SET isAddress = true
-    WHERE report_id = ?
+    UPDATE diary_entries
+    SET isAddress = 1
+    WHERE entryID = ?
   `;
 
-  db.query(query, [report_id], (err, result) => {
+  db.query(query, [entryID], (err, result) => {
     if (err) {
       console.error("Error updating flagged status:", err.message);
       return res.status(500).json({ error: "Failed to update flagged" });
@@ -3888,22 +3959,22 @@ app.put("/flaggedAddress/:id", (req, res) => {
 });
 
 app.put("/commentAddress/:id", (req, res) => {
-  const reportcommentID = req.params.id;
+  const commentID = req.params.id;
 
   const query = `
-    UPDATE comment_reports
-    SET isAddress = true
-    WHERE reportcommentID = ?
+    UPDATE comments
+    SET isReviewed = 1
+    WHERE commentID = ?
   `;
 
-  db.query(query, [reportcommentID], (err, result) => {
+  db.query(query, [commentID], (err, result) => {
     if (err) {
       console.error("Error updating comment status:", err.message);
       return res.status(500).json({ error: "Failed to update comment" });
     }
     res
       .status(200)
-      .json({ message: "comment marked as addressed successfully" });
+      .json({ message: "comment marked as reviewed successfully" });
   });
 });
 
