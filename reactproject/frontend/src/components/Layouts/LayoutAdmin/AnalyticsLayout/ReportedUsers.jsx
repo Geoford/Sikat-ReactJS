@@ -273,20 +273,26 @@ const ReportedComment = ({ reportedUsers }) => {
                         <p className="text-danger m-0">Pending</p>
                       )}
                     </td>
-                    <td className="text-center align-middle">
-                      {!reportedUser.isReviewed && (
-                        <button
-                          className="secondaryButton"
-                          onClick={() => handleAddressed(reportedUser.userID)}
-                        >
-                          <p className="m-0">Mark as Reviewed</p>
-                        </button>
-                      )}
-                      <Link to={`/Profile/${reportedUser.userID}`}>
-                        <button className="primaryButton">
-                          <p className="m-0">Check</p>
-                        </button>
-                      </Link>
+                    <td
+                      className="text-center align-middle"
+                      style={{ width: "10rem" }}
+                    >
+                      <div className="d-flex justify-content-center flex-column gap-1">
+                        {/* Display actions only for pending reports */}
+                        {!reportedUser.isReviewed && (
+                          <button
+                            className="w-100 orangeButton py-2"
+                            onClick={() => handleAddressed(reportedUser.userID)}
+                          >
+                            <p className="m-0">Mark as Reviewed</p>
+                          </button>
+                        )}
+                        <Link to={`/Profile/${reportedUser.userID}`}>
+                          <button className="w-100 primaryButton py-2">
+                            <p className="m-0">Check</p>
+                          </button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))

@@ -2706,22 +2706,28 @@ app.get("/getReportedCommentsAnalytics", (req, res) => {
     return res.status(400).json({ error: "Department ID is required" });
   }
 
+  // SELECT
+  // comments.*,
+  // user_table.firstName,
+  // user_table.lastName,
+  // user_table.studentNumber
+  // FROM comments
+  // JOIN user_table ON comments.userID = user_table.userID
+  // WHERE comments.isReported = 1
+  // ORDER BY comments.isReviewed, comments.reportCount DESC ;
+
   const query = `
     SELECT
-      comment_reports.*,
       comments.*,
       user_table.firstName,
       user_table.lastName,
       user_table.studentNumber,
-      user_profiles.profile_image,
       diary_entries.*
     FROM 
-      comment_reports
-    JOIN user_table ON comment_reports.userID = user_table.userID
-    JOIN comments ON comment_reports.commentID = comments.commentID
-    JOIN user_profiles ON comment_reports.userID = user_profiles.userID
-    JOIN diary_entries ON comment_reports.entryID = diary_entries.entryID
-    WHERE user_table.departmentID = ?
+      comments
+    JOIN user_table ON comments.userID = user_table.userID
+    JOIN diary_entries ON comments.entryID = diary_entries.entryID
+    WHERE comments.isReported = 1 AND user_table.departmentID = ?
     ORDER BY isAddress
   `;
 
@@ -3240,18 +3246,21 @@ app.get("/flaggedAnalytics", (req, res) => {
 
   const query = `
     SELECT 
-      flagged_reports.*,
+      diary_entries.entryID,
+      diary_entries.title,
+      diary_entries.isFlagged,
+      diary_entries.flagCount,
+      diary_entries.isAddress,
+      user_table.departmentID,
       user_table.firstName,
       user_table.lastName,
-      user_table.studentNumber,
-      user_table.sex,
       user_profiles.profile_image,
-      diary_entries.title
-    FROM flagged_reports
-    LEFT JOIN user_table ON flagged_reports.userID = user_table.userID
-    LEFT JOIN user_profiles ON flagged_reports.userID = user_profiles.userID
-    LEFT JOIN diary_entries ON flagged_reports.entryID = diary_entries.entryID
-    WHERE user_table.departmentID = ?  -- Filter by departmentID
+      flagged_reports.created_at
+    FROM diary_entries
+    LEFT JOIN user_table ON diary_entries.userID = user_table.userID
+    LEFT JOIN user_profiles ON diary_entries.userID = user_profiles.userID
+    LEFT JOIN flagged_reports ON diary_entries.entryID = flagged_reports.entryID
+    WHERE diary_entries.isFlagged = 1 AND user_table.departmentID = ?  -- Filter by departmentID
     ORDER BY isAddress, flagged_reports.created_at DESC
   `;
 

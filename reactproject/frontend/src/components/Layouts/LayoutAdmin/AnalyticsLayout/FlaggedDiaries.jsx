@@ -132,7 +132,7 @@ const FlaggedDiaries = ({ flags }) => {
   const handleAddressed = (entryID) => {
     setConfirmModal({
       show: true,
-      message: `Are you sure you want to address this flagged?`,
+      message: `Are you sure you want to mark this as Reviewed?`,
       onConfirm: async () => {
         axios
           .put(`http://localhost:8081/flaggedAddress/${entryID}`)
@@ -195,7 +195,7 @@ const FlaggedDiaries = ({ flags }) => {
               <i className="bx bx-search"></i>
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search by author or diary title"
+              placeholder="Search: author or diary title"
               aria-label="Search"
               aria-describedby="basic-addon1"
               value={searchTerm}
@@ -303,21 +303,26 @@ const FlaggedDiaries = ({ flags }) => {
                         <p className="text-danger m-0">Pending</p>
                       )}
                     </td>
-                    <td className="text-center align-middle">
-                      {/* Display actions only for pending reports */}
-                      {!flag.isAddress && (
-                        <button
-                          className="secondaryButton p-2"
-                          onClick={() => handleAddressed(flag.entryID)}
-                        >
-                          <p className="m-0">Mark as Reviewed</p>
-                        </button>
-                      )}
-                      <Link to={`/DiaryEntry/${flag.entryID}`}>
-                        <button className="primaryButton">
-                          <p className="m-0">Check</p>
-                        </button>
-                      </Link>
+                    <td
+                      className="text-center align-middle"
+                      style={{ width: "5rem" }}
+                    >
+                      <div className=" d-flex flex-column gap-1">
+                        {/* Display actions only for pending reports */}
+                        {!flag.isAddress && (
+                          <button
+                            className="w-100 orangeButton py-2"
+                            onClick={() => handleAddressed(flag.entryID)}
+                          >
+                            <p className="m-0">Mark as Reviewed</p>
+                          </button>
+                        )}
+                        <Link to={`/DiaryEntry/${flag.entryID}`}>
+                          <button className="w-100 primaryButton py-2">
+                            <p className="m-0">Check</p>
+                          </button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -331,9 +336,9 @@ const FlaggedDiaries = ({ flags }) => {
             </tbody>
           </table>
         </div>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           {/* Statistics */}
-          <div className="row mt-2 w-50">
+          {/* <div className="row mt-2 w-50">
             <div className="col-lg-2 d-flex flex-column align-items-start">
               <h5 className="m-0">Total: {filteredUsers.length}</h5>
               <p className="m-0 text-secondary">
@@ -345,7 +350,7 @@ const FlaggedDiaries = ({ flags }) => {
                 {filteredUsers.filter((user) => user.sex === "Male").length}
               </p>
             </div>
-          </div>
+          </div> */}
           {/* Pagination */}
           <Pagination className="d-flex justify-content-center align-items-center mt-4">
             <Pagination.First onClick={() => handlePageChange(1)} />
