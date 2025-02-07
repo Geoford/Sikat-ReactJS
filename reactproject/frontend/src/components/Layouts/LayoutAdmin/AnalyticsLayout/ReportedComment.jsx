@@ -324,9 +324,9 @@ const ReportedComment = ({ reportedComments }) => {
             </tbody>
           </table>
         </div>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           {/* Statistics */}
-          <div className="row mt-2 w-50">
+          {/* <div className="row mt-2 w-50">
             <div className="col-lg-2 d-flex flex-column align-items-start">
               <h5 className="m-0">Total: {filteredUsers.length}</h5>
               <p className="m-0 text-secondary">
@@ -338,7 +338,7 @@ const ReportedComment = ({ reportedComments }) => {
                 {filteredUsers.filter((user) => user.sex === "Male").length}
               </p>
             </div>
-          </div>
+          </div> */}
           {/* Pagination */}
           <Pagination className="d-flex justify-content-center align-items-center mt-4">
             <Pagination.First onClick={() => handlePageChange(1)} />

@@ -153,8 +153,10 @@ const RightSide = () => {
                                                         {reportedUser.lastName}
                                                     </p>
                                                     <h6 className="text-danger m-0">
-                                                        Reason:{" "}
-                                                        {reportedUser.reason}
+                                                        Violation Count:{" "}
+                                                        {
+                                                            reportedUser.reportCount
+                                                        }
                                                     </h6>
                                                     {/* <p className="text-danger m-0">
                         Reported {reportedUser.count} times

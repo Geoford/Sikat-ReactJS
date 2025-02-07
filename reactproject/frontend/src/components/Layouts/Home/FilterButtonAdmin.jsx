@@ -125,7 +125,12 @@ const FilterButtonAdmin = ({ onFilterChange, userID }) => {
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         <h6 className="m-0 d-flex align-items-center gap-1">
-          <i className="bx bx-filter-alt"></i> Filter
+          <i className="bx bx-filter-alt"></i> Filter{" "}
+          {Object.values(selectedItems).some((isSelected) => isSelected) > 0 ? (
+            <>(on)</>
+          ) : (
+            <>(off)</>
+          )}
         </h6>
       </Dropdown.Toggle>
 
