@@ -14,6 +14,8 @@ import MessageModal from "../../Layouts/DiaryEntry/messageModal";
 
 const Analytics = () => {
   const [users, setUsers] = useState([]);
+  const [userDeptCourse, setUserDeptCourse] = useState(null);
+  const [error, setError] = useState(null);
   const [flags, setFlags] = useState([]);
   const [reportedComments, setReportedComments] = useState([]);
   const [reportedUsers, setreportedUsers] = useState([]);
@@ -52,6 +54,27 @@ const Analytics = () => {
 
     setIsLoading(false);
   }, [navigate]);
+
+  useEffect(() => {
+    if (!user || !user.userID) return; // Prevents execution if user is null
+
+    const fetchDeptAndCourse = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8081/fetchUserDept&Course/user/${user.userID}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data = await response.json();
+        setUserDeptCourse(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchDeptAndCourse();
+  }, [user]); // Depend only on `user`
 
   const handleTabChange = (tab) => {
     navigate(`/Admin/Analytics/${tab}`);
@@ -122,7 +145,7 @@ const Analytics = () => {
           style={{ backgroundColor: "var(--primary)" }}
         >
           <h4 className="text-light fw-bold m-0 mt-4 mt-lg-0 py-2">
-            User Analytics
+            User Analytics ({userDeptCourse?.DepartmentName})
           </h4>
         </div>
         <div

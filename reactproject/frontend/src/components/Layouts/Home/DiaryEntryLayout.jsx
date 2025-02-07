@@ -14,7 +14,6 @@ import ImageModal from "../DiaryEntry/imageModal";
 import Suspend from "../Profile/Suspend";
 
 const DiaryEntryLayout = ({
-  key,
   entry,
   user,
   followedUsers,

@@ -507,9 +507,10 @@ const Profile = () => {
                 </h4>
                 {currentUser.isAdmin ? (
                   <>
-                    <p className="m-0 mb-1 text-secondary">
+                    <p className="m-0 text-secondary">
                       {user.cvsuEmail} - {user.studentNumber}
                     </p>
+                    <p className="m-0 mb-1 text-secondary">{user.course}</p>
                   </>
                 ) : (
                   ""

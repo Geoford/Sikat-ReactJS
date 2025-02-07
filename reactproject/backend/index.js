@@ -1973,6 +1973,56 @@ app.get("/gadifyStatus/:userID", (req, res) => {
   });
 });
 
+app.get("/fetchCourses", (req, res) => {
+  const query = `SELECT * 
+    FROM courses`;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    res.json(result[0]); // Merged result since the JOIN already includes profile data
+  });
+});
+
+app.get("/fetchUserDept&Course/user/:id", (req, res) => {
+  const userID = req.params.id;
+
+  console.log("Received Request for User ID:", userID); // ✅ Log User ID
+
+  const userValues = `
+    SELECT 
+      user_table.userID, 
+      course_department.DepartmentName, 
+      courses.courseName
+    FROM course_department
+    JOIN courses ON course_department.departmentID = courses.departmentID 
+    JOIN user_table ON user_table.departmentID = course_department.departmentID 
+    WHERE user_table.userID = ?`;
+
+  console.log("Executing SQL Query:", userValues); // ✅ Log Query String
+  console.log("SQL Parameters:", [userID]); // ✅ Log Query Parameters
+
+  db.query(userValues, [userID], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(result[0]); // Merged result since the JOIN already includes profile data
+  });
+});
+
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
