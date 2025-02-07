@@ -143,7 +143,7 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
             onChange={() => handleToggleChange("General")}
             className="w-100 text-start"
           >
-            General
+            <p className="m-0">Select All</p>
           </ToggleButton>
 
           {/* Other filters */}
@@ -159,16 +159,16 @@ const FilterButton = ({ onFilterChange, userID, initialFilters }) => {
                 onChange={() => handleToggleChange(filter.subject)}
                 className="w-100 text-start"
               >
-                {filter.subject}
+                <p className="m-0">{filter.subject}</p>
               </ToggleButton>
             ))}
         </div>
-        <button
+        {/* <button
           className="w-100 orangeButton py-1 mt-2"
           onClick={handleSaveAndClose}
         >
           Save Filter
-        </button>
+        </button> */}
       </Dropdown.Menu>
     </Dropdown>
   );

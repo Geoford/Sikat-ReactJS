@@ -2466,7 +2466,7 @@ app.post("/reportingUser", (req, res) => {
 
   // Insert the report into the comment_reports table
   db.query(
-    "INSERT INTO reporting_users (UserID, reason) VALUES (?,?)",
+    "INSERT INTO reported_users (UserID, reason) VALUES (?,?)",
     [reportedUserID, reason],
     (error, results) => {
       if (error) {
@@ -2527,7 +2527,7 @@ app.get("/getReportedUsers", (req, res) => {
 });
 
 app.get("/fetchReportedUserReasons", (req, res) => {
-  db.query("SELECT * FROM reporting_users ", (err, results) => {
+  db.query("SELECT * FROM reported_users ", (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).json({ error: "Failed to retrieve options" });

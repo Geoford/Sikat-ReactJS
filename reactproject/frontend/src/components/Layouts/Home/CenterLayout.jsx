@@ -339,6 +339,13 @@ const CenterLayout = () => {
     }
   };
 
+  // FOR INFINITE SCROLLING
+  const [visibleEntries, setVisibleEntries] = useState(10);
+
+  const loadMoreEntries = () => {
+    setVisibleEntries((prev) => prev + 10); // Load 10 more entries
+  };
+
   if (isLoading) {
     return <CenterLoader></CenterLoader>;
   }
@@ -556,6 +563,7 @@ const CenterLayout = () => {
             const dateToBePosted = new Date();
             return scheduledDate < dateToBePosted;
           })
+          .slice(0, visibleEntries)
           .map((entry) => (
             <DiaryEntryLayout
               key={entry.entryID}
@@ -569,6 +577,25 @@ const CenterLayout = () => {
               formatDate={formatDate}
             />
           ))
+      )}
+      {visibleEntries < entries.length ? (
+        <button className="w-100 btn btn-secondary" onClick={loadMoreEntries}>
+          Load More
+        </button>
+      ) : (
+        <>
+          <button
+            className="w-100 btn btn-secondary"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top
+              setTimeout(() => {
+                window.location.reload(); // Refresh page
+              }, 500); // Wait for smooth scroll before refreshing
+            }}
+          >
+            Your reached the end, see new entries.
+          </button>
+        </>
       )}
     </div>
   );

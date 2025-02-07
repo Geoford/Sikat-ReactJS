@@ -133,7 +133,7 @@ const FilterButtonAdmin = ({ onFilterChange, userID }) => {
         className="px-2"
         style={{ zIndex: "1000", width: "clamp(13rem, 15dvw, 15rem)" }}
       >
-        <div className="filterToggle d-flex flex-column gap-1">
+        <div className="fiterToggle d-flex flex-column gap-1">
           <ToggleButton
             key="General"
             id="toggle-General"
@@ -145,7 +145,7 @@ const FilterButtonAdmin = ({ onFilterChange, userID }) => {
             aria-checked={selectedItems["General"] || false}
             aria-label="Toggle General filter"
           >
-            General
+            <p className="m-0">Select All</p>
           </ToggleButton>
 
           {filterOptions
@@ -162,17 +162,17 @@ const FilterButtonAdmin = ({ onFilterChange, userID }) => {
                 aria-checked={selectedItems[filter.adminFilterSubject] || false}
                 aria-label={`Toggle ${filter.adminFilterSubject} filter`}
               >
-                {filter.adminFilterSubject}
+                <p className="m-0">{filter.adminFilterSubject}</p>
               </ToggleButton>
             ))}
         </div>
-        <button
+        {/* <button
           className="w-100 orangeButton py-1 mt-2"
           onClick={handleSaveAndClose}
           disabled={!hasChanges}
         >
           Save Filter
-        </button>
+        </button> */}
       </Dropdown.Menu>
     </Dropdown>
   );
