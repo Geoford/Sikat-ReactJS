@@ -1798,9 +1798,9 @@ app.get("/analyticsReportedUsers", (req, res) => {
   let query = `
     SELECT 
       user_table.userID,
-      reporting_users.created_at
+      reported_users.created_at
     FROM user_table
-    JOIN reporting_users ON user_table.userID = reporting_users.userID
+    JOIN reported_users ON user_table.userID = reported_users.userID
     WHERE user_table.isReported = 1
   `;
 

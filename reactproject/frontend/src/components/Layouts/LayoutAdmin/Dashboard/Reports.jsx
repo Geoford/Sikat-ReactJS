@@ -161,7 +161,7 @@ const Reports = ({
         </div>
       </Link>
       <Link
-        to="/Admin/Analytics/FlaggedDiaries"
+        to="/Admin/Analytics/ReportedComments"
         className="col-md-6 col-lg dashboardData d-flex align-items-center justify-content-center text-decoration-none border border-2 border-light rounded shadow-sm overflow-hidden p-2"
         style={{
           height: "10rem",
@@ -207,7 +207,7 @@ const Reports = ({
         </div>
       </Link>
       <Link
-        to="/Admin/Analytics/FlaggedDiaries"
+        to="/Admin/Analytics/ReportedUsers"
         className="col-md-6 col-lg dashboardData d-flex align-items-center justify-content-center text-decoration-none border border-2 border-light rounded shadow-sm overflow-hidden p-2"
         style={{
           height: "10rem",
