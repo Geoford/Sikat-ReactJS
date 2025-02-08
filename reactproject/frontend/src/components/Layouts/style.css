@@ -390,14 +390,28 @@ body > div.fade.modal.show > div > div > div {
   right: 110%;
 }
 /* ANIMATIONS */
-.fade-right {
+.fade-right-reg {
   opacity: 0; /* Initially hidden */
-  animation: faderight 1s ease-out forwards; /* Animation properties */
+  animation: faderightreg 1s ease-out forwards; /* Animation properties */
 }
-@keyframes faderight {
+@keyframes faderightreg {
   0% {
     opacity: 0;
     transform: translateX(90px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Move to the original position */
+  }
+}
+.fade-left-reg {
+  opacity: 0; /* Initially hidden */
+  animation: fadeleftreg 1s ease-out forwards; /* Animation properties */
+}
+@keyframes fadeleftreg {
+  0% {
+    opacity: 0;
+    transform: translateX(-90px); /* Start slightly below */
   }
   100% {
     opacity: 1;

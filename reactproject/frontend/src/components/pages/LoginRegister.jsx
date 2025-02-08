@@ -78,7 +78,7 @@ const LoginRegister = () => {
           <div className="vh-100 position-relative">
             <div>
               <img
-                className="position-absolute fade-left"
+                className="position-absolute fade-left-reg"
                 src={BackgroundImg1}
                 alt=""
                 style={{
@@ -90,7 +90,7 @@ const LoginRegister = () => {
             </div>
             <div>
               <img
-                className="position-absolute fade-right"
+                className="position-absolute fade-right-reg"
                 src={BackgroundImg2}
                 alt=""
                 style={{

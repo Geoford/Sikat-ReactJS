@@ -425,88 +425,106 @@ app.post("/Register", (req, res) => {
 
   const hashedPassword = bcrypt.hashSync(password);
 
-  const userSql =
-    "INSERT INTO user_table (`firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`, sex, course, year) VALUES (?)";
-  const userValues = [
-    firstName,
-    lastName,
-    cvsuEmail,
-    username,
-    hashedPassword,
-    studentNumber,
-    verificationToken,
-    true,
-    sex,
-    course,
-    year,
-  ];
-
-  db.query(userSql, [userValues], (err, data) => {
+  const getDepartmentIdQuery =
+    "SELECT departmentID FROM courses WHERE courseName = ?";
+  db.query(getDepartmentIdQuery, [course], (err, results) => {
     if (err) {
-      console.error("Error inserting user data: ", err);
-      return res.status(500).json({ error: "Error inserting user data" });
+      console.error("Error fetching departmentID:", err);
+      return res.status(500).json({ message: "Database error" });
     }
 
-    const userID = data.insertId;
+    if (results.length === 0) {
+      return res.status(400).json({ message: "Invalid course name" });
+    }
 
-    const profileSql =
-      "INSERT INTO user_profiles (`userID`, `alias`) VALUES (?, ?)";
-    db.query(profileSql, [userID, alias], (err, profileData) => {
+    const departmentID = results[0].departmentID;
+
+    const userSql =
+      "INSERT INTO user_table (`departmentID`, `firstName`, `lastName`, `cvsuEmail`, `username`, `password`, `studentNumber`, `verificationToken`, `isVerified`, sex, course, year) VALUES (?)";
+    const userValues = [
+      departmentID,
+      firstName,
+      lastName,
+      cvsuEmail,
+      username,
+      hashedPassword,
+      studentNumber,
+      verificationToken,
+      true,
+      sex,
+      course,
+      year,
+    ];
+
+    db.query(userSql, [userValues], (err, data) => {
       if (err) {
-        console.error("Error inserting profile data: ", err);
-        return res.status(500).json({ error: "Error inserting profile data" });
+        console.error("Error inserting user data: ", err);
+        return res.status(500).json({ error: "Error inserting user data" });
       }
 
-      // Retrieve all admin users
-      const adminQuery = "SELECT userID FROM user_table WHERE isAdmin = 1";
-      db.query(adminQuery, (err, admins) => {
+      const userID = data.insertId;
+
+      const profileSql =
+        "INSERT INTO user_profiles (`userID`, `alias`) VALUES (?, ?)";
+      db.query(profileSql, [userID, alias], (err, profileData) => {
         if (err) {
-          console.error("Error retrieving admin users: ", err);
+          console.error("Error inserting profile data: ", err);
           return res
             .status(500)
-            .json({ error: "Error retrieving admin users" });
+            .json({ error: "Error inserting profile data" });
         }
 
-        const followQueries = admins.map((admin) => {
-          return new Promise((resolve, reject) => {
-            const followSql =
-              "INSERT INTO followers (userID, followedUserID) VALUES (?, ?)";
-            db.query(followSql, [userID, admin.userID], (err) => {
-              if (err) reject(err);
-              else resolve();
-            });
-          });
-        });
-
-        // Execute all follow queries
-        Promise.all(followQueries)
-          .then(() => {
-            const mailOptions = {
-              from: "sikatediary@gmail.com",
-              to: cvsuEmail,
-              subject: "Your OTP Code",
-              text: `Your OTP code is: ${otp}`,
-            };
-
-            transporter.sendMail(mailOptions, (err, info) => {
-              if (err) {
-                console.error("Error sending email: ", err);
-                return res.status(500).json({ error: "Error sending email" });
-              }
-              console.log("Verification email sent: " + info.response);
-            });
-
-            res.status(201).json({
-              message:
-                "User registered successfully. Automatically followed admins.",
-            });
-          })
-          .catch((err) => {
-            console.error("Error following admins: ", err);
-            res
+        // Retrieve all admin users
+        const adminQuery = "SELECT userID FROM user_table WHERE isAdmin = 1";
+        db.query(adminQuery, (err, admins) => {
+          if (err) {
+            console.error("Error retrieving admin users: ", err);
+            return res
               .status(500)
-              .json({ error: "Error automatically following admins" });
+              .json({ error: "Error retrieving admin users" });
+          }
+
+          const followQueries = admins.map((admin) => {
+            return new Promise((resolve, reject) => {
+              const followSql =
+                "INSERT INTO followers (userID, followedUserID) VALUES (?, ?)";
+              db.query(followSql, [userID, admin.userID], (err) => {
+                if (err) reject(err);
+                else resolve();
+              });
+            });
           });
+
+          // Execute all follow queries
+          Promise.all(followQueries)
+            .then(() => {
+              const mailOptions = {
+                from: "sikatediary@gmail.com",
+                to: cvsuEmail,
+                subject: "Your OTP Code",
+                text: `Your OTP code is: ${otp}`,
+              };
+
+              transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                  console.error("Error sending email: ", err);
+                  return res.status(500).json({ error: "Error sending email" });
+                }
+                console.log("Verification email sent: " + info.response);
+              });
+
+              res.status(201).json({
+                message:
+                  "User registered successfully. Automatically followed admins.",
+              });
+            })
+            .catch((err) => {
+              console.error("Error following admins: ", err);
+              res
+                .status(500)
+                .json({ error: "Error automatically following admins" });
+            });
+        });
       });
     });
   });
