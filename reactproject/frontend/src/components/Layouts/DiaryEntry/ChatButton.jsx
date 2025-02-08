@@ -11,11 +11,11 @@ import Modal from "react-bootstrap/Modal";
 import DefaultProfile from "../../../assets/anonymous.png";
 import axios from "axios";
 
-const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
+const ChatButton = ({ user, entry, imageFile, userToChat }) => {
   const [show, setShow] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [user, setUser] = useState(null);
+  const [parsedUser, setUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(userToChat);
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -206,7 +206,9 @@ const ChatButton = ({ entry, imageFile, userToChat, isAdmin }) => {
           className="InteractButton d-flex align-items-center justify-content-center gap-2"
           onClick={handleShow}
           disabled={
-            isAdmin || (!entry.containsAlarmingWords && !entry.isFlagged)
+            user.isAdmin != 1 ||
+            entry.isAdmin === 1 ||
+            (!entry.containsAlarmingWords && !entry.isFlagged)
           }
         >
           <i class="bx bx-chat my-1"></i>

@@ -145,7 +145,8 @@ const Analytics = () => {
           style={{ backgroundColor: "var(--primary)" }}
         >
           <h4 className="text-light fw-bold m-0 mt-4 mt-lg-0 py-2">
-            User Analytics ({userDeptCourse?.DepartmentName})
+            User Analytics{" "}
+            {user?.isAdmin === 1 ? "" : <>({userDeptCourse?.DepartmentName})</>}
           </h4>
         </div>
         <div

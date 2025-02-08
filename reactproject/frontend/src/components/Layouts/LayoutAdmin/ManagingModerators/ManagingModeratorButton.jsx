@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AddingModeratorForm from "./AddingModeratorForm";
-import { add } from "lodash";
+import axios from "axios";
 
 const ManagingModeratorButton = ({
   departmentID,
@@ -16,6 +16,72 @@ const ManagingModeratorButton = ({
     setAddingModerator(false);
     setManageModerator(false);
   };
+
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/users")
+      .then((response) => setUsers(response.data))
+      .catch((error) => console.error("Error fetching users:", error));
+  }, []);
+
+  useEffect(() => {
+    const filtered = users.filter((user) =>
+      `${user.firstName} ${user.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
+
+  const handleSave = () => {
+    if (!selectedUser) {
+      alert("Please select a user.");
+      return;
+    }
+
+    axios
+      .post("http://localhost:8081/assignModerator", {
+        userID: selectedUser.userID,
+        departmentID,
+        departmentName,
+      })
+      .then((response) => {
+        alert(response.data.message);
+        setSelectedUser(null);
+        setSearchTerm("");
+      })
+      .catch((error) => {
+        console.error("Error assigning moderator:", error);
+        alert("Failed to assign moderator.");
+      });
+  };
+
+  const handleRemove = (mod) => {
+    if (!mod) {
+      alert("Please select a user.");
+      return;
+    }
+
+    axios
+      .post("http://localhost:8081/removeModerator", {
+        userID: mod.userID,
+      })
+      .then((response) => {
+        alert(response.data.message);
+        setSelectedUser(null);
+        setSearchTerm("");
+      })
+      .catch((error) => {
+        console.error("Error removing moderator:", error);
+        alert("Failed to remove moderator.");
+      });
+  };
+
   return (
     <>
       <button className="purpleButton" onClick={() => setManageModerator(true)}>
@@ -38,13 +104,45 @@ const ManagingModeratorButton = ({
         >
           {addingModerator ? (
             <div className={addingModerator ? "fade-right" : "fade-left"}>
-              <AddingModeratorForm
-                departmentID={departmentID}
-                departmentName={departmentName}
-              />
+              <div>
+                <h5>Add new moderator</h5>
+                <input
+                  type="text"
+                  placeholder="Search user"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="form-control mb-2"
+                />
+                <ul className="list-group">
+                  {filteredUsers.slice(0, 10).map((user) => (
+                    <li
+                      key={user.userID}
+                      className={`list-group-item d-flex justify-content-between align-items-center ${
+                        selectedUser?.userID === user.userID
+                          ? "active text-white"
+                          : ""
+                      }`}
+                    >
+                      {user.firstName} {user.lastName}
+                      <button
+                        className=" primaryButton "
+                        onClick={() => setSelectedUser(user)}
+                      >
+                        {selectedUser?.userID === user.userID
+                          ? "Selected"
+                          : "Select"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ) : (
-            <div className={addingModerator ? "fade-right" : "fade-left"}>
+            <div
+              className={`d-flex flex-column  gap-2 ${
+                addingModerator ? "fade-right" : "fade-left"
+              }`}
+            >
               {moderators.filter((mod) => departmentID === mod.departmentID)
                 .length > 0 ? (
                 moderators
@@ -81,7 +179,12 @@ const ManagingModeratorButton = ({
                         </div>
 
                         <div className="d-flex align-items-center gap-1">
-                          <button className="btn btn-danger">
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              handleRemove(mod);
+                            }}
+                          >
                             <p className="m-0">Remove</p>
                           </button>
                         </div>
@@ -107,10 +210,13 @@ const ManagingModeratorButton = ({
               >
                 <p className="m-0 ">Cancel</p>
               </button>
-              <button className="primaryButton py-2 rounded">
-                <p className="m-0" onClick={() => setAddingModerator(true)}>
-                  Save
-                </p>
+
+              <button
+                className="primaryButton py-2 rounded"
+                onClick={handleSave}
+                disabled={!selectedUser}
+              >
+                <p className="m-0">Save</p>
               </button>
             </div>
           ) : (

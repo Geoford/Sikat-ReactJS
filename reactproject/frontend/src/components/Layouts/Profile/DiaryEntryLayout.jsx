@@ -12,6 +12,9 @@ import EditPostButton from "../Home/EditPostButton";
 import DeleteButton from "../DiaryEntry/DeleteButton";
 import ImageModal from "../DiaryEntry/imageModal";
 import Suspend from "./Suspend";
+import DiaryEntryHeader from "../DiaryEntry/DiaryEntryHeader";
+import DiaryDetails from "../DiaryEntry/DiaryDetails";
+import FollowButton from "../DiaryEntry/FollowButton";
 
 const DiaryEntryLayout = ({
   entry,
@@ -280,281 +283,26 @@ const DiaryEntryLayout = ({
       className="position-relative rounded shadow-sm p-3 mb-2"
       style={{ backgroundColor: "white", width: "100%" }}
     >
-      <div className="d-flex align-items-start justify-content-between border-bottom pb-2">
-        {/* TO DETERMINE IF THE DIARY IS PUBLIC OR PRIVATE */}
-        {entry.visibility === "private" ? (
-          // IF PRIVATE
-          <div className="d-flex align-items-center gap-2 text-secondary">
-            <Link
-              to={`/Profile/${entry.userID}`}
-              className="linkText rounded p-0"
-            >
-              <div className="profilePicture">
-                <img
-                  src={`http://localhost:8081${entry.profile_image}`}
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            </Link>
-
-            <div className="d-flex flex-column align-items-start">
-              <Link
-                to={`/Profile/${entry.userID}`}
-                className="linkText rounded p-0"
-              >
-                <h5 className="m-0">
-                  {entry.isAdmin === 1
-                    ? "Gender and Development"
-                    : entry.firstName && entry.lastName
-                    ? entry.firstName + " " + entry.lastName
-                    : user.firstName + " " + user.lastName}
-                </h5>
-              </Link>
-
-              <p className="m-0" style={{ fontSize: ".7rem" }}>
-                {formatDate(entry.created_at)}{" "}
-                <span>
-                  {entry.anonimity === "public" ? (
-                    <i class="bx bx-globe"></i>
-                  ) : (
-                    <i class="bx bx-lock-alt"></i>
-                  )}
-                </span>
-              </p>
-            </div>
-          </div>
-        ) : (
-          // IF PUBLIC
-          <div className="d-flex align-items-center gap-2 text-secondary">
-            {/* TO DETERMINE IF THE DIARY IN ANONYMOUS OR NOT */}
-            {entry.anonimity === "private" ? (
-              <div className="profilePicture">
-                <img
-                  src={
-                    entry.isAdmin === 1
-                      ? `http://localhost:8081${entry.profile_image}`
-                      : anonymous
-                  }
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            ) : (
-              <Link
-                to={`/Profile/${entry.userID}`}
-                className="linkText rounded p-0"
-              >
-                <div className="profilePicture">
-                  <img
-                    src={
-                      entry.profile_image
-                        ? `http://localhost:8081${entry.profile_image}`
-                        : userDefaultProfile
-                    }
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              </Link>
-            )}
-
-            <div className="d-flex flex-column align-items-start">
-              <div className="d-flex align-items-center justify-content-center gap-1">
-                {entry.anonimity === "private" ? (
-                  <h5 className="m-0">
-                    {entry.alias}
-                    {/* {user.userID === entry.userID ? " (You)" : ""} */}
-                  </h5>
-                ) : (
-                  <Link
-                    to={`/Profile/${entry.userID}`}
-                    className="linkText rounded p-0"
-                  >
-                    <h5 className="m-0 text-start">
-                      {entry.isAdmin === 1
-                        ? "Gender and Development"
-                        : entry.firstName && entry.lastName
-                        ? entry.firstName + " " + entry.lastName
-                        : user.firstName + " " + user.lastName}
-                    </h5>
-                  </Link>
-                )}
-                {user.isAdmin ? (
-                  ""
-                ) : (
-                  <>
-                    {!currentUser.isAdmin &&
-                      currentUser.userID !== entry.userID &&
-                      entry.anonimity !== "private" &&
-                      entry.isAdmin !== 1 && (
-                        <div className="d-flex align-items-center gap-1">
-                          <h3
-                            className="m-0 text-secondary d-flex align-items-center"
-                            style={{ height: ".9rem" }}
-                          >
-                            ·
-                          </h3>
-                          <button
-                            className="secondaryButton p-0 m-0"
-                            onClick={() =>
-                              handleFollowToggle(entry.userID, entry.firstName)
-                            }
-                            style={{ height: "" }}
-                          >
-                            <h5 className="m-0">
-                              {followedUsers.includes(entry.userID)
-                                ? "Following"
-                                : "Follow"}
-                            </h5>{" "}
-                          </button>
-                        </div>
-                      )}
-                  </>
-                )}
-              </div>
-              <p className="m-0" style={{ fontSize: ".7rem" }}>
-                {formatDate(entry.created_at)}{" "}
-                <span>
-                  {entry.visibility === "public" ? (
-                    <i class="bx bx-globe"></i>
-                  ) : (
-                    <i class="bx bx-lock-alt"></i>
-                  )}
-                </span>
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div>
-          {ownDiary || currentUser.isAdmin ? (
-            <Dropdown>
-              <Dropdown.Toggle
-                className="btn-light d-flex align-items-center pt-0 pb-2"
-                id="dropdown-basic"
-                bsPrefix="custom-toggle"
-              >
-                <h5 className="m-0">...</h5>
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="p-2">
-                {ownDiary ? (
-                  <>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      {user.isAdmin ? (
-                        <EditPostButton
-                          entry={entry}
-                          entryID={entry.entryID}
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        ></EditPostButton>
-                      ) : (
-                        <EditDiaryEntryButton
-                          entryID={entry.entryID}
-                          diaryTitle={entry.title}
-                          diaryDesc={entry.description}
-                          diaryVisib={entry.visibility}
-                          diaryAnon={entry.anonimity}
-                          diarySub={entry.subjects}
-                          imageFile={
-                            entry.diary_image &&
-                            `http://localhost:8081${entry.diary_image}`
-                          }
-                        />
-                      )}
-                    </Dropdown.Item>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <DeleteButton
-                        entryID={entry.entryID}
-                        title={entry.title}
-                      ></DeleteButton>
-                    </Dropdown.Item>
-                  </>
-                ) : (
-                  <>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <Suspend
-                        userID={entry.userID}
-                        firstName={entry.firstName}
-                        suspended={suspended}
-                      ></Suspend>
-                    </Dropdown.Item>
-                    <Dropdown.Item className="p-0 btn btn-light">
-                      <DeleteButton
-                        entryID={entry.entryID}
-                        title={entry.title}
-                      ></DeleteButton>
-                    </Dropdown.Item>
-                  </>
-                )}
-              </Dropdown.Menu>
-            </Dropdown>
-          ) : null}
-        </div>
-      </div>
-
       <div
         className="text-start border-bottom py-2 pt-2"
         style={{ minHeight: "5rem" }}
       >
-        <div className="d-flex alig-items-center gap-1 position-relative">
-          {entry.subjects === "None(no subject or topic)" ||
-          entry.subjects === "General" ||
-          entry.subjects === null ? null : (
-            <h6 className="text-secondary m-0 mt-2">
-              <span style={{ fontSize: "clamp(0.7rem, 1dvw, .85rem)" }}>
-                Trigger Warning: {entry.subjects}
-              </span>
-            </h6>
-          )}
-        </div>
+        <DiaryEntryHeader
+          entry={entry}
+          user={currentUser}
+          formatDate={formatDate}
+          ownDiary={ownDiary}
+          currentUser={currentUser}
+          FollowButton={FollowButton}
+          followedUsers={followedUsers}
+          handleFollowToggle={handleFollowToggle}
+        />
 
-        <div className="d-flex gap-1 align-items-center mt-2 position-relative">
-          <div className="d-flex flex-column gap-1">
-            <h5 className="m-0">{entry.title}</h5>
-          </div>
-          {entry.containsAlarmingWords === 1 && currentUser.isAdmin === 1 ? (
-            <div className="d-flex justify-content-center align-items-end pt-1 gap-1">
-              <div className="informationToolTip accordion text-danger align-middle">
-                <h4 className="m-0">
-                  <i class="bx bx-error" style={{}}></i>
-                </h4>
-                <p
-                  className="infToolTip rounded p-2 m-0 text-center"
-                  style={{
-                    backgroundColor: "rgb(179, 0, 0, .7)",
-                    width: "85%",
-                  }}
-                >
-                  This diary entry has been flagged by the system as potentially
-                  containing sensitive or distressing topics and may require
-                  immediate attention.
-                </p>
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        <p style={{ whiteSpace: "pre-wrap" }}>{entry.description}</p>
+        <DiaryDetails
+          user={currentUser}
+          entry={entry}
+          entryImage={`http://localhost:8081${entry.diary_image}`}
+        />
 
         {/* Clickable Image */}
         {entry.diary_image && (
@@ -619,7 +367,7 @@ const DiaryEntryLayout = ({
           {currentUser.isAdmin ? (
             <ChatButton
               entry={entry}
-              isAdmin={entry.isAdmin}
+              user={currentUser}
               userToChat={entry.userID}
             ></ChatButton>
           ) : (

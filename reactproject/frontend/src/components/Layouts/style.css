@@ -880,6 +880,13 @@ input.form-control:focus {
   color: #ffff !important;
 }
 
+/* FOR LIST-GROUP-ITEMS */
+.list-group-item.active {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+.list-group-item button {
+}
 @media screen and (max-width: 1150px) {
   .followerName {
     /* display: none; */

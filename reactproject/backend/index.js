@@ -546,6 +546,8 @@ app.get("/fetchDepartmentModerators", (req, res) => {
       user_table ON course_department.departmentID = user_table.departmentID
     JOIN 
       user_profiles ON user_table.userID = user_profiles.userID
+    WHERE 
+      user_table.isAdmin = 2
   `;
 
   db.query(query, (err, results) => {
@@ -1382,6 +1384,7 @@ app.get("/entries", (req, res) => {
       user_table.lastName,
       user_table.isAdmin,
       user_table.isSuspended,
+      user_table.course,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -2051,7 +2054,11 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const scheduledDate = req.query.scheduledDate === "true";
 
   let query = `
-    SELECT diary_entries.*, user_table.firstName, user_profiles.*
+    SELECT diary_entries.*, 
+    user_table.firstName, 
+    user_table.lastName, 
+    user_table.course, 
+    user_profiles.*
     FROM diary_entries 
      JOIN user_table ON diary_entries.userID = user_table.userID 
      JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
@@ -2091,6 +2098,7 @@ app.get("/fetchDiaryEntry/:entryID", (req, res) => {
          user_table.isSuspended, 
          user_table.firstName, 
          user_table.lastName, 
+         user_table.course, 
          user_profiles.*, 
          flagged_reports.isReviewed
   FROM diary_entries 
@@ -2528,24 +2536,21 @@ app.post("/reportingUser", (req, res) => {
 
       const reasonArray = reason.split(", ").map((r) => r.trim());
 
-      // Update the count for each reason
-      reasonArray.forEach((reasonItem) => {
-        db.query(
-          `UPDATE user_table 
-          SET reportCount = reportCount + 1,
-          isReported =  1 
-          WHERE userID = ?`,
-          [reportedUserID],
-          (updateError) => {
-            if (updateError) {
-              console.error(
-                `Error updating count for reason: ${reasonItem}`,
-                updateError
-              );
-            }
+      db.query(
+        `UPDATE user_table 
+        SET reportCount = reportCount + 1,
+        isReported =  1 
+        WHERE userID = ?`,
+        [reportedUserID],
+        (updateError) => {
+          if (updateError) {
+            console.error(
+              `Error updating count for reason: ${reasonItem}`,
+              updateError
+            );
           }
-        );
-      });
+        }
+      );
 
       // Send response once the main report is saved
       res
@@ -2576,17 +2581,6 @@ app.get("/getReportedUsers", (req, res) => {
   });
 });
 
-app.get("/fetchReportedUserReasons", (req, res) => {
-  db.query("SELECT * FROM reported_users ", (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: "Failed to retrieve options" });
-    } else {
-      res.json(results);
-    }
-  });
-});
-
 app.get("/getReportedUsersAnalytics", (req, res) => {
   const { departmentID } = req.query;
 
@@ -2596,18 +2590,14 @@ app.get("/getReportedUsersAnalytics", (req, res) => {
   }
 
   const query = `
-    SELECT
-      reported_users.*,
-      user_table.firstName,
-      user_table.lastName,
-      user_table.studentNumber,
+ SELECT
+      user_table.*,
       user_profiles.profile_image
     FROM 
-      reported_users
-    JOIN user_table ON reported_users.reportedUserID = user_table.userID
-    JOIN user_profiles ON reported_users.userID = user_profiles.userID
-    WHERE user_table.departmentID = ?
-    ORDER BY isAddress, created_at 
+      user_table
+    JOIN user_profiles ON user_table.userID = user_profiles.userID
+    WHERE user_table.isReported = 1 AND user_table.departmentID = ?
+    ORDER BY user_table.isReviewed, user_table.reportCount DESC;
   `;
 
   db.query(query, [departmentID], (err, results) => {
@@ -2616,6 +2606,17 @@ app.get("/getReportedUsersAnalytics", (req, res) => {
       return res.status(500).json({ error: "Error fetching reported users" });
     }
     res.status(200).json(results);
+  });
+});
+
+app.get("/fetchReportedUserReasons", (req, res) => {
+  db.query("SELECT * FROM reported_users ", (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to retrieve options" });
+    } else {
+      res.json(results);
+    }
   });
 });
 
@@ -4371,6 +4372,7 @@ app.delete("/deleteUserFilters", (req, res) => {
   );
 });
 
+// FOR MANAGING MODERATORS
 app.post("/assignModerator", (req, res) => {
   const { userID, departmentID, departmentName } = req.body;
 
@@ -4394,6 +4396,27 @@ app.post("/assignModerator", (req, res) => {
       res.json({ message: "Moderator assigned successfully!", result });
     }
   );
+});
+
+app.post("/removeModerator", (req, res) => {
+  const { userID } = req.body;
+
+  if (!userID) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
+  const updateQuery = `
+    UPDATE user_table 
+    SET  departmentMod = null, isAdmin = 0 
+    WHERE userID = ?
+  `;
+
+  db.query(updateQuery, [userID], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Moderator successfully removed!", result });
+  });
 });
 
 const PORT = process.env.PORT || 8081;

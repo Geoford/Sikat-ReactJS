@@ -4,6 +4,8 @@ import axios from "axios";
 const AddingModeratorForm = ({ departmentID, departmentName }) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("  ");
 
   useEffect(() => {
     axios
@@ -11,6 +13,15 @@ const AddingModeratorForm = ({ departmentID, departmentName }) => {
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
+
+  useEffect(() => {
+    const filtered = users.filter((user) =>
+      `${user.firstName} ${user.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
 
   const handleSave = () => {
     if (!selectedUser) {
@@ -37,8 +48,15 @@ const AddingModeratorForm = ({ departmentID, departmentName }) => {
   return (
     <div>
       <h5>Select User to Assign as Moderator</h5>
+      <input
+        type="text"
+        placeholder="Serach User to become moderator"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="form-control mb-2"
+      />
       <ul className="list-group">
-        {users.map((user) => (
+        {filteredUsers.map((user) => (
           <li
             key={user.userID}
             className={`list-group-item d-flex justify-content-between align-items-center ${
