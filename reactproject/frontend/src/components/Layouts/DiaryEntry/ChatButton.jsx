@@ -203,7 +203,7 @@ const ChatButton = ({ user, entry, imageFile, userToChat }) => {
     <>
       <div className=" d-flex align-items-center justify-content-center position-relative">
         <button
-          className="InteractButton d-flex align-items-center justify-content-center gap-2"
+          className="InteractButton informationToolTip d-flex align-items-center justify-content-center gap-2"
           onClick={handleShow}
           disabled={
             user.isAdmin != 1 ||
@@ -211,8 +211,18 @@ const ChatButton = ({ user, entry, imageFile, userToChat }) => {
             (!entry.containsAlarmingWords && !entry.isFlagged)
           }
         >
-          <i class="bx bx-chat my-1"></i>
-          <p className="m-0 d-none d-xl-block">Message</p>
+          <div className="text-secondary d-flex align-items-center justify-content-center gap-2">
+            <i class="bx bx-chat my-1"></i>
+            <p className="m-0 d-none d-xl-block">Message</p>
+            {user.isAdmin === 2 && (
+              <p
+                className="infToolTip rounded p-2 m-0 mt-1"
+                style={{ width: "clamp(8rem, 20dvw, 15rem)" }}
+              >
+                Only administrators have permission to send messages to users.
+              </p>
+            )}
+          </div>
         </button>
       </div>
 

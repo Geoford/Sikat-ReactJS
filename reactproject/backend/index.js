@@ -2797,7 +2797,7 @@ app.get("/getReportedCommentsAnalytics", (req, res) => {
     JOIN user_table ON comments.userID = user_table.userID
     JOIN diary_entries ON comments.entryID = diary_entries.entryID
     WHERE comments.isReported = 1 AND user_table.departmentID = ?
-    ORDER BY isAddress
+    ORDER BY comments.isReviewed, comments.reportCount DESC 
   `;
 
   db.query(query, [departmentID], (err, results) => {
@@ -3330,7 +3330,7 @@ app.get("/flaggedAnalytics", (req, res) => {
     LEFT JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     LEFT JOIN flagged_reports ON diary_entries.entryID = flagged_reports.entryID
     WHERE diary_entries.isFlagged = 1 AND user_table.departmentID = ?  -- Filter by departmentID
-    ORDER BY isAddress, flagged_reports.created_at DESC
+    ORDER BY diary_entries.isAddress, diary_entries.flagCount DESC
   `;
 
   db.query(query, [departmentID], (err, results) => {
