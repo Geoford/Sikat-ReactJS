@@ -30,6 +30,13 @@ const db = mysql.createConnection({
   database: "sikat-ediary",
 });
 
+// const db = mysql.createConnection({
+//   host: "sql12.freesqldatabase.com",
+//   user: "sql12762009",
+//   password: "c9LRMHS1aZ",
+//   database: "sql12762009",
+// });
+
 const pusher = new Pusher({
   appId: "1875705",
   key: "4810211a14a19b86f640",
@@ -1653,7 +1660,7 @@ app.put("/reviewed", (req, res) => {
   }
 
   db.query(
-    "UPDATE flagged_reports SET isReviewed = 1 WHERE entryID = ?",
+    "UPDATE diary_entries SET isAddress = 1  WHERE entryID = ?",
     [entryID],
     (err, result) => {
       if (err) {

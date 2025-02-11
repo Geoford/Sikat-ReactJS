@@ -7,6 +7,7 @@ import anonymous from "../../../assets/anonymous.png";
 import EditDiaryEntryButton from "../Home/EditDiaryEntryButton";
 import DeleteButton from "./DeleteButton";
 import EditPostButton from "../Home/EditPostButton";
+import Reviewed from "../Profile/Reviewed";
 
 const DiaryEntryHeader = ({
   entry,
@@ -105,22 +106,6 @@ const DiaryEntryHeader = ({
                         followedUsers={followedUsers}
                         handleFollowToggle={handleFollowToggle}
                       ></FollowButton>
-                      {/* <button
-                      className="secondaryButton p-0 m-0"
-                      onClick={() =>
-                        handleFollowToggle(
-                          entry.userID,
-                          entry.firstName
-                        )
-                      }
-                      style={{ height: "" }}
-                    >
-                      <h5 className="m-0">
-                        {followedUsers.includes(entry.userID)
-                          ? "Following"
-                          : "Follow"}
-                      </h5>{" "}
-                    </button> */}
                     </div>
                   )}
               </>
@@ -151,20 +136,14 @@ const DiaryEntryHeader = ({
             <Dropdown.Menu className="p-2">
               {user.isAdmin && !entry.isAdmin ? (
                 <>
-                  <Suspend
+                  {/* <Suspend
                     entryID={entry.entryID}
                     userID={entry.userID}
                     firstName={entry.firstName}
                     suspended={entry.isSuspended}
-                  ></Suspend>
+                  ></Suspend> */}
 
-                  {/* <Reviewed
-                  entry={entry}
-                  entryID={entry.entryID}
-                  userID={entry.userID}
-                  firstName={entry.firstName}
-                  suspended={entry.isSuspended}
-                ></Reviewed> */}
+                  <Reviewed entry={entry} entryID={entry.entryID}></Reviewed>
                   <Hide
                     type={"diary"}
                     entry={entry}

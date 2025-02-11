@@ -222,6 +222,14 @@ const ChatButton = ({ user, entry, imageFile, userToChat }) => {
                 Only administrators have permission to send messages to users.
               </p>
             )}
+            {user.isAdmin === 1 && !entry.isFlagged && (
+              <p
+                className="infToolTip rounded p-2 m-0 mt-1"
+                style={{ width: "clamp(8rem, 20dvw, 15rem)" }}
+              >
+                Diary is not flagged and doesn't have alarming words.
+              </p>
+            )}
           </div>
         </button>
       </div>

@@ -1,62 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
-function Reviewed({ entryID, userID, firstName, suspended, entry }) {
+function Reviewed({ entry }) {
   const [show, setShow] = useState(false);
-  const [reasons, setReasons] = useState([]);
-
-  const [flags, setFlags] = useState([]);
-  const [selectedReason, setSelectedReason] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState("3 Days");
-
   const [modal, setModal] = useState({ show: false, message: "" });
-  const [confirmModal, setConfirmModal] = useState({
-    show: false,
-    message: "",
-    onConfirm: () => {},
-    onCancel: () => {},
-  });
-
-  useEffect(() => {
-    const fetchFlags = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/flagged`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch flags");
-        }
-        const data = await response.json();
-        setFlags(data);
-      } catch (error) {
-        console.error("Error fetching flags:", error);
-      }
-    };
-
-    fetchFlags();
-  }, []);
 
   const closeModal = () => {
     setModal({ show: false, message: "" });
   };
-  const closeConfirmModal = () => {
-    setConfirmModal({
-      show: false,
-      message: "",
-      onConfirm: () => {},
-      onCancel: () => {},
-    });
-  };
 
   const handleReviewed = async (entryID) => {
     try {
-      await axios.put("http://localhost:8081/reviewed", {
+      await axios.put(`http://localhost:8081/flaggedAddress/${entryID}`, {
         entryID,
       });
-      alert("reviewed");
+
+      // Close the modal after success
+      handleClose();
+
+      // Show confirmation message
+      setModal({
+        show: true,
+        message: `Flagged diary has been addressed.`,
+      });
+
+      // Reload the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error updating reviewed:", error);
+      setModal({
+        show: true,
+        message: "Failed to update entry. Please try again.",
+      });
     }
   };
 
@@ -67,19 +48,21 @@ function Reviewed({ entryID, userID, firstName, suspended, entry }) {
     <>
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
-        disabled={entry.isReviewed}
+        disabled={entry.isAddress}
         onClick={handleShow}
-        // disabled={suspended}
       >
-        <i class="bx bx-message-alt-check"></i> <p className="m-0">Reviewed</p>
+        <i className="bx bx-message-alt-check"></i>{" "}
+        <p className="m-0">
+          {entry.isAddress ? "Reviewed" : "Mark as Reviewed"}
+        </p>
       </button>
 
-      {/* <MessageAlert
+      <MessageModal
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageAlert> */}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
@@ -96,7 +79,7 @@ function Reviewed({ entryID, userID, firstName, suspended, entry }) {
           </Button>
           <button
             className="primaryButton py-2 rounded"
-            onClick={() => handleReviewed(entryID)}
+            onClick={() => handleReviewed(entry.entryID)}
           >
             <p className="m-0">Confirm</p>
           </button>
