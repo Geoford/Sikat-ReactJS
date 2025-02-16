@@ -85,9 +85,7 @@ const DiaryEntryHeader = ({
                 </h5>
               </Link>
             )}
-            {user.isAdmin ? (
-              ""
-            ) : (
+            {entry.isAdmin === 0 && user.isAdmin === 0 ? (
               <>
                 {user &&
                   user.userID !== entry.userID &&
@@ -109,7 +107,7 @@ const DiaryEntryHeader = ({
                     </div>
                   )}
               </>
-            )}
+            ) : null}
           </div>
           <p className="m-0" style={{ fontSize: ".7rem" }}>
             {formatDate(entry.created_at)}{" "}

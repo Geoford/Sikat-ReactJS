@@ -23,19 +23,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
-// const db = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: "",
-//   database: "sikat-ediary",
-// });
-
 const db = mysql.createConnection({
-  host: "sql12.freesqldatabase.com",
-  user: "sql12762009",
-  password: "c9LRMHS1aZ",
-  database: "sql12762009",
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "sikat-ediary",
 });
+
+// const db = mysql.createConnection({
+//   host: "sql12.freesqldatabase.com",
+//   user: "sql12762009",
+//   password: "c9LRMHS1aZ",
+//   database: "sql12762009",
+// });
 
 const pusher = new Pusher({
   appId: "1875705",
@@ -1705,7 +1705,7 @@ app.put("/reviewedProfile/:userID", (req, res) => {
   }
 
   db.query(
-    "UPDATE reported_users SET isReviewed = 1, isAddress = 1 WHERE userID = ?",
+    "UPDATE user_table SET isReviewed = 1 WHERE userID = ?",
     [userID],
     (err, result) => {
       if (err) {
@@ -2084,15 +2084,21 @@ app.get("/fetchUserEntry/user/:id", (req, res) => {
   const scheduledDate = req.query.scheduledDate === "true";
 
   let query = `
-    SELECT diary_entries.*, 
-    user_table.firstName, 
-    user_table.lastName, 
-    user_table.course, 
-    user_profiles.*
-    FROM diary_entries 
-     JOIN user_table ON diary_entries.userID = user_table.userID 
-     JOIN user_profiles ON diary_entries.userID = user_profiles.userID 
+    SELECT
+      diary_entries.*,
+      user_table.firstName,
+      user_table.lastName,
+      user_table.isAdmin,
+      user_table.isSuspended,
+      user_table.course,
+      user_table.departmentID,
+      user_profiles.profile_image,
+      user_profiles.alias
+    FROM diary_entries
+      JOIN user_table ON diary_entries.userID = user_table.userID
+      JOIN user_profiles ON diary_entries.userID = user_profiles.userID
     WHERE diary_entries.userID = ?
+    
   `;
 
   if (!scheduledDate) {
@@ -2409,7 +2415,7 @@ app.delete("/unfollow/:followUserId", (req, res) => {
 
 const getFollowedUsersFromDatabase = async (userID) => {
   const query = `
-    SELECT user_table.userID, user_table.username, user_table.firstName , user_table.lastName, user_profiles.profile_image
+    SELECT user_table.userID, user_table.isAdmin, user_table.username, user_table.firstName , user_table.lastName, user_profiles.profile_image
     FROM followers
     INNER JOIN user_table ON followers.followedUserID = user_table.userID
     INNER JOIN user_profiles ON followers.followedUserID = user_profiles.userID
@@ -4194,31 +4200,20 @@ app.post("/suspendUser", (req, res) => {
             }
           }
         );
-
-        // Update flagged_reports table to set isAddress = 1 where entryID matches
-        if (entryID) {
-          db.query(
-            "UPDATE flagged_reports SET isAddress = 1 WHERE entryID = ?",
-            [entryID],
-            (updateErr) => {
-              if (updateErr) {
-                console.error(
-                  "Error updating flagged reports:",
-                  updateErr.message
-                );
-                res.status(500).json({
-                  success: false,
-                  error: "Failed to update flagged reports",
-                });
-              } else {
-                res.json({ success: true });
-              }
-            }
-          );
-        } else {
-          res.json({ success: true });
-        }
       }
+    }
+  );
+  db.query(
+    `
+    UPDATE user_table SET offenseCount = offenseCount + 1, isReviewed = 1 WHERE userID = ?
+    `,
+    [userID],
+    (err, results) => {
+      if (err) {
+        console.error("Error updating report count :", err);
+        return res.status(500).send("Error updating report count.");
+      }
+      res.json(results);
     }
   );
 });

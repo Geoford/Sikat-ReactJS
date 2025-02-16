@@ -1,21 +1,9 @@
 import Dropdown from "react-bootstrap/Dropdown";
-import EditPersonalDetailButton from "../../pages/PagesUser/UserProfileLayout/EditPersonalDetailButton";
 import ReportUserProfileButton from "./ReportUserProfileButton";
 import Suspend from "./Suspend";
-import ChatButton from "./ChatButton";
 import ProfileReview from "./ProfileReview";
 
-const OthersProfileDropdown = ({
-  user,
-  entry,
-  isAdmin,
-  ownerAdmin,
-  userID,
-  firstName,
-  toBeReported,
-  reportedUserID,
-  suspended,
-}) => {
+const OthersProfileDropdown = ({ user, profileOwner }) => {
   return (
     <Dropdown className="d-flex align-items-center">
       <Dropdown.Toggle
@@ -36,35 +24,25 @@ const OthersProfileDropdown = ({
       </Dropdown.Toggle>
 
       <Dropdown.Menu style={{ zIndex: "1" }}>
-        {isAdmin ? (
+        {user.isAdmin ? (
           ""
-        ) : ownerAdmin ? (
-          // <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
-          //   <ChatButton ></ChatButton>
-          // </Dropdown.Item>
+        ) : user.isAdmin ? (
           <></>
         ) : (
           <Dropdown.Item href="" className="p-0 px-2 btn btn-light">
             <ReportUserProfileButton
               user={user}
-              userID={userID}
-              firstName={firstName}
-              toBeReported={toBeReported}
-              reportedUserID={reportedUserID}
+              profileOwner={profileOwner}
             ></ReportUserProfileButton>
           </Dropdown.Item>
         )}
 
         {/* {isAdmin ? "im admin" : "Im not an Admin"} */}
-        {isAdmin ? (
+        {user.isAdmin ? (
           <Dropdown.Item className="btn btn-light p-0 px-2">
             {/* <button className="w-100 btn btn-light text-start">Suspend</button> */}
-            <Suspend
-              userID={userID}
-              firstName={firstName}
-              suspended={suspended}
-            ></Suspend>
-            <ProfileReview userID={userID}></ProfileReview>
+            <Suspend profileOwner={profileOwner}></Suspend>
+            <ProfileReview profileOwner={profileOwner}></ProfileReview>
           </Dropdown.Item>
         ) : (
           ""

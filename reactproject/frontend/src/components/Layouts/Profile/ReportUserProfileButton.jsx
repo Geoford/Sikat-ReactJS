@@ -5,13 +5,7 @@ import axios from "axios";
 import MessageModal from "../DiaryEntry/messageModal";
 import MessageAlert from "../DiaryEntry/messageAlert";
 
-function ReportUserButton({
-  user,
-  userID,
-  firstName,
-  toBeReported,
-  reportedUserID,
-}) {
+function ReportUserButton({ user, profileOwner }) {
   const [show, setShow] = useState(false);
   const [selectedBehavior, setSelectedBehavior] = useState("");
   const [otherText, setOtherText] = useState("");
@@ -74,7 +68,7 @@ function ReportUserButton({
   const handleSubmitReport = async () => {
     try {
       const response = await axios.post("http://localhost:8081/reportingUser", {
-        reportedUserID,
+        reportedUserID: profileOwner.userID,
         reason: selectedBehavior,
       });
 
@@ -123,7 +117,7 @@ function ReportUserButton({
         <Modal.Header closeButton>
           <Modal.Title>
             <h4 className="m-0">
-              Report {firstName} {user.lastName}
+              Report {profileOwner.firstName} {profileOwner.lastName}
             </h4>
           </Modal.Title>
         </Modal.Header>

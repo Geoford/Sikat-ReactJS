@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/userDefaultProfile.png";
 import MainLayout from "../Layouts/MainLayout";
 import JournalEntries from "../Layouts/Profile/JournalEntries";
-import DiaryEntryLayout from "../Layouts/Profile/DiaryEntryLayout";
+import DiaryEntryLayout from "../Layouts/Home/DiaryEntryLayout";
 import ProfileDropdown from "../Layouts/Profile/ProfileDropdown";
 import OthersProfileDropdown from "../Layouts/Profile/OthersProfileDropdown";
 import axios from "axios";
@@ -19,6 +19,7 @@ import BackButton from "../Layouts/Home/BackButton";
 
 const Profile = () => {
   const { userID } = useParams();
+  const [profileOwner, setProfileOwner] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,7 +31,6 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  let currentUser = null;
 
   const [modal, setModal] = useState({
     show: false,
@@ -55,18 +55,38 @@ const Profile = () => {
     });
   };
 
-  try {
-    currentUser = JSON.parse(localStorage.getItem("user"));
-  } catch (err) {
-    console.error("Error parsing current user:", err);
-  }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = localStorage.getItem("user");
+
+      if (!userData) {
+        navigate("/");
+        return;
+      }
+      const parsedUser = JSON.parse(userData);
+      try {
+        const response = await fetch(
+          `http://localhost:8081/fetchUser/user/${parsedUser.userID}`
+        );
+
+        if (!response.ok) {
+          throw new Error("User not found");
+        }
+
+        const data = await response.json();
+        console.log("User data:", data);
+        setUser(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate, userID]);
 
   useEffect(() => {
-    if (!currentUser) {
-      navigate("/");
-      return;
-    }
-
     const fetchUserData = async () => {
       try {
         const response = await fetch(
@@ -76,11 +96,8 @@ const Profile = () => {
         const data = await response.json();
 
         console.log("User data:", data);
-        // if (data.isSuspended === 1) {
-        //   navigate("/suspended");
-        //   return;
-        // }
-        setUser(data);
+
+        setProfileOwner(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -101,7 +118,7 @@ const Profile = () => {
   const fetchEntries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/fetchUserEntry/user/${user.userID}`
+        `http://localhost:8081/fetchUserEntry/user/${profileOwner.userID}`
       );
 
       if (response.data.entries && Array.isArray(response.data.entries)) {
@@ -137,7 +154,7 @@ const Profile = () => {
   const uploadProfile = (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("userID", user.userID);
+    formData.append("userID", profileOwner.userID);
 
     setConfirmModal({
       show: true,
@@ -166,12 +183,12 @@ const Profile = () => {
 
   const fetchFollowedUsers = async () => {
     try {
-      if (!currentUser || !currentUser.userID) {
+      if (!user || !user.userID) {
         console.error("Current user or userID is not available");
         return;
       }
       const response = await axios.get(
-        `http://localhost:8081/followedUsers/${currentUser.userID}`
+        `http://localhost:8081/followedUsers/${user.userID}`
       );
       const followedUsersData = response.data.map((user) => user.userID);
       setFollowedUsers(followedUsersData);
@@ -198,7 +215,7 @@ const Profile = () => {
       return;
     }
 
-    if (currentUser.userID === followUserId) {
+    if (user.userID === followUserId) {
       setModal({
         show: true,
         message: `You cannot follow yourself.`,
@@ -212,13 +229,13 @@ const Profile = () => {
       if (isFollowing) {
         setConfirmModal({
           show: true,
-          message: `Are you sure you want to unfollow ${user.firstName}?`,
+          message: `Are you sure you want to unfollow ${profileOwner.firstName}?`,
           onConfirm: async () => {
             try {
               await axios.delete(
                 `http://localhost:8081/unfollow/${followUserId}`,
                 {
-                  data: { followerId: currentUser.userID },
+                  data: { followerId: user.userID },
                 }
               );
 
@@ -231,11 +248,11 @@ const Profile = () => {
               setConfirmModal({ show: false, message: "" });
               setModal({
                 show: true,
-                message: `You have unfollowed ${user.firstName}.`,
+                message: `You have unfollowed ${profileOwner.firstName}.`,
               });
 
               // Refresh the followed users list from the backend
-              await fetchFollowedUsers(user.userID);
+              await fetchFollowedUsers(profileOwner.userID);
             } catch (error) {
               console.error("Error unfollowing user:", error);
               setModal({
@@ -250,7 +267,7 @@ const Profile = () => {
         const response = await axios.post(
           `http://localhost:8081/follow/${followUserId}`,
           {
-            followerId: currentUser.userID,
+            followerId: user.userID,
           }
         );
 
@@ -265,23 +282,23 @@ const Profile = () => {
         setFollowedUsers((prev) => [...prev, followUserId]);
         setModal({
           show: true,
-          message: `You are now following ${user.username}.`,
+          message: `You are now following ${profileOwner.username}.`,
         });
 
         await axios.post(
           `http://localhost:8081/notifications/${followUserId}`,
           {
             userID: followUserId,
-            actorID: currentUser.userID,
+            actorID: user.userID,
             entryID: null,
             profile_image: user.profile_image,
             type: "follow",
-            message: `${currentUser.firstName} ${currentUser.lastName} has followed you.`,
+            message: `${user.firstName} ${user.lastName} has followed you.`,
           }
         );
       }
 
-      await fetchFollowedUsers(currentUser.userID);
+      await fetchFollowedUsers(user.userID);
     } catch (error) {
       console.error("Error toggling follow status:", error);
       setModal({
@@ -299,7 +316,7 @@ const Profile = () => {
 
     axios
       .post(`http://localhost:8081/entry/${entryID}/gadify`, {
-        userID: currentUser.userID,
+        userID: user.userID,
       })
       .then((res) => {
         const isGadified =
@@ -313,19 +330,19 @@ const Profile = () => {
                   gadifyCount: isGadified
                     ? entry.gadifyCount + 1
                     : entry.gadifyCount - 1,
-                  isGadified: !entry.isGadified, // Toggle gadify status
                 }
               : entry
           )
         );
-        if (isGadified && currentUser.userID !== entry.userID) {
+
+        if (isGadified && user.userID !== entry.userID) {
           axios
             .post(`http://localhost:8081/notifications/${entry.userID}`, {
-              actorID: currentUser.userID,
+              actorID: user.userID,
               entryID: entryID,
-              profile_image: currentUser.profile_image,
+              profile_image: user.profile_image,
               type: "gadify",
-              message: `${currentUser.firstName} ${currentUser.lastName} gadified your diary entry.`,
+              message: `${user.firstName} ${user.lastName} gadified your diary entry.`,
             })
             .then((res) => {
               console.log("Notification response:", res.data);
@@ -339,6 +356,14 @@ const Profile = () => {
   };
 
   const handleClick = (entryID) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.entryID === entryID
+          ? { ...entry, isGadified: !entry.isGadified }
+          : entry
+      )
+    );
+
     const updatedExpandButtons = { ...expandButtons, [entryID]: true };
     setExpandButtons(updatedExpandButtons);
 
@@ -394,7 +419,7 @@ const Profile = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const ownProfile = currentUser.userID == userID;
+  const ownProfile = user.userID == userID;
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
@@ -402,16 +427,16 @@ const Profile = () => {
   return (
     <MainLayout>
       <div
-        className="container d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
+        className="container overflow-y-hidden d-flex rounded shadow-sm mt-4 p-2 pt-3 pt-md-2"
         style={{ background: "#ffff" }}
       >
         <BackButton></BackButton>
-        <MessageAlert
+        <MessageModal
           showModal={modal}
           closeModal={closeModal}
           title={"Notice"}
           message={modal.message}
-        ></MessageAlert>
+        ></MessageModal>
         <MessageModal
           showModal={confirmModal}
           closeModal={closeConfirmModal}
@@ -423,8 +448,8 @@ const Profile = () => {
 
         {user.isSuspended ? (
           <SuspensionModal
-            name={user.firstName}
-            isAdmin={currentUser.isAdmin}
+            name={profileOwner.firstName}
+            isAdmin={user.isAdmin}
             show={true}
           ></SuspensionModal>
         ) : (
@@ -446,8 +471,8 @@ const Profile = () => {
             >
               <img
                 src={
-                  user && user.profile_image
-                    ? `http://localhost:8081${user.profile_image}`
+                  profileOwner && profileOwner.profile_image
+                    ? `http://localhost:8081${profileOwner.profile_image}`
                     : DefaultProfile
                 }
                 alt="Profile"
@@ -502,42 +527,44 @@ const Profile = () => {
             >
               <div>
                 <h4 className="m-0">
-                  {user.firstName} {user.lastName}
-                  {ownProfile ? <> ({user.alias || "No Alias"})</> : null}
+                  {profileOwner.firstName} {profileOwner.lastName}
+                  {ownProfile ? (
+                    <> ({profileOwner.alias || "No Alias"})</>
+                  ) : null}
                 </h4>
-                {currentUser.isAdmin ? (
+                {user.isAdmin ? (
                   <>
                     <p className="m-0 text-secondary">
-                      {user.cvsuEmail} - {user.studentNumber}
+                      {profileOwner.cvsuEmail} - {profileOwner.studentNumber}
                     </p>
-                    <p className="m-0 mb-1 text-secondary">{user.course}</p>
+                    <p className="m-0 mb-1 text-secondary">
+                      {profileOwner.course}
+                    </p>
                   </>
                 ) : (
                   ""
                 )}
-                {currentUser.isAdmin ? (
+                {user.isAdmin ? (
                   <h5 className="text-danger">
-                    {user.isSuspended ? "Suspended " : ""}
-                    {suspensionTime(user.suspendUntil)}
+                    {profileOwner.isSuspended ? "Suspended " : ""}
+                    {suspensionTime(profileOwner.suspendUntil)}
                   </h5>
                 ) : (
                   ""
                 )}
               </div>
 
-              {user.isAdmin ? (
-                ""
-              ) : (
+              {!profileOwner.isAdmin ? (
                 <Followers
                   ownProfile={ownProfile}
-                  user={user}
-                  currentUser={currentUser}
-                  followersCount={user.followersCount}
-                  followingCount={user.followingCount}
+                  user={profileOwner}
+                  // currentUser={user}
+                  followersCount={profileOwner.followersCount}
+                  followingCount={profileOwner.followingCount}
                 ></Followers>
-              )}
+              ) : null}
               <p className="mt-3 text-secondary">
-                {user.bio || "No bio available."}
+                {profileOwner.bio || "No bio available."}
               </p>
             </div>
             <div
@@ -552,10 +579,14 @@ const Profile = () => {
                 </div>
               ) : (
                 <div className="d-flex align-items-center">
-                  {currentUser.isAdmin ? (
+                  {user.isAdmin ? (
                     <div className="d-flex gap-1">
-                      <FlaggedDiaries userID={user.userID}></FlaggedDiaries>
-                      <ReportedComments userID={user.userID}></ReportedComments>
+                      <FlaggedDiaries
+                        userID={profileOwner.userID}
+                      ></FlaggedDiaries>
+                      <ReportedComments
+                        userID={profileOwner.userID}
+                      ></ReportedComments>
                     </div>
                   ) : (
                     <>
@@ -572,12 +603,14 @@ const Profile = () => {
                         <>
                           <button
                             className="primaryButton py-2 px-5"
-                            onClick={() => handleFollowToggle(user.userID)} // Use the user's ID directly
-                            disabled={user.isAdmin}
+                            onClick={() =>
+                              handleFollowToggle(profileOwner.userID)
+                            } // Use the user's ID directly
+                            disabled={profileOwner.isAdmin}
                           >
                             <h5 className="m-0">
                               {" "}
-                              {followedUsers.includes(user.userID)
+                              {followedUsers.includes(profileOwner.userID)
                                 ? "Unfollow"
                                 : "Follow"}
                             </h5>
@@ -592,40 +625,27 @@ const Profile = () => {
               {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
               {ownProfile ? (
                 <ProfileDropdown
-                  userID={user.userID}
-                  isAdmin={currentUser.isAdmin}
+                  userID={profileOwner.userID}
+                  isAdmin={user.isAdmin}
                 />
               ) : (
-                <>
-                  {user.isAdmin ? (
-                    ""
-                  ) : (
-                    <OthersProfileDropdown
-                      isAdmin={currentUser.isAdmin}
-                      user={user}
-                      entry={entries}
-                      ownerAdmin={user.isAdmin}
-                      userID={user.userID}
-                      firstName={user.firstName}
-                      reportedUserID={user.userID}
-                      toBeReported={user.username}
-                      suspended={user.isSuspended}
-                    />
-                  )}
-                </>
+                <OthersProfileDropdown
+                  user={user}
+                  profileOwner={profileOwner}
+                />
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mt-2">
+      <div className="container mt-2 overflow-hidden">
         <div className="row">
           <div className="col-lg-4 mb-2 p-0 px-md-1">
             {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
             <JournalEntries
-              user={user}
-              isAdmin={currentUser.isAdmin}
+              user={profileOwner}
+              isAdmin={user.isAdmin}
               userID={userID}
               ownProfile={ownProfile}
             />
@@ -637,7 +657,7 @@ const Profile = () => {
               entries
                 .filter(
                   (entry) =>
-                    currentUser.isAdmin ||
+                    user.isAdmin ||
                     ownProfile ||
                     (entry.visibility !== "private" &&
                       entry.anonimity !== "private")
@@ -647,12 +667,12 @@ const Profile = () => {
                     {!ownProfile && entry.visibility === "private" ? null : (
                       <div className="w-100 ">
                         <DiaryEntryLayout
-                          key={entry.entryID}
+                          // key={entry.entryID}
                           entry={entry}
                           user={user}
-                          isGadified={entry.isGadified}
-                          currentUser={currentUser}
-                          suspended={user.isSuspended}
+                          // isGadified={entry.isGadified}
+                          // currentUser={user}
+                          // suspended={profileOwner.isSuspended}
                           followedUsers={followedUsers}
                           handleFollowToggle={handleFollowToggle}
                           handleClick={handleClick}

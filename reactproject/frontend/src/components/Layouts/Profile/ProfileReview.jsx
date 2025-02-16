@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
-import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
-function Reviewed({ userID }) {
+function Reviewed({ profileOwner }) {
   const [show, setShow] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [modal, setModal] = useState({ show: false, message: "" });
@@ -15,21 +15,21 @@ function Reviewed({ userID }) {
     onCancel: () => {},
   });
 
-  useEffect(() => {
-    const fetchReview = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8081/getReportedUser/${userID}`
-        );
-        setReviews(response.data);
-        setShow(false);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchReview = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8081/getReportedUser/${userID}`
+  //       );
+  //       setReviews(response.data);
+  //       setShow(false);
+  //     } catch (error) {
+  //       console.error("Error fetching reviews:", error);
+  //     }
+  //   };
 
-    fetchReview();
-  }, []);
+  //   fetchReview();
+  // }, []);
 
   const closeModal = () => {
     setModal({ show: false, message: "" });
@@ -46,7 +46,14 @@ function Reviewed({ userID }) {
   const handleReviewed = async (userID) => {
     try {
       await axios.put(`http://localhost:8081/reviewedProfile/${userID}`);
-      alert("reviewed");
+      handleClose();
+      setModal({
+        show: true,
+        message: `${profileOwner.firstName} ${profileOwner.lastName} has been reviewed.`,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error updating reviewed:", error);
     }
@@ -59,19 +66,21 @@ function Reviewed({ userID }) {
     <>
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
-        disabled={reviews.isReviewed}
-        onClick={() => handleShow(reviews)}
+        disabled={profileOwner.isReviewed}
+        onClick={() => handleShow()}
       >
         <i className="bx bx-message-alt-check"></i>
-        <p className="m-0">Reviewed</p>
+        <p className="m-0">
+          {profileOwner.isReviewed ? "Reviewed" : "Mark as reviewed"}
+        </p>
       </button>
 
-      {/* <MessageAlert
+      <MessageModal
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageAlert> */}
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
@@ -88,7 +97,7 @@ function Reviewed({ userID }) {
           </Button>
           <button
             className="primaryButton py-2 rounded"
-            onClick={() => handleReviewed(userID)}
+            onClick={() => handleReviewed(profileOwner.userID)}
           >
             <p className="m-0">Confirm</p>
           </button>

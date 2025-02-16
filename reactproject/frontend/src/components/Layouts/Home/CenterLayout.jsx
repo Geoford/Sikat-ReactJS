@@ -569,7 +569,7 @@ const CenterLayout = () => {
           .slice(0, visibleEntries)
           .map((entry) => (
             <DiaryEntryLayout
-              key={entry.entryID}
+              // key={entry.entryID}
               entry={entry}
               user={user}
               followedUsers={followedUsers}

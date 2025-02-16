@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
-import MessageAlert from "../DiaryEntry/messageAlert";
+import MessageModal from "../DiaryEntry/messageModal";
 
-function Suspend({ entryID, userID, firstName, suspended }) {
+function Suspend({ profileOwner }) {
   const [show, setShow] = useState(false);
   const [reasons, setReasons] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
@@ -36,25 +36,19 @@ function Suspend({ entryID, userID, firstName, suspended }) {
   const handleSuspend = async () => {
     try {
       const response = await axios.post("http://localhost:8081/suspendUser", {
-        userID,
+        userID: profileOwner.userID,
         reason: selectedReason,
         period: selectedPeriod,
-        entryID,
       });
 
-      if (response.data.success) {
-        setModal({
-          show: true,
-          message: `User suspended successfully.`,
-        });
-
-        handleClose();
-      } else {
-        setModal({
-          show: true,
-          message: `Failed to suspend user.`,
-        });
-      }
+      handleClose();
+      setModal({
+        show: true,
+        message: `${profileOwner.firstName} ${profileOwner.lastName} has been suspended.`,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error suspending user:", error);
       setModal({
@@ -82,28 +76,32 @@ function Suspend({ entryID, userID, firstName, suspended }) {
       <button
         className="btn btn-light w-100 d-flex align-items-center justify-content-center gap-1"
         onClick={handleShow}
-        disabled={suspended}
+        disabled={profileOwner.isSuspended}
       >
         <i className="bx bx-block"></i>
-        <p className="m-0">Suspend</p>
+        <p className="m-0">
+          {profileOwner.isSuspended ? "Suspended" : "Suspend"}
+        </p>
       </button>
 
-      <MessageAlert
+      <MessageModal
         showModal={modal}
         closeModal={closeModal}
         title={"Notice"}
         message={modal.message}
-      ></MessageAlert>
+      ></MessageModal>
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            <h4>Suspend {firstName}</h4>
+            <h4>
+              Suspend {profileOwner.firstName} {profileOwner.lastName}
+            </h4>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="text-danger">
-            <h5>Number of Offense: 0</h5>
+            <h5>Number of Offense: {profileOwner.reportCount}</h5>
           </div>
           <div className="d-flex flex-column gap-2">
             <div className="form-floating">
