@@ -11,6 +11,7 @@ const MainLayout = ({ children, ActiveTab }) => {
   const [showMessage, setShowMessage] = useState(false);
   // State to store user data fetched from localStorage
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState();
 
   // useEffect hook to run logic when the component first mounts
   useEffect(() => {
@@ -21,6 +22,7 @@ const MainLayout = ({ children, ActiveTab }) => {
     if (userData) {
       const parsedUser = JSON.parse(userData); // Parse the user data
       setUser(parsedUser); // Set the user data in the state
+      setLoading(false);
     } else {
       // If no user data is found, redirect to the homepage
       window.location.href = "/";
@@ -49,6 +51,19 @@ const MainLayout = ({ children, ActiveTab }) => {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <nav
+        className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
+        style={{
+          position: "fixed",
+          top: "0",
+          minHeight: "4.2rem",
+          width: "100%",
+        }}
+      ></nav>
+    );
+  }
   return (
     <div className="position-relative overflow-x-hidden" style={{ width: "" }}>
       <NavBar ActiveTab={ActiveTab} style={{ position: "sticky", top: "0" }} />

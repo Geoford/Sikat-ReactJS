@@ -42,19 +42,19 @@ const NavBar = ({ ActiveTab }) => {
     }
   }, [navigate]);
 
-  // if (loading) {
-  //   return (
-  //     <nav
-  //       className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
-  //       style={{
-  //         position: "fixed",
-  //         top: "0",
-  //         minHeight: "4rem",
-  //         width: "100%",
-  //       }}
-  //     ></nav>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <nav
+        className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
+        style={{
+          position: "fixed",
+          top: "0",
+          minHeight: "4.2rem",
+          width: "100%",
+        }}
+      ></nav>
+    );
+  }
 
   if (!user) return null;
 
@@ -63,7 +63,13 @@ const NavBar = ({ ActiveTab }) => {
   return (
     <nav
       className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
-      style={{ position: "fixed", top: "0", minHeight: "4rem", width: "100%" }}
+      style={{
+        position: "fixed",
+        top: "0",
+        minHeight: "4rem",
+        width: "100%",
+        zIndex: "1000",
+      }}
     >
       <div className="container-fluid py-2 px-3 ">
         <div className="d-flex align-items-center gap-2">

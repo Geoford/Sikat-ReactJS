@@ -41,7 +41,10 @@ const DiaryDetails = ({ entry, user }) => {
           </h6>
         )}
       </div>
-      <div className="d-flex gap-1 align-items-center position-relative">
+      <div
+        className="d-flex gap-1 align-items-center position-relative"
+        style={{ zIndex: "20" }}
+      >
         <div className="d-flex flex-column gap-1">
           <h5 className="m-0">{entry.title}</h5>
         </div>

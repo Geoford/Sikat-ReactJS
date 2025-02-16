@@ -23,19 +23,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "sikat-ediary",
-});
-
 // const db = mysql.createConnection({
-//   host: "sql12.freesqldatabase.com",
-//   user: "sql12762009",
-//   password: "c9LRMHS1aZ",
-//   database: "sql12762009",
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "sikat-ediary",
 // });
+
+const db = mysql.createConnection({
+  host: "sql12.freesqldatabase.com",
+  user: "sql12762009",
+  password: "c9LRMHS1aZ",
+  database: "sql12762009",
+});
 
 const pusher = new Pusher({
   appId: "1875705",
@@ -1410,6 +1410,7 @@ app.get("/entries", (req, res) => {
       user_table.isAdmin,
       user_table.isSuspended,
       user_table.course,
+      user_table.departmentID,
       user_profiles.profile_image,
       user_profiles.alias
     FROM diary_entries
@@ -2054,10 +2055,14 @@ app.get("/fetchUserDept&Course/user/:id", (req, res) => {
 app.get("/fetchUser/user/:id", (req, res) => {
   const userID = req.params.id;
 
-  const userValues = `SELECT * 
+  const userValues = `
+    SELECT 
+    user_table.*,
+    user_profiles.*,
+    course_department.DepartmentName
     FROM user_table
-    JOIN 
-    user_profiles ON user_table.userID = user_profiles.userID 
+    JOIN user_profiles ON user_table.userID = user_profiles.userID 
+    JOIN course_department ON user_table.departmentID = course_department.departmentID 
     WHERE user_table.userID = ?`;
 
   db.query(userValues, [userID], (err, result) => {

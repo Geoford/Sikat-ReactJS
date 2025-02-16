@@ -20,7 +20,7 @@ import axios from "axios";
 
 export default function HomeMainLayout({}) {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setloading] = useState(true);
   const [showModal, setShowModal] = useState(false); // Modal state for inactivity alert
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ export default function HomeMainLayout({}) {
     } else {
       navigate("/");
     }
-    setIsLoading(false);
+    setloading(false);
   }, [navigate]);
 
   useEffect(() => {
@@ -46,8 +46,19 @@ export default function HomeMainLayout({}) {
     window.location.reload(); // Reload the page after inactivity
   };
 
-  if (isLoading) return <div>Loading...</div>;
-
+  if (loading) {
+    return (
+      <nav
+        className="navbar navbar-expand-lg p-0 pt-2 pt-lg-0"
+        style={{
+          position: "fixed",
+          top: "0",
+          minHeight: "4.2rem",
+          width: "100%",
+        }}
+      ></nav>
+    );
+  }
   return (
     <MainLayout ActiveTab="Home">
       <div className="overflow-x-hidden">

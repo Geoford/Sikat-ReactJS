@@ -124,12 +124,30 @@ const DiaryEntryHeader = ({
         </div>
       </div>
       <div>
-        {ownDiary || currentUser.isAdmin ? (
-          <Dropdown>
+        {ownDiary || (user.isAdmin && !entry.isAdmin && entry.isFlagged) ? (
+          <Dropdown className="informationToolTip" style={{ zIndex: "1" }}>
+            {entry.departmentID !== user.departmentID &&
+              user.departmentID !== 8 && (
+                <div className=" accordion text-danger align-middle">
+                  <p
+                    className="infToolTip rounded p-2 m-0 mt-1 text-center"
+                    style={{
+                      width: "20rem",
+                    }}
+                  >
+                    You can only moderate students under {user.DepartmentName}.
+                  </p>
+                </div>
+              )}
+
             <Dropdown.Toggle
               className="btn-light d-flex align-items-center pt-0 pb-2"
               id="dropdown-basic"
               bsPrefix="custom-toggle"
+              disabled={
+                entry.departmentID !== user.departmentID &&
+                user.departmentID !== 8
+              }
             >
               <h5 className="m-0">...</h5>
             </Dropdown.Toggle>
@@ -193,9 +211,7 @@ const DiaryEntryHeader = ({
               )}
             </Dropdown.Menu>
           </Dropdown>
-        ) : (
-          <p></p>
-        )}
+        ) : null}
       </div>
     </div>
   );
