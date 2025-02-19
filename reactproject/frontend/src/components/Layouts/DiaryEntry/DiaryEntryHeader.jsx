@@ -59,7 +59,7 @@ const DiaryEntryHeader = ({
             {entry.anonimity === "private" ? (
               <h5 className="m-0">
                 {entry.alias} {entry.userID === user.userID ? "(You)" : null}
-                {user.isAdmin ? `(${entry.course})` : null}
+                {user.isAdmin && !ownDiary ? `(${entry.course})` : null}
               </h5>
             ) : (
               <Link
@@ -72,7 +72,7 @@ const DiaryEntryHeader = ({
                     : entry.firstName && entry.lastName
                     ? entry.firstName + " " + entry.lastName
                     : user.firstName + " " + user.lastName}{" "}
-                  {user.isAdmin ? (
+                  {user.isAdmin || !ownDiary ? (
                     <>{entry.isAdmin ? null : `(${entry.course})`}</>
                   ) : null}
                   <>

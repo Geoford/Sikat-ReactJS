@@ -285,15 +285,13 @@ const RightSide = () => {
                 <p className="m-0 mb-1 text-start">
                   {latestAnnouncement.title || "Untitled Announcement"}
                 </p>
-                <img
-                  src={
-                    latestAnnouncement.diary_image
-                      ? `http://localhost:8081${latestAnnouncement.diary_image}`
-                      : SampleImage
-                  }
-                  alt="Announcement"
-                  style={{ width: "100%", borderRadius: ".3rem" }}
-                />
+                {latestAnnouncement.diary_image && (
+                  <img
+                    src={`http://localhost:8081${latestAnnouncement.diary_image}`}
+                    alt="Announcement"
+                    style={{ width: "100%", borderRadius: ".3rem" }}
+                  />
+                )}
               </Link>
             </div>
           ) : (

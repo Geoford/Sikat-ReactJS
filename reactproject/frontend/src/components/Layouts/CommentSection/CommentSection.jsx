@@ -378,7 +378,7 @@ const CommentSection = ({
                   className="btn-light d-flex align-items-center pt-0 pb-2"
                   id="dropdown-basic"
                   bsPrefix="custom-toggle"
-                  disabled={comment.isAdmin && !user.isAdmin}
+                  disabled={comment.isAdmin}
                 >
                   <h5 className="m-0">...</h5>
                 </Dropdown.Toggle>
@@ -387,13 +387,7 @@ const CommentSection = ({
                   {!canManage &&
                     (user.isAdmin ? (
                       <>
-                        <Suspend
-                          isAnon={isAnon}
-                          alias={alias}
-                          userID={comment.userID}
-                          firstName={comment.firstName}
-                          suspended={comment.isSuspended}
-                        />
+                        <Suspend profileOwner={comment} />
                         {/* <Hide type={"comment"} entry={entry} /> */}
                       </>
                     ) : (

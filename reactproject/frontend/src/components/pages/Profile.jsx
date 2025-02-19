@@ -446,7 +446,7 @@ const Profile = () => {
           needConfirm={1}
         ></MessageModal>
 
-        {user.isSuspended ? (
+        {profileOwner.isSuspended ? (
           <SuspensionModal
             name={profileOwner.firstName}
             isAdmin={user.isAdmin}
@@ -531,15 +531,30 @@ const Profile = () => {
                   {ownProfile ? (
                     <> ({profileOwner.alias || "No Alias"})</>
                   ) : null}
+                  {profileOwner.isAdmin && (
+                    <>
+                      <h5 className="m-0 text-secondary d-flex align-items-center gap-1">
+                        {profileOwner.isAdmin === 1 && `ADMIN`}
+                        {profileOwner.isAdmin === 2 &&
+                          `${profileOwner.DepartmentName} Moderator`}
+                        <i class="bx bx-check-shield text-primary"></i>
+                      </h5>
+                    </>
+                  )}
                 </h4>
                 {user.isAdmin ? (
                   <>
-                    <p className="m-0 text-secondary">
-                      {profileOwner.cvsuEmail} - {profileOwner.studentNumber}
-                    </p>
-                    <p className="m-0 mb-1 text-secondary">
-                      {profileOwner.course}
-                    </p>
+                    {!profileOwner.isAdmin && (
+                      <>
+                        <p className="m-0 text-secondary">
+                          {profileOwner.cvsuEmail} -{" "}
+                          {profileOwner.studentNumber}
+                        </p>
+                        <p className="m-0 mb-1 text-secondary">
+                          {profileOwner.course}
+                        </p>
+                      </>
+                    )}
                   </>
                 ) : (
                   ""
@@ -580,26 +595,23 @@ const Profile = () => {
               ) : (
                 <div className="d-flex align-items-center">
                   {user.isAdmin ? (
-                    <div className="d-flex gap-1">
-                      <FlaggedDiaries
-                        userID={profileOwner.userID}
-                      ></FlaggedDiaries>
-                      <ReportedComments
-                        userID={profileOwner.userID}
-                      ></ReportedComments>
-                    </div>
+                    <>
+                      {profileOwner.isAdmin ? null : (
+                        <>
+                          <div className="d-flex gap-1">
+                            <FlaggedDiaries
+                              userID={profileOwner.userID}
+                            ></FlaggedDiaries>
+                            <ReportedComments
+                              userID={profileOwner.userID}
+                            ></ReportedComments>
+                          </div>
+                        </>
+                      )}
+                    </>
                   ) : (
                     <>
-                      {user.isAdmin ? (
-                        <>
-                          {/* <button
-                            className="primaryButtonDisabled py-2 px-5"
-                            disabled={user.isAdmin}
-                          >
-                            <h5 className="m-0">Follow</h5>
-                          </button> */}
-                        </>
-                      ) : (
+                      {profileOwner.isAdmin ? null : (
                         <>
                           <button
                             className="primaryButton py-2 px-5"
@@ -623,16 +635,20 @@ const Profile = () => {
               )}
 
               {/* {currentUser && currentUser.isAdmin ? "Im Admin" : " Im Not"} */}
-              {ownProfile ? (
-                <ProfileDropdown
-                  userID={profileOwner.userID}
-                  isAdmin={user.isAdmin}
-                />
-              ) : (
-                <OthersProfileDropdown
-                  user={user}
-                  profileOwner={profileOwner}
-                />
+              {profileOwner.isAdmin ? null : (
+                <>
+                  {ownProfile ? (
+                    <ProfileDropdown
+                      userID={profileOwner.userID}
+                      isAdmin={user.isAdmin}
+                    />
+                  ) : (
+                    <OthersProfileDropdown
+                      user={user}
+                      profileOwner={profileOwner}
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

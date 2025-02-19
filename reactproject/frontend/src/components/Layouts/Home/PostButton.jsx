@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import uploadIcon from "../../../assets/upload.png";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import SubjectSelection from "../LayoutUser/SubjectSelection";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -28,6 +25,7 @@ function PostButton({ onEntrySaved }) {
   const [anonimity, setAnonimity] = useState("now");
   const [file, setFile] = useState(null);
   const [scheduledDate, setScheduledDate] = useState(null);
+  const [isAnnouncement, setIsAnnouncement] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const removePreview = () => {
     setFile(null);
@@ -164,6 +162,7 @@ function PostButton({ onEntrySaved }) {
     }
 
     const formData = new FormData();
+    formData.append("isAnnouncement", isAnnouncement ? 1 : 0);
     formData.append("title", title);
     formData.append("description", description);
     formData.append("userID", user?.userID);
@@ -230,7 +229,12 @@ function PostButton({ onEntrySaved }) {
             <h5 className="m-0">Create New Post</h5>
             <Form className="d-flex align-items-center justify-content-end gap-2">
               <h5 className="m-0">Announcement</h5>
-              <Form.Check type="switch" id="custom-switch" />
+              <Form.Check
+                type="switch"
+                id="custom-switch"
+                checked={isAnnouncement}
+                onChange={(e) => setIsAnnouncement(e.target.checked)}
+              />
             </Form>
           </Modal.Title>
         </Modal.Header>

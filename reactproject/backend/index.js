@@ -1344,6 +1344,7 @@ app.post(
   },
   (req, res) => {
     const {
+      isAnnouncement,
       title,
       description,
       userID,
@@ -1367,10 +1368,11 @@ app.post(
     const isScheduled = scheduledDate ? 1 : 0;
 
     const query = `
-      INSERT INTO diary_entries (title, description, userID, diary_image, anonimity, scheduledDate, isScheduled)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO diary_entries (isAnnouncement, title, description, userID, diary_image, anonimity, scheduledDate, isScheduled)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
+      isAnnouncement,
       title,
       description,
       userID,
@@ -1834,7 +1836,7 @@ app.get("/announcement", async (req, res) => {
     ON 
       diary_entries.userID = user_table.userID 
     WHERE 
-      user_table.isAdmin = 1 
+      diary_entries.isAnnouncement = 1 
     ORDER BY 
       diary_entries.created_at DESC 
     LIMIT 1
@@ -2604,7 +2606,7 @@ app.get("/getReportedUsers", (req, res) => {
     FROM 
       user_table
     JOIN user_profiles ON user_table.userID = user_profiles.userID
-    WHERE user_table.isReported = 1
+    WHERE user_table.isReported = 1 AND user_table.isReviewed = 0
     ORDER BY user_table.isReviewed, user_table.reportCount DESC;
   `;
 
