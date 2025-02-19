@@ -365,7 +365,8 @@ const CommentSection = ({
                   </div>
                   <div className="d-flex justify-content-start flex-column">
                     <p className="m-0 text-start">
-                      {comment.firstName} {comment.lastName}
+                      {comment.firstName} {comment.lastName}{" "}
+                      {user.isAdmin ? <>({comment.DepartmentName})</> : null}
                     </p>
                   </div>
                 </div>

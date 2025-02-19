@@ -4,6 +4,7 @@ import axios from "axios";
 import LoginValidation from "./LoginValidation";
 import logo from "../../assets/TransparentLogo.png";
 import ForgotPassword from "./ForgotPassword";
+import { Modal } from "react-bootstrap";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -15,6 +16,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [suspendModal, setSuspendModal] = useState(false);
+  const closeSuspendModal = () => {
+    setSuspendModal(false);
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -174,6 +179,18 @@ export default function Login() {
           )}
 
           {serverError && <span className="text-danger">{serverError}</span>}
+
+          {/* {serverError && (
+            <Modal show={!!serverError} onHide={closeSuspendModal} centered>
+              <Modal.Header CloseButton>
+                <Modal.Title className="text-danger text-center">
+                  {serverError}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body></Modal.Body>
+            </Modal>
+          )} */}
+
           <div className="text-end my-2">
             <ForgotPassword></ForgotPassword>
           </div>

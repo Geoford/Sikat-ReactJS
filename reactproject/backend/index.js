@@ -2480,10 +2480,12 @@ app.get("/fetchComments/:entryID", (req, res) => {
     SELECT 
       comments.commentID, comments.text, comments.created_at, comments.replyCommentID,
       comments.userID,  -- Add this line to fetch userID
+      course_department.DepartmentName,
       user_table.username, user_table.firstName, user_table.isAdmin, user_table.isSuspended, user_table.lastName, user_profiles.profile_image
     FROM comments
     INNER JOIN user_table ON comments.userID = user_table.userID
     INNER JOIN user_profiles ON comments.userID = user_profiles.userID
+    INNER JOIN course_department ON user_table.departmentID = course_department.departmentID
     WHERE comments.entryID = ?
     ORDER BY comments.created_at ASC
   `;

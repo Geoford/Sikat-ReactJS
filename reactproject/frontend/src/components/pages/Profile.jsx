@@ -534,7 +534,8 @@ const Profile = () => {
                   {profileOwner.isAdmin && (
                     <>
                       <h5 className="m-0 text-secondary d-flex align-items-center gap-1">
-                        {profileOwner.isAdmin === 1 && `ADMIN`}
+                        {profileOwner.isAdmin === 1 &&
+                          `GAD-CCAT Campus Administrator`}
                         {profileOwner.isAdmin === 2 &&
                           `${profileOwner.DepartmentName} Moderator`}
                         <i class="bx bx-check-shield text-primary"></i>
