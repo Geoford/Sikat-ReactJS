@@ -117,7 +117,11 @@ const FilterButtonAdmin = ({ onFilterChange, userID }) => {
   };
 
   return (
-    <Dropdown show={dropdownOpen} onToggle={setDropdownOpen}>
+    <Dropdown
+      show={dropdownOpen}
+      onToggle={setDropdownOpen}
+      style={{ zIndex: "50" }}
+    >
       <Dropdown.Toggle
         className="border-0 d-flex align-items-center ps-0"
         variant=""
